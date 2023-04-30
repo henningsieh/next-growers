@@ -1,40 +1,139 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    provider          = "postgres"
+    url               = env("DATABASE_URL")
+    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    password      String?
+    role          String    @default("USER")
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[] // One User has many Accounts
+    sessions      Session[] // One User has many Sessions
+
+    reports  Report[] // One User has many Reports
+    posts    Post[] // One User has many Posts
+    comments Comment[] // One User has many Comments
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-// Necessary for Next auth
+model Report {
+    id          String    @id @default(cuid())
+    title       String
+    description String
+    contests    Contest[] @relation("ReportToContest") //many2many
+    posts       Post[] // One Report has many Posts
+
+    authorId String // One User has many Reports
+    author   User   @relation(fields: [authorId], references: [id])
+
+    products  Product[] // One Report has many Products
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    @@index([authorId], name: "authorId_idx")
+}
+
+model Product {
+    id   String @id @default(cuid())
+    name TypeOf
+
+    reportId  String // One Report has many Products
+    report    Report  @relation(fields: [reportId], references: [id])
+    companyId String // One Company has many Products
+    company   Company @relation(fields: [companyId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Post {
+    id       String    @id @default(cuid())
+    title    String
+    content  String
+    comments Comment[] // One Post has many Comments
+
+    reportId String // One Report has many Posts
+    report   Report @relation(fields: [reportId], references: [id])
+
+    authorId String
+    author   User   @relation(fields: [authorId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Comment {
+    id      String @id @default(cuid())
+    content String
+
+    authorId String // One User has many Comments
+    author   User    @relation(fields: [authorId], references: [id])
+    postId   String? // One Post has many Comments
+    post     Post?   @relation(fields: [postId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Company {
+    id       String    @id @default(cuid())
+    name     String
+    contests Contest[] // One Company has many Contests 
+    products Product[] // One Company has many Products
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Contest {
+    id      String   @id @default(cuid())
+    title   String
+    content String
+    reports Report[] @relation("ReportToContest") //many2many
+
+    companyId String // One Company has many Contests 
+    company   Company @relation(fields: [companyId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum TypeOf {
+    SEED
+    NUTRIENT
+    LIGHT
+    TENT
+}
+
 model Account {
     id                String  @id @default(cuid())
-    userId            String
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String? @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    userId String // One User has many Accounts
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@unique([provider, providerAccountId])
 }
@@ -42,26 +141,22 @@ model Account {
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
-    userId       String
     expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
 
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    role          String    @default("USER")
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    userId String // One User has many Sessions
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
     identifier String
     token      String   @unique
     expires    DateTime
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@unique([identifier, token])
 }
