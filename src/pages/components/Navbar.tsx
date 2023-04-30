@@ -138,7 +138,7 @@ const Navbar = ({ session, status }: NavbarProps) => {
               </ul>
             </div>
             <div className="navbar-end">
-              <div className='pr-2'><i>{status}</i> as {session?.user.role.replace(/"/g, '')} with {session?.user.email.replace(/"/g, '')}</div>
+              <div className='pr-2'><i>{status}</i> as {session?.user.role.replace(/"/g, '')} with {JSON.stringify(session?.user.email)}</div>
               <button
                 className={`btn ${status === "authenticated" 
                   ? "btn btn-outline btn-error" 
