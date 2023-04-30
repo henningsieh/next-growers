@@ -1,10 +1,10 @@
-import { z } from "zod";
-
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
+
+import { z } from "zod";
 
 export const exampleRouter = createTRPCRouter({
   hello: publicProcedure
@@ -15,11 +15,11 @@ export const exampleRouter = createTRPCRouter({
       };
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: publicProcedure.query(({ ctx }) => { // not used!!
     return ctx.prisma.example.findMany();
   }),
 
   getSecretMessage: protectedProcedure.query(() => {
-    return "you can now see this secret message!";
+    return "You can now see this secret message!";
   }),
 });
