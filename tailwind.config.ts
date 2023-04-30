@@ -8,6 +8,7 @@ export default {
   daisyui: {
     themes: [
       {
+        // https://daisyui.com/theme-generator/
         mytheme: {
           primary: '#ea580c',
           secondary: '#65a30d',

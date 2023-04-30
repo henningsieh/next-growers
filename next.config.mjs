@@ -6,6 +6,22 @@ await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "api.api-ninjas.com",
+        port: "",
+        pathname: "/v1/randomimage/**",
+      },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
   reactStrictMode: true,
 
   /**
