@@ -17,12 +17,12 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navbar />
+      <Navbar session={session} status={status} />
 
       <main className="h-screen bg-black text-white">
         <div className="flex place-content-center h-screen">
         <div id="TOP" className="flex place-content-center items-center">
-          {status === 'authenticated' && session && session.user && <p>Signed in as {session.user.email}</p>}
+          {/* {status === 'authenticated' && session && session.user && <p>Signed in as {session.user.email}</p>} */}
 
             <div className="flex flex-col">
               <div className="text-2xl text-center my-2"></div>
@@ -44,7 +44,7 @@ const Home: NextPage = () => {
 
               <a href="#API">
                 <div className="flex btn rounded-lg w-fit mx-auto mt-2 bg-black border-gray-500 hover:bg-gray-800 hover:border-gray-800">
-                  API
+                  GO LOW
                 </div>
               </a>
             </div>
@@ -57,13 +57,23 @@ const Home: NextPage = () => {
                 </a>
               </li>
               <li>
-                <a href="https://typescriptlang.org" target={`_blank`}>
-                  TypeScript
+                <a href="https://prisma.io" target={`_blank`}>
+                  Prisma
                 </a>
               </li>
               <li>
-                <a href="https://tailwindcss.com" target={`_blank`}>
-                  Tailwind
+                <a href="https://www.postgresql.org/" target={`_blank`}>
+                  PostgreSQL
+                </a>
+              </li>
+              <li>
+                <a href="https://supabase.com/" target={`_blank`}>
+                  Supabase
+                </a>
+              </li>
+              <li>
+                <a href="https://vercel.com" target={`_blank`}>
+                  Vercel
                 </a>
               </li>
               <li>
@@ -77,23 +87,13 @@ const Home: NextPage = () => {
                 </a>
               </li>
               <li>
-                <a href="https://prisma.io" target={`_blank`}>
-                  Prisma
+                <a href="https://typescriptlang.org" target={`_blank`}>
+                  TypeScript
                 </a>
               </li>
               <li>
-                <a href="https://mysql.com" target={`_blank`}>
-                  MySQL
-                </a>
-              </li>
-              <li>
-                <a href="https://app.planetscale.com" target={`_blank`}>
-                  PlanetScale
-                </a>
-              </li>
-              <li>
-                <a href="https://vercel.com" target={`_blank`}>
-                  Vercel
+                <a href="https://tailwindcss.com" target={`_blank`}>
+                  Tailwind
                 </a>
               </li>
             </ul>
@@ -102,11 +102,18 @@ const Home: NextPage = () => {
       </main>
 
       <main className="flex place-content-center h-screen">
-        <div className="flex place-content-center items-center">
+        <div className="flex flex-col place-content-center items-center">
+
           <div id="API" className="text-6xl mx-5">
-            API
+            BELOW IS HERE
           </div>
-          <ul>
+        <a href="#TOP">  
+        <button className="btn btn-outline btn-accent w-96 my-4">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5" /></svg>
+        </button>
+        </a>
+{/*           <ul>
             <li>
               <a href={'/api/helloworld'}>/helloworld</a>
             </li>
@@ -122,7 +129,7 @@ const Home: NextPage = () => {
             <li>
               <a href={'http://localhost:5555'}>/PrismaStudio</a>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </main>
 

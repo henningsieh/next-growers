@@ -4,8 +4,14 @@ import Link from 'next/link';
 import Modal from './Modal';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
+import { type Session } from "next-auth";
 
-const Navbar = () => {
+interface NavbarProps {
+  session: Session | null;
+  status: "authenticated" | "loading" | "unauthenticated";
+}
+
+const Navbar = ({ session, status }: NavbarProps) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleSignInClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -21,9 +27,9 @@ const Navbar = () => {
     <div className="sticky top-0 p-2">
       <AnimatePresence>
         <motion.nav
-          initial={{ x: -500, opacity: 0, scale: 0.5 }}
-          animate={{ x: 0, opacity: 1, scale: 1 }}
-          transition={{ duration: 1, type: 'ease-out' }}
+          initial={{ y: -50, opacity: 0, scale: 0.5 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          transition={{ duration: 0.25, type: 'easeInOut'}}
         >
           <div className="navbar bg-neutral">
             <div className="navbar-start">
@@ -55,7 +61,7 @@ const Navbar = () => {
                     <a href="#TOP">TOP SECTION</a>
                   </li>
                   <li>
-                    <a href="#API">API SECTION {`<testing>`}</a>
+                    <a href="#API">BELOW SECTION</a>
                   </li>
                   <li>
                     <Link href="/t3-app-info">T3-App Info</Link>
@@ -89,22 +95,24 @@ const Navbar = () => {
                 </ul>
               </div>
               <div className="btn btn-ghost normal-case text-xl">
-                <Link href="/">GrowAGram.com</Link>
+                <a href="#TOP">GrowAGram.com</a>
               </div>
             </div>
-
             {/* Regular Nav */}
             <div className="navbar-center hidden lg:flex">
               <ul className="menu menu-horizontal px-1">
                 <li>
-                  <Link href="/#API">Explore Grows</Link>
+                  <a href="#TOP">TOP SECTION</a>
                 </li>
                 <li>
-                  <Link href="/">Fiend Grower</Link>
+                  <a href="#API">BELOW SECTION</a>
+                </li>
+                <li>
+                  <Link href="/t3-app-info">T3-App Info</Link>
                 </li>
                 <li tabIndex={0}>
                   <a className="justify-between cursor-default">
-                    Manufacturer
+                    Parent {`<submenu>`}
                     <svg
                       className="fill-current"
                       xmlns="http://www.w3.org/2000/svg"
@@ -130,30 +138,44 @@ const Navbar = () => {
               </ul>
             </div>
             <div className="navbar-end">
-              <button className="btn btn-primary rounded-lg" onClick={handleSignInClick}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  viewBox="4 -2 22 28"
-                  className="pr-1 w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-                  />
-                </svg>
-                Sign in
-              </button>
+              <div className='pr-2'><i>{status}</i> as {session?.user.role.replace(/"/g, '')} with {session?.user.email.replace(/"/g, '')}</div>
+              <button
+                className={`btn ${status === "authenticated" 
+                  ? "btn btn-outline btn-error" 
+                  : "btn btn-primary rounded-lg"
+                }`} 
               
-              <button className="ml-1 btn btn-error rounded-lg" onClick={signOut}>Log out</button>
+                onClick={ status === "authenticated" 
+                  ? () => void signOut() 
+                  : handleSignInClick
+                }>
+                {status === "authenticated"
+                  ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1.5} stroke="currentColor" 
+                    viewBox="4 -2 22 28"
+                    className="pr-0 w-6 h-6" >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                  </svg>
+
+                  : <svg xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1.5} stroke="currentColor"
+                    viewBox="4 -2 22 28"
+                    className="pr-1 w-6 h-6" >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                    />
+                  </svg>
+                }
+                {status === "authenticated" 
+                  ? "Sign Out" 
+                  : "Sign In" 
+                }
+              </button>
             </div>
           </div>
         </motion.nav>
         {showModal && <Modal onClose={handleCloseModal} isOpen={showModal} />}
-      </AnimatePresence>
+      </AnimatePresence>      
     </div>
   );
 };
