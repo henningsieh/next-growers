@@ -1,10 +1,11 @@
+import "~/styles/globals.css";
+
+import { SessionProvider, useSession } from "next-auth/react";
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 
 import { api } from "~/utils/api";
 
-import "~/styles/globals.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -12,6 +13,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      {/* // FUTURE BANNERS GO HERE!! */}
       <Component {...pageProps} />
     </SessionProvider>
   );
