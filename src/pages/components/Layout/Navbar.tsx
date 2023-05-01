@@ -21,7 +21,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="sticky top-0 p-2">
+    <div className="sticky top-0 z-10 p-2">
       <AnimatePresence>
         <motion.nav
           initial={{ y: -50, opacity: 0, scale: 0.5 }}
@@ -95,6 +95,7 @@ const Navbar = () => {
                 <Link href="/">GrowAGram.com</Link>
               </div>
             </div>
+
             {/* Regular Nav */}
             <div className="navbar-center hidden lg:flex">
               <ul className="menu menu-horizontal px-1">
@@ -134,35 +135,23 @@ const Navbar = () => {
                 </li>
               </ul>
             </div>
+
+            {/* Profile Menu / Sign in */}
             <div className="navbar-end">
-              {/* <div className='pr-2'><i>{status}</i> as {session?.user.role.replace(/"/g, '')} with {JSON.stringify(session?.user.email)}</div> */}
-              {status === "unauthenticated" ?
+            {status === "unauthenticated" ?
               <button
-                className={`btn ${status === "authenticated" 
-                  ? "btn btn-outline btn-error" 
-                  : "btn btn-primary rounded-lg"
-                }`} 
-                onClick={ status === "authenticated" 
-                  ? () => void signOut() 
-                  : handleSignInClick }>
-                {status === "authenticated"
-                  ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1.5} stroke="currentColor" 
-                    viewBox="4 -2 22 28"
-                    className="pr-0 w-6 h-6" >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                  </svg>
-                  : <svg xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1.5} stroke="currentColor"
-                    viewBox="4 -2 22 28"
-                    className="pr-1 w-6 h-6" >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
-                  </svg>
-                }
-                {status === "authenticated" ? "Sign Out" : "Sign In" }
+                className={"btn btn-primary rounded-lg"} 
+                onClick={ handleSignInClick }
+              >
+
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1.5} stroke="currentColor"
+                viewBox="4 -2 22 28" className="pr-1 w-6 h-6" >
+                <path strokeLinecap="round" strokeLinejoin="round"
+                      d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+              </svg>
+                Sign In
               </button>
-              : '' }
+            : '' }
 
             {status === "authenticated" 
             ? <div className="dropdown dropdown-end">
@@ -180,12 +169,12 @@ const Navbar = () => {
                 </label>
                 <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-64">
                   <li>
-                    <a className="justify-between">
-                      Profile
+                    <Link href="/account/edit" className="justify-between">
+                      Profile and Settings
                       <span className="badge badge-error badge-outline">Attention</span>
-                    </a>
+                    </Link>
                   </li>
-                  <li><a>Settings</a></li>
+                  <li><Link href="/account/reports">My Reports</Link></li>
                   <li className='btn-outline btn-error rounded-md'><a  onClick={() => void signOut()} >Logout</a></li>
                 </ul>
               </div>

@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Navbar from '../../components/Navbar';
+import Navbar from '../../components/Layout/Navbar';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -20,8 +20,6 @@ const AddReport = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <Navbar session={session} status={status} />
 
       <main className="h-screen bg-black text-white">
         <div className="flex place-content-center h-screen">
