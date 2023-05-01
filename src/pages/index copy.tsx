@@ -1,13 +1,9 @@
 import Head from 'next/head';
 //import { trpc } from '../utils/trpc';
-import Navbar from './components/Layout/Navbar';
 import type { NextPage } from 'next';
-import { useSession } from 'next-auth/react';
 
 const Home: NextPage = () => {
 //  const etMsg = trpc.useQuery(['trpcRoute.etAPI']);
-
-  const { data: session, status } = useSession();
 
   return (
     <section id="TOP">

@@ -27,10 +27,10 @@ const Home: NextPage = () => {
         </div>
       </div>
       <p className="mb-2 text-xl font-bold text-secondary-content">At GrowAGram, we provide a platform for cannabis enthusiasts to showcase their growing skills and share their knowledge. </p>
-      <p className="mb-4 text-xl font-bold text-secondary-content">As the legalization of cannabis approaches in Germany, we believe it's important to build a community that celebrates the plant and its unique growing process.</p>
+      <p className="mb-4 text-xl font-bold text-secondary-content">As the legalization of cannabis approaches in Germany, we believe it&apos;s important to build a community that celebrates the plant and its unique growing process.</p>
       <button className="btn btn-primary w-full font-bold text-slate-200">Joint the Growing Movement</button>
       <h2 className="mt-5 text-4xl text-slate-900">Become part of the Community!</h2>
-      <p className="text-md">If you're passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.</p>
+      <p className="text-md">If you&apos;re passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.</p>
     </div>
   </div>
 </div>

@@ -33,7 +33,7 @@ const useLoginForm = () => {
     const newErrors: Errors = {};
     try {
       emailSchema.parse(form.email);
-      const result = await signIn('email', { email: form.email });
+      await signIn('email', { email: form.email });
     } catch (err) {
       newErrors.email = (err as Error).message;
     }

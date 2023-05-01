@@ -1,10 +1,7 @@
 import Head from 'next/head';
-import Navbar from '../../components/Layout/Navbar';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 const AddReport = () => {
-  const { data: session, status } = useSession();
   const [formData, setFormData] = useState({
     title: '',
     content: '',
