@@ -13,7 +13,27 @@ const Home: NextPage = () => {
 
       <main className="h-screen bg-black text-white">
 
+      <div className="hero min-h-screen" 
+      style={{ backgroundImage: `url("/MqISkm2iLGc-unsplash.jpg")` }}>
+  <div className="hero-overlay bg-opacity-30"></div>
+  <div className="hero-content text-center text-neutral-content">
+    <div className="p-10 rounded-md text-secondary-content max-w-4xl bg-secondary bg-opacity-70">
 
+      <div className="card mb-4 bg-accent/80 text-slate-200">
+        <div className="card-body">
+          <p className="mb-5 text-4xl">Welcome to</p>
+          <h1 className="mb-5 text-8xl font-bold">GrowAGram</h1>
+          <h2 className="mb-5 text-5xl font-bold">🪴 Show Your Grow! 🚀</h2>
+        </div>
+      </div>
+      <p className="mb-2 text-xl font-bold text-secondary-content">At GrowAGram, we provide a platform for cannabis enthusiasts to showcase their growing skills and share their knowledge. </p>
+      <p className="mb-4 text-xl font-bold text-secondary-content">As the legalization of cannabis approaches in Germany, we believe it's important to build a community that celebrates the plant and its unique growing process.</p>
+      <button className="btn btn-primary w-full font-bold text-slate-200">Joint the Growing Movement</button>
+      <h2 className="mt-5 text-4xl text-slate-900">Become part of the Community!</h2>
+      <p className="text-md">If you're passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.</p>
+    </div>
+  </div>
+</div>
         
       </main>
 

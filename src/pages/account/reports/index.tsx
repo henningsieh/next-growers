@@ -44,7 +44,7 @@ const UserReports = () => {
           : 
             <div className="hero max-h-screen bg-primary text-primary-content rounded-md">
               <div className="hero-content flex-col sm:flex-row">
-                <Image alt="no report image" width={640} height={429} src="/tim-foster-A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" />
+                <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" />
                 <div className=''>
                   <h1 className="text-4xl font-bold">No Reports found! 😢</h1>
                   <p className="py-6 text-xl">You haven&apos;t created any reports yet.</p>
