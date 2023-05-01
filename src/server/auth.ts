@@ -56,6 +56,15 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
+      
+      // LOG VERIFYLINK TO CONSOLE IN DEVELOPMENT MODE ONLY
+      ...(process.env.NODE_ENV !== "production"
+        ? {
+            sendVerificationRequest({ url }) {
+              console.log("LOGIN LINK", url);
+            },
+          }
+        : {}),
     }),
     /**
      * ...add more providers here.
