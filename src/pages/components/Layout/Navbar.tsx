@@ -1,17 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { signOut, useSession } from 'next-auth/react';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import Modal from './Modal';
-import { signOut } from 'next-auth/react';
+import Modal from '../Modal';
 import { useState } from 'react';
-import { type Session } from "next-auth";
 
-interface NavbarProps {
-  session: Session | null;
-  status: "authenticated" | "loading" | "unauthenticated";
-}
+const Navbar = () => {
+  const { data: session, status } = useSession();
 
-const Navbar = ({ session, status }: NavbarProps) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleSignInClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,7 +31,7 @@ const Navbar = ({ session, status }: NavbarProps) => {
           <div className="navbar bg-neutral">
             <div className="navbar-start">
               {/* Mobile Nav */}
-              <div className="dropdown">
+              <div className="z-40 dropdown">
                 <label tabIndex={0} className="btn btn-ghost lg:hidden">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +52,7 @@ const Navbar = ({ session, status }: NavbarProps) => {
                 </label>
                 <ul
                   tabIndex={0}
-                  className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-200 rounded-box w-52"
+                  className="z-40 w-64 mt-3 p-2 shadow bg-base-200 rounded-box menu menu-compact dropdown-content"
                 >
                   <li>
                     <a href="#TOP">TOP SECTION</a>
@@ -95,7 +92,7 @@ const Navbar = ({ session, status }: NavbarProps) => {
                 </ul>
               </div>
               <div className="btn btn-ghost normal-case text-xl">
-                <a href="#TOP">GrowAGram.com</a>
+                <Link href="/">GrowAGram.com</Link>
               </div>
             </div>
             {/* Regular Nav */}
@@ -138,40 +135,64 @@ const Navbar = ({ session, status }: NavbarProps) => {
               </ul>
             </div>
             <div className="navbar-end">
-              <div className='pr-2'><i>{status}</i> as {session?.user.role.replace(/"/g, '')} with {JSON.stringify(session?.user.email)}</div>
+              {/* <div className='pr-2'><i>{status}</i> as {session?.user.role.replace(/"/g, '')} with {JSON.stringify(session?.user.email)}</div> */}
+              {status === "unauthenticated" ?
               <button
                 className={`btn ${status === "authenticated" 
                   ? "btn btn-outline btn-error" 
                   : "btn btn-primary rounded-lg"
                 }`} 
-              
                 onClick={ status === "authenticated" 
                   ? () => void signOut() 
-                  : handleSignInClick
-                }>
+                  : handleSignInClick }>
                 {status === "authenticated"
                   ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1.5} stroke="currentColor" 
                     viewBox="4 -2 22 28"
                     className="pr-0 w-6 h-6" >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 119 0v3.75M3.75 21.75h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                   </svg>
-
                   : <svg xmlns="http://www.w3.org/2000/svg" fill="none" strokeWidth={1.5} stroke="currentColor"
                     viewBox="4 -2 22 28"
                     className="pr-1 w-6 h-6" >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-                    />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
                   </svg>
                 }
-                {status === "authenticated" 
-                  ? "Sign Out" 
-                  : "Sign In" 
-                }
+                {status === "authenticated" ? "Sign Out" : "Sign In" }
               </button>
+              : '' }
+
+            {status === "authenticated" 
+            ? <div className="dropdown dropdown-end">
+                <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                  <div className="w-10 rounded-full">
+                    {session?.user?.image 
+                    ? (
+                      <Image
+                        alt={`${session.user.name || ''}'s Profile Image`}
+                        width={500} height={500}
+                        src={session.user.image}
+                      /> ) 
+                    : ( '' )}
+                  </div>
+                </label>
+                <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-64">
+                  <li>
+                    <a className="justify-between">
+                      Profile
+                      <span className="badge badge-error badge-outline">Attention</span>
+                    </a>
+                  </li>
+                  <li><a>Settings</a></li>
+                  <li className='btn-outline btn-error rounded-md'><a  onClick={() => void signOut()} >Logout</a></li>
+                </ul>
+              </div>
+            : '' }
             </div>
+
+
           </div>
         </motion.nav>
         {showModal && <Modal onClose={handleCloseModal} isOpen={showModal} />}

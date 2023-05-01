@@ -10,6 +10,18 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "forum.cannabisanbauen.net",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+        pathname: "/a/**",
+      },
+      {
+        protocol: "https",
         hostname: "api.api-ninjas.com",
         port: "",
         pathname: "/v1/randomimage/**",

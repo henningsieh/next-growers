@@ -5,6 +5,8 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 
 import { api } from "~/utils/api";
+import Layout from "./components/Layout";
+
 
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -13,8 +15,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      {/* // FUTURE BANNERS GO HERE!! */}
-      <Component {...pageProps} />
+      <Layout>
+        {/* // FUTURE BANNERS GO HERE!! */}
+        <Component {...pageProps} />
+      </Layout>
     </SessionProvider>
   );
 };
