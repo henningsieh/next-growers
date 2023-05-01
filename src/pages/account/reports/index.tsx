@@ -1,13 +1,8 @@
 import Head from 'next/head';
 import Image from "next/image";
-import Navbar from '../../components/Layout/Navbar';
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
-import { useSession } from 'next-auth/react';
-import { useState } from 'react';
 
 const UserReports = () => {
-  const { data: session, status } = useSession();
 
   const { data: reports, 
           isLoading, 
@@ -24,7 +19,7 @@ const UserReports = () => {
     <section>
 
       <Head>
-        <title>Create a new Report</title>
+        <title>Create new Report</title>
         <meta
         name="description"
         content="Upload and create your Report to growagram.com"
