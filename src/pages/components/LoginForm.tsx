@@ -73,7 +73,7 @@ const LoginForm = () => {
             value={form.email}
             onChange={handleChange}
           />
-          <Button leftIcon={<IconMail />}  variant='outline' className="text-secondary-content font-bold text-md btn btn-secondary rounded-lg" type="submit">
+          <Button leftIcon={<IconMail />}   className="text-secondary-content font-bold text-md btn btn-secondary rounded-lg" type="submit">
 {/*             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

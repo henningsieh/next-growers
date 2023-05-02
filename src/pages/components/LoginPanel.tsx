@@ -1,12 +1,11 @@
-import { Box, Button, Checkbox, Group, Menu, Modal, Text, TextInput } from '@mantine/core';
-import { IconArrowsLeftRight, IconLogout, IconMessageCircle, IconPhoto, IconSearch, IconSettings, IconTrash } from '@tabler/icons-react';
+import { Button, Group, Menu, Modal } from '@mantine/core';
+import { IconArrowsLeftRight, IconLogout, IconMessageCircle, IconPhoto, IconSearch, IconSettings } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 
 import { Avatar } from '@mantine/core';
 import Link from 'next/link';
 import LoginForm from './LoginForm';
 import { useDisclosure } from '@mantine/hooks';
-import { useForm } from '@mantine/form';
 
 export default function LoginModal() {
   const { data: session, status } = useSession();
@@ -71,8 +70,7 @@ export default function LoginModal() {
         <Menu shadow="md" width={200}>
           <Menu.Target>
             {/* <Button>Toggle menu</Button> */}
-            <Avatar className="cursor-pointer" variant="outline" radius="xl" size="md" color="grape" 
-                    src={session.user.image} 
+            <Avatar src={session.user.image} className="cursor-pointer" variant="outline" radius="xl" size="md" color="grape" 
             />
           </Menu.Target>
 
@@ -95,8 +93,10 @@ export default function LoginModal() {
             <Menu.Item  onClick={() => void signOut()} color="red" icon={<IconLogout size={14} />}>Sign out</Menu.Item>
           </Menu.Dropdown>
         </Menu>
-        :
-        <Button variant="default" onClick={open}>Sign in 🔒</Button>
+        : 
+        <>
+            <Button className="cursor-default" variant="default" size={'xs'} onClick={open}>Sign in 🔒</Button>
+        </>
       }
       </Group>
     </>

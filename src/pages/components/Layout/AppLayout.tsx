@@ -7,7 +7,6 @@ import {
     Burger,
     Button,
     Center,
-    Collapse,
     Divider,
     Drawer,
     Group,
@@ -31,7 +30,6 @@ import {
     IconNotification,
 } from '@tabler/icons-react';
 
-import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
 import Footer from './Footer';
 import LoginPanel from '../LoginPanel';
@@ -133,7 +131,7 @@ const useStyles = createStyles((theme) => ({
   
   export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-    const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+    // const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
     const { classes, theme } = useStyles();
   
     const links = mockdata.map((item) => (
@@ -162,7 +160,7 @@ const useStyles = createStyles((theme) => ({
                   <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
                   
                   {/* <MantineLogo size={30} /> */}
-                  <Text c={'orange'} fw={700} fz="xl">GrowAGram.com</Text>
+                  <Text c={'orange'} fw={700} fz="md">GrowAGram</Text>
                   <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
                     <Link href="/" className={classes.link}>
                         Home 
@@ -216,7 +214,7 @@ const useStyles = createStyles((theme) => ({
                         Learn
                     </a>
                     <Link href="/t3-app-info" className={classes.link}>
-                    NextJS T3-Stack App
+                    NextJS T3 App Stack 
                     </Link>
                   </Group>
       
@@ -258,7 +256,7 @@ const useStyles = createStyles((theme) => ({
                   Learn
                   </a> */}
                     <Link onClick={toggleDrawer} href="/t3-app-info" className={classes.link}>
-                    NextJS T3-Stack App
+                    NextJS T3 App Stack 
                     </Link>
         
                   <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />

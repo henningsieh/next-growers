@@ -58,7 +58,7 @@ const UserReports = () => {
               <div className="hero-content flex-col md:flex-row">
                 {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
                 <div className='text-center'>
-                  <h1 className="whitespace-nowrap text-4xl font-bold">No Reports found! 😢</h1>
+                  <h1 className="whitespace-nowrap text-3xl font-bold">No Reports found! 😢</h1>
                   <p className="error py-6 font-bold text-lg">You haven&apos;t created any reports yet.</p>
                     {/* <Button className=' btn btn-active 
                           btn-secondary text-secondary-content

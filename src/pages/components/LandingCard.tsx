@@ -13,42 +13,44 @@ const useStyles = createStyles((theme) => ({
     height: rem(800),
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingBottom: `calc(${theme.spacing.xl} * 6)`,
     zIndex: 1,
     position: 'relative',
 
     [theme.fn.smallerThan('sm')]: {
       height: rem(700),
+      flexDirection: 'column',
+      justifyContent: 'center',
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
     },
   },
 
   title: {
     color: theme.white,
-    fontSize: rem(44),
+    fontSize: rem(48),
     fontWeight: 900,
     lineHeight: 1.1,
     paddingBottom: 12,
 
     [theme.fn.smallerThan('sm')]: {
-      fontSize: rem(40),
+      fontSize: rem(42),
       lineHeight: 1.2,
     },
 
     [theme.fn.smallerThan('xs')]: {
-      fontSize: rem(28),
+      fontSize: rem(36),
       lineHeight: 1.3,
     },
   },
 
   description: {
     color: theme.white,
-    maxWidth: 600,
+    maxWidth: 660,
 
     [theme.fn.smallerThan('sm')]: {
-      maxWidth: '100%',
+      maxWidth: '96%',
       fontSize: theme.fontSizes.md,
     },
   },
@@ -74,18 +76,18 @@ export default function LandingCard() {
       />
       <Container className={classes.container}>
         <Title className={classes.title}>GrowAGram.com</Title>
-        <Title pb={24} order={2}>🪴 Show Your Grow! 🚀</Title>
+        <Title pb={20} order={2}>🪴 Show Your Grow! 🚀</Title>
         <Text className={classes.description} size="xl" mt="xl">
         At GrowAGram, we provide a platform for cannabis enthusiasts to showcase their growing skills and share their knowledge. 
         </Text>
         <Text className={classes.description} size="xl" mt="xl">
         As the legalization of cannabis approaches in Germany, we believe it&apos;s important to build a community that celebrates the plant and its unique growing process. 
         </Text>
-
-        <Button color="orange.9" variant="outline" size="xl" radius="xl" className={classes.control}>
-          Get started
-        </Button>
-        <Text className={classes.description} size="sm" mt="xl">
+        <button className="my-8 w-96 h-12 rounded-md text-white
+        bg-gradient-to-r from-pink-600 via-red-600 to-orange-500">
+            COMING SOON... 🤞
+        </button>
+        <Text className={classes.description} size="md">
         If you&apos;re passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.
         </Text>
       </Container>
