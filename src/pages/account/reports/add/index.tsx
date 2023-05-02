@@ -1,4 +1,9 @@
-import { Box, Button, Group, NumberInput, TextInput, Textarea, Title } from '@mantine/core';
+import { type GetServerSidePropsContext } from "next";
+import { authOptions } from "~/server/auth";
+import { getServerSession } from "next-auth/next"
+import { useSession } from "next-auth/react"
+
+import { Box, Button, Group, TextInput, Textarea, Title } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 
 import { z } from 'zod';
@@ -11,6 +16,7 @@ const schema = z.object({
 });
 
 export default function Form() {
+  const { data: session } = useSession()
   const form = useForm({    
     validateInputOnChange: true,
     validate: zodResolver(schema),
@@ -20,6 +26,7 @@ export default function Form() {
     },
   });
 
+  if (session) {
   return (
     <Box maw={640} mx="auto">
 
@@ -54,4 +61,26 @@ export default function Form() {
       </form>
     </Box>
   );
+}
+return <p className="text-6xl">Access Denied</p>
+}
+
+
+/**
+ * 
+ * PROTECTED PAGE
+ */
+export async function getServerSideProps(ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) {
+  return {
+    props: {
+      session: await getServerSession(
+        ctx.req,
+        ctx.res,
+        authOptions
+      ),
+    },
+  }
 }

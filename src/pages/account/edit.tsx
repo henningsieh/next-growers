@@ -1,11 +1,18 @@
+import { type GetServerSidePropsContext } from "next";
+import { authOptions } from "~/server/auth";
+import { getServerSession } from "next-auth/next"
+import { useSession } from "next-auth/react"
+
 import Head from 'next/head';
 import type { NextPage } from 'next';
 
 //import { trpc } from '../utils/trpc';
 
 const Home: NextPage = () => {
+  const { data: session } = useSession()
 //  const etMsg = trpc.useQuery(['trpcRoute.etAPI']);
 
+if (session) {
   return (
     <section>
       <Head>
@@ -28,6 +35,28 @@ const Home: NextPage = () => {
 
     </section>
   );
+}
+return <p className="text-6xl">Access Denied</p>
 };
 
 export default Home;
+
+
+/**
+ * 
+ * PROTECTED PAGE
+ */
+export async function getServerSideProps(ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) {
+  return {
+    props: {
+      session: await getServerSession(
+        ctx.req,
+        ctx.res,
+        authOptions
+      ),
+    },
+  }
+}

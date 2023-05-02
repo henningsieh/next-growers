@@ -1,19 +1,29 @@
+import { type GetServerSidePropsContext } from "next";
+import { authOptions } from "~/server/auth";
+import { getServerSession } from "next-auth/next"
+import { useSession } from "next-auth/react"
+
 import { Button } from '@mantine/core';
 import Head from 'next/head';
-import Image from "next/image";
 import Link from 'next/link';
 import { api } from "~/utils/api";
 
 const UserReports = () => {
+  const { data: session } = useSession()
 
   const { data: reports, 
           isLoading, 
           isError 
   } = api.reports.getOwnReports.useQuery();
   
-	if (isLoading) return <div>Loading reports 🔄</div>
-	if (isError)   return <div>Error fetching your reports ❌ Please sign in!</div>
-  // console.log(reports)
+
+
+  
+  if (session) {
+
+    if (isLoading) return <div>Loading reports 🔄</div>
+    if (isError)   return <div>Error fetching your reports ❌ Please sign in!</div>
+    // console.log(reports)
 
   return (
 
@@ -74,5 +84,27 @@ const UserReports = () => {
 
   )
 }
+return <p className="text-6xl">Access Denied</p>
+}
 
 export default UserReports
+
+
+/**
+ * 
+ * PROTECTED PAGE
+ */
+export async function getServerSideProps(ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) {
+  return {
+    props: {
+      session: await getServerSession(
+        ctx.req,
+        ctx.res,
+        authOptions
+      ),
+    },
+  }
+}

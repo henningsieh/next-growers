@@ -3,6 +3,9 @@ import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next"
 import { useSession } from "next-auth/react"
 
+
+import { Container, Title } from "@mantine/core";
+
 export default function Page() {
   const { data: session } = useSession()
 
@@ -12,8 +15,11 @@ export default function Page() {
   if (session) {
     return (
       <>
-        <h1>Protected Page</h1>
-        <p>You can view this page because you are signed in.</p>
+        <Container className="h-96">
+          <Title>Your Account Settings</Title>
+          <h2>Protected Page</h2>
+          <p>You can view this page because you are signed in.</p>
+        </Container>
       </>
     )
   }
