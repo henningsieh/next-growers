@@ -20,7 +20,7 @@ const useStyles = createStyles((theme) => ({
     position: 'relative',
 
     [theme.fn.smallerThan('sm')]: {
-      height: rem(700),
+      height: rem(900),
       flexDirection: 'column',
       justifyContent: 'center',
       paddingBottom: `calc(${theme.spacing.xl} * 3)`,
