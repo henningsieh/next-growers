@@ -80,7 +80,7 @@ export default function LoginModal() {
             <Menu.Label>Application</Menu.Label>
             <Menu.Item icon={<IconSettings size={14} />}>Settings</Menu.Item>
             <Menu.Item icon={<IconMessageCircle size={14} />}>Messages</Menu.Item>
-            <Menu.Item icon={<IconPhoto size={14} />}><Link href="/account/reports">My Reports</Link></Menu.Item>
+            <Link href="/account/reports"><Menu.Item icon={<IconPhoto size={14} />}>My Reports</Menu.Item></Link>
             <Menu.Item icon={<IconSearch size={14} />}
               // Shotcut Indicator
               // rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
