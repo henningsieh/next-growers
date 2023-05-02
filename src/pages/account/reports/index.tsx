@@ -1,5 +1,7 @@
+import { Button } from '@mantine/core';
 import Head from 'next/head';
 import Image from "next/image";
+import Link from 'next/link';
 import { api } from "~/utils/api";
 
 const UserReports = () => {
@@ -19,7 +21,7 @@ const UserReports = () => {
     <section>
 
       <Head>
-        <title>Create new Report</title>
+        <title>Your Reports</title>
         <meta
         name="description"
         content="Upload and create your Report to growagram.com"
@@ -43,13 +45,20 @@ const UserReports = () => {
           )})
           : 
             <div className="hero max-h-screen bg-primary text-primary-content rounded-md">
-              <div className="hero-content flex-col sm:flex-row">
-                <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" />
-                <div className=''>
-                  <h1 className="text-4xl font-bold">No Reports found! 😢</h1>
-                  <p className="py-6 text-xl">You haven&apos;t created any reports yet.</p>
-                <button className='btn btn-active btn-secondary text-secondary-content font-bold w-full'>
-                  Create and upload your first report now! 🚀</button>
+              <div className="hero-content flex-col md:flex-row">
+                {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
+                <div className='text-center'>
+                  <h1 className="whitespace-nowrap text-4xl font-bold">No Reports found! 😢</h1>
+                  <p className="error py-6 font-bold text-lg">You haven&apos;t created any reports yet.</p>
+                    {/* <Button className=' btn btn-active 
+                          btn-secondary text-secondary-content
+                          w-full whitespace-nowrap font-bold'
+                        > Create your first report! 🚀</Button> */}
+                    <Link href="/account/reports/add">
+                    <Button color="orange.6" variant="outline" fullWidth >
+                    Create your first report! 🚀
+                  </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -62,44 +71,6 @@ const UserReports = () => {
 
 
 
-
-
-/* 
-
-    <section>
-      <Head>
-        <title>Create a new Report</title>
-        <meta
-          name="description"
-          content="Upload and create your Report to growagram.com"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <Navbar session={session} status={status} />
-
-			{reports.length ?
-				reports.map((report) => {
-					return (
-            <>
-              <div className="card w-96 bg-neutral-100/20 shadow-xl image-full">
-                <figure><Image src="https://picsum.photos/200/120" width={200} height={120} alt="Shoes" /></figure>
-                <div className="card-body">
-                  <h2 className="card-title">{report.title}</h2>
-                  <p>{report.description}</p>
-                  <div className="card-actions justify-end">
-                    <button className="btn btn-primary">Buy Now</button>
-                  </div>
-                </div>
-              </div>
-            </>
-            )
-				})
-				: "Create your first report..."}
-
-    </section>
-
- */
 
   )
 }

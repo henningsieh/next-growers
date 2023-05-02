@@ -3,8 +3,8 @@
  * 1. You want to modify request context (see Part 1).
  * 2. You want to create a new middleware or type of procedure (see Part 3).
  *
- * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
- * need to use are documented accordingly near the end.
+ * TL;DR - This is where all the tRPC server stuff is created and plugged in. 
+ * The pieces you will need to use are documented accordingly near the end.
  */
 
 /**
@@ -12,7 +12,8 @@
  *
  * This section defines the "contexts" that are available in the backend API.
  *
- * These allow you to access things when processing a request, like the database, the session, etc.
+ * These allow you to access things when processing a request, like the 
+ * database, the session, etc.
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
@@ -25,8 +26,8 @@ type CreateContextOptions = {
 };
 
 /**
- * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
- * it from here.
+ * This helper generates the "internals" for a tRPC context. 
+ * If you need to use it, you can export it from here.
  *
  * Examples of things you may need it for:
  * - testing, so we don't have to mock Next.js' req/res
@@ -61,9 +62,9 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 /**
  * 2. INITIALIZATION
  *
- * This is where the tRPC API is initialized, connecting the context and transformer. We also parse
- * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
- * errors on the backend.
+ * This is where the tRPC API is initialized, connecting the context and 
+ * transformer. We also parse ZodErrors so that you get typesafety on the 
+ * frontend if your procedure fails due to validation errors on the backend.
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";

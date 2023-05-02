@@ -1,5 +1,7 @@
 import * as z from 'zod';
 
+import { Button } from '@mantine/core';
+import { IconMail } from '@tabler/icons-react';
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -49,7 +51,7 @@ const LoginForm = () => {
 
   return (
     <>
-      <h2 className="text-accent text-4xl font-bold mb">{'Sign in \u{1F512}'}</h2>
+      <h2 className="text-accent text-2xl font-bold mb">{'Log in to GrowAGram 🔒'}</h2>
 
       <form className="w-full py-4" onSubmit={(e) => { e.preventDefault(); void handleSubmit(e) }}>
 
@@ -71,8 +73,8 @@ const LoginForm = () => {
             value={form.email}
             onChange={handleChange}
           />
-          <button className="text-secondary-content font-bold text-md btn btn-secondary rounded-lg" type="submit">
-            <svg
+          <Button leftIcon={<IconMail />}  variant='outline' className="text-secondary-content font-bold text-md btn btn-secondary rounded-lg" type="submit">
+{/*             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -85,13 +87,16 @@ const LoginForm = () => {
                 strokeLinejoin="round"
                 d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
               />
-            </svg>
-            Send me the Link
-          </button>
+            </svg>  */}
+            SEND ME THE MAGIC LOGIN LINK
+          </Button>
           
         </div>
       </form>
-      <button >Log in with Google</button>
+{/*       <button >Log in with Google</button> */}
+
+
+
     </>
   );
 };
