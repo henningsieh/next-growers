@@ -86,7 +86,7 @@ export default function LandingCard() {
           Get started
         </Button>
         <Text className={classes.description} size="sm" mt="xl">
-        If you&apo;re passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.
+        If you&apos;re passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.
         </Text>
       </Container>
       Foto von <a href="https://unsplash.com/@diyahna22?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Diyahna Lewis</a> auf <a href="https://unsplash.com/de/fotos/--JxxyIUHnU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
