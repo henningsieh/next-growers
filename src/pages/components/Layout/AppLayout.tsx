@@ -35,6 +35,7 @@ import Footer from './Footer';
 import LoginPanel from '../LoginPanel';
 import LightDarkButton from '../LightDarkButton';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -155,12 +156,15 @@ const useStyles = createStyles((theme) => ({
     return (
         <>
           <Box pb={120}>
-              <Header height={60} px="md">
+
+              <Header height={60} px="md" sx={{ position: 'sticky', top: 0, zIndex: 999 }}>
                 <Group position="apart" sx={{ height: '100%' }}>
                   <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
                   
                   {/* <MantineLogo size={30} /> */}
-                  <Text c={'orange'} fw={700} fz="md">GrowAGram</Text>
+                  <Image className="rounded-sm" height={42} width={110} alt="GrowAGram Logo" 
+                          src="/growagram-logo-wide-magenta-gradient.png" />
+                  {/* <Text c={'orange'} fw={700} fz="md">GrowAGram</Text> */}
                   <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
                     <Link href="/" className={classes.link}>
                         Home 
@@ -243,33 +247,19 @@ const useStyles = createStyles((theme) => ({
                   <Link onClick={toggleDrawer} href="/" className={classes.link}>
                   Home
                   </Link>
-{/*                   <UnstyledButton className={classes.link} onClick={toggleLinks}>
-                    <Center inline>
-                        <Box component="span" mr={5}>
-                        Features
-                        </Box>
-                        <IconChevronDown size={16} color={theme.fn.primaryColor()} />
-                    </Center>
-                    </UnstyledButton>
-                    <Collapse in={linksOpened}>{links}</Collapse>
-                  <a href="#" className={classes.link}>
-                  Learn
-                  </a> */}
+
                     <Link onClick={toggleDrawer} href="/t3-app-info" className={classes.link}>
                     NextJS T3 App Stack 
                     </Link>
         
                   <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
-                  {/*       
-                  <Group position="center" grow pb="xl" px="md">
-                    <Button variant="default">Log in</Button>
-                    <Button>Sign up</Button>
-                  </Group> */}
+
                 </ScrollArea>
               </Drawer>
-          { children }
-          </Box>
 
+              { children }
+          
+          </Box>
 
           <Footer />
         </>
