@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { type ReactNode } from 'react';
+
 import {
     Anchor,
     Box,
     Burger,
     Button,
     Center,
+    Container,
     Divider,
     Drawer,
     Group,
@@ -162,7 +162,7 @@ const useStyles = createStyles((theme) => ({
                   <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
                   
                   {/* <MantineLogo size={30} /> */}
-                  <Image className="rounded-sm" height={42} width={110} alt="GrowAGram Logo" 
+                  <Image className="rounded-sm" height={32} width={84} alt="GrowAGram Logo" 
                           src="/growagram-logo-wide-magenta-gradient.png" />
                   {/* <Text c={'orange'} fw={700} fz="md">GrowAGram</Text> */}
                   <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
@@ -241,24 +241,27 @@ const useStyles = createStyles((theme) => ({
                 className={classes.hiddenDesktop}
                 zIndex={10}
               >
-                <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
-                  <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
+                <ScrollArea pt={-4} h={`calc(100vh - ${rem(80)})`} mx="-md">
+                  {/* <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} /> */}
         
                   <Link onClick={toggleDrawer} href="/" className={classes.link}>
                   Home
                   </Link>
 
-                    <Link onClick={toggleDrawer} href="/t3-app-info" className={classes.link}>
-                    NextJS T3 App Stack 
-                    </Link>
+                  <Link onClick={toggleDrawer} href="/t3-app-info" className={classes.link}>
+                  NextJS T3 App Stack 
+                  </Link>
         
                   <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
 
                 </ScrollArea>
               </Drawer>
 
+              <Container className="h-full-screen-minus-header">
+
               { children }
           
+              </Container>
           </Box>
 
           <Footer />

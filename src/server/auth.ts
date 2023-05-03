@@ -10,6 +10,9 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 // import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 
+
+
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -17,17 +20,13 @@ import { prisma } from "~/server/db";
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      role: string;
-    } & DefaultSession["user"];
-  }
-
   interface User {
-    // ...other properties
-    role: string;
+    id: string
+    role: string
+    path: string
+  }
+  interface Session extends DefaultSession {
+    user: User & DefaultSession["user"];
   }
 }
 
@@ -38,10 +37,12 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
+    session: ({ session, user, token }) => ({
       ...session,
+      ...token,
       user: {
         ...session.user,
+        
         id: user.id,
         role: user.role
       },
@@ -89,3 +90,4 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
+

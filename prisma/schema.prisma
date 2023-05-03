@@ -18,13 +18,11 @@ model User {
     image         String?
     accounts      Account[] // One User has many Accounts
     sessions      Session[] // One User has many Sessions
-
-    reports  Report[] // One User has many Reports
-    posts    Post[] // One User has many Posts
-    comments Comment[] // One User has many Comments
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    reports       Report[] // One User has many Reports
+    posts         Post[] // One User has many Posts
+    comments      Comment[] // One User has many Comments
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
 }
 
 model Report {
@@ -33,13 +31,11 @@ model Report {
     description String
     contests    Contest[] @relation("ReportToContest") //many2many
     posts       Post[] // One Report has many Posts
-
-    authorId String // One User has many Reports
-    author   User   @relation(fields: [authorId], references: [id])
-
-    products  Product[] // One Report has many Products
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
+    authorId    String? // One User has many Reports
+    author      User?     @relation(fields: [authorId], references: [id])
+    products    Product[] // One Report has many Products
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
 
     @@index([authorId], name: "authorId_idx")
 }

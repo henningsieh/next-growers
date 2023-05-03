@@ -28,76 +28,48 @@ export default function LoginModal() {
 
         {/* Modal content */}
 
-{/*         <Box maw={300} mx="auto">
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
-            <TextInput
-              withAsterisk
-              label="Email"
-              placeholder="your@email.com"
-              {...form.getInputProps('email')}
-            />
-
-            <Checkbox
-              mt="md"
-              label="I agree to sell my privacy"
-              {...form.getInputProps('termsOfService', { type: 'checkbox' })}
-            />
-
-            <Group position="right" mt="md">
-              <Button type="submit">Submit</Button>style={{ backgroundImage: `url("/MqISkm2iLGc-unsplash.jpg")` }}
-            </Group>
-          </form>
-        </Box> */}
-
         <LoginForm />
-
+        
         <Link href={"http://localhost:3000/api/auth/signin"} >Sign in with Google</Link>
 
       </Modal>
 
       {/* // Open Modal from Navbar */}
       <Group position="center">
-{/*       {session?.user?.image 
-                    ? (
-                      <Image
-                        alt={`${session.user.name || ''}'s Profile Image`}
-                        width={500} height={500}
-                        src={session.user.image}
-                      /> ) 
-                    : ( '' )} */}
-      {status === "authenticated" 
+        
+        {status === "authenticated" 
         ? 
-        <Menu shadow="md" width={200}>
-          <Menu.Target>
-            {/* <Button>Toggle menu</Button> */}
-            <Avatar src={session.user.image} className="cursor-pointer" variant="outline" radius="xl" size="md" color="grape" 
-            />
-          </Menu.Target>
+          <Menu shadow="md" width={200}>
+            <Menu.Target>
+              {/* <Button>Toggle menu</Button> */}
+              <Avatar src={session.user.image} className="cursor-pointer" variant="outline" radius="xl" size="md" color="grape" 
+              />
+            </Menu.Target>
 
-          <Menu.Dropdown>
-            <Menu.Label>Application</Menu.Label>
-            <Menu.Item icon={<IconSettings size={14} />}>Settings</Menu.Item>
-            <Menu.Item icon={<IconMessageCircle size={14} />}>Messages</Menu.Item>
-            <Link href="/account/reports"><Menu.Item icon={<IconPhoto size={14} />}>My Reports</Menu.Item></Link>
-            <Menu.Item icon={<IconSearch size={14} />}
-              // Shotcut Indicator
-              // rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
-            >
-              Search
-            </Menu.Item>
+            <Menu.Dropdown>
+              <Menu.Label>Application</Menu.Label>
+              <Menu.Item icon={<IconSettings size={14} />}>Settings</Menu.Item>
+              <Menu.Item icon={<IconMessageCircle size={14} />}>Messages</Menu.Item>
+              <Link href="/account/reports"><Menu.Item icon={<IconPhoto size={14} />}>My Reports</Menu.Item></Link>
+              <Menu.Item icon={<IconSearch size={14} />}
+                // Shotcut Indicator
+                // rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
+              >
+                Search
+              </Menu.Item>
 
-            <Menu.Divider />
+              <Menu.Divider />
 
-            <Menu.Label>Danger zone</Menu.Label>
-            <Menu.Item icon={<IconArrowsLeftRight size={14} />}>Transfer my data</Menu.Item>
-            <Menu.Item  onClick={() => void signOut()} color="red" icon={<IconLogout size={14} />}>Sign out</Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+              <Menu.Label>Danger zone</Menu.Label>
+              <Menu.Item icon={<IconArrowsLeftRight size={14} />}>Transfer my data</Menu.Item>
+              <Menu.Item  onClick={() => void signOut()} color="red" icon={<IconLogout size={14} />}>Sign out</Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         : 
-        <>
-            <Button className="cursor-default" variant="default" size={'xs'} onClick={open}>Sign in 🔒</Button>
-        </>
-      }
+          <>
+              <Button className="cursor-default" variant="default" size={'xs'} onClick={open}>Sign in 🔒</Button>
+          </>
+        }
       </Group>
     </>
   );
