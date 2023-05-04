@@ -9,6 +9,6 @@ type getAllReportsOutput = RouterOutput["reports"]["getAll"];
 export type Report = getAllReportsOutput[number];
 
 export const reportInput = z.object({
-  title: z.string().min(12).max(100),
-  description: z.string().min(42).max(1000),
+  title: z.string().min(1).max(100),
+  description: z.string().min(1).max(1000),
 });

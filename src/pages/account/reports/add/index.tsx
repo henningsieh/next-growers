@@ -2,7 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next"
 import { useSession } from "next-auth/react"
-import { Box, Group, TextInput, Textarea, Title } from '@mantine/core';
+import { Box, Button, Group, TextInput, Textarea, Title } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 
 import { z } from 'zod';
@@ -128,12 +128,15 @@ export default function Add() {
         />  */}
 
         <Group position="right" mt="xl">
-				<button
-					className=" 
-          font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2 text-center 
-          bg-gradient-to-r from-pink-600 via-red-600 to-orange-500
-          "
-				>Create</button></Group>
+          <Button type="submit" fullWidth className=" 
+            font-medium rounded-lg sm:w-auto px-5 py-2 
+            bg-gradient-to-r from-pink-600 via-red-600 to-orange-500">
+          Create new report! 🚀</Button>
+
+          <Button type="submit" color="orange.6" variant="outline" fullWidth >
+          Create new report! 🚀
+          </Button>
+        </Group>
       </form>
     </Box>
   );
