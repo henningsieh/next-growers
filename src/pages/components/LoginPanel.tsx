@@ -24,7 +24,7 @@ export default function LoginModal() {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="🪄 Magic Link and No Password! ❌"  centered>
+      <Modal opened={opened} onClose={close} title="Sign in to GrowAGram.com 🔒"  centered>
 
         {/* Modal content */}
 

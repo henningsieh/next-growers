@@ -63,9 +63,10 @@ export default function LoginForm() {
 
   return (
     <>
-      <h2 className="text-accent text-2xl font-bold mb">{'Log in to GrowAGram 🔒'}</h2>
+      {/* <h2 className="text-accent text-2xl font-bold mb">{'Log in to GrowAGram 🔒'}</h2> */}
 
-      <form className="w-full py-4" onSubmit={(e) => { e.preventDefault(); void handleSubmit(e) }}>
+  {/* OLD FORM */}
+  {/* <form className="w-full py-4" onSubmit={(e) => { e.preventDefault(); void handleSubmit(e) }}>
         <div className="flex flex-col relative ">
           {errors.email && (
             <div
@@ -89,7 +90,7 @@ export default function LoginForm() {
           </Button>
           
         </div>
-      </form>
+      </form> */}
 
       {/* https://tailwindcomponents.com/component/custom-nextauth-login-page */}
       {/* Email Sign In */}
@@ -97,7 +98,13 @@ export default function LoginForm() {
         <div className="grid gap-y-3">
           <input
             className="focus:border-purple-400 rounded-md border border-slate-600 bg-slate-700 py-3 px-4 text-slate-200 outline-none transition placeholder:text-slate-400"
-            placeholder="email@example.com"
+            
+            type="text"
+            placeholder="Your Email address"
+            aria-label="Email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
           />
           <button
             className="flex items-center justify-center gap-x-2 rounded-md border border-slate-600 bg-slate-700 py-3 px-4 text-slate-300 transition hover:text-purple-400"
