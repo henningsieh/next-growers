@@ -8,6 +8,7 @@ import {
     Button,
     Center,
     Collapse,
+    Container,
     Divider,
     Drawer,
     Group,
@@ -36,6 +37,7 @@ import { useDisclosure } from '@mantine/hooks';
 import LoginPanel from '../LoginPanel';
 import LightDarkButton from '../LightDarkButton';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -155,16 +157,16 @@ const useStyles = createStyles((theme) => ({
   
     return (
         <>
-          <Box pb={120}>
+          <Container size="xl">
               <Header height={60} px="md">
                 <Group position="apart" sx={{ height: '100%' }}>
                   <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
                   
                   <Image className="rounded-sm" height={32} width={84} alt="GrowAGram Logo" 
                           src="/growagram-logo-wide-magenta-gradient.png" />                  <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
-                    <a href="#" className={classes.link}>
+                    <Link href="/" className={classes.link}>
                         Home 
-                    </a>
+                    </Link>
                     <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                         <HoverCard.Target>
                         <a href="#" className={classes.link}>
@@ -210,12 +212,9 @@ const useStyles = createStyles((theme) => ({
                         </div>
                         </HoverCard.Dropdown>
                     </HoverCard>
-                    <a href="#" className={classes.link}>
-                        Learn
-                    </a>
-                    <a href="#" className={classes.link}>
-                        Academy
-                    </a>
+                    <Link href="/t3-app-info" className={classes.link}>
+                      T3 Stack
+                    </Link>
                   </Group>
       
                   <Group 
@@ -237,12 +236,15 @@ const useStyles = createStyles((theme) => ({
                 className={classes.hiddenDesktop}
                 zIndex={10}
               >
-                <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
+                <ScrollArea 
+                  onClick={closeDrawer} // -> menu self close on item click
+                  h={`calc(100vh - ${rem(60)})`} 
+                  mx="-md">
                   <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
         
-                  <a href="#" className={classes.link}>
-                  Home
-                  </a>
+                  <Link href="/" className={classes.link}>
+                    Home 
+                  </Link>
                   <UnstyledButton className={classes.link} onClick={toggleLinks}>
                     <Center inline>
                         <Box component="span" mr={5}>
@@ -250,29 +252,20 @@ const useStyles = createStyles((theme) => ({
                         </Box>
                         <IconChevronDown size={16} color={theme.fn.primaryColor()} />
                     </Center>
-                    </UnstyledButton>
-                    <Collapse in={linksOpened}>{links}</Collapse>
-                  <a href="#" className={classes.link}>
-                  Learn
-                  </a>
-                  <a href="#" className={classes.link}>
-                  Academy
-                  </a>
+                  </UnstyledButton>
+                  <Collapse in={linksOpened}>{links}</Collapse>
+                  <Link href="/t3-app-info" className={classes.link}>
+                    T3 Stack
+                  </Link>
         
                   <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
-                  {/*       
-                  <Group position="center" grow pb="xl" px="md">
-                    <Button variant="default">Log in</Button>
-                    <Button>Sign up</Button>
-                  </Group> */}
+
                 </ScrollArea>
               </Drawer>
             
-            <Paper>
               { children }
-            </Paper>
 
-          </Box>
+          </Container>
 
         </>
     );

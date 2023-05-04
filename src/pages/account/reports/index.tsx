@@ -3,11 +3,12 @@ import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next"
 import { useSession } from "next-auth/react"
 
-import { Button, Container, Title } from '@mantine/core';
+import { Container, Title } from '@mantine/core';
 import Head from 'next/head';
 import { api } from "~/utils/api";
 
 import Add from "./add";
+import {Report} from "../../components/Report";
 
 const UserReports = () => {
 
@@ -21,6 +22,7 @@ const UserReports = () => {
 
     const trpc = api.useContext();
 
+    // FIXME: DELETE THIS, BUT IF DELETED; APP CRASHES
     const { mutate: deleteMutation } = api.reports.deleteReport.useMutation({
       onMutate: async (deleteId) => {
   
@@ -56,13 +58,15 @@ const UserReports = () => {
     // FETCH OWN REPORTS
     const { data: reports, isLoading, isError } = api.reports.getOwn.useQuery();
 
+    const pageTitle = "Your Reports";
+
     if (isLoading) return <div>Loading reports 🔄</div>
     if (isError)   return <div>Error fetching your reports ❌ Please sign in!</div>
 
     return (
       <section>
         <Head>
-          <title>Your Reports</title>
+          <title>{pageTitle}</title>
           <meta
           name="description"
           content="Upload and create your Report to growagram.com"
@@ -70,27 +74,18 @@ const UserReports = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <main className="m-2 h-screen">
-          <div className="w-5/6 m-auto flex flex-col place-content-center min-h-max">
+        <Container size={"xl"} className="h-screen">
+          <div className="m-auto flex flex-col place-content-center min-h-max">
             <div className="w-full flex flex-col space-y-4">
 
-
-            <Title order={1}>Your Reports</Title>
+            <Title order={1}>{pageTitle}</Title>
 
               {/* LOOP OVER REPORTS */}
               {reports.length
               ? reports.map((report) => {
                 return (
                   <div key={report.id} className="rounded-md shadow-xl">
-                    <p>id: {report.id}</p>
-                    <div className='bg-primary rounded-md'>titel:  {report.title}</div>
-                    <p>description: {report.description}</p>
-                    <Button variant="outline"  uppercase color="red"
-                    onClick={() => {
-                      deleteMutation(report.id)
-                    }}>
-                    Delete Report! &nbsp;⚠️
-                    </Button>
+                    <Report key={report.id} report={report} />
                   </div>
                 )
               })
@@ -101,27 +96,17 @@ const UserReports = () => {
                     <div className='text-center'>
                       <h1 className="whitespace-nowrap text-3xl font-bold">No Reports found! 😢</h1>
                       <p className="error py-6 font-bold text-lg">You haven&apos;t created any reports yet.</p>
-                        {/* <Button className=' btn btn-active 
-                              btn-secondary text-secondary-content
-                              w-full whitespace-nowrap font-bold'
-                            > Create your first report! 🚀</Button> */}
                     </div>
                   </div>
                 </div>
               }
-{/*               <Link href="/account/reports/add">
-                <Button color="orange.6" variant="outline" fullWidth >
-                  Add Report
-                </Button>
-              </Link> */}
-
 
             </div>
 
-              <Add />
+            <Add />
 
           </div>
-        </main>
+        </Container>
       </section>
     )
   }
