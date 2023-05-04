@@ -2,7 +2,7 @@ import { type GetServerSidePropsContext } from "next";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next"
 import { useSession } from "next-auth/react"
-import { Box, Button, Group, TextInput, Textarea, Title } from '@mantine/core';
+import { Box, Button, Group, Space, TextInput, Textarea, Title } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 
 import { z } from 'zod';
@@ -82,9 +82,11 @@ export default function Add() {
   });
 
   return (
-    <Box maw={640} mx="auto">
+    <Box  className="w-full flex flex-col space-y-4"  mx="auto">
 
-      <Title pb={24} order={1}>Create a Report</Title>
+      <Space h={42} />
+
+      <Title order={2}>Create a Report</Title>
       
       <form onSubmit={(e) => {
 				e.preventDefault()
@@ -128,13 +130,16 @@ export default function Add() {
         />  */}
 
         <Group position="right" mt="xl">
-          <Button type="submit" fullWidth className=" 
+          {/* <Button type="submit" fullWidth className=" 
             font-medium rounded-lg sm:w-auto px-5 py-2 
             bg-gradient-to-r from-pink-600 via-red-600 to-orange-500">
-          Create new report! 🚀</Button>
+          Create new report! 🚀</Button> */}
 
-          <Button type="submit" color="orange.6" variant="outline" fullWidth >
+          <Button type="submit" color="orange.6" variant="outline" >
           Create new report! 🚀
+          </Button>
+          <Button type="submit" color="orange" variant="filled" uppercase>
+            Create new report! 🚀
           </Button>
         </Group>
       </form>

@@ -8,7 +8,6 @@ import {
     Button,
     Center,
     Collapse,
-    Container,
     Divider,
     Drawer,
     Group,
@@ -33,9 +32,7 @@ import {
     IconNotification,
 } from '@tabler/icons-react';
 
-import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
-import Footer from './Footer';
 import LoginPanel from '../LoginPanel';
 import LightDarkButton from '../LightDarkButton';
 import Image from 'next/image';
@@ -277,8 +274,6 @@ const useStyles = createStyles((theme) => ({
 
           </Box>
 
-
-          <Footer />
         </>
     );
   }

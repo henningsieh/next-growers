@@ -3,9 +3,8 @@ import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next"
 import { useSession } from "next-auth/react"
 
-import { Button, Container } from '@mantine/core';
+import { Button, Container, Title } from '@mantine/core';
 import Head from 'next/head';
-import Link from 'next/link';
 import { api } from "~/utils/api";
 
 import Add from "./add";
@@ -71,9 +70,12 @@ const UserReports = () => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <main className="m-2 h-screen bg-base-100 text-base-content">
-          <div className="flex place-content-center h-screen">
-            <div className="flex flex-col space-y-4">
+        <main className="m-2 h-screen">
+          <div className="w-5/6 m-auto flex flex-col place-content-center min-h-max">
+            <div className="w-full flex flex-col space-y-4">
+
+
+            <Title order={1}>Your Reports</Title>
 
               {/* LOOP OVER REPORTS */}
               {reports.length
@@ -113,10 +115,10 @@ const UserReports = () => {
                 </Button>
               </Link> */}
 
-               <Add />
 
             </div>
 
+              <Add />
 
           </div>
         </main>
