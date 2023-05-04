@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { type ReactNode } from 'react';
 
+import { type ReactNode } from 'react';
 import {
     Anchor,
     Box,
     Burger,
     Button,
     Center,
+    Collapse,
     Container,
     Divider,
     Drawer,
     Group,
     Header,
     HoverCard,
+    Paper,
     ScrollArea,
     SimpleGrid,
     Text,
@@ -31,11 +33,11 @@ import {
     IconNotification,
 } from '@tabler/icons-react';
 
+import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
 import Footer from './Footer';
 import LoginPanel from '../LoginPanel';
 import LightDarkButton from '../LightDarkButton';
-import Link from 'next/link';
 import Image from 'next/image';
 
 const useStyles = createStyles((theme) => ({
@@ -133,7 +135,7 @@ const useStyles = createStyles((theme) => ({
   
   export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-    // const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+    const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
     const { classes, theme } = useStyles();
   
     const links = mockdata.map((item) => (
@@ -157,19 +159,15 @@ const useStyles = createStyles((theme) => ({
     return (
         <>
           <Box pb={120}>
-
-              <Header height={60} px="md" sx={{ position: 'sticky', top: 0, zIndex: 999 }}>
+              <Header height={60} px="md">
                 <Group position="apart" sx={{ height: '100%' }}>
                   <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} />
                   
-                  {/* <MantineLogo size={30} /> */}
                   <Image className="rounded-sm" height={32} width={84} alt="GrowAGram Logo" 
-                          src="/growagram-logo-wide-magenta-gradient.png" />
-                  {/* <Text c={'orange'} fw={700} fz="md">GrowAGram</Text> */}
-                  <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
-                    <Link href="/" className={classes.link}>
+                          src="/growagram-logo-wide-magenta-gradient.png" />                  <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
+                    <a href="#" className={classes.link}>
                         Home 
-                    </Link>
+                    </a>
                     <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                         <HoverCard.Target>
                         <a href="#" className={classes.link}>
@@ -218,9 +216,9 @@ const useStyles = createStyles((theme) => ({
                     <a href="#" className={classes.link}>
                         Learn
                     </a>
-                    <Link href="/t3-app-info" className={classes.link}>
-                    NextJS T3 App Stack 
-                    </Link>
+                    <a href="#" className={classes.link}>
+                        Academy
+                    </a>
                   </Group>
       
                   <Group 
@@ -242,28 +240,43 @@ const useStyles = createStyles((theme) => ({
                 className={classes.hiddenDesktop}
                 zIndex={10}
               >
-                <ScrollArea pt={-4} h={`calc(100vh - ${rem(80)})`} mx="-md">
-                  {/* <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} /> */}
+                <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
+                  <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
         
-                  <Link onClick={toggleDrawer} href="/" className={classes.link}>
+                  <a href="#" className={classes.link}>
                   Home
-                  </Link>
-
-                  <Link onClick={toggleDrawer} href="/t3-app-info" className={classes.link}>
-                  NextJS T3 App Stack 
-                  </Link>
+                  </a>
+                  <UnstyledButton className={classes.link} onClick={toggleLinks}>
+                    <Center inline>
+                        <Box component="span" mr={5}>
+                        Features
+                        </Box>
+                        <IconChevronDown size={16} color={theme.fn.primaryColor()} />
+                    </Center>
+                    </UnstyledButton>
+                    <Collapse in={linksOpened}>{links}</Collapse>
+                  <a href="#" className={classes.link}>
+                  Learn
+                  </a>
+                  <a href="#" className={classes.link}>
+                  Academy
+                  </a>
         
                   <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
-
+                  {/*       
+                  <Group position="center" grow pb="xl" px="md">
+                    <Button variant="default">Log in</Button>
+                    <Button>Sign up</Button>
+                  </Group> */}
                 </ScrollArea>
               </Drawer>
-
-              <Container className="h-full-screen-minus-header">
-
+            
+            <Paper>
               { children }
-          
-              </Container>
+            </Paper>
+
           </Box>
+
 
           <Footer />
         </>
