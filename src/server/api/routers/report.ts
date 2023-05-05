@@ -10,7 +10,9 @@ export const reportRouter = createTRPCRouter({
    */
   getAllReports: publicProcedure.query(async ({ ctx }) => {
     const reports = await ctx.prisma.report.findMany();
-    return reports.map(({ id, title, description }) => ({ id, title, description }));
+    return reports.map(
+      ( { id, title, description, authorId, createdAt, updatedAt }) => (
+        { id, title, description, authorId, createdAt, updatedAt }));
   }),
 
   /**
@@ -21,7 +23,7 @@ export const reportRouter = createTRPCRouter({
     const reports = await ctx.prisma.report.findMany({
       where: { authorId: ctx.session.user.id },
     });
-    return reports.map(
+    return reports.map( // authorId not needed, for own reports
       ( { id, title, description, createdAt, updatedAt } ) => (
         { id, title, description, createdAt, updatedAt }));
   }),
@@ -39,7 +41,7 @@ export const reportRouter = createTRPCRouter({
     return reports.map(( { id, title, description, authorId, createdAt, updatedAt }) => ({ id, title, description, authorId, createdAt, updatedAt }));
   }),
   
-  deleteReport: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
+  deleteOwnReport: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
     // First, check if the report exists
     const existingReport = await ctx.prisma.report.findUnique({
       where: {

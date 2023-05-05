@@ -36,11 +36,10 @@ const Home: NextPage = () => {
 
 export default Home;
 
-/** NOT SUPPORTED UNTIL auth-strategy=="session", only "jwt"...
- *
+/**
  * PROTECTED PAGE
  */
-/* export async function getServerSideProps(ctx: {
+export async function getServerSideProps(ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) {
@@ -50,4 +49,3 @@ export default Home;
     },
   };
 }
- */

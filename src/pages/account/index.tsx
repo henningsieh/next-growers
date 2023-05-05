@@ -24,11 +24,11 @@ export default function Page() {
   return <p className="text-6xl">Access Denied</p>;
 }
 
-/** NOT SUPPORTED UNTIL auth-strategy=="session", only "jwt"...
+/**
  *
  * PROTECTED PAGE
  */
-/* export async function getServerSideProps(ctx: {
+export async function getServerSideProps(ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) {
@@ -38,4 +38,3 @@ export default function Page() {
     },
   };
 }
- */

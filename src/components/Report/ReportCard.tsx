@@ -63,7 +63,7 @@ export default function ReportCard({
   const { id, title, description, createdAt, updatedAt } = report;
 
   const trpc = api.useContext();
-  const { mutate: deleteMutation } = api.reports.deleteReport.useMutation({
+  const { mutate: deleteMutation } = api.reports.deleteOwnReport.useMutation({
     onMutate: async (deleteId) => {
       // Cancel any outgoing refetches so they don't overwrite optimistic update
       await trpc.reports.getOwnReports.cancel();
