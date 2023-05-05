@@ -8,22 +8,22 @@ export const reportRouter = createTRPCRouter({
   /**
    * Get all Reports 
    */
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAllReports: publicProcedure.query(async ({ ctx }) => {
     const reports = await ctx.prisma.report.findMany();
-    return reports.map(({ id, title, description,  }) => ({ id, title, description }));
+    return reports.map(({ id, title, description }) => ({ id, title, description }));
   }),
 
   /**
    * Get Reports by  UserId
    * @Input: userId: String 
    */
-  getOwn: protectedProcedure.query(async ({ ctx }) => {
+  getOwnReports: protectedProcedure.query(async ({ ctx }) => {
     const reports = await ctx.prisma.report.findMany({
-      where: {
-        authorId: ctx.session.user.id,
-      },
+      where: { authorId: ctx.session.user.id },
     });
-    return reports.map(( { id, title, description, authorId, createdAt, updatedAt }) => ({ id, title, description, authorId, createdAt, updatedAt }));
+    return reports.map(
+      ( { id, title, description, authorId, createdAt, updatedAt } ) => (
+        { id, title, description, authorId, createdAt, updatedAt }));
   }),
 
   /**

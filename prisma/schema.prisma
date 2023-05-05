@@ -29,11 +29,11 @@ model Report {
     id          String    @id @default(cuid())
     title       String
     description String
-    contests    Contest[] @relation("ReportToContest") //many2many
     posts       Post[] // One Report has many Posts
-    authorId    String? // One User has many Reports
-    author      User?     @relation(fields: [authorId], references: [id])
+    contests    Contest[] @relation("ReportToContest") //many2many
     products    Product[] // One Report has many Products
+    author      User?     @relation(fields: [authorId], references: [id])
+    authorId    String? // One User has many Reports
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
 

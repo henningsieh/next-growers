@@ -4,7 +4,7 @@ import { z } from "zod";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
-type getAllReportsOutput = RouterOutput["reports"]["getAll"];
+type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
 
 export type Report = getAllReportsOutput[number];
 
