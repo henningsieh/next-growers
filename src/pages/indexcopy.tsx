@@ -1,9 +1,9 @@
-import Head from 'next/head';
+import Head from "next/head";
 //import { trpc } from '../utils/trpc';
-import type { NextPage } from 'next';
+import type { NextPage } from "next";
 
 const Home: NextPage = () => {
-//  const etMsg = trpc.useQuery(['trpcRoute.etAPI']);
+  //  const etMsg = trpc.useQuery(['trpcRoute.etAPI']);
 
   return (
     <section id="TOP">
@@ -14,15 +14,14 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="h-screen bg-black text-white">
-        <div className="flex place-content-center h-screen">
-        <div className="flex place-content-center items-center">
-          {/* {status === 'authenticated' && session && session.user && <p>Signed in as {session.user.email}</p>} */}
+        <div className="flex h-screen place-content-center">
+          <div className="flex place-content-center items-center">
+            {/* {status === 'authenticated' && session && session.user && <p>Signed in as {session.user.email}</p>} */}
 
             <div className="flex flex-col">
-              <div className="text-2xl text-center my-2"></div>
+              <div className="my-2 text-center text-2xl"></div>
               <div className=" text-lg">
-
-{/* 
+                {/* 
 
                 {etMsg.data ? (
                   <span className="mx-10">
@@ -33,17 +32,16 @@ const Home: NextPage = () => {
                 )}
 
  */}
-
               </div>
 
               <a href="#API">
-                <div className="flex btn rounded-lg w-fit mx-auto mt-2 bg-black border-gray-500 hover:bg-gray-800 hover:border-gray-800">
+                <div className="btn mx-auto mt-2 flex w-fit rounded-lg border-gray-500 bg-black hover:border-gray-800 hover:bg-gray-800">
                   GO LOW
                 </div>
               </a>
             </div>
           </div>
-          <div className="flex place-items-center mx-5">
+          <div className="mx-5 flex place-items-center">
             <ul>
               <li>
                 <a href="https://nextjs.org" target={`_blank`}>
@@ -93,19 +91,28 @@ const Home: NextPage = () => {
             </ul>
           </div>
         </div>
-      <section id="API" className="flex place-content-center h-screen">
-        <div className="flex flex-col place-content-center items-center">
-
-          <div className="text-6xl mx-5">
-            BELOW IS HERE
-          </div>
-        <a href="#TOP">  
-        <button className="btn btn-outline btn-accent w-96 my-4">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5" /></svg>
-        </button>
-        </a>
-{/*           <ul>
+        <section id="API" className="flex h-screen place-content-center">
+          <div className="flex flex-col place-content-center items-center">
+            <div className="mx-5 text-6xl">BELOW IS HERE</div>
+            <a href="#TOP">
+              <button className="btn btn-outline btn-accent my-4 w-96">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="h-6 w-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 12.75l7.5-7.5 7.5 7.5m-15 6l7.5-7.5 7.5 7.5"
+                  />
+                </svg>
+              </button>
+            </a>
+            {/*           <ul>
             <li>
               <a href={'/api/helloworld'}>/helloworld</a>
             </li>
@@ -122,11 +129,9 @@ const Home: NextPage = () => {
               <a href={'http://localhost:5555'}>/PrismaStudio</a>
             </li>
           </ul> */}
-        </div>
-      </section>
+          </div>
+        </section>
       </main>
-
-
     </section>
   );
 };

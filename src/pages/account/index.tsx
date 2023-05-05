@@ -1,17 +1,15 @@
 import { type GetServerSidePropsContext } from "next";
 import { authOptions } from "~/server/auth";
-import { getServerSession } from "next-auth/next"
-import { useSession } from "next-auth/react"
-
+import { getServerSession } from "next-auth/next";
+import { useSession } from "next-auth/react";
 
 import { Container, Title } from "@mantine/core";
 
 export default function Page() {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
 
   // if (typeof window === "undefined") return null
-  
-  
+
   if (session) {
     return (
       <>
@@ -21,26 +19,23 @@ export default function Page() {
           <p>You can view this page because you are signed in.</p>
         </Container>
       </>
-    )
+    );
   }
-  return <p className="text-6xl">Access Denied</p>
+  return <p className="text-6xl">Access Denied</p>;
 }
 
-/**
- * 
+/** NOT SUPPORTED UNTIL auth-strategy=="session", only "jwt"...
+ *
  * PROTECTED PAGE
  */
-export async function getServerSideProps(ctx: {
+/* export async function getServerSideProps(ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) {
   return {
     props: {
-      session: await getServerSession(
-        ctx.req,
-        ctx.res,
-        authOptions
-      ),
+      session: await getServerSession(ctx.req, ctx.res, authOptions),
     },
-  }
+  };
 }
+ */
