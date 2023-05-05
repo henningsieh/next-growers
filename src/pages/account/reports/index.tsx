@@ -1,15 +1,13 @@
-import { type GetServerSidePropsContext } from "next";
+import { Container, Grid, Title } from "@mantine/core";
+
+import Add from "~/components/Report/add";
+import type { GetServerSidePropsContext } from "next";
+import Head from "next/head";
+import ReportCard from "~/components/Report/ReportCard";
+import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
-
-import { api } from "~/utils/api";
-import { Container, Grid, Title } from "@mantine/core";
-
-import Head from "next/head";
-import Add from "~/components/Report/add";
-// import Report from "../../components/Report";
-import ReportCard from "~/components/Report/ReportCard";
 
 export default function OwnReports() {
   const pageTitle = "Your Reports";
@@ -19,7 +17,7 @@ export default function OwnReports() {
     data: reports,
     isLoading,
     isError,
-  } = api.reports.getAllReports.useQuery();
+  } = api.reports.getOwnReports.useQuery();
 
   const { data: session } = useSession();
   if (!session) {
@@ -34,27 +32,19 @@ export default function OwnReports() {
     const cardProps = {
       image:
         "https://images.unsplash.com/photo-1437719417032-8595fd9e9dc6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80",
-      country: "Croatia",
+      country: "Zkittlez",
       badges: [
         {
           emoji: "☀️",
-          label: "Sunny weather",
-        },
-        {
-          emoji: "🦓",
-          label: "Onsite zoo",
-        },
-        {
-          emoji: "🌊",
-          label: "Sea",
+          label: "Outdoor",
         },
         {
           emoji: "🌲",
-          label: "Nature",
+          label: "Sativa",
         },
         {
-          emoji: "🤽",
-          label: "Water sports",
+          emoji: "🌊",
+          label: "pure water",
         },
       ],
     };

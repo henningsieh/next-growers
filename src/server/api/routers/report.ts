@@ -22,8 +22,8 @@ export const reportRouter = createTRPCRouter({
       where: { authorId: ctx.session.user.id },
     });
     return reports.map(
-      ( { id, title, description, authorId, createdAt, updatedAt } ) => (
-        { id, title, description, authorId, createdAt, updatedAt }));
+      ( { id, title, description, createdAt, updatedAt } ) => (
+        { id, title, description, createdAt, updatedAt }));
   }),
 
   /**

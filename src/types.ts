@@ -5,8 +5,10 @@ import { z } from "zod";
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
+type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
 
 export type Report = getAllReportsOutput[number];
+export type OwnReport = getOwnReportsOutput[number];
 
 export const reportInput = z.object({
   title: z.string().min(1).max(100),

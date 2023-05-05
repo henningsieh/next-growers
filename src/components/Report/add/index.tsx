@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 
-import type { Report } from "~/types";
+import type { OwnReport } from "~/types";
 import { api } from "~/utils/api";
 import { reportInput } from "~/types";
 import toast from "react-hot-toast";
@@ -28,7 +28,7 @@ const schema = z.object({
   // age: z.number().min(18, { message: 'You must be at least 18 to create an account' }),
 });
 
-export default function Add() {
+export default function AddReport() {
   const [newReport, setNewReport] = useState({ title: "", description: "" });
   const { data: session } = useSession();
   const trpc = api.useContext();
@@ -49,20 +49,19 @@ export default function Add() {
   const { mutate } = api.reports.create.useMutation({
     onMutate: async (newReport) => {
       // Cancel any outgoing refetches so they don't overwrite our optimistic update
-      await trpc.reports.getAllReports.cancel();
+      await trpc.reports.getOwnReports.cancel();
 
       // Snapshot the previous value
-      const previousReports = trpc.reports.getAllReports.getData();
+      const previousReports = trpc.reports.getOwnReports.getData();
 
       // Optimistically update to the new value
-      trpc.reports.getAllReports.setData(undefined, (prev) => {
-        const optimisticReport: Report = {
+      trpc.reports.getOwnReports.setData(undefined, (prev) => {
+        const optimisticReport: OwnReport = {
           id: "TEMP_ID", // 'placeholder'
           title: newReport.title,
           description: newReport.description,
-          /*        authorId: session.user.id,
-          createdAt: new Date(),                // 'placeholder'  
-          updatedAt: new Date()                 // 'placeholder'   */
+          updatedAt: new Date(),
+          createdAt: new Date(),
         };
 
         // Return optimistically updated reports
@@ -83,7 +82,7 @@ export default function Add() {
       // Clear input
       setNewReport(newReport);
       if (!context) return;
-      trpc.reports.getAllReports.setData(
+      trpc.reports.getOwnReports.setData(
         undefined,
         () => context.previousReports
       );
@@ -91,7 +90,7 @@ export default function Add() {
     // Always refetch after error or success:
     onSettled: async () => {
       console.log("SETTLED");
-      await trpc.reports.getAllReports.invalidate();
+      await trpc.reports.getOwnReports.invalidate();
     },
   });
 

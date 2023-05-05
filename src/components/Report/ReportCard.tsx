@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { IconAlertTriangleFilled, IconHeart } from "@tabler/icons-react";
 
-import type { Report } from "~/types";
+import type { OwnReport } from "~/types";
 import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
@@ -21,7 +21,7 @@ const useStyles = createStyles((theme) => ({
 
   section: {
     borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
     }`,
     paddingLeft: theme.spacing.sm,
     paddingRight: theme.spacing.sm,
@@ -49,7 +49,7 @@ interface BadgeCardProps {
 }
 
 interface ReportCardProps extends BadgeCardProps {
-  report: Report; // replace `any` with the actual type of the `report` prop
+  report: OwnReport;
 }
 
 export default function ReportCard({
@@ -60,19 +60,19 @@ export default function ReportCard({
 }: ReportCardProps) {
   const { classes, theme } = useStyles();
 
-  const { id, title, description } = report;
+  const { id, title, description, createdAt, updatedAt } = report;
 
   const trpc = api.useContext();
   const { mutate: deleteMutation } = api.reports.deleteReport.useMutation({
     onMutate: async (deleteId) => {
       // Cancel any outgoing refetches so they don't overwrite optimistic update
-      await trpc.reports.getAllReports.cancel();
+      await trpc.reports.getOwnReports.cancel();
 
       // Snapshot the previous value
-      const previousReports = trpc.reports.getAllReports.getData();
+      const previousReports = trpc.reports.getOwnReports.getData();
 
       // Optimistically update to the new value
-      trpc.reports.getAllReports.setData(undefined, (prev) => {
+      trpc.reports.getOwnReports.setData(undefined, (prev) => {
         if (!prev) return previousReports;
         return prev.filter((report) => report.id !== deleteId);
       });
@@ -85,7 +85,7 @@ export default function ReportCard({
     onError: (_err, _newTodo, context) => {
       // toast.error(`An error occured when deleting todo`)
       if (!context) return;
-      trpc.reports.getAllReports.setData(
+      trpc.reports.getOwnReports.setData(
         undefined,
         () => context.previousReports
       );
@@ -93,7 +93,7 @@ export default function ReportCard({
     // Always refetch after error or success:
     onSettled: async () => {
       console.log("SETTLED");
-      await trpc.reports.getAllReports.invalidate();
+      await trpc.reports.getOwnReports.invalidate();
     },
   });
 
@@ -123,9 +123,12 @@ export default function ReportCard({
         <Text fz="sm" mt="xs">
           description: {description}
         </Text>
-        {/*           <Text mt="md" className={classes.label} c="dimmed">
-            updated at: {updatedAt.toLocaleString()}
-          </Text> */}
+        <Text mt="md" className={classes.label} c="dimmed">
+          updated at: {updatedAt.toLocaleString()}
+        </Text>
+        <Text mt="md" className={classes.label} c="dimmed">
+          created at: {createdAt.toLocaleString()}
+        </Text>
       </Card.Section>
 
       <Card.Section className={classes.section}>

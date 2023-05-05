@@ -31,21 +31,22 @@ const MyApp: AppType<{ session: Session | null }> = ({
       colorScheme={colorScheme}
       toggleColorScheme={toggleColorScheme}
     >
+      {/* https://stackoverflow.com/questions/74555403/how-to-change-hover-color-in-mantine-ui-menu */}
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
         theme={{
-          colors: {
-            white: ["#C1CCF6"],
-            // Add your color
-            deepBlue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
-            // or replace default theme color
-            blue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
-          },
-          shadows: {
-            md: "1px 1px 3px rgba(0, 0, 0, .25)",
-            xl: "5px 5px 3px rgba(0, 0, 0, .25)",
-          },
+          // colors: {
+          //   white: ["#C1CCF6"],
+          //   // Add your color
+          //   deepBlue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
+          //   // or replace default theme color
+          //   blue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
+          // },
+          // shadows: {
+          //   md: "1px 1px 3px rgba(0, 0, 0, .25)",
+          //   xl: "5px 5px 3px rgba(0, 0, 0, .25)",
+          // },
           primaryColor: "pink",
           colorScheme, // get light/dark from local storage state
           globalStyles: (theme) => ({
