@@ -23,15 +23,18 @@ import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import type { NextPage } from "next";
+import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next";
 import { getUsername } from "~/helpers";
 import { useSession } from "next-auth/react";
+import { userSetUSerNameInput } from "~/types";
 import { z } from "zod";
 
-const Home: NextPage = () => {
+export default function EditReport() {
   const pageTitle = "Edit Profile";
   const { data: session } = useSession();
+
   const theme = useMantineTheme();
 
   const setRandomUsername = () => {
@@ -47,19 +50,28 @@ const Home: NextPage = () => {
     validate: zodResolver(validateFormSchema),
     initialValues: {
       email: session?.user.email,
-      name: session?.user.name || getUsername(),
+      name: !!session?.user.name ? session.user.name : "",
     },
   });
 
-  if (session) {
+  const { mutate: tRPCsetUsername, isLoading } =
+    api.user.saveOwnUsername.useMutation({
+      onMutate: (editedUser) => {
+        console.log(editedUser);
+      },
+    });
+
+  if (session?.user) {
     return (
       <>
         <Head>
           <title>GrowAGram | {pageTitle}</title>
-          <meta name="description" content="Edit User Profile Page" />
+          <meta
+            name="description"
+            content="Upload and create your Report to growagram.com"
+          />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-
         <Group position="left">
           <Link href="/account">
             <Button variant="default" /* onClick={() => router.back()} */>
@@ -71,7 +83,11 @@ const Home: NextPage = () => {
         <Container size="xs">
           <Title order={1}>{pageTitle}</Title>
           <Space />
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
+          <form
+            onSubmit={form.onSubmit((values) =>
+              tRPCsetUsername({ id: session.user.id, name: values.name })
+            )}
+          >
             <TextInput
               icon={<IconUser />}
               withAsterisk
@@ -83,7 +99,7 @@ const Home: NextPage = () => {
                   <ActionIcon
                     onClick={setRandomUsername}
                     size={28}
-                    radius=""
+                    radius="sm"
                     color={theme.primaryColor}
                     variant="outline"
                   >
@@ -93,6 +109,8 @@ const Home: NextPage = () => {
               }
             />
             <TextInput
+              readOnly
+              className="cursor-not-allowed"
               icon={<IconAt />}
               withAsterisk
               label="Email address"
@@ -101,7 +119,7 @@ const Home: NextPage = () => {
             />
             <Space />
             <Group position="right" mt="xl">
-              <Button variant="outline" type="submit">
+              <Button variant="outline" type="submit" disabled={isLoading}>
                 Submit
               </Button>
             </Group>
@@ -110,10 +128,9 @@ const Home: NextPage = () => {
       </>
     );
   }
-  return <p className="text-6xl">Access Denied</p>;
-};
 
-export default Home;
+  return <p className="text-6xl">Access Denied</p>;
+}
 
 /**
  * PROTECTED PAGE

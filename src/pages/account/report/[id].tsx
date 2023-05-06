@@ -23,14 +23,14 @@ import { useSession } from "next-auth/react";
 const EditReport: NextPage = () => {
   const pageTitle = "Edit Report";
   const router = useRouter();
-  const { id } = router.query;
+  const id = router.query.id;
 
   // FETCH REPORT BY ID
   const {
     data: result,
     isLoading,
     isError,
-  } = api.reports.getReportById.useQuery(id as string);
+  } = api.reports.getReportById.useQuery(useRouter().query.id as string);
 
   const { data: session } = useSession();
 

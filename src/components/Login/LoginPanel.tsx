@@ -60,7 +60,11 @@ export default function LoginModal() {
 
             <Menu.Dropdown>
               <Menu.Label>Application</Menu.Label>
-              <Menu.Item icon={<IconSettings size={14} />}>Settings</Menu.Item>
+              <Link href="/account/edit">
+                <Menu.Item icon={<IconSettings size={14} />}>
+                  Edit Profile
+                </Menu.Item>
+              </Link>
               <Menu.Item icon={<IconMessageCircle size={14} />}>
                 Messages
               </Menu.Item>

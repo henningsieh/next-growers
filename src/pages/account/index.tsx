@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 
 import { Container, Title } from "@mantine/core";
+import AccessDenied from "~/components/Atom/AccessDenied";
 
 export default function Page() {
   const { data: session } = useSession();
@@ -21,7 +22,7 @@ export default function Page() {
       </>
     );
   }
-  return <p className="text-6xl">Access Denied</p>;
+  return <AccessDenied />;
 }
 
 /**

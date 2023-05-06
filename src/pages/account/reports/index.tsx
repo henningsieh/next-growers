@@ -22,11 +22,7 @@ export default function OwnReports() {
   } = api.reports.getOwnReports.useQuery();
 
   const { data: session } = useSession();
-  if (!session) {
-    return (
-      <Container className="text-center text-4xl">Access Denied</Container>
-    );
-  } else {
+  if (session) {
     if (isLoading) return <Loading />;
     if (isError) return <LoadingError />;
 
@@ -105,6 +101,8 @@ export default function OwnReports() {
       </>
     );
   }
+
+  return <Container className="text-center text-4xl">Access Denied</Container>;
 }
 
 /**

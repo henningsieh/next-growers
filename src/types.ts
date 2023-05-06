@@ -20,3 +20,9 @@ export const reportEditInput = z.object({
   title: z.string().min(1).max(100),
   description: z.string().min(1).max(1000),
 });
+
+
+export const userSetUSerNameInput = z.object({
+  id: z.string().min(1),
+  name: z.string().min(6).max(100),  
+})
