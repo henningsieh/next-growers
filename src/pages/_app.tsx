@@ -57,11 +57,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
               backgroundColor:
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[8]
-                  : theme.white,
+                  : theme.colors.gray[1],
               color:
                 theme.colorScheme === "dark"
-                  ? theme.colors.dark[0]
-                  : theme.black,
+                  ? theme.colors.dark[1]
+                  : theme.colors.gray[8],
               lineHeight: theme.lineHeight,
             },
 
@@ -112,11 +112,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
           <Toaster />
-          <AppLayout>
-            <Container size={"xl"} mt="md" px="xs">
+          <Container size={"xl"} px="xs">
+            <AppLayout>
               <Component {...pageProps} />
-            </Container>
-          </AppLayout>
+            </AppLayout>
+          </Container>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>

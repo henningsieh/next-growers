@@ -53,14 +53,17 @@ const EditReport: NextPage = () => {
 
         <Container size={"1440"} className="h-screen">
           <div className="m-auto flex min-h-max flex-col space-y-4 ">
-            <Group position="left">
+            {/* <Group position="left">
               <Link href="/account/reports">
-                <Button variant="default" /* onClick={() => router.back()} */>
+                <Button
+                  variant="default"
+                  // onClick={() => router.back()}
+                >
                   <IconBackspace className="mr-2" height={24} stroke={1.5} />{" "}
                   Your Reports
                 </Button>
               </Link>
-            </Group>
+            </Group> */}
             <Title order={1}>{pageTitle}</Title>
             <p>id: {id}</p>
             <TextInput

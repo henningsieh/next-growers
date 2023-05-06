@@ -1,10 +1,9 @@
 import {
   ActionIcon,
-  Box,
   Button,
   Container,
   Group,
-  NumberInput,
+  Loader,
   Space,
   TextInput,
   Title,
@@ -19,16 +18,17 @@ import {
 } from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
 
+import AccessDenied from "~/components/Atom/AccessDenied";
 import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import type { NextPage } from "next";
+import Router from "next/router";
 import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next";
 import { getUsername } from "~/helpers";
 import { useSession } from "next-auth/react";
-import { userSetUSerNameInput } from "~/types";
+import { useState } from "react";
 import { z } from "zod";
 
 export default function EditReport() {
@@ -37,10 +37,14 @@ export default function EditReport() {
 
   const theme = useMantineTheme();
 
-  const setRandomUsername = () => {
+  /**
+   * function: setRandomUsername(): string
+   */
+  const setRandomUsername = function (): string {
     form.setValues({ name: getUsername() });
-    form.values.name = getUsername();
+    return form.values.name;
   };
+
   const validateFormSchema = z.object({
     name: z.string().min(6, { message: "Name should have at least 6 letters" }),
     email: z.string().email({ message: "Invalid email address" }),
@@ -72,14 +76,7 @@ export default function EditReport() {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <Group position="left">
-          <Link href="/account">
-            <Button variant="default" /* onClick={() => router.back()} */>
-              <IconBackspace className="mr-2" height={24} stroke={1.5} /> Your
-              Profile
-            </Button>
-          </Link>
-        </Group>
+
         <Container size="xs">
           <Title order={1}>{pageTitle}</Title>
           <Space />
@@ -107,7 +104,7 @@ export default function EditReport() {
                   </ActionIcon>
                 </Tooltip>
               }
-            />
+            />{" "}
             <TextInput
               readOnly
               className="cursor-not-allowed"
@@ -119,8 +116,13 @@ export default function EditReport() {
             />
             <Space />
             <Group position="right" mt="xl">
-              <Button variant="outline" type="submit" disabled={isLoading}>
-                Submit
+              <Button
+                fullWidth
+                variant="outline"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? <Loader size={24} /> : "Submit"}
               </Button>
             </Group>
           </form>
@@ -129,7 +131,7 @@ export default function EditReport() {
     );
   }
 
-  return <p className="text-6xl">Access Denied</p>;
+  return <AccessDenied />;
 }
 
 /**

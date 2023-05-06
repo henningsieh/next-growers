@@ -8,6 +8,7 @@ import {
   Button,
   Center,
   Collapse,
+  Container,
   Divider,
   Drawer,
   Group,
@@ -163,11 +164,29 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     </UnstyledButton>
   ));
 
+  const handleUnstyledButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.stopPropagation();
+    toggleLinks();
+  };
+
   return (
     <>
-      <Header height={60} px="md">
+      <Header
+        height={60}
+        style={{
+          position: "fixed",
+          zIndex: 100,
+          maxWidth: "1548px",
+          width: "100%",
+          margin: "0px auto",
+          padding: "0 28px",
+        }}
+      >
         <Group position="apart" sx={{ height: "100%" }}>
           <Burger
+            ml="-xs"
             opened={drawerOpened}
             onClick={toggleDrawer}
             className={classes.hiddenDesktop}
@@ -259,7 +278,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         opened={drawerOpened}
         onClose={closeDrawer}
         size="100%"
-        padding="md"
+        // padding="md"
         title="Navigation"
         className={classes.hiddenDesktop}
         zIndex={10}
@@ -268,6 +287,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           onClick={closeDrawer} // -> menu self close on item click
           h={`calc(100vh - ${rem(60)})`}
           mx="-md"
+          mt="-md"
         >
           <Divider
             my="sm"
@@ -277,7 +297,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           <Link href="/" className={classes.link}>
             Home
           </Link>
-          <UnstyledButton className={classes.link} onClick={toggleLinks}>
+          <UnstyledButton
+            className={classes.link}
+            onClick={handleUnstyledButtonClick}
+          >
             <Center inline>
               <Box component="span" mr={5}>
                 Social Clubs
@@ -296,8 +319,9 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           />
         </ScrollArea>
       </Drawer>
-
-      {children}
+      <Container size={"xl"} className="mt-16">
+        {children}
+      </Container>
     </>
   );
 }

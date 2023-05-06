@@ -155,14 +155,13 @@ export default function ReportCard({
             deleteMutation(report.id);
           }}
         >
-          Delete{" "}
+          Delete
           <IconAlertTriangleFilled className="ml-2" height={18} stroke={1.5} />
         </Button>
         <Link href={`/account/report/${report.id}`}>
           <Button
             className="border-orange-600"
             variant="default"
-            color="orange.8"
             radius="sm"
             style={{ flex: 1 }}
           >
