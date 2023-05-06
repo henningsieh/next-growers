@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import {
   Box,
   Button,
@@ -106,13 +110,14 @@ export default function AddReport() {
           const result = reportInput.safeParse(newReport);
           console.log(result);
           if (!result.success) {
-            toast.error(result.error.format()._errors.join("\n"));
+            toast.error(result.error.format()._errors.toString());
+            const errorString = result.error.format()._errors.toString();
             return;
           }
-
           mutate(newReport);
         }}
       >
+        <p>{}</p>
         <TextInput
           withAsterisk
           label="Titel"

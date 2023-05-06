@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { reportEditInput, reportInput } from "~/types"
 
-import { reportInput } from "~/types"
 import { z, } from "zod";
 
 export const reportRouter = createTRPCRouter({
@@ -32,13 +32,26 @@ export const reportRouter = createTRPCRouter({
    * Get Reports by  foreign AuthourId
    * @Input: userId: String 
    */
-  getReportsByUserId: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+  getReportById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const reports = await ctx.prisma.report.findMany({
+      where: {
+        id: input,
+      },
+    });
+    return reports.map(( { id, title, description, authorId, createdAt, updatedAt }) => ({ id, title, description, authorId, createdAt, updatedAt }));
+  }),
+
+  /**
+   * Get Reports by  foreign AuthourId
+   * @Input: userId: String 
+   */
+  getReportsByUserId: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const report = await ctx.prisma.report.findFirst({
       where: {
         authorId: input,
       },
     });
-    return reports.map(( { id, title, description, authorId, createdAt, updatedAt }) => ({ id, title, description, authorId, createdAt, updatedAt }));
+    return report;
   }),
   
   deleteOwnReport: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
@@ -80,7 +93,39 @@ export const reportRouter = createTRPCRouter({
         },
       },
     });
+  }),
+
+
+  saveOwnReport: protectedProcedure.input(reportEditInput).mutation(async ({ ctx, input }) => {
+    // First, check if the report exists
+    const existingReport = await ctx.prisma.report.findUnique({
+      where: {
+        id: input.id,
+      },
+    });
+    
+    // Then, check if the user is the author of the report
+    if (existingReport && existingReport.authorId !== ctx.session.user.id) {
+      throw new Error('You are not authorized to edit this report');
+    }
+    
+    // Create or update the report
+    const data = {
+      ...input,
+      authorId: ctx.session.user.id,
+    };
+    const report = await ctx.prisma.report.upsert({
+      where: {
+        id: input.id,
+      },
+      create: data,
+      update: data,
+    });
+    
+    return report;
   })
+
+
 }
 
 

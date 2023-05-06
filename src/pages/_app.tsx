@@ -11,8 +11,10 @@ import {
   type ColorScheme,
   ColorSchemeProvider,
   MantineProvider,
+  Container,
 } from "@mantine/core";
 import AppLayout from "~/components/Layout/AppLayout";
+import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -47,7 +49,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
           //   md: "1px 1px 3px rgba(0, 0, 0, .25)",
           //   xl: "5px 5px 3px rgba(0, 0, 0, .25)",
           // },
-          primaryColor: "pink",
+          primaryColor: "orange",
           colorScheme, // get light/dark from local storage state
           globalStyles: (theme) => ({
             body: {
@@ -76,6 +78,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
             }, */
           }),
           components: {
+            Container: {
+              defaultProps: {
+                sizes: {
+                  xs: 540,
+                  sm: 720,
+                  md: 960,
+                  lg: 1440,
+                  xl: 1600,
+                },
+              },
+            },
+            /* 
             Button: {
               // Subscribe to theme and component params
               styles: (theme) => ({
@@ -91,14 +105,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
                   lineHeight: theme.lineHeight,
                 },
               }),
-            },
+            }, */
           },
         }}
       >
         <SessionProvider session={session}>
+          {/* // FUTURE BANNERS GO HERE!! */}
+          <Toaster />
           <AppLayout>
-            {/* // FUTURE BANNERS GO HERE!! */}
-            <Component {...pageProps} />
+            <Container size={"xl"} mt="md" px="xs">
+              <Component {...pageProps} />
+            </Container>
           </AppLayout>
         </SessionProvider>
       </MantineProvider>

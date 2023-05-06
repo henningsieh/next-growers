@@ -8,8 +8,13 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconAlertTriangleFilled, IconHeart } from "@tabler/icons-react";
+import {
+  IconAlertTriangleFilled,
+  IconEdit,
+  IconHeart,
+} from "@tabler/icons-react";
 
+import Link from "next/link";
 import type { OwnReport } from "~/types";
 import { api } from "~/utils/api";
 
@@ -60,8 +65,6 @@ export default function ReportCard({
 }: ReportCardProps) {
   const { classes, theme } = useStyles();
 
-  const { id, title, description, createdAt, updatedAt } = report;
-
   const trpc = api.useContext();
   const { mutate: deleteMutation } = api.reports.deleteOwnReport.useMutation({
     onMutate: async (deleteId) => {
@@ -110,24 +113,24 @@ export default function ReportCard({
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
-        <Image src={image} alt={id} height={180} />
+        <Image src={image} alt={report.id} height={180} />
       </Card.Section>
 
       <Card.Section className={classes.section} mt="md">
         <Group position="apart">
           <Text fz="lg" fw={500}>
-            Title: {title}
+            Title: {report.title}
           </Text>
           <Badge size="sm">{country}</Badge>
         </Group>
         <Text fz="sm" mt="xs">
-          description: {description}
+          description: {report.description}
         </Text>
         <Text mt="md" className={classes.label} c="dimmed">
-          updated at: {updatedAt.toLocaleString()}
+          updated at: {report.updatedAt.toLocaleString()}
         </Text>
         <Text mt="md" className={classes.label} c="dimmed">
-          created at: {createdAt.toLocaleString()}
+          created at: {report.createdAt.toLocaleString()}
         </Text>
       </Card.Section>
 
@@ -149,21 +152,23 @@ export default function ReportCard({
           style={{ flex: 0 }}
           className="border-1 border-red-600"
           onClick={() => {
-            deleteMutation(id);
+            deleteMutation(report.id);
           }}
         >
           Delete{" "}
           <IconAlertTriangleFilled className="ml-2" height={18} stroke={1.5} />
         </Button>
-        <Button
-          className="border-orange-600"
-          variant="default"
-          color="orange.8"
-          radius="sm"
-          style={{ flex: 1 }}
-        >
-          Show details
-        </Button>
+        <Link href={`/account/report/${report.id}`}>
+          <Button
+            className="border-orange-600"
+            variant="default"
+            color="orange.8"
+            radius="sm"
+            style={{ flex: 1 }}
+          >
+            Edit Report <IconEdit className="ml-2" height={18} stroke={1.5} />
+          </Button>
+        </Link>
         {/* 
           <ActionIcon variant="default" radius="sm" size={38}>
             <IconHeart width={22} className={classes.like} stroke={1.5} />
