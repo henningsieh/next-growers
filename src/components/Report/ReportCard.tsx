@@ -158,7 +158,7 @@ export default function ReportCard({
           Delete
           <IconAlertTriangleFilled className="ml-2" height={18} stroke={1.5} />
         </Button>
-        <Link href={`/account/report/${report.id}`}>
+        <Link href={`/account/reports/${report.id}`}>
           <Button
             className="border-orange-600"
             variant="default"

@@ -21,7 +21,6 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 const EditReport: NextPage = () => {
-  const pageTitle = "Edit Report";
   const router = useRouter();
   const id = router.query.id;
 
@@ -38,6 +37,7 @@ const EditReport: NextPage = () => {
     if (isLoading) return <Loading />;
     if (isError) return <LoadingError />;
 
+    const pageTitle = "Edit Report";
     const report = result;
 
     return (
@@ -65,7 +65,9 @@ const EditReport: NextPage = () => {
               </Link>
             </Group> */}
             <Title order={1}>{pageTitle}</Title>
-            <p>id: {id}</p>
+            <Link href={`/reports/${id as string}`}>
+              <Button>public view</Button>
+            </Link>
             <TextInput
               withAsterisk
               label="Titel"

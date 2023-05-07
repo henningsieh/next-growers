@@ -45,7 +45,7 @@ export const reportRouter = createTRPCRouter({
    * Get Report by Id
    * @Input: userId: String 
    */
-  getReportById: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+  getReportById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const report = await ctx.prisma.report.findFirst({
       where: {
         id: input,
