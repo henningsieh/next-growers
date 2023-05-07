@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "~/styles/globals.css";
 
-import { SessionProvider } from "next-auth/react";
-import { type AppType } from "next/app";
-import { type Session } from "next-auth";
+import { ColorSchemeProvider, Container, MantineProvider } from "@mantine/core";
 
-import { api } from "~/utils/api";
-import { useState } from "react";
-import {
-  type ColorScheme,
-  ColorSchemeProvider,
-  MantineProvider,
-  Container,
-} from "@mantine/core";
 import AppLayout from "~/components/Layout/AppLayout";
+import type { AppType } from "next/app";
+import type { ColorScheme } from "@mantine/core";
+import Footer from "~/components/Footer";
+import type { Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
+import { api } from "~/utils/api";
+import { appWithTranslation } from "next-i18next";
+import { useState } from "react";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -116,6 +114,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <AppLayout>
               <Component {...pageProps} />
             </AppLayout>
+            <Footer />
           </Container>
         </SessionProvider>
       </MantineProvider>
@@ -123,4 +122,4 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-export default api.withTRPC(MyApp);
+export default api.withTRPC(appWithTranslation(MyApp));

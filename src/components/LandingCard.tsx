@@ -17,7 +17,7 @@ const useStyles = createStyles((theme) => ({
 
   container: {
     // height: rem(800),
-    minheight: "calc(100vh - 90px)",
+    height: "calc(100vh - 88px)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
