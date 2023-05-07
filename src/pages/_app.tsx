@@ -6,7 +6,6 @@ import { ColorSchemeProvider, Container, MantineProvider } from "@mantine/core";
 import AppLayout from "~/components/Layout/AppLayout";
 import type { AppType } from "next/app";
 import type { ColorScheme } from "@mantine/core";
-import Footer from "~/components/Footer";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
@@ -114,7 +113,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <AppLayout>
               <Component {...pageProps} />
             </AppLayout>
-            <Footer />
           </Container>
         </SessionProvider>
       </MantineProvider>
