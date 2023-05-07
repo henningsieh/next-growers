@@ -29,10 +29,10 @@ export const reportRouter = createTRPCRouter({
   }),
 
   /**
-   * Get Reports by  foreign AuthourId
+   * Get Reports by foreign AuthourId
    * @Input: userId: String 
    */
-  getReportById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+  getReportsByAuthorId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const reports = await ctx.prisma.report.findMany({
       where: {
         id: input,
@@ -42,13 +42,13 @@ export const reportRouter = createTRPCRouter({
   }),
 
   /**
-   * Get Reports by  foreign AuthourId
+   * Get Report by Id
    * @Input: userId: String 
    */
-  getReportsByUserId: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
+  getReportById: protectedProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const report = await ctx.prisma.report.findFirst({
       where: {
-        authorId: input,
+        id: input,
       },
     });
     return report;

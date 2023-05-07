@@ -38,7 +38,7 @@ const EditReport: NextPage = () => {
     if (isLoading) return <Loading />;
     if (isError) return <LoadingError />;
 
-    const report = result[0];
+    const report = result;
 
     return (
       <>
