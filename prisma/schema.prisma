@@ -8,11 +8,16 @@ datasource db {
     shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
+enum Role {
+    USER
+    ADMIN
+}
+
 model User {
     id            String    @id @default(cuid())
     name          String?
     password      String?
-    role          String    @default("USER")
+    role          Role      @default(USER)
     email         String?   @unique
     emailVerified DateTime?
     image         String?
@@ -41,8 +46,10 @@ model Report {
 }
 
 model Product {
-    id   String @id @default(cuid())
-    name TypeOf
+    id          String @id @default(cuid())
+    tape        TypeOf
+    name        String
+    description String
 
     reportId  String // One Report has many Products
     report    Report  @relation(fields: [reportId], references: [id])
