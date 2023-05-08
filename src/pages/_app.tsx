@@ -35,19 +35,45 @@ const MyApp: AppType<{ session: Session | null }> = ({
         withGlobalStyles
         withNormalizeCSS
         theme={{
-          // colors: {
-          //   white: ["#C1CCF6"],
-          //   // Add your color
-          //   deepBlue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
-          //   // or replace default theme color
-          //   blue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
-          // },
-          // shadows: {
-          //   md: "1px 1px 3px rgba(0, 0, 0, .25)",
-          //   xl: "5px 5px 3px rgba(0, 0, 0, .25)",
-          // },
-          primaryColor: "orange",
           colorScheme, // get light/dark from local storage state
+          primaryColor: "orange",
+          breakpoints: {
+            xs: "28em",
+            sm: "36em",
+            md: "56em",
+            lg: "70em",
+            xl: "102em",
+          },
+          components: {
+            Container: {
+              defaultProps: {
+                sizes: {
+                  xs: 540,
+                  sm: 720,
+                  md: 960,
+                  lg: 1140,
+                  xl: 1320,
+                },
+              },
+            },
+            /* 
+            Button: {
+              // Subscribe to theme and component params
+              styles: (theme) => ({
+                root: {
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[7]
+                      : theme.white,
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[0]
+                      : theme.black,
+                  lineHeight: theme.lineHeight,
+                },
+              }),
+            }, */
+          },
           globalStyles: (theme) => ({
             body: {
               ...theme.fn.fontStyles(),
@@ -74,46 +100,25 @@ const MyApp: AppType<{ session: Session | null }> = ({
               backgroundColor: "pink",
             }, */
           }),
-          components: {
-            Container: {
-              defaultProps: {
-                sizes: {
-                  xs: 540,
-                  sm: 720,
-                  md: 960,
-                  lg: 1440,
-                  xl: 1600,
-                },
-              },
-            },
-            /* 
-            Button: {
-              // Subscribe to theme and component params
-              styles: (theme) => ({
-                root: {
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[7]
-                      : theme.white,
-                  color:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[0]
-                      : theme.black,
-                  lineHeight: theme.lineHeight,
-                },
-              }),
-            }, */
-          },
+          // colors: {
+          //   white: ["#C1CCF6"],
+          //   // Add your color
+          //   deepBlue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
+          //   // or replace default theme color
+          //   blue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
+          // },
+          // shadows: {
+          //   md: "1px 1px 3px rgba(0, 0, 0, .25)",
+          //   xl: "5px 5px 3px rgba(0, 0, 0, .25)",
+          // },
         }}
       >
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
           <Toaster />
-          <Container size={"xl"} px="xs">
-            <AppLayout>
-              <Component {...pageProps} />
-            </AppLayout>
-          </Container>
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>

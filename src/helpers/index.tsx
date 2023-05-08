@@ -117,3 +117,31 @@ export function getUsername(): string {
   const randomIndex = Math.floor(Math.random() * usernames.length);
   return usernames[randomIndex] as string;
 }
+
+export function getEmailaddress(): string {
+  const emailAddresses: string[] = [
+    "plantdad@hotmail.com",
+    "greenthumb@outlook.com",
+    "crazyplantlady@gmail.com",
+    "botanicalboss@yahoo.com",
+    "gardeningguru@aol.com",
+    "theplantprofessor@mail.com",
+    "bloommaster@protonmail.com",
+    "gardenenthusiast@icloud.com",
+    "seed.sower@mail.com",
+    "succulentqueen@outlook.com",
+    "horticulturehero@protonmail.com",
+    "veggievixen@gmail.com",
+    "orchidobsessed@yahoo.com",
+    "thegardensage@hotmail.com",
+    "leaflover@icloud.com",
+    "flowerfanatic@outlook.com",
+    "plantwhisperer@gmail.com",
+    "compostking@mail.com",
+    "theplantdoctor@icloud.com",
+    "plantdadjr@gmail.com",
+  ];
+
+  const randomIndex = Math.floor(Math.random() * emailAddresses.length);
+  return emailAddresses[randomIndex] as string;
+}

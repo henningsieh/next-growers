@@ -111,7 +111,7 @@ export default function ReportCard({
   ));
 
   return (
-    <Card withBorder radius="md" p="md" className={classes.card}>
+    <Card withBorder radius="md" p="sm" className={classes.card}>
       <Card.Section>
         <Image src={image} alt={report.id} height={180} />
       </Card.Section>
@@ -126,11 +126,11 @@ export default function ReportCard({
         <Text fz="sm" mt="xs">
           description: {report.description}
         </Text>
-        <Text mt="md" className={classes.label} c="dimmed">
-          updated at: {report.updatedAt.toLocaleString()}
-        </Text>
-        <Text mt="md" className={classes.label} c="dimmed">
-          created at: {report.createdAt.toLocaleString()}
+        {/* <Text mt="sm" className={classes.label} c="dimmed">
+          updated at: {report.updatedAt.toLocaleDateString()}
+        </Text> */}
+        <Text mt="sm" className={classes.label} c="dimmed">
+          created at: {report.createdAt.toLocaleDateString()}
         </Text>
       </Card.Section>
 
@@ -143,9 +143,9 @@ export default function ReportCard({
         </Group>
       </Card.Section>
 
-      <Group mt="xs">
+      <Group mt="xs" position="apart">
         <Button
-          fullWidth
+          size="sm"
           variant="filled"
           color="red"
           radius="sm"
@@ -160,12 +160,14 @@ export default function ReportCard({
         </Button>
         <Link href={`/account/reports/${report.id}`}>
           <Button
+            size="sm"
             className="border-orange-600"
             variant="default"
             radius="sm"
             style={{ flex: 1 }}
           >
-            Edit Report <IconEdit className="ml-2" height={18} stroke={1.5} />
+            Edit
+            <IconEdit className="ml-2" height={22} stroke={1.5} />
           </Button>
         </Link>
         {/* 

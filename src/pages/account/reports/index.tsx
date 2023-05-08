@@ -12,7 +12,7 @@ import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 
 export default function OwnReports() {
-  const pageTitle = "Your Reports";
+  const pageTitle = "My Reports";
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -58,46 +58,37 @@ export default function OwnReports() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="m-auto flex min-h-max flex-col place-content-center">
-          <div className="flex w-full flex-col space-y-4">
-            <Title order={1}>{pageTitle}</Title>
-            <Grid gutter="sm">
-              {/* LOOP OVER REPORTS */}
-              {reports.length ? (
-                reports.map((report) => {
-                  return (
-                    <Grid.Col
-                      key={report.id}
-                      xs={12}
-                      sm={6}
-                      md={4}
-                      lg={3}
-                      xl={2}
-                    >
-                      <ReportCard {...cardProps} report={report} />
-                    </Grid.Col>
-                  );
-                })
-              ) : (
-                <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
-                  <div className="hero-content flex-col md:flex-row">
-                    {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
-                    <div className="text-center">
-                      <h1 className="whitespace-nowrap text-3xl font-bold">
-                        No Reports found! 😢
-                      </h1>
-                      <p className="error py-6 text-lg font-bold">
-                        You haven&apos;t created any reports yet.
-                      </p>
-                    </div>
+        <div className="flex w-full flex-col space-y-4">
+          <Title order={1}>{pageTitle}</Title>
+          <Grid gutter="sm">
+            {/* LOOP OVER REPORTS */}
+            {reports.length ? (
+              reports.map((report) => {
+                return (
+                  <Grid.Col key={report.id} xs={12} sm={6} md={4} lg={3} xl={2}>
+                    <ReportCard {...cardProps} report={report} />
+                  </Grid.Col>
+                );
+              })
+            ) : (
+              <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
+                <div className="hero-content flex-col md:flex-row">
+                  {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
+                  <div className="text-center">
+                    <h1 className="whitespace-nowrap text-3xl font-bold">
+                      No Reports found! 😢
+                    </h1>
+                    <p className="error py-6 text-lg font-bold">
+                      You haven&apos;t created any reports yet.
+                    </p>
                   </div>
                 </div>
-              )}
-            </Grid>
-          </div>
-
-          <Add />
+              </div>
+            )}
+          </Grid>
         </div>
+
+        <Add />
       </>
     );
   }

@@ -6,6 +6,7 @@ import {
   IconPhoto,
   IconSearch,
   IconSettings,
+  IconUser,
 } from "@tabler/icons-react";
 import { signOut, useSession } from "next-auth/react";
 
@@ -59,15 +60,15 @@ export default function LoginModal() {
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Label>Application</Menu.Label>
+              <Menu.Label>High</Menu.Label>
               <Link href="/account/edit">
-                <Menu.Item icon={<IconSettings size={14} />}>
+                <Menu.Item icon={<IconUser size={14} />}>
                   Edit Profile
                 </Menu.Item>
               </Link>
-              <Menu.Item icon={<IconMessageCircle size={14} />}>
+              {/* <Menu.Item icon={<IconMessageCircle size={14} />}>
                 Messages
-              </Menu.Item>
+              </Menu.Item> */}
               <Link href="/account/reports">
                 <Menu.Item icon={<IconPhoto size={14} />}>My Reports</Menu.Item>
               </Link>
@@ -81,16 +82,16 @@ export default function LoginModal() {
 
               <Menu.Divider />
 
-              <Menu.Label>Danger zone</Menu.Label>
-              <Menu.Item icon={<IconArrowsLeftRight size={14} />}>
+              <Menu.Label>Stoned</Menu.Label>
+              {/* <Menu.Item icon={<IconArrowsLeftRight size={14} />}>
                 Transfer my data
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item
                 onClick={() => void signOut()}
                 color="red"
                 icon={<IconLogout size={14} />}
               >
-                Sign out
+                Sign out 👋
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>

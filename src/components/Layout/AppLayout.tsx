@@ -29,14 +29,21 @@ import {
   IconCode,
   IconCoin,
   IconFingerprint,
+  IconMapPin,
+  IconMessageCircle,
   IconNotification,
+  IconSocial,
+  IconStar,
+  IconTools,
+  IconUsers,
 } from "@tabler/icons-react";
 
 import { useDisclosure } from "@mantine/hooks";
 import LoginPanel from "../Login/LoginPanel";
-import LightDarkButton from "./LightDarkButton";
 import Image from "next/image";
 import Link from "next/link";
+import LightDarkButton from "../Atom/LightDarkButton";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -95,13 +102,13 @@ const useStyles = createStyles((theme) => ({
   },
 
   hiddenMobile: {
-    [theme.fn.smallerThan("sm")]: {
+    [theme.fn.smallerThan("md")]: {
       display: "none",
     },
   },
 
   hiddenDesktop: {
-    [theme.fn.largerThan("sm")]: {
+    [theme.fn.largerThan("md")]: {
       display: "none",
     },
   },
@@ -109,45 +116,57 @@ const useStyles = createStyles((theme) => ({
 
 const mockdata = [
   {
-    icon: IconCode,
-    title: "Open source",
-    description: "This Pokémon’s cry is very loud and distracting",
+    icon: IconMessageCircle,
+    title: "CannabisAnbauen.net",
+    description: "Willkommen im CannabisAnbauen.net Forum!",
+    url: "https://forum.cannabisanbauen.net/",
   },
   {
-    icon: IconCoin,
-    title: "Free for everyone",
-    description: "The fluid of Smeargle’s tail secretions changes",
+    icon: IconMapPin,
+    title: "Meetups and Events",
+    description: "Connect in person with fellow growers near you.",
   },
   {
-    icon: IconBook,
-    title: "Documentation",
-    description: "Yanma is capable of seeing 360 degrees without",
+    icon: IconUsers,
+    title: "Online Communities",
+    description:
+      "Join social networks and online communities dedicated to growing.",
   },
   {
-    icon: IconFingerprint,
-    title: "Security",
-    description: "The shell’s rounded shape and the grooves on its.",
+    icon: IconSocial,
+    title: "Social Media Groups",
+    description: "Join groups on social media dedicated to growing.",
   },
   {
-    icon: IconChartPie3,
-    title: "Analytics",
-    description: "This Pokémon uses its flying ability to quickly chase",
+    icon: IconTools,
+    title: "Support Groups",
+    description: "Join support groups for growers facing common challenges.",
   },
   {
-    icon: IconNotification,
-    title: "Notifications",
-    description: "Combusken battles with the intensely hot flames it spews",
+    icon: IconStar,
+    title: "Interest Groups",
+    description:
+      "Join groups dedicated to growing specific plants or using specific techniques.",
   },
 ];
+
+function openUrlInNewTab(url: string) {
+  window.open(url, "_blank");
+}
 
 export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { classes, theme } = useStyles();
+  const router = useRouter();
 
   const links = mockdata.map((item) => (
-    <UnstyledButton className={classes.subLink} key={item.title}>
+    <UnstyledButton
+      onClick={() => openUrlInNewTab(item.url as string)}
+      className={classes.subLink}
+      key={item.title}
+    >
       <Group noWrap align="flex-start">
         <ThemeIcon size={34} variant="default" radius="md">
           <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
@@ -177,11 +196,11 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         height={60}
         style={{
           position: "fixed",
-          zIndex: 100,
-          maxWidth: "1548px",
+          zIndex: 10,
+          maxWidth: "100%",
           width: "100%",
           margin: "0px auto",
-          padding: "0 28px",
+          padding: "0 1.2rem",
         }}
       >
         <Group position="apart" sx={{ height: "100%" }}>
@@ -217,7 +236,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
                 <a href="#" className={classes.link}>
                   <Center inline>
                     <Box component="span" mr={5}>
-                      Social Clubs
+                      Community
                     </Box>
                     <IconChevronDown
                       size={16}
@@ -229,7 +248,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
 
               <HoverCard.Dropdown sx={{ overflow: "hidden" }}>
                 <Group position="apart" px="md">
-                  <Text fw={500}>Social Clubs</Text>
+                  <Text fw={500}>Community</Text>
                   <Anchor href="#" fz="xs">
                     View all
                   </Anchor>
@@ -303,7 +322,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           >
             <Center inline>
               <Box component="span" mr={5}>
-                Social Clubs
+                Community
               </Box>
               <IconChevronDown size={16} color={theme.fn.primaryColor()} />
             </Center>
@@ -319,9 +338,8 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           />
         </ScrollArea>
       </Drawer>
-      <Container size={"xl"} className="mt-16">
-        {children}
-      </Container>
+
+      <div className="mx-4 mt-16 max-w-none">{children}</div>
     </>
   );
 }

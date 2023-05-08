@@ -5,6 +5,7 @@
 import {
   Box,
   Button,
+  Container,
   Group,
   Space,
   TextInput,
@@ -99,7 +100,12 @@ export default function AddReport() {
   });
 
   return (
-    <Box className="flex w-full flex-col space-y-4" mx="auto">
+    <Container
+      size="sm"
+      my="xl"
+      className="flex w-full flex-col space-y-4"
+      mx="auto"
+    >
       <Space h={42} />
 
       <Title order={2}>Create a Report</Title>
@@ -176,6 +182,6 @@ export default function AddReport() {
           </Button>
         </Group>
       </form>
-    </Box>
+    </Container>
   );
 }

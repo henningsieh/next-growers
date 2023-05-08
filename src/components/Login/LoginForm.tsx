@@ -2,42 +2,45 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as z from 'zod';
+import * as z from "zod";
 
-import { Button } from '@mantine/core';
-import { IconMail } from '@tabler/icons-react';
-import { signIn }       from 'next-auth/react';
-import { useState } from 'react';
+import { Button, TextInput } from "@mantine/core";
 
-interface LoginForm {
+import EmailForm from "./EmailForm";
+import { IconMail } from "@tabler/icons-react";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+
+interface LoginFormContent {
   email: string;
-  password: string;
 }
 
 interface Errors {
   email?: string;
-  password?: string;
 }
 
-  const useLoginForm = () => {
-  const [form, setForm] = useState<LoginForm>({ email: '', password: '' });
+const useLoginForm = () => {
+  const [formContent, setFormContent] = useState<LoginFormContent>({
+    email: "",
+  });
   const [errors, setErrors] = useState<Errors>({});
 
-  const emailSchema = z.string().email('Invalid email address');
+  const emailSchema = z.string().email("Invalid email address");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm((prevState) => ({ ...prevState, [name]: value }));
+    console.log(value);
+    setFormContent((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleGoogleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newErrors: Errors = {};
     try {
-      await signIn("google");
+      const result = await signIn("google");
     } catch (err) {
-      // console.log (err);
+      console.log(err);
     }
-  
+
     setErrors(newErrors);
   };
 
@@ -46,59 +49,45 @@ interface Errors {
     // Validate email field
     const newErrors: Errors = {};
     try {
-      emailSchema.parse(form.email);
-      await signIn('email', { email: form.email });
+      emailSchema.parse(formContent.email);
+      await signIn("email", { email: formContent.email });
     } catch (err) {
       newErrors.email = (err as Error).message;
     }
-  
+    console.log(newErrors.email);
     setErrors(newErrors);
   };
 
-  return { form, errors, handleChange, handleSubmit , handleGoogleSignIn};
+  return {
+    form: formContent,
+    errors,
+    handleChange,
+    handleSubmit,
+    handleGoogleSignIn,
+  };
 };
 
 export default function LoginForm() {
-  const { form, errors, handleChange, handleSubmit, handleGoogleSignIn} = useLoginForm();
+  const { form, errors, handleChange, handleSubmit, handleGoogleSignIn } =
+    useLoginForm();
 
   return (
     <>
-      {/* <h2 className="text-accent text-2xl font-bold mb">{'Log in to GrowAGram 🔒'}</h2> */}
-
-  {/* OLD FORM */}
-  {/* <form className="w-full py-4" onSubmit={(e) => { e.preventDefault(); void handleSubmit(e) }}>
-        <div className="flex flex-col relative ">
-          {errors.email && (
-            <div
-              className="tooltip tooltip-open tooltip-error absolute top-4 left-1/2 transform -translate-y-1/2"
-              data-tip={errors.email}
-            ></div>
-          )}
-
-          <input
-            className="focus:outline-none my-4 font-bold text-md border-b-2 border-primary 
-  text-primary-content appearance-none bg-transparent mr-3 px-2"
-            type="text"
-            placeholder="Your Email address"
-            aria-label="Email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
-          <Button leftIcon={<IconMail />}   className="text-secondary-content font-bold text-md btn btn-secondary rounded-lg" type="submit">
-            SEND ME THE MAGIC LOGIN LINK
-          </Button>
-          
-        </div>
-      </form> */}
+      <EmailForm />
 
       {/* https://tailwindcomponents.com/component/custom-nextauth-login-page */}
       {/* Email Sign In */}
-      <form className="p-4 md:p-5 lg:p-6" onSubmit={(e) => { e.preventDefault(); void handleSubmit(e) }}>
+      {/*       <form
+        className="p-4 md:p-5 lg:p-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSubmit(e);
+        }}
+      >
         <div className="grid gap-y-3">
+          <p>{errors.email}</p>
           <input
-            className="focus:border-purple-400 rounded-md border border-slate-600 bg-slate-700 py-3 px-4 text-slate-200 outline-none transition placeholder:text-slate-400"
-            
+            className="rounded-md border border-slate-600 bg-slate-700 px-4 py-3 text-slate-200 outline-none transition placeholder:text-slate-400 focus:border-purple-400"
             type="text"
             placeholder="Your Email address"
             aria-label="Email"
@@ -106,11 +95,9 @@ export default function LoginForm() {
             value={form.email}
             onChange={handleChange}
           />
-          <button
-            className="flex items-center justify-center gap-x-2 rounded-md border border-slate-600 bg-slate-700 py-3 px-4 text-slate-300 transition hover:text-purple-400"
-          >
+          <button className="text-white flex items-center justify-center gap-x-2 rounded-md border border-slate-600 bg-slate-700 px-4 py-3 text-slate-300 transition hover:text-purple-400">
             <svg
-              style={{ color: 'rgb(203, 213, 225)' }}
+              style={{ color: "rgb(203, 213, 225)" }}
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
@@ -126,7 +113,7 @@ export default function LoginForm() {
             Sign in with Email
           </button>
         </div>
-      </form>
+      </form> */}
 
       <div className="my-3 flex items-center px-3">
         <hr className="w-full border-slate-600" />
@@ -135,13 +122,17 @@ export default function LoginForm() {
       </div>
 
       {/* Google In */}
-      <form className="p-4 md:p-5 lg:p-6" onSubmit={(e) => { e.preventDefault(); void handleGoogleSignIn(e) }}>
+      <form
+        className="p-4 md:p-5 lg:p-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleGoogleSignIn(e);
+        }}
+      >
         <div className="grid gap-y-3">
-          <button
-            className="flex items-center justify-center gap-x-2 rounded-md border border-slate-600 bg-slate-700 py-3 px-4 text-slate-300 transition hover:text-purple-400"
-          >
+          <button className="flex items-center justify-center gap-x-2 rounded-md border border-slate-600 bg-slate-700 px-4 py-3 text-slate-300 transition hover:text-purple-400">
             <svg
-              style={{ color: 'rgb(203, 213, 225)' }}
+              style={{ color: "rgb(203, 213, 225)" }}
               xmlns="http://www.w3.org/2000/svg"
               width={18}
               height={18}
@@ -158,7 +149,6 @@ export default function LoginForm() {
           </button>
         </div>
       </form>
-
     </>
   );
 }

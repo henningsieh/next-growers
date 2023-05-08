@@ -1,8 +1,4 @@
 import type {
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType,
-} from "next";
-import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
