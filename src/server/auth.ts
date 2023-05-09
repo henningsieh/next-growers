@@ -41,8 +41,8 @@ export const authOptions: NextAuthOptions = {
       ...token,
       user: {
         ...session.user,
-        
         id: user.id,
+        image: user.image ? user.image : `https://ui-avatars.com/api/?name=${user.name as string}`,
         role: user.role
       },
     }),

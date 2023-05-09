@@ -21,8 +21,15 @@ export const reportEditInput = z.object({
   description: z.string().min(1).max(1000),
 });
 
-
 export const userSetUSerNameInput = z.object({
   id: z.string().min(1),
   name: z.string().min(6).max(100),  
 })
+
+export const imageUploadInput = z.object({
+  fileName: z.string(),  
+})
+
+export interface ImageUploadResponse {
+  success: boolean;
+}

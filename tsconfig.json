@@ -27,7 +27,10 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
-, "next-i18next.config.js", "next.config.js"  ],
+    "**/*.mjs",
+    "next-i18next.config.js",
+    "next.config.js",
+    "prisma/seed.js"
+  ],
   "exclude": ["node_modules"]
 }

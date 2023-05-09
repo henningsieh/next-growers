@@ -55,7 +55,7 @@ const useStyles = createStyles((theme) => ({
     textDecoration: "none",
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
     fontWeight: 500,
-    fontSize: theme.fontSizes.sm,
+    fontSize: theme.fontSizes.lg,
 
     [theme.fn.smallerThan("sm")]: {
       height: rem(42),
@@ -204,19 +204,25 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         }}
       >
         <Group position="apart" sx={{ height: "100%" }}>
-          <Burger
-            ml="-xs"
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            className={classes.hiddenDesktop}
-          />
-          <Image
-            className="rounded-sm"
-            height={32}
-            width={84}
-            alt="GrowAGram Logo"
-            src="/growagram-logo-wide-magenta-gradient.png"
-          />{" "}
+          <Group>
+            <Burger
+              size={30}
+              pl={0}
+              pr={0}
+              opened={drawerOpened}
+              onClick={toggleDrawer}
+              className={classes.hiddenDesktop}
+            />
+            <Link href="/">
+              <Image
+                className="rounded-sm"
+                height={18}
+                width={74}
+                alt="GrowAGram Logo"
+                src="/growagram-logo-wide-magenta-gradient.png"
+              />
+            </Link>
+          </Group>
           <Group
             sx={{ height: "100%" }}
             spacing={0}
@@ -224,6 +230,9 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           >
             <Link href="/" className={classes.link}>
               Home
+            </Link>
+            <Link href="/reports" className={classes.link}>
+              Explore Reports
             </Link>
             <HoverCard
               width={600}
@@ -315,6 +324,9 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
 
           <Link href="/" className={classes.link}>
             Home
+          </Link>
+          <Link href="/reports" className={classes.link}>
+            Explore Reports
           </Link>
           <UnstyledButton
             className={classes.link}

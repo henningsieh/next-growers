@@ -34,11 +34,12 @@ model Report {
     id          String    @id @default(cuid())
     title       String
     description String
+    imageUrl    String    @default("https://images.unsplash.com/photo-1630020594265-c7b6b410895f")
     posts       Post[] // One Report has many Posts
     contests    Contest[] @relation("ReportToContest") //many2many
     products    Product[] // One Report has many Products
-    author      User?     @relation(fields: [authorId], references: [id])
-    authorId    String? // One User has many Reports
+    author      User      @relation(fields: [authorId], references: [id])
+    authorId    String // One User has many Reports
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
 

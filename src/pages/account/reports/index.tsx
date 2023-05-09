@@ -66,7 +66,11 @@ export default function OwnReports() {
               reports.map((report) => {
                 return (
                   <Grid.Col key={report.id} xs={12} sm={6} md={4} lg={3} xl={2}>
-                    <ReportCard {...cardProps} report={report} />
+                    <ReportCard
+                      {...cardProps}
+                      procedure="own"
+                      report={report}
+                    />
                   </Grid.Col>
                 );
               })

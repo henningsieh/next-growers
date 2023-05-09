@@ -25,6 +25,10 @@ export const env = createEnv({
     EMAIL_SERVER: z.string(),
     EMAIL_FROM: z.string(),
     // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
+
+    CLOUDINARY_API_KEY: z.string().min(1),
+    CLOUDINARY_API_SECRET: z.string().min(1),
+    CLOUDINARY_NAME: z.string().min(1),
   },
 
   /**
@@ -49,5 +53,8 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     EMAIL_SERVER: process.env.EMAIL_SERVER,
     EMAIL_FROM: process.env.EMAIL_FROM,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
   },
 });

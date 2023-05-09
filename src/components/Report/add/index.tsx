@@ -1,27 +1,56 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import {
-  Box,
   Button,
   Container,
   Group,
   Space,
+  Text,
   TextInput,
   Textarea,
   Title,
+  createStyles,
+  rem,
 } from "@mantine/core";
+import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import { IconCloudUpload, IconDownload, IconX } from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
 
+import AccessDenied from "~/components/Atom/AccessDenied";
+import type { ImageUploadResponse } from "~/types";
 import type { OwnReport } from "~/types";
 import { api } from "~/utils/api";
+import axios from "axios";
 import { reportInput } from "~/types";
 import toast from "react-hot-toast";
+import { useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { z } from "zod";
 
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    position: "relative",
+    marginBottom: rem(30),
+  },
+
+  dropzone: {
+    borderWidth: rem(1),
+    paddingBottom: rem(50),
+  },
+
+  icon: {
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[3]
+        : theme.colors.gray[4],
+  },
+
+  control: {
+    position: "absolute",
+    width: rem(250),
+    left: `calc(50% - ${rem(125)})`,
+    bottom: rem(-20),
+  },
+}));
 const schema = z.object({
   titel: z
     .string()
@@ -34,6 +63,8 @@ const schema = z.object({
 });
 
 export default function AddReport() {
+  const { classes, theme } = useStyles();
+  const openRef = useRef<() => void>(null);
   const [newReport, setNewReport] = useState({ title: "", description: "" });
   const { data: session } = useSession();
   const trpc = api.useContext();
@@ -47,9 +78,7 @@ export default function AddReport() {
     },
   });
 
-  if (!session) {
-    return <p className="text-6xl">Access Denied</p>;
-  }
+  if (!session) return <AccessDenied />;
 
   const { mutate } = api.reports.create.useMutation({
     onMutate: async (newReport) => {
@@ -65,6 +94,9 @@ export default function AddReport() {
           id: "TEMP_ID", // 'placeholder'
           title: newReport.title,
           description: newReport.description,
+          authorId: "",
+          authorImage: "",
+          authorName: "",
           updatedAt: new Date(),
           createdAt: new Date(),
         };
@@ -94,15 +126,50 @@ export default function AddReport() {
     },
     // Always refetch after error or success:
     onSettled: async () => {
-      console.log("SETTLED");
+      console.log("END api.reports.create.useMutation");
       await trpc.reports.getOwnReports.invalidate();
     },
   });
 
+  const handleDrop = async (files: File[]): Promise<void> => {
+    const formData = new FormData();
+    console.log(files);
+    if (files && files[0]) {
+      // files.map((file) => formData.append("image", file));
+      formData.append("image", files[0]); // Assuming only one file is uploaded
+      try {
+        const {
+          data,
+        }: {
+          data: ImageUploadResponse;
+        } = await axios.post("/api/image", formData);
+
+        /* const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        }); */
+        if (data.success) {
+          console.log("File uploaded successfully");
+        } else {
+          throw new Error("File uploaded NOT successfully");
+        }
+      } catch (error) {
+        console.log(error);
+        throw new Error("Error uploading file");
+      }
+    }
+  };
+
+  const handleDropWrapper = (files: File[]): void => {
+    handleDrop(files).catch((error) => {
+      console.log(error);
+    });
+  };
+
   return (
     <Container
       size="sm"
-      my="xl"
+      px={0}
       className="flex w-full flex-col space-y-4"
       mx="auto"
     >
@@ -114,7 +181,6 @@ export default function AddReport() {
         onSubmit={(e) => {
           e.preventDefault();
           const result = reportInput.safeParse(newReport);
-          console.log(result);
           if (!result.success) {
             toast.error(result.error.format()._errors.toString());
             const errorString = result.error.format()._errors.toString();
@@ -153,6 +219,83 @@ export default function AddReport() {
           }}
           value={newReport.description}
         />
+        <Space h="sm" />
+        <label className="mantine-InputWrapper-label mantine-Textarea-label mantine-1mo4y8r">
+          File Upload
+          <span
+            className="mantine-ifziax mantine-InputWrapper-required mantine-Textarea-required"
+            aria-hidden="true"
+          >
+            {/* * */}
+          </span>
+        </label>
+        <div className={classes.wrapper}>
+          <Dropzone
+            openRef={openRef}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            onDrop={handleDropWrapper}
+            className={classes.dropzone}
+            radius="md"
+            accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+            maxSize={30 * 1024 ** 2}
+          >
+            <div style={{ pointerEvents: "none" }}>
+              <Group position="center">
+                <Dropzone.Accept>
+                  <IconDownload
+                    size={rem(50)}
+                    color={
+                      theme.colorScheme === "dark"
+                        ? theme.colors.blue[0]
+                        : theme.white
+                    }
+                    stroke={1.5}
+                  />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX
+                    size={rem(50)}
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                  />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconCloudUpload
+                    size={rem(50)}
+                    color={
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[0]
+                        : theme.black
+                    }
+                    stroke={1.5}
+                  />
+                </Dropzone.Idle>
+              </Group>
+
+              <Text ta="center" fw={700} fz="lg" mt="xl">
+                <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
+                <Dropzone.Idle>Upload Images</Dropzone.Idle>
+              </Text>
+              <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
+                <i>.pdf</i> files that are less than 30mb in size.
+              </Text>
+            </div>
+          </Dropzone>
+
+          <Button
+            className={`${
+              theme.colorScheme === "light" ? "text-gray-900" : ""
+            } border-1 border-orange-500`}
+            size="sm"
+            radius="xl"
+            onClick={() => openRef.current?.()}
+          >
+            Select files
+          </Button>
+        </div>
+
         {/* <NumberInput
           withAsterisk
           label="Age"
@@ -172,10 +315,11 @@ export default function AddReport() {
           </Button> */}
           <Button
             type="submit"
-            className="border-1 border-orange-800"
-            color="orange.7"
+            // className="border-1 border-orange-500"
+            className={`${
+              theme.colorScheme === "light" ? "text-gray-900" : ""
+            } border-1 border-orange-500`}
             radius="sm"
-            variant="filled"
             uppercase
           >
             Create new report! 🚀

@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { exampleRouter } from "~/server/api/routers/example";
+import { imageRouter } from "./routers/image";
 import { reportRouter } from "~/server/api/routers/report";
 import { userRouter } from "~/server/api/routers/user";
 
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   example: exampleRouter,
   reports: reportRouter,
   user: userRouter,
+  upload: imageRouter,
 });
 
 
