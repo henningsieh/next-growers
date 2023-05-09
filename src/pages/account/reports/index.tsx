@@ -1,11 +1,10 @@
 import { Container, Grid, Title } from "@mantine/core";
 
-import Add from "~/components/Report/add";
 import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
-import ReportCard from "~/components/Report/ReportCard";
+import ReportCard from "~/components/Report/Card";
 import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next";
@@ -51,10 +50,7 @@ export default function OwnReports() {
       <>
         <Head>
           <title>GrowAGram | {pageTitle}</title>
-          <meta
-            name="description"
-            content="Upload and create your Report to growagram.com"
-          />
+          <meta name="description" content="My grow report on growagram.com" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
@@ -91,8 +87,6 @@ export default function OwnReports() {
             )}
           </Grid>
         </div>
-
-        <Add />
       </>
     );
   }

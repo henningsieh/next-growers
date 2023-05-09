@@ -1,3 +1,6 @@
+import type { ImageUploadResponse } from "~/types";
+import axios from "axios";
+
 export function getUsername(): string {
   const usernames: string[] = [
     "Green Thumb",
@@ -145,3 +148,41 @@ export function getEmailaddress(): string {
   const randomIndex = Math.floor(Math.random() * emailAddresses.length);
   return emailAddresses[randomIndex] as string;
 }
+export const handleDrop = async (
+  files: File[],
+  setNewReport: React.Dispatch<
+    React.SetStateAction<{
+      title: string;
+      description: string;
+      cloudUrl: string;
+    }>
+  >
+): Promise<void> => {
+  const formData = new FormData();
+  console.log("src\\helpers\\handleDrop:", files);
+  if (files && files[0]) {
+    formData.append("image", files[0]); // Assuming only one file is uploaded
+    // files.map((file) => formData.append("image", file));
+
+    try {
+      const {
+        data,
+      }: {
+        data: ImageUploadResponse;
+      } = await axios.post("/api/upload", formData);
+
+      if (data.success) {
+        console.log("File uploaded successfully");
+        setNewReport((prevState) => ({
+          ...prevState,
+          cloudUrl: data.cloudUrl,
+        }));
+      } else {
+        throw new Error("File uploaded NOT successfully");
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error("Error uploading file");
+    }
+  }
+};

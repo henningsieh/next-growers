@@ -5,9 +5,9 @@ import { z } from "zod";
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
-type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
-
 export type Report = getAllReportsOutput[number];
+
+type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
 export type OwnReport = getOwnReportsOutput[number];
 
 export const reportInput = z.object({
@@ -32,4 +32,5 @@ export const imageUploadInput = z.object({
 
 export interface ImageUploadResponse {
   success: boolean;
+  cloudUrl: string;
 }

@@ -1,10 +1,10 @@
 import { Container, Grid, Title } from "@mantine/core";
 
-import Add from "~/components/Report/add";
+import Add from "~/components/Report/Add";
 import Head from "next/head";
 import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
-import ReportCard from "~/components/Report/ReportCard";
+import ReportCard from "~/components/Report/Card";
 import { api } from "~/utils/api";
 
 export default function AllReports() {
@@ -47,9 +47,8 @@ export default function AllReports() {
         <title>GrowAGram | {pageTitle}</title>
         <meta
           name="description"
-          content="Upload and create your Report to growagram.com"
+          content="GrowAGram is a community for sharing and discovering tips, techniques, and insights on growing plants. Join our community and upload your own reports to share your successes and learn from others."
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="flex w-full flex-col space-y-4">

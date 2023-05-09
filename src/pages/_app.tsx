@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 
 import { ColorSchemeProvider, Container, MantineProvider } from "@mantine/core";
 
-import AppLayout from "~/components/Layout/AppLayout";
+import AppLayout from "~/layout/AppLayout";
 import type { AppType } from "next/app";
 import type { ColorScheme } from "@mantine/core";
 import type { Session } from "next-auth";
@@ -56,7 +56,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 },
               },
             },
-            /* 
+
             Button: {
               // Subscribe to theme and component params
               styles: (theme) => ({
@@ -72,7 +72,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                   lineHeight: theme.lineHeight,
                 },
               }),
-            }, */
+            },
           },
           globalStyles: (theme) => ({
             body: {

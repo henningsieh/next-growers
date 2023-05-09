@@ -86,9 +86,8 @@ export default function EditReport() {
 
           <meta
             name="description"
-            content="Upload and create your Report to growagram.com"
+            content="Edit your profile details on growagram.com"
           />
-          <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <AppNotification

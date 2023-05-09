@@ -39,10 +39,10 @@ import {
 } from "@tabler/icons-react";
 
 import { useDisclosure } from "@mantine/hooks";
-import LoginPanel from "../Login/LoginPanel";
+import LoginPanel from "../components/Login/LoginPanel";
 import Image from "next/image";
 import Link from "next/link";
-import LightDarkButton from "../Atom/LightDarkButton";
+import LightDarkButton from "../components/Atom/LightDarkButton";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({

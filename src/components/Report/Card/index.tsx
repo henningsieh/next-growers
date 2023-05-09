@@ -21,7 +21,7 @@ import {
 import { IconTimelineEventPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import type { Report } from "~/types";
-import UserAvatar from "../Atom/UserAvatar";
+import UserAvatar from "../../Atom/UserAvatar";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 
@@ -172,7 +172,7 @@ export default function ReportCard({
         </Text> */}
         <Text mt="sm" className={classes.label} c="dimmed">
           <IconTimelineEventPlus />
-          {report.createdAt.toLocaleDateString()}
+          {report.createdAt}
         </Text>
       </Card.Section>
 

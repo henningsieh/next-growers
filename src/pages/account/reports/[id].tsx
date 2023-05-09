@@ -43,12 +43,11 @@ const EditReport: NextPage = () => {
     return (
       <>
         <Head>
-          <title>GrowAGram | {pageTitle}</title>
+          <title>{`GrowAGram | ${pageTitle}`}</title>
           <meta
             name="description"
-            content="Upload and create your Report to growagram.com"
+            content="Edit your grow report details on growagram.com"
           />
-          <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <div className="m-auto flex min-h-max flex-col space-y-4 ">

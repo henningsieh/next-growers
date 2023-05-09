@@ -2,6 +2,7 @@ import {
   Button,
   Container,
   Group,
+  Image,
   Space,
   Text,
   TextInput,
@@ -15,10 +16,10 @@ import { IconCloudUpload, IconDownload, IconX } from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import type { ImageUploadResponse } from "~/types";
+import { ImagePreview } from "~/components/Atom/ImagePreview";
 import type { OwnReport } from "~/types";
 import { api } from "~/utils/api";
-import axios from "axios";
+import { handleDrop } from "~/helpers";
 import { reportInput } from "~/types";
 import toast from "react-hot-toast";
 import { useRef } from "react";
@@ -28,6 +29,7 @@ import { z } from "zod";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
+    marginTop: "-1rem",
     position: "relative",
     marginBottom: rem(30),
   },
@@ -51,6 +53,7 @@ const useStyles = createStyles((theme) => ({
     bottom: rem(-20),
   },
 }));
+
 const schema = z.object({
   titel: z
     .string()
@@ -64,8 +67,12 @@ const schema = z.object({
 
 export default function AddReport() {
   const { classes, theme } = useStyles();
-  const openRef = useRef<() => void>(null);
-  const [newReport, setNewReport] = useState({ title: "", description: "" });
+  const openReference = useRef<() => void>(null);
+  const [newReport, setNewReport] = useState({
+    title: "",
+    description: "",
+    cloudUrl: "",
+  });
   const { data: session } = useSession();
   const trpc = api.useContext();
 
@@ -97,8 +104,8 @@ export default function AddReport() {
           authorId: "",
           authorImage: "",
           authorName: "",
-          updatedAt: new Date(),
-          createdAt: new Date(),
+          updatedAt: "",
+          createdAt: "",
         };
 
         // Return optimistically updated reports
@@ -107,7 +114,7 @@ export default function AddReport() {
       });
 
       // Clear input
-      setNewReport({ title: "", description: "" });
+      setNewReport({ title: "", description: "", cloudUrl: "" });
 
       // Return a context object with the snapshotted value
       return { previousReports };
@@ -117,7 +124,7 @@ export default function AddReport() {
     onError: (err, newReport, context) => {
       toast.error("An error occured when creating reports");
       // Clear input
-      setNewReport(newReport);
+      setNewReport({ ...newReport, cloudUrl: "" });
       if (!context) return;
       trpc.reports.getOwnReports.setData(
         undefined,
@@ -131,201 +138,198 @@ export default function AddReport() {
     },
   });
 
-  const handleDrop = async (files: File[]): Promise<void> => {
-    const formData = new FormData();
-    console.log(files);
-    if (files && files[0]) {
-      // files.map((file) => formData.append("image", file));
-      formData.append("image", files[0]); // Assuming only one file is uploaded
-      try {
-        const {
-          data,
-        }: {
-          data: ImageUploadResponse;
-        } = await axios.post("/api/image", formData);
-
-        /* const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        }); */
-        if (data.success) {
-          console.log("File uploaded successfully");
-        } else {
-          throw new Error("File uploaded NOT successfully");
-        }
-      } catch (error) {
-        console.log(error);
-        throw new Error("Error uploading file");
-      }
-    }
-  };
-
   const handleDropWrapper = (files: File[]): void => {
-    handleDrop(files).catch((error) => {
+    handleDrop(files, setNewReport).catch((error) => {
       console.log(error);
     });
   };
 
   return (
-    <Container
-      size="sm"
-      px={0}
-      className="flex w-full flex-col space-y-4"
-      mx="auto"
-    >
-      <Space h={42} />
-
-      <Title order={2}>Create a Report</Title>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const result = reportInput.safeParse(newReport);
-          if (!result.success) {
-            toast.error(result.error.format()._errors.toString());
-            const errorString = result.error.format()._errors.toString();
-            return;
-          }
-          mutate(newReport);
-        }}
+    <>
+      <Container
+        size="sm"
+        px={0}
+        className="flex w-full flex-col space-y-4"
+        mx="auto"
       >
-        <p>{}</p>
-        <TextInput
-          withAsterisk
-          label="Titel"
-          placeholder="High Life Chronicles: A Thrilling Cannabis Grow Report"
-          {...form.getInputProps("titel")}
-          onChange={(e) => {
-            setNewReport((prevState) => ({
-              ...prevState,
-              title: e.target.value,
-            }));
-          }}
-          value={newReport.title}
+        <Space h="xs" />
+        <Title order={2}>Preview:</Title>
+
+        <ImagePreview
+          image={newReport.cloudUrl}
+          title={newReport.title}
+          link=""
+          author={session.user.name as string}
+          comments={0}
+          views={83}
         />
-        <Textarea
-          withAsterisk
-          label="Description"
-          placeholder="Welcome to the high life with our epic cannabis grow report! Follow along as we document the journey of cultivating the finest strains of cannabis, from seed to harvest. Our expert growers will share their tips and tricks for producing big, beautiful buds that will blow your mind. Get ready to learn about the best nutrients, lighting, and growing techniques for cultivating potent and flavorful cannabis. Whether you're a seasoned cultivator or just starting out, our cannabis grow report has something for everyone. So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
-          mt="sm"
-          autosize
-          minRows={8}
-          {...form.getInputProps("description")}
-          onChange={(e) => {
-            setNewReport((prevState) => ({
-              ...prevState,
-              description: e.target.value,
-            }));
+
+        <form
+          className="space-y-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const result = reportInput.safeParse(newReport);
+            if (!result.success) {
+              toast.error(result.error.format()._errors.toString());
+              const errorString = result.error.format()._errors.toString();
+              return;
+            }
+            mutate(newReport);
           }}
-          value={newReport.description}
-        />
-        <Space h="sm" />
-        <label className="mantine-InputWrapper-label mantine-Textarea-label mantine-1mo4y8r">
-          File Upload
-          <span
-            className="mantine-ifziax mantine-InputWrapper-required mantine-Textarea-required"
-            aria-hidden="true"
-          >
-            {/* * */}
-          </span>
-        </label>
-        <div className={classes.wrapper}>
-          <Dropzone
-            openRef={openRef}
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onDrop={handleDropWrapper}
-            className={classes.dropzone}
-            radius="md"
-            accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-            maxSize={30 * 1024 ** 2}
-          >
-            <div style={{ pointerEvents: "none" }}>
-              <Group position="center">
-                <Dropzone.Accept>
-                  <IconDownload
-                    size={rem(50)}
-                    color={
-                      theme.colorScheme === "dark"
-                        ? theme.colors.blue[0]
-                        : theme.white
-                    }
-                    stroke={1.5}
-                  />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX
-                    size={rem(50)}
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconCloudUpload
-                    size={rem(50)}
-                    color={
-                      theme.colorScheme === "dark"
-                        ? theme.colors.dark[0]
-                        : theme.black
-                    }
-                    stroke={1.5}
-                  />
-                </Dropzone.Idle>
-              </Group>
+        >
+          <TextInput
+            withAsterisk
+            label="Titel:"
+            placeholder="High Life Chronicles: A Thrilling Cannabis Grow Report"
+            {...form.getInputProps("titel")}
+            onChange={(e) => {
+              setNewReport((prevState) => ({
+                ...prevState,
+                title: e.target.value,
+              }));
+            }}
+            value={newReport.title}
+          />
+          <Textarea
+            withAsterisk
+            label="Report description:"
+            placeholder="Welcome to the high life with our epic cannabis grow report! Follow along as we document the journey of cultivating the finest strains of cannabis, from seed to harvest. Our expert growers will share their tips and tricks for producing big, beautiful buds that will blow your mind. Get ready to learn about the best nutrients, lighting, and growing techniques for cultivating potent and flavorful cannabis. So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
+            mt="sm"
+            autosize
+            minRows={6}
+            {...form.getInputProps("description")}
+            onChange={(e) => {
+              setNewReport((prevState) => ({
+                ...prevState,
+                description: e.target.value,
+              }));
+            }}
+            value={newReport.description}
+          />
+          <Space h="sm" />
+          {/* {newReport.cloudUrl !== "" && ( */}
+          {/*           <Container px={0} className="bg-gr flex flex-col justify-center">
+            <Image
+              withPlaceholder
+              radius="md"
+              width={320}
+              height={180}
+              src={newReport.cloudUrl}
+              alt="awsdv"
+            />
+          </Container> */}
+          {/* )} */}
+          <label className="mantine-InputWrapper-label mantine-Textarea-label text-sm">
+            Upload the report header main image
+            <span
+              className="mantine-InputWrapper-required mantine-Textarea-required text-red-500"
+              aria-hidden="true"
+            >
+              {" "}
+              *
+            </span>
+          </label>
+          <div className={classes.wrapper}>
+            <Dropzone
+              openRef={openReference}
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              onDrop={handleDropWrapper}
+              onChange={(e) => {
+                alert(e);
+              }}
+              className={classes.dropzone}
+              radius="md"
+              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+              maxSize={10 * 1024 ** 2}
+            >
+              <div style={{ pointerEvents: "none" }}>
+                <Group position="center">
+                  <Dropzone.Accept>
+                    <IconDownload
+                      size={rem(50)}
+                      color={
+                        theme.colorScheme === "dark"
+                          ? theme.colors.blue[0]
+                          : theme.white
+                      }
+                      stroke={1.5}
+                    />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX
+                      size={rem(50)}
+                      color={theme.colors.red[6]}
+                      stroke={1.5}
+                    />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconCloudUpload
+                      size={rem(50)}
+                      color={
+                        theme.colorScheme === "dark"
+                          ? theme.colors.dark[0]
+                          : theme.black
+                      }
+                      stroke={1.5}
+                    />
+                  </Dropzone.Idle>
+                </Group>
 
-              <Text ta="center" fw={700} fz="lg" mt="xl">
-                <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                <Dropzone.Reject>Pdf file less than 30mb</Dropzone.Reject>
-                <Dropzone.Idle>Upload Images</Dropzone.Idle>
-              </Text>
-              <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
-                <i>.pdf</i> files that are less than 30mb in size.
-              </Text>
-            </div>
-          </Dropzone>
+                <Text ta="center" fw={700} fz="lg" mt="xl">
+                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                  <Dropzone.Reject>Only Images, less than 10mb</Dropzone.Reject>
+                  <Dropzone.Idle>Upload Images</Dropzone.Idle>
+                </Text>
+                <Text ta="center" fz="sm" mt="xs" c="dimmed">
+                  Drag&apos;n&apos;drop your image here to upload. We can accept
+                  only <i>.pdf</i> files that are less than 30mb in size.
+                </Text>
+              </div>
+            </Dropzone>
 
-          <Button
-            className={`${
-              theme.colorScheme === "light" ? "text-gray-900" : ""
-            } border-1 border-orange-500`}
-            size="sm"
-            radius="xl"
-            onClick={() => openRef.current?.()}
-          >
-            Select files
-          </Button>
-        </div>
+            {/*             <Button
+              className={`${
+                theme.colorScheme === "light" ? "text-gray-900" : ""
+              } border-1 border-orange-500`}
+              size="sm"
+              radius="xl"
+              onClick={() => refNode.current?.()}
+            >
+              Select files
+            </Button> */}
+          </div>
 
-        {/* <NumberInput
-          withAsterisk
-          label="Age"
-          placeholder="Your age"
-          mt="sm"
-          {...form.getInputProps('age')}
-        />  */}
+          {/* <NumberInput
+            withAsterisk
+            label="Age"
+            placeholder="Your age"
+            mt="sm"
+            {...form.getInputProps('age')}
+          />  */}
 
-        <Group position="right" mt="xl">
-          {/* <Button type="submit" fullWidth className=" 
-            font-medium rounded-lg sm:w-auto px-5 py-2 
-            bg-gradient-to-r from-pink-600 via-red-600 to-orange-500">
-          Create new report! 🚀</Button> */}
+          <Group position="right" mt="xl">
+            {/* <Button type="submit" fullWidth className=" 
+              font-medium rounded-lg sm:w-auto px-5 py-2 
+              bg-gradient-to-r from-pink-600 via-red-600 to-orange-500">
+            Create new report! 🚀</Button> */}
 
-          {/*           <Button type="submit" color="orange.6" variant="outline" >
-          Create new report! 🚀
-          </Button> */}
-          <Button
-            type="submit"
-            // className="border-1 border-orange-500"
-            className={`${
-              theme.colorScheme === "light" ? "text-gray-900" : ""
-            } border-1 border-orange-500`}
-            radius="sm"
-            uppercase
-          >
+            {/*           <Button type="submit" color="orange.6" variant="outline" >
             Create new report! 🚀
-          </Button>
-        </Group>
-      </form>
-    </Container>
+            </Button> */}
+            <Button
+              type="submit"
+              // className="border-1 border-orange-500"
+              className={`${
+                theme.colorScheme === "light" ? "text-gray-900" : ""
+              } border-1 border-orange-500`}
+              radius="sm"
+              uppercase
+            >
+              Create new report! 🚀
+            </Button>
+          </Group>
+        </form>
+      </Container>
+    </>
   );
 }

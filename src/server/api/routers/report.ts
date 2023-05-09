@@ -5,17 +5,24 @@ import { z, } from "zod";
 
 export const reportRouter = createTRPCRouter({
   
-/**
- * Get all Reports with author information
- */
-getAllReports: publicProcedure.query(async ({ ctx }) => {
-  const reports = await ctx.prisma.report.findMany({
-    include: { author: { select: { id: true, name: true, image: true } } },
-  });
-
-  return reports.map(({ id, title, description, author, createdAt, updatedAt }) => ({ id, title, description, authorId: author?.id, authorName: author?.name, authorImage: author?.image, createdAt, updatedAt,
-  }));
-}),
+  /**
+   * Get all Reports with author information
+   */
+  getAllReports: publicProcedure.query(async ({ ctx }) => {
+    const reports = await ctx.prisma.report.findMany({
+      include: { author: { select: { id: true, name: true, image: true } } },
+    });
+    return reports.map(({ id, title, description, author, createdAt, updatedAt }) => ({
+      id,
+      title,
+      description,
+      authorId: author?.id,
+      authorName: author?.name,
+      authorImage: author?.image,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
+    }));
+  }),
 
   /**
    * Get Reports by  UserId
@@ -26,7 +33,15 @@ getAllReports: publicProcedure.query(async ({ ctx }) => {
       include: { author: { select: { id: true, name: true, image: true } } },
       where: { authorId: ctx.session.user.id },
     });
-    return reports.map(({ id, title, description, author, createdAt, updatedAt }) => ({ id, title, description, authorId: author?.id, authorName: author?.name, authorImage: author?.image, createdAt, updatedAt,
+    return reports.map(({ id, title, description, author, createdAt, updatedAt }) => ({
+      id,
+      title,
+      description,
+      authorId: author?.id,
+      authorName: author?.name,
+      authorImage: author?.image,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
     }));
   }),
 
@@ -53,7 +68,11 @@ getAllReports: publicProcedure.query(async ({ ctx }) => {
         id: input,
       },
     });
-    return report;
+    return {
+      ...report,
+      createdAt: report?.createdAt.toISOString(),
+      updatedAt: report?.updatedAt.toISOString(),
+    };
   }),
   
   deleteOwnReport: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
