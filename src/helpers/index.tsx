@@ -148,6 +148,7 @@ export function getEmailaddress(): string {
   const randomIndex = Math.floor(Math.random() * emailAddresses.length);
   return emailAddresses[randomIndex] as string;
 }
+
 export const handleDrop = async (
   files: File[],
   setNewReport: React.Dispatch<
@@ -161,18 +162,17 @@ export const handleDrop = async (
   const formData = new FormData();
   console.log("src\\helpers\\handleDrop:", files);
   if (files && files[0]) {
-    formData.append("image", files[0]); // Assuming only one file is uploaded
     // files.map((file) => formData.append("image", file));
-
+    formData.append("image", files[0]); // Assuming only one file is uploaded
     try {
-      const {
-        data,
-      }: {
-        data: ImageUploadResponse;
-      } = await axios.post("/api/upload", formData);
+      const { data }: { data: ImageUploadResponse } = await axios.post(
+        "/api/upload",
+        formData
+      );
 
       if (data.success) {
         console.log("File uploaded successfully");
+        // setting the new cloudUrl to the component state
         setNewReport((prevState) => ({
           ...prevState,
           cloudUrl: data.cloudUrl,
@@ -182,7 +182,7 @@ export const handleDrop = async (
       }
     } catch (error) {
       console.log(error);
-      throw new Error("Error uploading file");
+      throw new Error("Error uploading file"); // <-- THIS ERROR GETS THROWN ON VERCEL PRODUCTION
     }
   }
 };

@@ -139,7 +139,9 @@ export default function AddReport() {
   });
 
   const handleDropWrapper = (files: File[]): void => {
+    // handleDrop calls the /api/upload endpoint
     handleDrop(files, setNewReport).catch((error) => {
+      // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
       console.log(error);
     });
   };

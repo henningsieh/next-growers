@@ -1,6 +1,5 @@
 import type { NextApiHandler, NextApiRequest } from "next";
 
-import IncomingForm from "formidable/Formidable";
 import cloudinary from "~/utils/cloudinary";
 import formidable from "formidable";
 import fs from "fs/promises";
@@ -38,6 +37,7 @@ const handler: NextApiHandler = async (req, res) => {
   try {
     await fs.readdir(path.join(process.cwd() + "/public", "/images"));
   } catch (error) {
+    // Create local folder if not existing
     await fs.mkdir(path.join(process.cwd() + "/public", "/images"));
   }
 
@@ -45,10 +45,11 @@ const handler: NextApiHandler = async (req, res) => {
 
   if (!!data.files.image && !Array.isArray(data.files.image)) {
     // handle the case where image is NOT an array
-    console.log(data.files.image.filepath);
-    console.log(data.files.image.newFilename);
-    console.log(data.files.image.originalFilename);
-    console.log(data.files.image.mimetype);
+
+    // console.log(data.files.image.filepath);
+    // console.log(data.files.image.newFilename);
+    // console.log(data.files.image.originalFilename);
+    // console.log(data.files.image.mimetype);
 
     const image = data.files.image.filepath;
 
@@ -64,6 +65,7 @@ const handler: NextApiHandler = async (req, res) => {
     console.log(`✅ Successfully uploaded ${image}`);
     console.log(`URL: ${result.secure_url}`);
 
+    // return successfully the new image cloud url
     res.json({ success: "true", cloudUrl: result.secure_url });
   }
 };
