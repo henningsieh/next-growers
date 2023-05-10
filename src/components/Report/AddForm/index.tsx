@@ -162,10 +162,9 @@ export default function AddReport() {
 
         {newReport.cloudUrl ? (
           <ImagePreview
-            setNewReport={setNewReport}
             image={newReport.cloudUrl}
             title={newReport.title}
-            link="onClick="
+            link="#"
             author={session.user.name as string}
             comments={0}
             views={83}
@@ -173,7 +172,7 @@ export default function AddReport() {
         ) : (
           <div className={classes.wrapper}>
             <Dropzone
-              multiple={false}
+              multiple={false} // only one header image!
               openRef={openReference}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
               onDrop={handleDropWrapper}

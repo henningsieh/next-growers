@@ -9,7 +9,6 @@ import {
   getStylesRef,
   rem,
 } from "@mantine/core";
-import { Dispatch, SetStateAction } from "react";
 import { IconEye, IconMessageCircle } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
