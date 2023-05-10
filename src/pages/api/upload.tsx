@@ -41,16 +41,10 @@ const handler: NextApiHandler = async (req, res) => {
   if (!!data.files.image && !Array.isArray(data.files.image)) {
     // handle the case where image is NOT an array
 
-    // console.log(data.files.image.filepath);
-    // console.log(data.files.image.newFilename);
-    console.log(data.files.image.originalFilename);
-    // console.log(data.files.image.mimetype);
-
     /**
      * building publicId which will lead to a URL as follows:
      * https://res.cloudinary.com/CLOUDNAME/image/upload/versioning_id/ORIGINALFILENAME_DATE(NOW).jpg
      */
-
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1;

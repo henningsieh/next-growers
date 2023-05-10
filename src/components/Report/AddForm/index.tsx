@@ -31,12 +31,12 @@ const useStyles = createStyles((theme) => ({
   wrapper: {
     marginTop: "-1rem",
     position: "relative",
-    marginBottom: rem(30),
+    // marginBottom: rem(30),
   },
 
   dropzone: {
     borderWidth: rem(1),
-    paddingBottom: rem(50),
+    padding: rem(5),
   },
 
   icon: {
@@ -68,6 +68,9 @@ const schema = z.object({
 export default function AddReport() {
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
+
+  const [isUploading, setIsUploading] = useState();
+
   const [newReport, setNewReport] = useState({
     title: "",
     description: "",
@@ -157,14 +160,92 @@ export default function AddReport() {
         <Space h="xs" />
         <Title order={2}>Preview:</Title>
 
-        <ImagePreview
-          image={newReport.cloudUrl}
-          title={newReport.title}
-          link=""
-          author={session.user.name as string}
-          comments={0}
-          views={83}
-        />
+        {newReport.cloudUrl ? (
+          <ImagePreview
+            setNewReport={setNewReport}
+            image={newReport.cloudUrl}
+            title={newReport.title}
+            link="onClick="
+            author={session.user.name as string}
+            comments={0}
+            views={83}
+          />
+        ) : (
+          <div className={classes.wrapper}>
+            <Dropzone
+              multiple={false}
+              openRef={openReference}
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              onDrop={handleDropWrapper}
+              onChange={(e) => {
+                alert(e.currentTarget);
+              }}
+              className={classes.dropzone}
+              radius="md"
+              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+              maxSize={10 * 1024 ** 2}
+            >
+              <div style={{ pointerEvents: "none" }}>
+                <Group position="center">
+                  <Dropzone.Accept>
+                    <IconDownload
+                      size={rem(50)}
+                      color={
+                        theme.colorScheme === "dark"
+                          ? theme.colors.blue[0]
+                          : theme.white
+                      }
+                      stroke={1.5}
+                    />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX
+                      size={rem(50)}
+                      color={theme.colors.red[6]}
+                      stroke={1.5}
+                    />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconCloudUpload
+                      size={rem(50)}
+                      color={
+                        theme.colorScheme === "dark"
+                          ? theme.colors.dark[0]
+                          : theme.black
+                      }
+                      stroke={1.5}
+                    />
+                  </Dropzone.Idle>
+                </Group>
+
+                <Text ta="center" fw={700} fz="lg" mt="xl">
+                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                  <Dropzone.Reject>
+                    Only one Images, less than 10mb
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
+                </Text>
+                <Text ta="center" fz="sm" my="xs" c="dimmed">
+                  Drag&apos;n&apos;drop your image here to upload!
+                  <br />
+                  We can accept only one <i>.jpg/.png/.gif</i> file that is less
+                  than 10mb in size.
+                </Text>
+              </div>
+            </Dropzone>
+
+            {/*             <Button
+              className={`${
+                theme.colorScheme === "light" ? "text-gray-900" : ""
+              } border-1 border-orange-500`}
+              size="sm"
+              radius="xl"
+              onClick={() => refNode.current?.()}
+            >
+              Select files
+            </Button> */}
+          </div>
+        )}
 
         <form
           className="space-y-2"
@@ -221,85 +302,6 @@ export default function AddReport() {
             />
           </Container> */}
           {/* )} */}
-          <label className="mantine-InputWrapper-label mantine-Textarea-label text-sm">
-            Upload the report header main image
-            <span
-              className="mantine-InputWrapper-required mantine-Textarea-required text-red-500"
-              aria-hidden="true"
-            >
-              {" "}
-              *
-            </span>
-          </label>
-          <div className={classes.wrapper}>
-            <Dropzone
-              openRef={openReference}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onDrop={handleDropWrapper}
-              onChange={(e) => {
-                alert(e);
-              }}
-              className={classes.dropzone}
-              radius="md"
-              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-              maxSize={10 * 1024 ** 2}
-            >
-              <div style={{ pointerEvents: "none" }}>
-                <Group position="center">
-                  <Dropzone.Accept>
-                    <IconDownload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.blue[0]
-                          : theme.white
-                      }
-                      stroke={1.5}
-                    />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX
-                      size={rem(50)}
-                      color={theme.colors.red[6]}
-                      stroke={1.5}
-                    />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconCloudUpload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.dark[0]
-                          : theme.black
-                      }
-                      stroke={1.5}
-                    />
-                  </Dropzone.Idle>
-                </Group>
-
-                <Text ta="center" fw={700} fz="lg" mt="xl">
-                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                  <Dropzone.Reject>Only Images, less than 10mb</Dropzone.Reject>
-                  <Dropzone.Idle>Upload Images</Dropzone.Idle>
-                </Text>
-                <Text ta="center" fz="sm" mt="xs" c="dimmed">
-                  Drag&apos;n&apos;drop your image here to upload. We can accept
-                  only <i>.pdf</i> files that are less than 30mb in size.
-                </Text>
-              </div>
-            </Dropzone>
-
-            {/*             <Button
-              className={`${
-                theme.colorScheme === "light" ? "text-gray-900" : ""
-              } border-1 border-orange-500`}
-              size="sm"
-              radius="xl"
-              onClick={() => refNode.current?.()}
-            >
-              Select files
-            </Button> */}
-          </div>
 
           {/* <NumberInput
             withAsterisk

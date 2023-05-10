@@ -9,6 +9,7 @@ import {
   getStylesRef,
   rem,
 } from "@mantine/core";
+import { Dispatch, SetStateAction } from "react";
 import { IconEye, IconMessageCircle } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
@@ -49,6 +50,22 @@ const useStyles = createStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "flex-end",
     zIndex: 1,
+  },
+  deleteButtonWrapper: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    padding: "0.5rem",
+    zIndex: 100,
+  },
+
+  deleteButton: {
+    backgroundColor: "red",
+    color: "white",
+    border: "none",
+    borderRadius: "0.5rem",
+    padding: "0.5rem 1rem",
+    cursor: "pointer",
   },
 
   title: {
@@ -92,8 +109,8 @@ export function ImagePreview({
       className={classes.card}
       radius="md"
       component="a"
-      href={link}
-      target="_blank"
+      // href={link}
+      // target="_blank"
     >
       <div
         className={classes.image}
@@ -135,6 +152,17 @@ export function ImagePreview({
               </Center>
             </Group>
           </Group>
+        </div>
+        {/* Delete Button */}
+        <div className={classes.deleteButtonWrapper}>
+          {/*           <button
+            onClick={() => {
+              alert("delete");
+            }}
+            className={classes.deleteButton}
+          >
+            Delete Image
+          </button> */}
         </div>
       </div>
     </Card>
