@@ -34,13 +34,6 @@ const readFile = (
 };
 
 const handler: NextApiHandler = async (req, res) => {
-  try {
-    await fs.readdir(path.join(process.cwd() + "/public", "/images"));
-  } catch (error) {
-    // Create local folder if not existing
-    await fs.mkdir(path.join(process.cwd() + "/public", "/images"));
-  }
-
   const data = await readFile(req, false);
 
   console.log("readFile", data);
