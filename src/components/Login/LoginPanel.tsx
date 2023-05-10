@@ -6,6 +6,7 @@ import {
   IconPhoto,
   IconSearch,
   IconSettings,
+  IconSquarePlus,
   IconUser,
 } from "@tabler/icons-react";
 import { signOut, useSession } from "next-auth/react";
@@ -71,6 +72,11 @@ export default function LoginModal() {
               </Menu.Item> */}
               <Link href="/account/reports">
                 <Menu.Item icon={<IconPhoto size={14} />}>My Reports</Menu.Item>
+              </Link>
+              <Link href="/account/reports/create">
+                <Menu.Item icon={<IconSquarePlus size={14} />}>
+                  Add Report
+                </Menu.Item>
               </Link>
               <Menu.Item
                 icon={<IconSearch size={14} />}

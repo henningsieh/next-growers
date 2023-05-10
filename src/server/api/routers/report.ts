@@ -107,6 +107,7 @@ export const reportRouter = createTRPCRouter({
       data: {
         title: input.title,
         description: input.description,
+        imageUrl: input.cloudUrl,
         author: {
           connect: {
             id: ctx.session.user.id,
