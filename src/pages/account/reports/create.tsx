@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
 
-import AddReport from "~/components/Report/Add";
+import AddReport from "~/components/Report/AddReport";
 import Head from "next/head";
 import { IconBackspace } from "@tabler/icons-react";
 import Link from "next/link";
