@@ -1,16 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
 
+import type { Report } from "~/types";
 import { api } from "~/utils/api";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { prisma } from "~/server/db";
+import { stringifyReportData } from "~/helpers";
 import superjson from "superjson";
 
 /**
@@ -34,19 +34,20 @@ export async function getStaticProps(
   });
 
   // Prefetching the report from prisma
-  const result = await prisma.report.findUnique({ where: { id } });
+  const result = await prisma.report.findUnique({
+    include: {
+      author: { select: { id: true, name: true, image: true } },
+      image: { select: { id: true, publicId: true, cloudUrl: true } },
+    },
+    where: {
+      id: id,
+    },
+  });
   console.debug(
     "getStaticProps 🤖",
     "...prefetching the report's dataset from db"
   );
-  //FIXME: make me reusable
-  const createdAt = result?.createdAt.toISOString();
-  const updatedAt = result?.updatedAt.toISOString();
-  const report = {
-    ...result,
-    createdAt,
-    updatedAt,
-  };
+  const report = stringifyReportData(result);
 
   // Prefetching the `reports.getReportById` query here.
   await helpers.reports.getReportById.prefetch(id);
@@ -66,6 +67,7 @@ export async function getStaticProps(
   };
 }
 /**
+ * getStaticPaths
  * @param reports: { id: string }[]
  * @returns { paths[] }
  */
@@ -104,7 +106,8 @@ export default function ReportDetails(
 
   return (
     <>
-      <h1>Title: {reportFromDB.title}</h1>
+      <h1>from DB</h1>
+      <h2>Title: {reportFromDB.title}</h2>
       <p>Created {reportFromDB.createdAt}</p>
       <p>{reportFromDB.description}</p>
       <h2>Raw data:</h2>
@@ -112,7 +115,8 @@ export default function ReportDetails(
 
       <hr />
 
-      <h1>Title: {report?.title}</h1>
+      <h1>from tRPC</h1>
+      <h2>Title: {report?.title}</h2>
       <p>Created {report?.createdAt}</p>
       <p>{report?.description}</p>
       <h2>Raw data:</h2>

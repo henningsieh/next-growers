@@ -1,166 +1,179 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider          = "postgres"
-    url               = env("DATABASE_URL")
-    shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  provider          = "postgres"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 enum Role {
-    USER
-    ADMIN
+  USER
+  ADMIN
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    password      String?
-    role          Role      @default(USER)
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[] // One User has many Accounts
-    sessions      Session[] // One User has many Sessions
-    reports       Report[] // One User has many Reports
-    posts         Post[] // One User has many Posts
-    comments      Comment[] // One User has many Comments
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  name          String?
+  password      String?
+  image         String?
+  role          Role      @default(USER)
+  email         String?   @unique
+  emailVerified DateTime?
+  accounts      Account[] // One User has many Accounts
+  sessions      Session[] // One User has many Sessions
+  reports       Report[] // One User has many Reports
+  posts         Post[] // One User has many Posts
+  comments      Comment[] // One User has many Comments
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  imageId       String?
+}
+
+model Image {
+  id       String  @id @default(cuid())
+  publicId String
+  cloudUrl String
+  report   Report? @relation(fields: [reportId], references: [id])
+  reportId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Report {
-    id          String    @id @default(cuid())
-    title       String
-    description String
-    imageUrl    String    @default("https://images.unsplash.com/photo-1630020594265-c7b6b410895f")
-    posts       Post[] // One Report has many Posts
-    contests    Contest[] @relation("ReportToContest") //many2many
-    products    Product[] // One Report has many Products
-    author      User      @relation(fields: [authorId], references: [id])
-    authorId    String // One User has many Reports
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  title       String
+  image       Image?
+  description String
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String // One User has many Reports
+  posts       Post[] // One Report has many Posts
+  contests    Contest[] @relation("ReportToContest") //many2many
+  products    Product[] // One Report has many Products
 
-    @@index([authorId], name: "authorId_idx")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId], name: "authorId_idx")
 }
 
 model Product {
-    id          String @id @default(cuid())
-    tape        TypeOf
-    name        String
-    description String
+  id          String @id @default(cuid())
+  type        TypeOf
+  name        String
+  description String
 
-    reportId  String // One Report has many Products
-    report    Report  @relation(fields: [reportId], references: [id])
-    companyId String // One Company has many Products
-    company   Company @relation(fields: [companyId], references: [id])
+  reportId  String // One Report has many Products
+  report    Report  @relation(fields: [reportId], references: [id])
+  companyId String // One Company has many Products
+  company   Company @relation(fields: [companyId], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Post {
-    id       String    @id @default(cuid())
-    title    String
-    content  String
-    comments Comment[] // One Post has many Comments
+  id       String    @id @default(cuid())
+  title    String
+  content  String
+  comments Comment[] // One Post has many Comments
 
-    reportId String // One Report has many Posts
-    report   Report @relation(fields: [reportId], references: [id])
+  reportId String // One Report has many Posts
+  report   Report @relation(fields: [reportId], references: [id])
 
-    authorId String
-    author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Comment {
-    id      String @id @default(cuid())
-    content String
+  id      String @id @default(cuid())
+  content String
 
-    authorId String // One User has many Comments
-    author   User    @relation(fields: [authorId], references: [id])
-    postId   String? // One Post has many Comments
-    post     Post?   @relation(fields: [postId], references: [id])
+  authorId String // One User has many Comments
+  author   User    @relation(fields: [authorId], references: [id])
+  postId   String? // One Post has many Comments
+  post     Post?   @relation(fields: [postId], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Company {
-    id       String    @id @default(cuid())
-    name     String
-    contests Contest[] // One Company has many Contests 
-    products Product[] // One Company has many Products
+  id       String    @id @default(cuid())
+  name     String
+  contests Contest[] // One Company has many Contests 
+  products Product[] // One Company has many Products
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Contest {
-    id      String   @id @default(cuid())
-    title   String
-    content String
-    reports Report[] @relation("ReportToContest") //many2many
+  id      String   @id @default(cuid())
+  title   String
+  content String
+  reports Report[] @relation("ReportToContest") //many2many
 
-    companyId String // One Company has many Contests 
-    company   Company @relation(fields: [companyId], references: [id])
+  companyId String // One Company has many Contests 
+  company   Company @relation(fields: [companyId], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum TypeOf {
-    SEED
-    NUTRIENT
-    LIGHT
-    TENT
+  SEED
+  NUTRIENT
+  LIGHT
+  TENT
 }
 
 model Account {
-    id                String  @id @default(cuid())
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
+  id                String  @id @default(cuid())
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
-    userId String // One User has many Accounts
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String // One User has many Accounts
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@unique([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    expires      DateTime
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  expires      DateTime
 
-    userId String // One User has many Sessions
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String // One User has many Sessions
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+  identifier String
+  token      String   @unique
+  expires    DateTime
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@unique([identifier, token])
+  @@unique([identifier, token])
 }

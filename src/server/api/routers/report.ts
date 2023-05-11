@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { reportEditInput, reportInput } from "~/types"
 
+import { stringifyReportData } from "~/helpers";
 import { z, } from "zod";
 
 export const reportRouter = createTRPCRouter({
@@ -10,10 +13,15 @@ export const reportRouter = createTRPCRouter({
    */
   getAllReports: publicProcedure.query(async ({ ctx }) => {
     const reports = await ctx.prisma.report.findMany({
-      include: { author: { select: { id: true, name: true, image: true } } },
+      include: { 
+        author: { select: { id: true, name: true, image: true } }, 
+        image: { select: { id: true , publicId: true, cloudUrl: true } }, 
+      },
     });
-    return reports.map(({ id, title, description, author, createdAt, updatedAt }) => ({
+    return reports.map(({ id, image, title, description, author, createdAt, updatedAt }) => ({
       id,
+      imagePublicId: image?.publicId,
+      imageCloudUrl: image?.cloudUrl,
       title,
       description,
       authorId: author?.id,
@@ -30,11 +38,16 @@ export const reportRouter = createTRPCRouter({
    */
   getOwnReports: protectedProcedure.query(async ({ ctx }) => {
     const reports = await ctx.prisma.report.findMany({
-      include: { author: { select: { id: true, name: true, image: true } } },
+      include: { 
+        author: { select: { id: true, name: true, image: true } }, 
+        image: { select: { id: true , publicId: true, cloudUrl: true } }, 
+      },
       where: { authorId: ctx.session.user.id },
     });
-    return reports.map(({ id, title, description, author, createdAt, updatedAt }) => ({
+    return reports.map(({ id, image, title, description, author, createdAt, updatedAt }) => ({
       id,
+      imagePublicId: image?.publicId,
+      imageCloudUrl: image?.cloudUrl,
       title,
       description,
       authorId: author?.id,
@@ -43,19 +56,8 @@ export const reportRouter = createTRPCRouter({
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),
     }));
-  }),
 
-  /**
-   * Get Reports by foreign AuthourId
-   * @Input: userId: String 
-   */
-  getReportsByAuthorId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const reports = await ctx.prisma.report.findMany({
-      where: {
-        id: input,
-      },
-    });
-    return reports.map(( { id, title, description, authorId, createdAt, updatedAt }) => ({ id, title, description, authorId, createdAt, updatedAt }));
+    
   }),
 
   /**
@@ -63,18 +65,46 @@ export const reportRouter = createTRPCRouter({
    * @Input: userId: String 
    */
   getReportById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
-    const report = await ctx.prisma.report.findFirst({
+    const report = await ctx.prisma.report.findUnique({
+      include: { 
+        author: { select: { id: true, name: true, image: true } }, 
+        image: { select: { id: true , publicId: true, cloudUrl: true } }, 
+      },
       where: {
         id: input,
       },
     });
     return {
-      ...report,
+      id: report?.id,
+      imagePublicId: report?.image?.publicId,
+      imageCloudUrl: report?.image?.cloudUrl,
+      title: report?.title,
+      description: report?.description,
+      authorId: report?.author?.id,
+      authorName: report?.author?.name,
+      authorImage: report?.author?.image,
       createdAt: report?.createdAt.toISOString(),
       updatedAt: report?.updatedAt.toISOString(),
     };
   }),
   
+  /**
+   * Get Reports by foreign AuthourId
+   * @Input: userId: String 
+   */
+  getReportsByAuthorId: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const reports = await ctx.prisma.report.findMany({
+      include: { 
+        author: { select: { id: true, name: true, image: true } }, 
+        image: { select: { id: true , publicId: true, cloudUrl: true } }, 
+      },
+      where: {
+        id: input,
+      },
+    });
+    return reports.map(( { id, title, description, authorId, createdAt, updatedAt }) => ({ id, title, description, authorId, createdAt, updatedAt }));
+  }),
+
   deleteOwnReport: protectedProcedure.input(z.string()).mutation(async ({ ctx, input }) => {
     // First, check if the report exists
     const existingReport = await ctx.prisma.report.findUnique({
@@ -107,10 +137,14 @@ export const reportRouter = createTRPCRouter({
       data: {
         title: input.title,
         description: input.description,
-        imageUrl: input.cloudUrl,
         author: {
           connect: {
             id: ctx.session.user.id,
+          },
+        },
+        image: {
+          connect: {
+            id: input.imageId,
           },
         },
       },
@@ -145,10 +179,9 @@ export const reportRouter = createTRPCRouter({
     });
     
     return report;
-  })
+  }),
 
 
 }
-
 
 )

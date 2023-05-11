@@ -11,9 +11,15 @@ type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
 export type OwnReport = getOwnReportsOutput[number];
 
 export const reportInput = z.object({
-  title: z.string().min(1).max(100),
-  description: z.string().min(1).max(1000),
-  cloudUrl: z.string().min(1).max(1000),
+  title: z
+    .string()
+    .min(8, { message: "Title should have at least 8 letters" })
+    .max(32, { message: "Title should have max 32 letters" }),
+  description: z.string()
+    .min(12, { message: "Description should have at least 12 letters" })
+    .max(64, { message: "Description should have max 64 letters" }),
+  imageId: z.string()
+    .min(1, { message: "Header image is missing" }),
 });
 
 export const reportEditInput = z.object({
@@ -33,5 +39,8 @@ export const imageUploadInput = z.object({
 
 export interface ImageUploadResponse {
   success: boolean;
+  imageId: string;
+  reportId: string;
+  imagePublicId: string;
   cloudUrl: string;
 }

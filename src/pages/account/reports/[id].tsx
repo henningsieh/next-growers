@@ -1,16 +1,7 @@
-import {
-  Button,
-  Container,
-  Group,
-  Space,
-  TextInput,
-  Textarea,
-  Title,
-} from "@mantine/core";
+import { Button, Space, TextInput, Textarea, Title } from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
 
 import Head from "next/head";
-import { IconBackspace } from "@tabler/icons-react";
 import Link from "next/link";
 import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";

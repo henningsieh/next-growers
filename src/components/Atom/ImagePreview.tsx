@@ -97,7 +97,6 @@ export function ImagePreview({
   author,
   views,
   comments,
-  link,
 }: ImageCardProps) {
   const { classes, theme } = useStyles();
 

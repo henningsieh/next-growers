@@ -1,31 +1,36 @@
 import {
+  ActionIcon,
+  Box,
   Button,
   Container,
   Group,
-  Image,
-  Space,
+  Input,
   Text,
   TextInput,
   Textarea,
-  Title,
   createStyles,
   rem,
 } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
-import { IconCloudUpload, IconDownload, IconX } from "@tabler/icons-react";
+import {
+  IconCloudUpload,
+  IconDownload,
+  IconPhotoCancel,
+  IconX,
+} from "@tabler/icons-react";
+import { useEffect, useRef } from "react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
-import type { OwnReport } from "~/types";
+import type { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
 import { reportInput } from "~/types";
 import toast from "react-hot-toast";
-import { useRef } from "react";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { z } from "zod";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -54,285 +59,229 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const schema = z.object({
-  titel: z
-    .string()
-    .min(12, { message: "Titel should have at least 12 letters" }),
-  description: z
-    .string()
-    .min(42, { message: "Description should have at least 42 letters" }),
-  // email: z.string().email({ message: 'Invalid email' }),
-  // age: z.number().min(18, { message: 'You must be at least 18 to create an account' }),
-});
+interface AddFormProps {
+  user: User;
+}
 
-export default function AddReport() {
+function Form({ user }: AddFormProps) {
+  const { data: session } = useSession();
+
+  const router = useRouter();
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
-  const [isUploading, setIsUploading] = useState();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isUploading, setIsUploading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [reportId, setReportId] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [reportTitle, setReportTitle] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [reportDescription, setReportDescription] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [imageId, setImageId] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [imagePublicId, setImagePublicId] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [cloudUrl, setCloudUrl] = useState("");
 
-  const [newReport, setNewReport] = useState({
-    title: "",
-    description: "",
-    cloudUrl: "",
-  });
-  const { data: session } = useSession();
-  const trpc = api.useContext();
+  const handleDropWrapper = (files: File[]): void => {
+    // handleDrop calls the /api/upload endpoint
+    handleDrop(files, setImageId, setImagePublicId, setCloudUrl).catch(
+      (error) => {
+        // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
+        console.log(error);
+      }
+    );
+  };
 
-  const form = useForm({
-    validateInputOnChange: true,
-    validate: zodResolver(schema),
-    initialValues: {
-      titel: "",
-      description: "",
-    },
-  });
-
-  if (!session) return <AccessDenied />;
-
-  const { mutate } = api.reports.create.useMutation({
-    onMutate: async (newReport) => {
-      // Cancel any outgoing refetches so they don't overwrite our optimistic update
-      await trpc.reports.getOwnReports.cancel();
-
-      // Snapshot the previous value
-      const previousReports = trpc.reports.getOwnReports.getData();
-
-      // Optimistically update to the new value
-      trpc.reports.getOwnReports.setData(undefined, (prev) => {
-        const optimisticReport: OwnReport = {
-          id: "TEMP_ID", // 'placeholder'
-          title: newReport.title,
-          description: newReport.description,
-          authorId: "",
-          authorImage: "",
-          authorName: "",
-          updatedAt: "",
-          createdAt: "",
-        };
-
-        // Return optimistically updated reports
-        if (!prev) return [optimisticReport];
-        return [...prev, optimisticReport];
-      });
-
-      // Clear input
-      setNewReport({ title: "", description: "", cloudUrl: "" });
-
-      // Return a context object with the snapshotted value
-      return { previousReports };
+  const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
+    onMutate: (newReportDB) => {
+      console.log("END api.reports.create.useMutation");
+      console.log("newReportDB", newReportDB);
     },
     // If the mutation fails,
     // use the context returned from onMutate to roll back
     onError: (err, newReport, context) => {
-      toast.error("An error occured when creating reports");
-      // Clear input
-      setNewReport({ ...newReport, cloudUrl: "" });
+      toast.error("An error occured when saving your report");
       if (!context) return;
-      trpc.reports.getOwnReports.setData(
-        undefined,
-        () => context.previousReports
-      );
+      console.log(context);
+    },
+    onSuccess: (newReportDB) => {
+      // Navigate to the new report page
+      void router.push(`/account/reports/${newReportDB.id}`);
     },
     // Always refetch after error or success:
-    onSettled: async () => {
+    onSettled: () => {
       console.log("END api.reports.create.useMutation");
-      await trpc.reports.getOwnReports.invalidate();
     },
   });
 
-  const handleDropWrapper = (files: File[]): void => {
-    // handleDrop calls the /api/upload endpoint
-    handleDrop(files, setNewReport).catch((error) => {
-      // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
-      console.log(error);
-    });
+  const handleErrors = (errors: typeof form.errors) => {
+    // console.log(errors);
+    if (errors.description) {
+      toast.error(errors.description as string);
+    }
+    if (errors.title) {
+      toast.error(errors.title as string);
+    }
+    if (errors.imageId) {
+      toast.error(errors.imageId as string);
+    }
   };
+
+  const form = useForm({
+    validate: zodResolver(reportInput),
+    initialValues: {
+      title: "",
+      description: "",
+      imageId: "",
+    },
+  });
+
+  // Update the "imageId" state when the value of the "imageId" field in the form changes
+  useEffect(() => {
+    form.setFieldValue("imageId", imageId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageId]);
+
+  if (!session) return <AccessDenied />;
 
   return (
     <>
+      {cloudUrl ? (
+        <>
+          <ImagePreview
+            image={cloudUrl}
+            title={reportTitle}
+            link="#"
+            author={user.name as string}
+            comments={42}
+            views={183}
+          />
+          <Box className="flex justify-end  pt-0">
+            <ActionIcon
+              onClick={() => {
+                setImageId("");
+                setCloudUrl("");
+              }}
+              color="red"
+              variant="outline"
+            >
+              <IconPhotoCancel size="lg" />
+            </ActionIcon>
+          </Box>
+        </>
+      ) : (
+        <div className={classes.wrapper}>
+          <Dropzone
+            multiple={false} // only one header image!
+            openRef={openReference}
+            onDrop={handleDropWrapper}
+            onChange={(e) => {
+              alert(e.currentTarget);
+            }}
+            className={classes.dropzone}
+            radius="md"
+            accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+            maxSize={10 * 1024 ** 2}
+          >
+            <div style={{ pointerEvents: "none" }}>
+              <Group position="center">
+                <Dropzone.Accept>
+                  <IconDownload
+                    size={rem(50)}
+                    color={
+                      theme.colorScheme === "dark"
+                        ? theme.colors.blue[0]
+                        : theme.white
+                    }
+                    stroke={1.5}
+                  />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX
+                    size={rem(50)}
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                  />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconCloudUpload
+                    size={rem(50)}
+                    color={
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[0]
+                        : theme.black
+                    }
+                    stroke={1.5}
+                  />
+                </Dropzone.Idle>
+              </Group>
+
+              <Text ta="center" fw={700} fz="lg" mt="xl">
+                <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                <Dropzone.Reject>
+                  Only one Images, less than 10mb
+                </Dropzone.Reject>
+                <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
+              </Text>
+              <Text ta="center" fz="sm" my="xs" c="dimmed">
+                Drag&apos;n&apos;drop your image here to upload!
+                <br />
+                We can accept only one <i>.jpg/.png/.gif</i> file that is less
+                than 10mb in size.
+              </Text>
+            </div>
+          </Dropzone>
+        </div>
+      )}
+
+      {/* // Report form */}
       <Container
         size="sm"
         px={0}
         className="flex w-full flex-col space-y-4"
         mx="auto"
       >
-        <Space h="xs" />
-        <Title order={2}>Preview:</Title>
-
-        {newReport.cloudUrl ? (
-          <ImagePreview
-            image={newReport.cloudUrl}
-            title={newReport.title}
-            link="#"
-            author={session.user.name as string}
-            comments={0}
-            views={83}
-          />
-        ) : (
-          <div className={classes.wrapper}>
-            <Dropzone
-              multiple={false} // only one header image!
-              openRef={openReference}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onDrop={handleDropWrapper}
-              onChange={(e) => {
-                alert(e.currentTarget);
-              }}
-              className={classes.dropzone}
-              radius="md"
-              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-              maxSize={10 * 1024 ** 2}
-            >
-              <div style={{ pointerEvents: "none" }}>
-                <Group position="center">
-                  <Dropzone.Accept>
-                    <IconDownload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.blue[0]
-                          : theme.white
-                      }
-                      stroke={1.5}
-                    />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX
-                      size={rem(50)}
-                      color={theme.colors.red[6]}
-                      stroke={1.5}
-                    />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconCloudUpload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.dark[0]
-                          : theme.black
-                      }
-                      stroke={1.5}
-                    />
-                  </Dropzone.Idle>
-                </Group>
-
-                <Text ta="center" fw={700} fz="lg" mt="xl">
-                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                  <Dropzone.Reject>
-                    Only one Images, less than 10mb
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
-                </Text>
-                <Text ta="center" fz="sm" my="xs" c="dimmed">
-                  Drag&apos;n&apos;drop your image here to upload!
-                  <br />
-                  We can accept only one <i>.jpg/.png/.gif</i> file that is less
-                  than 10mb in size.
-                </Text>
-              </div>
-            </Dropzone>
-
-            {/*             <Button
-              className={`${
-                theme.colorScheme === "light" ? "text-gray-900" : ""
-              } border-1 border-orange-500`}
-              size="sm"
-              radius="xl"
-              onClick={() => refNode.current?.()}
-            >
-              Select files
-            </Button> */}
-          </div>
-        )}
-
         <form
-          className="space-y-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const result = reportInput.safeParse(newReport);
-            if (!result.success) {
-              toast.error(result.error.format()._errors.toString());
-              const errorString = result.error.format()._errors.toString();
-              return;
-            }
-            mutate(newReport);
-          }}
+          onSubmit={form.onSubmit((values) => {
+            console.log(form.values);
+            // send imageId as formField so that the report can be related
+            form.setValues({ imageId: imageId });
+            tRPCcreateReport(values);
+          }, handleErrors)}
         >
+          <div>imageId: {imageId}</div>
+          <Input
+            type="text"
+            {...form.getInputProps("imageId")}
+            value={imageId}
+          />
           <TextInput
             withAsterisk
-            label="Titel:"
-            placeholder="High Life Chronicles: A Thrilling Cannabis Grow Report"
-            {...form.getInputProps("titel")}
-            onChange={(e) => {
-              setNewReport((prevState) => ({
-                ...prevState,
-                title: e.target.value,
-              }));
-            }}
-            value={newReport.title}
+            label="Report title: "
+            placeholder="John Doe"
+            mt="sm"
+            {...form.getInputProps("title")}
           />
           <Textarea
             withAsterisk
             label="Report description:"
-            placeholder="Welcome to the high life with our epic cannabis grow report! Follow along as we document the journey of cultivating the finest strains of cannabis, from seed to harvest. Our expert growers will share their tips and tricks for producing big, beautiful buds that will blow your mind. Get ready to learn about the best nutrients, lighting, and growing techniques for cultivating potent and flavorful cannabis. So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
+            placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
             mt="sm"
             autosize
             minRows={6}
             {...form.getInputProps("description")}
-            onChange={(e) => {
-              setNewReport((prevState) => ({
-                ...prevState,
-                description: e.target.value,
-              }));
-            }}
-            value={newReport.description}
           />
-          <Space h="sm" />
-          {/* {newReport.cloudUrl !== "" && ( */}
-          {/*           <Container px={0} className="bg-gr flex flex-col justify-center">
-            <Image
-              withPlaceholder
-              radius="md"
-              width={320}
-              height={180}
-              src={newReport.cloudUrl}
-              alt="awsdv"
-            />
-          </Container> */}
-          {/* )} */}
-
-          {/* <NumberInput
-            withAsterisk
-            label="Age"
-            placeholder="Your age"
-            mt="sm"
-            {...form.getInputProps('age')}
-          />  */}
 
           <Group position="right" mt="xl">
-            {/* <Button type="submit" fullWidth className=" 
-              font-medium rounded-lg sm:w-auto px-5 py-2 
-              bg-gradient-to-r from-pink-600 via-red-600 to-orange-500">
-            Create new report! 🚀</Button> */}
-
-            {/*           <Button type="submit" color="orange.6" variant="outline" >
-            Create new report! 🚀
-            </Button> */}
-            <Button
-              type="submit"
-              // className="border-1 border-orange-500"
-              className={`${
-                theme.colorScheme === "light" ? "text-gray-900" : ""
-              } border-1 border-orange-500`}
-              radius="sm"
-              uppercase
-            >
-              Create new report! 🚀
-            </Button>
+            <Button type="submit">Submit</Button>
           </Group>
         </form>
       </Container>
     </>
   );
 }
+
+export default Form;

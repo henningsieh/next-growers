@@ -1,24 +1,10 @@
-import {
-  Button,
-  Container,
-  Group,
-  Space,
-  TextInput,
-  Textarea,
-  Title,
-} from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
 
 import AddReport from "~/components/Report/AddForm";
 import Head from "next/head";
-import { IconBackspace } from "@tabler/icons-react";
-import Link from "next/link";
-import Loading from "~/components/Atom/Loading";
-import LoadingError from "~/components/Atom/LoadingError";
-import { api } from "~/utils/api";
+import { Title } from "@mantine/core";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
-import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 const CreateReport: NextPage = () => {
@@ -39,7 +25,7 @@ const CreateReport: NextPage = () => {
 
         <Title order={1}>{pageTitle}</Title>
 
-        <AddReport />
+        <AddReport user={session.user} />
       </>
     );
   }

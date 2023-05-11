@@ -1,11 +1,8 @@
 import { Button, Group, Menu, Modal } from "@mantine/core";
 import {
-  IconArrowsLeftRight,
   IconLogout,
-  IconMessageCircle,
   IconPhoto,
   IconSearch,
-  IconSettings,
   IconSquarePlus,
   IconUser,
 } from "@tabler/icons-react";

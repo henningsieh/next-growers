@@ -2,8 +2,8 @@ import type { NextApiHandler, NextApiRequest } from "next";
 
 import cloudinary from "~/utils/cloudinary";
 import formidable from "formidable";
-import fs from "fs/promises";
 import path from "path";
+import { prisma } from "~/server/db";
 
 export const config = {
   api: {
@@ -11,13 +11,14 @@ export const config = {
   },
 };
 
-const readFile = (
+const readUploadedFile = (
   req: NextApiRequest,
   saveLocally?: boolean
 ): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
   const options: formidable.Options = {};
   if (saveLocally) {
     options.uploadDir = path.join(process.cwd(), "/public/images");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     options.filename = (name, ext, path, form) => {
       return `${Date.now()}_${path.originalFilename as string}`;
     };
@@ -34,17 +35,13 @@ const readFile = (
 };
 
 const handler: NextApiHandler = async (req, res) => {
-  const data = await readFile(req, false);
+  const data = await readUploadedFile(req, false);
 
-  console.log("readFile", data);
+  // console.log("readFile", data);
 
   if (!!data.files.image && !Array.isArray(data.files.image)) {
     // handle the case where image is NOT an array
 
-    /**
-     * building publicId which will lead to a URL as follows:
-     * https://res.cloudinary.com/CLOUDNAME/image/upload/versioning_id/ORIGINALFILENAME_DATE(NOW).jpg
-     */
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
@@ -72,11 +69,28 @@ const handler: NextApiHandler = async (req, res) => {
       flags: "lossy", // let's save some data, quality seems fine
       invalidate: true, // invalidate cache in case, image gets updated
     });
+
+    console.log("cloudinaryResult", result);
     console.log(`✅ Successfully uploaded ${localPathToImage}`);
+    console.log(`Public ID: ${result.public_id}`);
     console.log(`URL: ${result.secure_url}`);
 
+    // Create image dataset in db
+    const image = await prisma.image.create({
+      data: {
+        cloudUrl: result.secure_url,
+        publicId: result.public_id,
+      },
+    });
+    console.log("prisma.image", image);
     // return successfully the new image cloud url
-    res.json({ success: "true", cloudUrl: result.secure_url });
+    res.json({
+      success: "true",
+      imageId: image.id, // cloudinary public_id of uploaded image
+      reportId: image.reportId, // cloudinary public_id of uploaded image
+      imagePublicId: result.public_id, // cloudinary public_id of uploaded image
+      cloudUrl: result.secure_url, // cloudinary public secure_url to uploaded image
+    });
   }
 };
 

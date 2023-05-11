@@ -19,7 +19,7 @@ export default function OwnReports() {
     isLoading,
     isError,
   } = api.reports.getOwnReports.useQuery();
-
+  console.log(reports);
   const { data: session } = useSession();
   if (session) {
     if (isLoading) return <Loading />;

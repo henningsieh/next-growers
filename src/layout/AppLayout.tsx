@@ -8,7 +8,6 @@ import {
   Button,
   Center,
   Collapse,
-  Container,
   Divider,
   Drawer,
   Group,
@@ -23,15 +22,9 @@ import {
   rem,
 } from "@mantine/core";
 import {
-  IconBook,
-  IconChartPie3,
   IconChevronDown,
-  IconCode,
-  IconCoin,
-  IconFingerprint,
   IconMapPin,
   IconMessageCircle,
-  IconNotification,
   IconSocial,
   IconStar,
   IconTools,
@@ -43,7 +36,6 @@ import LoginPanel from "../components/Login/LoginPanel";
 import Image from "next/image";
 import Link from "next/link";
 import LightDarkButton from "../components/Atom/LightDarkButton";
-import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -159,7 +151,6 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { classes, theme } = useStyles();
-  const router = useRouter();
 
   const links = mockdata.map((item) => (
     <UnstyledButton

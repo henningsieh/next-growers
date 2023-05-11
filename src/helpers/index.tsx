@@ -1,4 +1,9 @@
-import type { ImageUploadResponse } from "~/types";
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import type { Dispatch, SetStateAction } from "react";
+import type { ImageUploadResponse, Report } from "~/types";
+
 import axios from "axios";
 
 export function getUsername(): string {
@@ -151,13 +156,9 @@ export function getEmailaddress(): string {
 
 export const handleDrop = async (
   files: File[],
-  setNewReport: React.Dispatch<
-    React.SetStateAction<{
-      title: string;
-      description: string;
-      cloudUrl: string;
-    }>
-  >
+  setImageId: Dispatch<SetStateAction<string>>,
+  setImagePublicId: Dispatch<SetStateAction<string>>,
+  setCloudUrl: Dispatch<SetStateAction<string>>
 ): Promise<void> => {
   const formData = new FormData();
   console.log("src\\helpers\\handleDrop:", files);
@@ -172,17 +173,33 @@ export const handleDrop = async (
 
       if (data.success) {
         console.log("File uploaded successfully");
-        // setting the new cloudUrl to the component state
-        setNewReport((prevState) => ({
-          ...prevState,
-          cloudUrl: data.cloudUrl,
-        }));
+        // setting the image informations to the component state
+        setImageId(data.imageId);
+        setImagePublicId(data.imagePublicId);
+        setCloudUrl(data.cloudUrl);
       } else {
         throw new Error("File uploaded NOT successfully");
       }
     } catch (error) {
       console.log(error);
-      throw new Error("Error uploading file"); // <-- THIS ERROR GETS THROWN ON VERCEL PRODUCTION
+      throw new Error("Error uploading file");
     }
   }
 };
+
+export function stringifyReportData(report: any): Report {
+  return {
+    id: report?.id,
+    imagePublicId: report?.image?.publicId,
+    imageCloudUrl: report?.image?.cloudUrl,
+    title: report?.title,
+    description: report?.description,
+    authorId: report?.author?.id,
+    authorName: report?.author?.name,
+    authorImage: report?.author?.image,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    createdAt: report?.createdAt?.toISOString(),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    updatedAt: report?.updatedAt?.toISOString(),
+  };
+}

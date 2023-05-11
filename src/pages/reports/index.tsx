@@ -1,6 +1,5 @@
 import { Container, Grid, Title } from "@mantine/core";
 
-import Add from "~/components/Report/AddForm";
 import Head from "next/head";
 import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";

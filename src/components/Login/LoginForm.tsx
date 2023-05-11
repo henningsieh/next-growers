@@ -4,10 +4,7 @@
 
 import * as z from "zod";
 
-import { Button, TextInput } from "@mantine/core";
-
 import EmailForm from "./EmailForm";
-import { IconMail } from "@tabler/icons-react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
@@ -36,7 +33,7 @@ const useLoginForm = () => {
     e.preventDefault();
     const newErrors: Errors = {};
     try {
-      const result = await signIn("google");
+      void (await signIn("google"));
     } catch (err) {
       console.log(err);
     }
@@ -68,8 +65,7 @@ const useLoginForm = () => {
 };
 
 export default function LoginForm() {
-  const { form, errors, handleChange, handleSubmit, handleGoogleSignIn } =
-    useLoginForm();
+  const { handleGoogleSignIn } = useLoginForm();
 
   return (
     <>

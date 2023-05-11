@@ -1,22 +1,14 @@
 import {
-  Avatar,
   Badge,
   Button,
   Card,
   Group,
   Image,
   Text,
-  Tooltip,
   createStyles,
   rem,
 } from "@mantine/core";
-import {
-  IconAlertTriangleFilled,
-  IconClock,
-  IconEdit,
-  IconHeart,
-  IconTimeline,
-} from "@tabler/icons-react";
+import { IconAlertTriangleFilled, IconEdit } from "@tabler/icons-react";
 
 import { IconTimelineEventPlus } from "@tabler/icons-react";
 import Link from "next/link";
@@ -142,7 +134,7 @@ export default function ReportCard({
   return (
     <Card withBorder radius="md" p="sm" className={classes.card}>
       <Card.Section>
-        <Image src={image} alt={report.id} height={180} />
+        <Image src={report.imageCloudUrl} alt={report.id} height={180} />
       </Card.Section>
 
       <Card.Section className={classes.section} mt="md">
