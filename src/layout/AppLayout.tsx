@@ -188,7 +188,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         style={{
           position: "fixed",
           zIndex: 10,
-          maxWidth: "100%",
+          maxWidth: "1600px",
           width: "100%",
           margin: "0px auto",
           padding: "0 1.2rem",
@@ -342,7 +342,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         </ScrollArea>
       </Drawer>
 
-      <div className="mx-4 mt-16 max-w-none">{children}</div>
+      <div className="mt-16 ">{children}</div>
     </>
   );
 }

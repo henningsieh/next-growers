@@ -1,35 +1,46 @@
+import { Container, Title } from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
 
+import AccessDenied from "~/components/Atom/AccessDenied";
 import AddReport from "~/components/Report/AddForm";
 import Head from "next/head";
-import { Title } from "@mantine/core";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 
 const CreateReport: NextPage = () => {
+  const pageTitle = "Create a Report";
+
   const { data: session } = useSession();
 
-  if (session) {
-    const pageTitle = "Create a Report";
+  if (!session?.user) return <AccessDenied />;
 
-    return (
-      <>
-        <Head>
-          <title>{`GrowAGram | ${pageTitle}`}</title>
-          <meta
-            name="description"
-            content="Create your grow report to growagram.com"
-          />
-        </Head>
+  return (
+    <>
+      <Head>
+        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <meta
+          name="description"
+          content="Create your grow report on growagram.com"
+        />
+      </Head>
 
-        <Title order={1}>{pageTitle}</Title>
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex w-full flex-col space-y-4">
+        {/* // Header with Title */}
+        <div className="flex items-center justify-between">
+          {/* // Title */}
+          <Title order={1} className="inline">
+            {pageTitle}
+          </Title>
+        </div>
+        {/* // Header End */}
+        {/* // Add Component */}
 
         <AddReport user={session.user} />
-      </>
-    );
-  }
-  return <p className="text-6xl">Access Denied</p>;
+      </Container>
+    </>
+  );
 };
 
 export default CreateReport;

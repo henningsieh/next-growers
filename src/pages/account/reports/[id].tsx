@@ -8,6 +8,7 @@ import {
 } from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
 
+import AccessDenied from "~/components/Atom/AccessDenied";
 import Head from "next/head";
 import Link from "next/link";
 import Loading from "~/components/Atom/Loading";
@@ -19,8 +20,10 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 const EditReport: NextPage = () => {
+  const pageTitle = "Edit Report";
   const router = useRouter();
-  const id = router.query.id;
+
+  const { data: session } = useSession();
 
   // FETCH REPORT BY ID
   const {
@@ -28,26 +31,34 @@ const EditReport: NextPage = () => {
     isLoading,
     isError,
   } = api.reports.getReportById.useQuery(useRouter().query.id as string);
+  const report = result;
+  if (isLoading) return <Loading />;
+  if (isError) return <LoadingError />;
 
-  const { data: session } = useSession();
+  if (!session?.user) return <AccessDenied />;
 
-  if (session) {
-    if (isLoading) return <Loading />;
-    if (isError) return <LoadingError />;
+  return (
+    <>
+      <Head>
+        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <meta
+          name="description"
+          content="Edit your grow report details on growagram.com"
+        />
+      </Head>
 
-    const pageTitle = "Edit Report";
-    const report = result;
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex w-full flex-col space-y-4">
+        {/* // Header with Title */}
+        <div className="flex items-center justify-between">
+          {/* // Title */}
+          <Title order={1} className="inline">
+            {pageTitle}
+          </Title>
+        </div>
+        {/* // Header End */}
 
-    return (
-      <>
-        <Head>
-          <title>{`GrowAGram | ${pageTitle}`}</title>
-          <meta
-            name="description"
-            content="Edit your grow report details on growagram.com"
-          />
-        </Head>
-        <Title order={1}>{pageTitle}</Title>
+        {/* // Edit Form */}
         <Container
           size="sm"
           px={0}
@@ -80,10 +91,9 @@ const EditReport: NextPage = () => {
           <Space />
           <Button variant="outline">Save Report</Button>
         </Container>
-      </>
-    );
-  }
-  return <p className="text-6xl">Access Denied</p>;
+      </Container>
+    </>
+  );
 };
 
 export default EditReport;

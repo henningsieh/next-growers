@@ -85,10 +85,12 @@ export default function ReportCard({
         const previousReports = trpc.reports.getOwnReports.getData();
         // Optimistically update to the new value
         trpc.reports.getOwnReports.setData(
-          { orderBy: "createdAt", desc: true }, (prev) => {
-          if (!prev) return previousReports;
-          return prev.filter((report) => report.id !== deletedReportId);
-        });
+          { orderBy: "createdAt", desc: true },
+          (prev) => {
+            if (!prev) return previousReports;
+            return prev.filter((report) => report.id !== deletedReportId);
+          }
+        );
         // Return a context object with the snapshotted value
         return { previousReports };
       } else {
@@ -133,6 +135,7 @@ export default function ReportCard({
 
   const features = badges.map((badge) => (
     <Badge
+      px={0}
       color={theme.colorScheme === "dark" ? "dark" : "gray"}
       key={badge.label}
       leftSection={badge.emoji}

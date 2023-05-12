@@ -7,7 +7,7 @@ import ReportCard from "~/components/Report/Card";
 import { api } from "~/utils/api";
 
 export default function AllReports() {
-  const pageTitle = "All Reports";
+  const pageTitle = "Explore all Reports on GrowAGram";
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -43,15 +43,23 @@ export default function AllReports() {
   return (
     <>
       <Head>
-        <title>GrowAGram | {pageTitle}</title>
+        <title>{`GrowAGram | ${pageTitle}`}</title>
         <meta
           name="description"
           content="GrowAGram is a community for sharing and discovering tips, techniques, and insights on growing plants. Join our community and upload your own reports to share your successes and learn from others."
         />
       </Head>
 
-      <div className="flex w-full flex-col space-y-4">
-        <Title order={1}>{pageTitle}</Title>
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex w-full flex-col space-y-4">
+        {/* // Header with Title */}
+        <div className="flex items-center justify-between">
+          {/* // Title */}
+          <Title order={1} className="inline">
+            {pageTitle}
+          </Title>
+        </div>
+        {/* // Header End */}
         <Grid gutter="sm">
           {/* LOOP OVER REPORTS */}
           {reports.length ? (
@@ -78,7 +86,7 @@ export default function AllReports() {
             </div>
           )}
         </Grid>
-      </div>
+      </Container>
     </>
   );
 

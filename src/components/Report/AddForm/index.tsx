@@ -37,14 +37,18 @@ import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    // marginTop: "-1rem",
     position: "relative",
-    // marginBottom: rem(30),
+    alignItems: "center", // add this line
+    height: "100%", // add this line
   },
 
   dropzone: {
     borderWidth: rem(1),
     padding: rem(5),
+    height: "100%", // add this line
+    display: "flex", // add this line
+    alignItems: "center", // add this line
+    justifyContent: "center", // add this line
   },
 
   icon: {
@@ -158,12 +162,19 @@ function Form({ user }: AddFormProps) {
 
   return (
     <>
-      {isUploading && <Loading />}
-      {cloudUrl ? (
-        <>
-          <Container className="relative" size="sm" px={0}>
-            <Box
-              className="
+      <Container
+        size="sm"
+        px={0}
+        className="flex w-full flex-col space-y-4"
+        mx="auto"
+      >
+        {/* // Upload Panel */}
+        {isUploading && <Loading />}
+        {cloudUrl ? (
+          <>
+            <Container className="relative" size="md" px={0}>
+              <Box
+                className="
               absolute
               right-2
               top-2
@@ -171,32 +182,31 @@ function Form({ user }: AddFormProps) {
                 flex                
                 justify-end  
               "
-            >
-              <ActionIcon
-                onClick={() => {
-                  setImageId("");
-                  setCloudUrl("");
-                }}
-                color="red"
-                variant="filled"
               >
-                <IconTrashXFilled size="lg" />
-              </ActionIcon>
-            </Box>
-            <ImagePreview
-              image={cloudUrl}
-              title={form.values.title}
-              description={form.values.description}
-              link="#"
-              authorName={user.name as string}
-              authorImageUrl={user.image as string}
-              comments={42}
-              views={183}
-            />
-          </Container>
-        </>
-      ) : (
-        <Container size="sm" px={0}>
+                <ActionIcon
+                  onClick={() => {
+                    setImageId("");
+                    setCloudUrl("");
+                  }}
+                  color="red"
+                  variant="filled"
+                >
+                  <IconTrashXFilled size="lg" />
+                </ActionIcon>
+              </Box>
+              <ImagePreview
+                image={cloudUrl}
+                title={form.values.title}
+                description={form.values.description}
+                link="#"
+                authorName={user.name as string}
+                authorImageUrl={user.image as string}
+                comments={42}
+                views={183}
+              />
+            </Container>
+          </>
+        ) : (
           <div className={classes.wrapper}>
             <Dropzone
               h={rem(280)}
@@ -213,37 +223,37 @@ function Form({ user }: AddFormProps) {
             >
               <div style={{ pointerEvents: "none" }}>
                 <Group position="center">
-                  <Center maw={400} h={100} mx="auto">
-                    <Dropzone.Accept>
-                      <IconDownload
-                        size={rem(50)}
-                        color={
-                          theme.colorScheme === "dark"
-                            ? theme.colors.blue[0]
-                            : theme.white
-                        }
-                        stroke={1.5}
-                      />
-                    </Dropzone.Accept>
-                    <Dropzone.Reject>
-                      <IconX
-                        size={rem(50)}
-                        color={theme.colors.red[6]}
-                        stroke={1.5}
-                      />
-                    </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      <IconCloudUpload
-                        size={rem(50)}
-                        color={
-                          theme.colorScheme === "dark"
-                            ? theme.colors.dark[0]
-                            : theme.black
-                        }
-                        stroke={1.5}
-                      />
-                    </Dropzone.Idle>
-                  </Center>
+                  {/* <Center> */}
+                  <Dropzone.Accept>
+                    <IconDownload
+                      size={rem(50)}
+                      color={
+                        theme.colorScheme === "dark"
+                          ? theme.colors.blue[0]
+                          : theme.white
+                      }
+                      stroke={1.5}
+                    />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX
+                      size={rem(50)}
+                      color={theme.colors.red[6]}
+                      stroke={1.5}
+                    />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconCloudUpload
+                      size={rem(50)}
+                      color={
+                        theme.colorScheme === "dark"
+                          ? theme.colors.dark[0]
+                          : theme.black
+                      }
+                      stroke={1.5}
+                    />
+                  </Dropzone.Idle>
+                  {/* </Center> */}
                 </Group>
 
                 <Text ta="center" fw={700} fz="lg" mt="xl">
@@ -262,16 +272,9 @@ function Form({ user }: AddFormProps) {
               </div>
             </Dropzone>
           </div>
-        </Container>
-      )}
+        )}
 
-      {/* // Report form */}
-      <Container
-        size="sm"
-        px={0}
-        className="flex w-full flex-col space-y-4"
-        mx="auto"
-      >
+        {/* // Report form */}
         <form
           onSubmit={form.onSubmit((values) => {
             console.log(form.values);

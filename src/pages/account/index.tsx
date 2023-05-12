@@ -5,24 +5,40 @@ import { useSession } from "next-auth/react";
 
 import { Container, Title } from "@mantine/core";
 import AccessDenied from "~/components/Atom/AccessDenied";
+import Head from "next/head";
 
 export default function Page() {
+  const pageTitle = "Your Account Settings";
+
   const { data: session } = useSession();
 
-  // if (typeof window === "undefined") return null
+  if (!session?.user) return <AccessDenied />;
 
-  if (session) {
-    return (
-      <>
-        <Container className="h-96">
-          <Title>Your Account Settings</Title>
-          <h2>Protected Page</h2>
-          <p>You can view this page because you are signed in.</p>
-        </Container>
-      </>
-    );
-  }
-  return <AccessDenied />;
+  return (
+    <>
+      <Head>
+        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <meta
+          name="description"
+          content="Create your grow report on growagram.com"
+        />
+      </Head>
+
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex w-full flex-col space-y-4">
+        {/* // Header with Title */}
+        <div className="flex items-center justify-between">
+          {/* // Title */}
+          <Title order={1} className="inline">
+            {pageTitle}
+          </Title>
+        </div>{" "}
+        {/* // Header End */}
+        <h2>Protected Page</h2>
+        <p>You can view this page because you are signed in.</p>
+      </Container>
+    </>
+  );
 }
 
 /**

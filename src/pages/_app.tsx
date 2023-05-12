@@ -2,9 +2,8 @@
 import "~/styles/globals.css";
 
 import {
+  Box,
   ColorSchemeProvider,
-  Container,
-  Global,
   LoadingOverlay,
   MantineProvider,
 } from "@mantine/core";
@@ -29,6 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   useEffect(() => {
     Router.events.on("routeChangeStart", (url) => {
       setIsLoading(true);
+      console.log("url", url);
     });
 
     Router.events.on("routeChangeComplete", (url) => {
@@ -84,7 +84,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
           breakpoints: {
             xs: "32em",
             sm: "44em",
-            md: "68em",
+            md: "60em",
             lg: "86em",
             xl: "102em",
           },
@@ -96,7 +96,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                   sm: 720,
                   md: 960,
                   lg: 1140,
-                  xl: 1320,
+                  xl: 1600,
                 },
               },
             },
@@ -171,8 +171,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
       >
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
-          <Toaster />
-          <Container p={0} size={"1600px"}>
+          <Box>
+            <Toaster />
             <AppLayout>
               <LoadingOverlay
                 visible={isLoading}
@@ -181,7 +181,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               />
               <Component {...pageProps} />
             </AppLayout>
-          </Container>
+          </Box>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>

@@ -1,9 +1,11 @@
+import { Container, Title } from "@mantine/core";
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
 
+import Head from "next/head";
 import type { Report } from "~/types";
 import { api } from "~/utils/api";
 import { appRouter } from "~/server/api/root";
@@ -96,6 +98,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export default function ReportDetails(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
+  const pageTitle = "Report Details";
+
   // This report will HOPEFULLY 🙏 be immediately available as it's prefetched from db.
   // const { report: reportFromDB } = props;
   const { report: reportFromDB, id: reportId } = props;
@@ -106,21 +110,39 @@ export default function ReportDetails(
 
   return (
     <>
-      <h1>from DB</h1>
-      <h2>Title: {reportFromDB.title}</h2>
-      <p>Created {reportFromDB.createdAt}</p>
-      <p>{reportFromDB.description}</p>
-      <h2>Raw data:</h2>
-      <pre>{JSON.stringify(reportFromDB, null, 4)}</pre>
+      <Head>
+        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <meta
+          name="description"
+          content="Create your grow report on growagram.com"
+        />
+      </Head>
 
-      <hr />
-
-      <h1>from tRPC</h1>
-      <h2>Title: {report?.title}</h2>
-      <p>Created {report?.createdAt}</p>
-      <p>{report?.description}</p>
-      <h2>Raw data:</h2>
-      <pre>{JSON.stringify(report, null, 4)}</pre>
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex w-full flex-col space-y-4">
+        {/* // Header with Title */}
+        <div className="flex items-center justify-between">
+          {/* // Title */}
+          <Title order={1} className="inline">
+            {pageTitle}
+          </Title>
+        </div>{" "}
+        {/* // Header End */}
+        {/* // Add Component */}
+        <h1>from DB</h1>
+        <h2>Title: {reportFromDB.title}</h2>
+        <p>Created {reportFromDB.createdAt}</p>
+        <p>{reportFromDB.description}</p>
+        <h2>Raw data:</h2>
+        <pre>{JSON.stringify(reportFromDB, null, 4)}</pre>
+        <hr />
+        <h1>from tRPC</h1>
+        <h2>Title: {report?.title}</h2>
+        <p>Created {report?.createdAt}</p>
+        <p>{report?.description}</p>
+        <h2>Raw data:</h2>
+        <pre>{JSON.stringify(report, null, 4)}</pre>
+      </Container>
     </>
   );
 }

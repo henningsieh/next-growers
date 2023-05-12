@@ -78,111 +78,123 @@ export default function EditReport() {
   /**
    * rendering the form if authenticated
    */
-  if (session?.user) {
-    return (
-      <>
-        <Head>
-          <title>{`GrowAGram | ${pageTitle}`}</title>
 
-          <meta
-            name="description"
-            content="Edit your profile details on growagram.com"
-          />
-        </Head>
+  if (!session?.user) return <AccessDenied />;
 
-        <AppNotification
-          title="Success"
-          text="Your username has been saved to database."
-          opened={opened}
+  return (
+    <>
+      <Head>
+        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <meta
+          name="description"
+          content="Edit your profile details on growagram.com"
         />
+      </Head>
 
-        <div className="m-auto flex min-h-max flex-col place-content-center">
-          <div className="flex min-w-max flex-col space-y-4">
-            <Title order={1}>{pageTitle}</Title>
-            <Container px={0} size="sm">
-              {!session?.user.name && (
-                <Alert
-                  mt="lg"
-                  icon={<IconAlertCircle size="1rem" />}
-                  title="You don't have a username yet!"
-                  color="red"
-                  variant="filled"
-                >
-                  <Box className="">
-                    You need to set a Username first before exploroing all the
-                    grows.
-                  </Box>
-                </Alert>
-              )}
-
-              <Box
-                mb="sm"
-                mt="xl"
-                mr="sm"
-                className="text-md flex justify-end font-bold"
-              >
-                No Idea? Try out some AI generated Usernames!{" "}
-                <p className="-mr-2 ml-1 text-3xl">👇</p>
-              </Box>
-              <Space />
-              <form
-                onSubmit={form.onSubmit((values) =>
-                  tRPCsetUsername({ id: session.user.id, name: values.name })
-                )}
-              >
-                <TextInput
-                  icon={<IconAt />}
-                  withAsterisk
-                  label="Username"
-                  {...form.getInputProps("name")}
-                  mt="-xs"
-                  rightSection={
-                    <Tooltip
-                      arrowPosition="side"
-                      position="top-end"
-                      openDelay={100}
-                      label="Let AI generate my Username"
-                    >
-                      <ActionIcon
-                        onClick={setRandomUsername}
-                        size={28}
-                        radius="sm"
-                        color={theme.primaryColor}
-                        variant="outline"
-                      >
-                        <IconReload size="1.2rem" stroke={1.5} />
-                      </ActionIcon>
-                    </Tooltip>
-                  }
-                />
-                <TextInput
-                  readOnly
-                  className="cursor-not-allowed"
-                  icon={<IconMail />}
-                  withAsterisk
-                  label="Email address"
-                  {...form.getInputProps("email")}
-                  mt="lg"
-                />
-                <Space />
-                <Group position="right" mt="xl">
-                  <Button
-                    fullWidth
-                    variant="outline"
-                    type="submit"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? <Loader size={24} /> : "Submit"}
-                  </Button>
-                </Group>
-              </form>
-            </Container>
-          </div>
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex w-full flex-col space-y-4">
+        {/* // Header with Title */}
+        <div className="flex items-center justify-between">
+          {/* // Title */}
+          <Title order={1} className="inline">
+            {pageTitle}
+          </Title>
         </div>
-      </>
-    );
-  }
-  return <AccessDenied />;
+        {/* // Header End */}
+
+        <Container
+          size="xs"
+          px={0}
+          className="flex w-full flex-col space-y-4"
+          mx="auto"
+        >
+          {/* // Error if no Username */}
+          {!session?.user.name && (
+            <Alert
+              mt="lg"
+              icon={<IconAlertCircle size="1rem" />}
+              title="You don't have a username yet!"
+              color="red"
+              variant="filled"
+            >
+              <Box className="">
+                You need to set a Username first before exploroing all the
+                grows.
+              </Box>
+            </Alert>
+          )}
+
+          {/* // "AI" Username Generater */}
+          <Box
+            mb="sm"
+            mt="xl"
+            mr="sm"
+            className="text-md flex justify-end font-bold"
+          >
+            No Idea? Try out some AI generated Usernames!{" "}
+            <p className="-mr-2 ml-1 text-3xl">👇</p>
+          </Box>
+          <Space />
+          <form
+            onSubmit={form.onSubmit((values) =>
+              tRPCsetUsername({ id: session.user.id, name: values.name })
+            )}
+          >
+            <TextInput
+              icon={<IconAt />}
+              withAsterisk
+              label="Username"
+              {...form.getInputProps("name")}
+              mt="-xs"
+              rightSection={
+                <Tooltip
+                  arrowPosition="side"
+                  position="top-end"
+                  openDelay={100}
+                  label="Let AI generate my Username"
+                >
+                  <ActionIcon
+                    onClick={setRandomUsername}
+                    size={28}
+                    radius="sm"
+                    color={theme.primaryColor}
+                    variant="outline"
+                  >
+                    <IconReload size="1.2rem" stroke={1.5} />
+                  </ActionIcon>
+                </Tooltip>
+              }
+            />
+            <TextInput
+              readOnly
+              className="cursor-not-allowed"
+              icon={<IconMail />}
+              withAsterisk
+              label="Email address"
+              {...form.getInputProps("email")}
+              mt="lg"
+            />
+            <Space />
+            <Group position="right" mt="xl">
+              <Button
+                fullWidth
+                variant="outline"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? <Loader size={24} /> : "Submit"}
+              </Button>
+            </Group>
+          </form>
+        </Container>
+      </Container>
+      <AppNotification
+        title="Success"
+        text="Your username has been saved to database."
+        opened={opened}
+      />
+    </>
+  );
 }
 
 /**

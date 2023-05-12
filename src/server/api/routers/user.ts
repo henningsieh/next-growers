@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 import { userSetUSerNameInput } from "~/types"

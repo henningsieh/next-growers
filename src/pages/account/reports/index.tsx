@@ -62,16 +62,21 @@ export default function OwnReports() {
     return (
       <>
         <Head>
-          <title>GrowAGram | {pageTitle}</title>
-          <meta name="description" content="My grow report on growagram.com" />
+          <title>{`GrowAGram | ${pageTitle}`}</title>
+          <meta name="description" content="My grow reports on growagram.com" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <div className="flex w-full flex-col space-y-4">
+        {/* // Main Content Container */}
+        <Container size="xl" className="flex w-full flex-col space-y-4">
+          {/* // Header with Title and Sorting */}
           <div className="flex items-center justify-between">
+            {/* // Title */}
             <Title order={1} className="inline">
               {pageTitle}
             </Title>
+
+            {/* // Sorting Buttons */}
             <div className="inline-flex space-x-4">
               <Button
                 variant="outline"
@@ -99,13 +104,14 @@ export default function OwnReports() {
               </Button>
             </div>
           </div>
-
+          {/* // Header End */}
+          {/* // Report Grid */}
           <Grid gutter="sm">
             {/* LOOP OVER REPORTS */}
             {reports.length ? (
               reports.map((report) => {
                 return (
-                  <Grid.Col key={report.id} xs={12} sm={6} md={4} lg={3} xl={2}>
+                  <Grid.Col key={report.id} xs={12} sm={6} md={4} lg={3} xl={3}>
                     <ReportCard
                       {...cardProps}
                       procedure="own"
@@ -130,7 +136,7 @@ export default function OwnReports() {
               </div>
             )}
           </Grid>
-        </div>
+        </Container>
       </>
     );
   }
