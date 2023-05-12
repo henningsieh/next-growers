@@ -32,7 +32,7 @@ const EditReport: NextPage = () => {
     isError,
   } = api.reports.getReportById.useQuery(useRouter().query.id as string);
   const report = result;
-  if (isLoading) return <Loading />;
+  // if (isLoading) return <Loading />;
   if (isError) return <LoadingError />;
 
   if (!session?.user) return <AccessDenied />;
@@ -46,7 +46,7 @@ const EditReport: NextPage = () => {
           content="Edit your grow report details on growagram.com"
         />
       </Head>
-
+      <Loading isLoading={isLoading} />
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-4">
         {/* // Header with Title */}

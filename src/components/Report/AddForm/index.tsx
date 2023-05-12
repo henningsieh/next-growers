@@ -169,7 +169,9 @@ function Form({ user }: AddFormProps) {
         mx="auto"
       >
         {/* // Upload Panel */}
-        {isUploading && <Loading />}
+
+        <Loading isLoading={isUploading} />
+
         {cloudUrl ? (
           <>
             <Container className="relative" size="md" px={0}>
