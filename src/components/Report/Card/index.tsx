@@ -1,20 +1,31 @@
 import {
   Badge,
+  Blockquote,
+  Box,
   Button,
   Card,
   Group,
   Image,
+  Paper,
   Text,
+  Tooltip,
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconAlertTriangleFilled, IconEdit } from "@tabler/icons-react";
+import {
+  IconAlertTriangleFilled,
+  IconCannabis,
+  IconEdit,
+  IconSeeding,
+} from "@tabler/icons-react";
+import { Locale, Report } from "~/types";
 
 import { IconTimelineEventPlus } from "@tabler/icons-react";
+import { ImagePreview } from "~/components/Atom/ImagePreview";
 import Link from "next/link";
-import type { Report } from "~/types";
 import UserAvatar from "../../Atom/UserAvatar";
 import { api } from "~/utils/api";
+import { sanatizeDateString } from "~/helpers";
 import { useSession } from "next-auth/react";
 
 const useStyles = createStyles((theme) => ({
@@ -73,7 +84,8 @@ export default function ReportCard({
         // Snapshot the previous value
         const previousReports = trpc.reports.getOwnReports.getData();
         // Optimistically update to the new value
-        trpc.reports.getOwnReports.setData(undefined, (prev) => {
+        trpc.reports.getOwnReports.setData(
+          { orderBy: "createdAt", desc: true }, (prev) => {
           if (!prev) return previousReports;
           return prev.filter((report) => report.id !== deletedReportId);
         });
@@ -99,7 +111,7 @@ export default function ReportCard({
       if (!!context) {
         if (procedure == "own") {
           trpc.reports.getOwnReports.setData(
-            undefined,
+            { orderBy: "createdAt", desc: true },
             () => context.previousReports
           );
         } else {
@@ -128,51 +140,53 @@ export default function ReportCard({
       {badge.label}
     </Badge>
   ));
-
   const { data: session } = useSession();
 
   return (
-    <Card withBorder radius="md" p="sm" className={classes.card}>
+    <Card withBorder radius="sm" p="sm" className={classes.card}>
       <Card.Section>
-        <Image src={report.imageCloudUrl} alt={report.id} height={180} />
+        <ImagePreview
+          image={report.imageCloudUrl as string}
+          title={report.title}
+          description={report.description}
+          link={`/reports/${report.id}`}
+          authorName={report.authorName as string}
+          authorImageUrl={report.authorImage as string}
+          comments={42}
+          views={183}
+        />
       </Card.Section>
 
-      <Card.Section className={classes.section} mt="md">
-        <Group position="apart">
-          <Text fz="lg" fw={500}>
-            {report.title}
-          </Text>
-          <Badge size="sm">{country}</Badge>
-
-          <UserAvatar
-            userName={report.authorName}
-            imageUrl={
-              report.authorImage
-                ? report.authorImage
-                : `https://ui-avatars.com/api/?name=${
-                    report.authorName as string
-                  }`
-            }
-            avatarRadius="sm"
-          />
-        </Group>
-        <Text fz="sm" mt="xs">
+      <Group position="apart">
+        <Paper maw="13.2rem" fz="md" fw={500}>
           {report.description}
-        </Text>
-        {/* <Text mt="sm" className={classes.label} c="dimmed">
-          updated at: {report.updatedAt.toLocaleDateString()}
-        </Text> */}
-        <Text mt="sm" className={classes.label} c="dimmed">
-          <IconTimelineEventPlus />
-          {report.createdAt}
-        </Text>
+        </Paper>
+        <Box>
+          <Badge size="sm">{country}</Badge>
+        </Box>
+      </Group>
+      <Card.Section className={classes.section} mt="md">
+        <Group position="left">
+          <Tooltip
+            transitionProps={{ transition: "skew-down", duration: 300 }}
+            label="Germination"
+            color="green"
+            withArrow
+            arrowPosition="center"
+          >
+            <IconSeeding color="green" />
+          </Tooltip>
+          <Text className={classes.label} c="dimmed">
+            {sanatizeDateString(report.createdAt, Locale.EN)}
+          </Text>
+        </Group>
       </Card.Section>
 
       <Card.Section className={classes.section}>
-        <Text mt="md" className={classes.label} c="dimmed">
+        <Text mt="xs" className={classes.label} c="dimmed">
           Tags:
         </Text>
-        <Group spacing={7} mt={5}>
+        <Group spacing={7} mt={4}>
           {features}
         </Group>
       </Card.Section>
@@ -199,8 +213,8 @@ export default function ReportCard({
           </Button>
           <Link href={`/account/reports/${report.id}`}>
             <Button
-              size="sm"
-              className="border-orange-600"
+              size="sm" /* 
+              className="border-orange-600" */
               variant="default"
               radius="sm"
               style={{ flex: 1 }}

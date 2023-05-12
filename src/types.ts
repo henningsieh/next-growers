@@ -22,6 +22,11 @@ export const reportInput = z.object({
     .min(1, { message: "Header image is missing" }),
 });
 
+export const getReportsInput = z.object({
+  orderBy: z.string().min(1),
+  desc: z.boolean(),
+});
+
 export const reportEditInput = z.object({
   id: z.string().min(1),
   title: z.string().min(1).max(100),
@@ -43,4 +48,9 @@ export interface ImageUploadResponse {
   reportId: string;
   imagePublicId: string;
   cloudUrl: string;
+}
+
+export enum Locale {
+  EN = "en",
+  DE = "de",
 }

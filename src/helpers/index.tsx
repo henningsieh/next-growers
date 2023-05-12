@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { Dispatch, SetStateAction } from "react";
-import type { ImageUploadResponse, Report } from "~/types";
+import type { ImageUploadResponse, Locale, Report } from "~/types";
 
 import axios from "axios";
 
@@ -158,7 +158,8 @@ export const handleDrop = async (
   files: File[],
   setImageId: Dispatch<SetStateAction<string>>,
   setImagePublicId: Dispatch<SetStateAction<string>>,
-  setCloudUrl: Dispatch<SetStateAction<string>>
+  setCloudUrl: Dispatch<SetStateAction<string>>,
+  setIsUploading: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
   const formData = new FormData();
   console.log("src\\helpers\\handleDrop:", files);
@@ -177,6 +178,8 @@ export const handleDrop = async (
         setImageId(data.imageId);
         setImagePublicId(data.imagePublicId);
         setCloudUrl(data.cloudUrl);
+
+        setIsUploading(false);
       } else {
         throw new Error("File uploaded NOT successfully");
       }
@@ -202,4 +205,25 @@ export function stringifyReportData(report: any): Report {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     updatedAt: report?.updatedAt?.toISOString(),
   };
+}
+
+export function sanatizeDateString(originalDateString: string, locale: Locale) {
+  const reportStartDate = new Date(originalDateString);
+  const options: Intl.DateTimeFormatOptions = {
+    dateStyle: "medium",
+  };
+
+  if (locale === "en") {
+    // intl. date
+    const intlFormatter = new Intl.DateTimeFormat("en-US", options);
+    const intlDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
+    console.log(intlDate);
+    return intlDate;
+  } else {
+    // german date
+    const germanFormatter = new Intl.DateTimeFormat("de-DE", options);
+    const germanDate = germanFormatter.format(reportStartDate); // "11. Mai 2023"
+    console.log(germanDate);
+    return germanDate;
+  }
 }

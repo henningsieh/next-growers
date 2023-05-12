@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import {
+  Blockquote,
+  Box,
   Card,
   Center,
   Group,
+  Space,
   Text,
   createStyles,
   getStylesRef,
   rem,
 } from "@mantine/core";
 import { IconEye, IconMessageCircle } from "@tabler/icons-react";
+
+import UserAvatar from "./UserAvatar";
+import { report } from "process";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -21,8 +27,12 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.gray[0],
 
     [`&:hover .${getStylesRef("image")}`]: {
-      transform: "scale(1.03)",
+      transform: "scale(1.1)",
     },
+  },
+
+  cite: {
+    color: theme.colors.gray[4],
   },
 
   image: {
@@ -34,16 +44,18 @@ const useStyles = createStyles((theme) => ({
 
   overlay: {
     position: "absolute",
-    top: "20%",
+    top: "0%",
     left: 0,
     right: 0,
     bottom: 0,
     backgroundImage:
-      "linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, .85) 90%)",
+      // "linear-gradient(180deg, rgba(255,102,0,1) 10%, rgba(255,255,255,0) 33%, rgba(0,0,0,0.8927171210280987) 75%)",
+      // "linear-gradient(180deg, rgba(205,82,0,1) 20%, rgba(255,255,255,0) 60%, rgba(0,0,0,0.8927171210280987) 75%)",
+      "linear-gradient(180deg, rgba(0,0,0,0.8170868689272583) 20%, rgba(255,255,255,0) 70%, rgba(255,102,0,1) 100%)",
   },
 
   content: {
-    height: "100%",
+    height: "105%",
     position: "relative",
     display: "flex",
     flexDirection: "column",
@@ -69,16 +81,18 @@ const useStyles = createStyles((theme) => ({
 
   title: {
     color: theme.white,
-    marginBottom: rem(5),
+    marginBottom: rem(1),
   },
 
   bodyText: {
-    color: theme.colors.dark[2],
+    color: theme.colors.dark[9],
     marginLeft: rem(7),
+    fontWeight: "bold",
   },
 
   author: {
-    color: theme.colors.dark[2],
+    color: theme.colors.dark[5],
+    fontWeight: "bold",
   },
 }));
 
@@ -86,7 +100,9 @@ interface ImageCardProps {
   link: string;
   image: string;
   title: string;
-  author: string;
+  description: string;
+  authorName: string;
+  authorImageUrl: string;
   views: number;
   comments: number;
 }
@@ -94,7 +110,9 @@ interface ImageCardProps {
 export function ImagePreview({
   image,
   title,
-  author,
+  description,
+  authorName,
+  authorImageUrl,
   views,
   comments,
 }: ImageCardProps) {
@@ -116,52 +134,69 @@ export function ImagePreview({
       />
       <div className={classes.overlay} />
 
+      {/* Avatar */}
+      <Box pos="absolute" className="-ml-2 pt-6">
+        <UserAvatar
+          userName={authorName}
+          imageUrl={authorImageUrl}
+          avatarRadius="md"
+        />
+      </Box>
+
+      <Box pos="absolute" className="-m-5">
+        {/* Blockquote */}
+        <Blockquote className={classes.cite} cite={authorName}>
+          {description}
+        </Blockquote>
+      </Box>
+
       <div className={classes.content}>
-        <div>
-          <Text size="lg" className={classes.title} weight={500}>
-            {title}
+        {/* Title */}
+        <Text size="lg" className={classes.title} weight={500}>
+          {title}
+        </Text>
+
+        {/* Subline */}
+        <Group position="apart" spacing="xs">
+          <Text size="sm" className={classes.author}>
+            {authorName}
           </Text>
 
-          <Group position="apart" spacing="xs">
-            <Text size="sm" className={classes.author}>
-              {author}
-            </Text>
-
-            <Group spacing="lg">
-              <Center>
-                <IconEye
-                  size="1rem"
-                  stroke={1.5}
-                  color={theme.colors.dark[2]}
-                />
-                <Text size="sm" className={classes.bodyText}>
-                  {views}
-                </Text>
-              </Center>
-              <Center>
-                <IconMessageCircle
-                  size="1rem"
-                  stroke={1.5}
-                  color={theme.colors.dark[2]}
-                />
-                <Text size="sm" className={classes.bodyText}>
-                  {comments}
-                </Text>
-              </Center>
-            </Group>
+          <Group spacing="lg">
+            <Center>
+              <IconEye
+                size="1.2rem"
+                stroke={2.5}
+                color={theme.colors.dark[5]}
+              />
+              <Text size="sm" className={classes.bodyText}>
+                {views}
+              </Text>
+            </Center>
+            <Center>
+              <IconMessageCircle
+                size="1rem"
+                stroke={2.5}
+                color={theme.colors.dark[6]}
+              />
+              <Text size="sm" className={classes.bodyText}>
+                {comments}
+              </Text>
+            </Center>
           </Group>
-        </div>
+        </Group>
+
         {/* Delete Button */}
-        <div className={classes.deleteButtonWrapper}>
-          {/*           <button
+        {/*<div className={classes.deleteButtonWrapper}>
+                     <button
             onClick={() => {
               alert("delete");
             }}
             className={classes.deleteButton}
           >
             Delete Image
-          </button> */}
-        </div>
+          </button>
+        </div> */}
       </div>
     </Card>
   );

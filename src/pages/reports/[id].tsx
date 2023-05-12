@@ -63,7 +63,7 @@ export async function getStaticProps(
       id: id,
       report: report,
     },
-    revalidate: 1,
+    revalidate: 5,
   };
 }
 /**

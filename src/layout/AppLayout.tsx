@@ -204,7 +204,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
               onClick={toggleDrawer}
               className={classes.hiddenDesktop}
             />
-            <Link href="/">
+            <Link href="/reports">
               <Image
                 className="rounded-sm"
                 height={18}

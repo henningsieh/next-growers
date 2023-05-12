@@ -1,22 +1,45 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "~/styles/globals.css";
 
-import { ColorSchemeProvider, Container, MantineProvider } from "@mantine/core";
+import {
+  ColorSchemeProvider,
+  Container,
+  Global,
+  LoadingOverlay,
+  MantineProvider,
+} from "@mantine/core";
+import { useEffect, useState } from "react";
 
 import AppLayout from "~/layout/AppLayout";
 import type { AppType } from "next/app";
 import type { ColorScheme } from "@mantine/core";
+import Router from "next/router";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { api } from "~/utils/api";
 import { appWithTranslation } from "next-i18next";
-import { useState } from "react";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    Router.events.on("routeChangeStart", (url) => {
+      setIsLoading(true);
+    });
+
+    Router.events.on("routeChangeComplete", (url) => {
+      setIsLoading(false);
+    });
+
+    Router.events.on("routeChangeError", (url) => {
+      setIsLoading(false);
+    });
+  }, [Router]);
+
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
@@ -30,18 +53,39 @@ const MyApp: AppType<{ session: Session | null }> = ({
       colorScheme={colorScheme}
       toggleColorScheme={toggleColorScheme}
     >
+      {/*       <Global
+        styles={[
+          {
+            "@font-face": {
+              fontFamily: "Greycliff CF",
+              src: `url('${bold}') format("woff2")`,
+              fontWeight: 700,
+              fontStyle: "normal",
+            },
+          },
+          {
+            "@font-face": {
+              fontFamily: "Greycliff CF",
+              src: `url('${heavy}') format("woff2")`,
+              fontWeight: 900,
+              fontStyle: "normal",
+            },
+          },
+        ]}
+      /> */}
       {/* https://stackoverflow.com/questions/74555403/how-to-change-hover-color-in-mantine-ui-menu */}
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
         theme={{
+          fontFamily: `'Roboto Slab', sans-serif`,
           colorScheme, // get light/dark from local storage state
           primaryColor: "orange",
           breakpoints: {
-            xs: "28em",
-            sm: "36em",
-            md: "56em",
-            lg: "70em",
+            xs: "32em",
+            sm: "44em",
+            md: "68em",
+            lg: "86em",
             xl: "102em",
           },
           components: {
@@ -58,29 +102,41 @@ const MyApp: AppType<{ session: Session | null }> = ({
             },
 
             Button: {
-              // Subscribe to theme and component params
+              defaultProps: {
+                variant: "outline",
+              },
               styles: (theme) => ({
                 root: {
+                  // overriding the tailwind overrides... 👀
+                  /* 
                   backgroundColor:
                     theme.colorScheme === "dark"
-                      ? theme.colors.dark[7]
-                      : theme.white,
+                      ? "#FF4200 !important"
+                      : "#FF6600 !important",
+                       */
                   color:
                     theme.colorScheme === "dark"
-                      ? theme.colors.dark[0]
+                      ? theme.colors.gray[0]
                       : theme.black,
-                  lineHeight: theme.lineHeight,
+                  /* 
+                  "&:hover": {
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? "#FF5500 !important"
+                        : "#FF7700 !important",
+                  },
+                   */
                 },
               }),
             },
           },
           globalStyles: (theme) => ({
             body: {
-              ...theme.fn.fontStyles(),
+              ...theme.fn.fontStyles() /* 
               backgroundColor:
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[8]
-                  : theme.colors.gray[1],
+                  : theme.colors.gray[1], */,
               color:
                 theme.colorScheme === "dark"
                   ? theme.colors.dark[1]
@@ -116,9 +172,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
           <Toaster />
-          <AppLayout>
-            <Component {...pageProps} />
-          </AppLayout>
+          <Container p={0} size={"1600px"}>
+            <AppLayout>
+              <LoadingOverlay
+                visible={isLoading}
+                transitionDuration={300}
+                overlayBlur={5}
+              />
+              <Component {...pageProps} />
+            </AppLayout>
+          </Container>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>

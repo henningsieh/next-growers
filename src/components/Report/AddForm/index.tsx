@@ -2,6 +2,7 @@ import {
   ActionIcon,
   Box,
   Button,
+  Center,
   Container,
   Group,
   Input,
@@ -16,6 +17,7 @@ import {
   IconCloudUpload,
   IconDownload,
   IconPhotoCancel,
+  IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
 import { useEffect, useRef } from "react";
@@ -23,6 +25,7 @@ import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
+import Loading from "~/components/Atom/Loading";
 import type { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
@@ -34,7 +37,7 @@ import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    marginTop: "-1rem",
+    // marginTop: "-1rem",
     position: "relative",
     // marginBottom: rem(30),
   },
@@ -85,14 +88,25 @@ function Form({ user }: AddFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cloudUrl, setCloudUrl] = useState("");
 
+  // Update the "imageId" state when the value of the "imageId" field in the form changes
+  useEffect(() => {
+    form.setFieldValue("imageId", imageId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageId]);
+
   const handleDropWrapper = (files: File[]): void => {
     // handleDrop calls the /api/upload endpoint
-    handleDrop(files, setImageId, setImagePublicId, setCloudUrl).catch(
-      (error) => {
-        // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
-        console.log(error);
-      }
-    );
+    setIsUploading(true);
+    handleDrop(
+      files,
+      setImageId,
+      setImagePublicId,
+      setCloudUrl,
+      setIsUploading
+    ).catch((error) => {
+      // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
+      console.log(error);
+    });
   };
 
   const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
@@ -132,6 +146,7 @@ function Form({ user }: AddFormProps) {
 
   const form = useForm({
     validate: zodResolver(reportInput),
+    validateInputOnChange: true,
     initialValues: {
       title: "",
       description: "",
@@ -139,102 +154,115 @@ function Form({ user }: AddFormProps) {
     },
   });
 
-  // Update the "imageId" state when the value of the "imageId" field in the form changes
-  useEffect(() => {
-    form.setFieldValue("imageId", imageId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageId]);
-
   if (!session) return <AccessDenied />;
 
   return (
     <>
+      {isUploading && <Loading />}
       {cloudUrl ? (
         <>
-          <ImagePreview
-            image={cloudUrl}
-            title={reportTitle}
-            link="#"
-            author={user.name as string}
-            comments={42}
-            views={183}
-          />
-          <Box className="flex justify-end  pt-0">
-            <ActionIcon
-              onClick={() => {
-                setImageId("");
-                setCloudUrl("");
-              }}
-              color="red"
-              variant="outline"
+          <Container className="relative" size="sm" px={0}>
+            <Box
+              className="
+              absolute
+              right-2
+              top-2
+              z-10
+                flex                
+                justify-end  
+              "
             >
-              <IconPhotoCancel size="lg" />
-            </ActionIcon>
-          </Box>
+              <ActionIcon
+                onClick={() => {
+                  setImageId("");
+                  setCloudUrl("");
+                }}
+                color="red"
+                variant="filled"
+              >
+                <IconTrashXFilled size="lg" />
+              </ActionIcon>
+            </Box>
+            <ImagePreview
+              image={cloudUrl}
+              title={form.values.title}
+              description={form.values.description}
+              link="#"
+              authorName={user.name as string}
+              authorImageUrl={user.image as string}
+              comments={42}
+              views={183}
+            />
+          </Container>
         </>
       ) : (
-        <div className={classes.wrapper}>
-          <Dropzone
-            multiple={false} // only one header image!
-            openRef={openReference}
-            onDrop={handleDropWrapper}
-            onChange={(e) => {
-              alert(e.currentTarget);
-            }}
-            className={classes.dropzone}
-            radius="md"
-            accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-            maxSize={10 * 1024 ** 2}
-          >
-            <div style={{ pointerEvents: "none" }}>
-              <Group position="center">
-                <Dropzone.Accept>
-                  <IconDownload
-                    size={rem(50)}
-                    color={
-                      theme.colorScheme === "dark"
-                        ? theme.colors.blue[0]
-                        : theme.white
-                    }
-                    stroke={1.5}
-                  />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX
-                    size={rem(50)}
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconCloudUpload
-                    size={rem(50)}
-                    color={
-                      theme.colorScheme === "dark"
-                        ? theme.colors.dark[0]
-                        : theme.black
-                    }
-                    stroke={1.5}
-                  />
-                </Dropzone.Idle>
-              </Group>
+        <Container size="sm" px={0}>
+          <div className={classes.wrapper}>
+            <Dropzone
+              h={rem(280)}
+              multiple={false} // only one header image!
+              openRef={openReference}
+              onDrop={handleDropWrapper}
+              onChange={(e) => {
+                alert(e.currentTarget);
+              }}
+              className={classes.dropzone}
+              // radius="md"
+              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+              maxSize={10 * 1024 ** 2}
+            >
+              <div style={{ pointerEvents: "none" }}>
+                <Group position="center">
+                  <Center maw={400} h={100} mx="auto">
+                    <Dropzone.Accept>
+                      <IconDownload
+                        size={rem(50)}
+                        color={
+                          theme.colorScheme === "dark"
+                            ? theme.colors.blue[0]
+                            : theme.white
+                        }
+                        stroke={1.5}
+                      />
+                    </Dropzone.Accept>
+                    <Dropzone.Reject>
+                      <IconX
+                        size={rem(50)}
+                        color={theme.colors.red[6]}
+                        stroke={1.5}
+                      />
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      <IconCloudUpload
+                        size={rem(50)}
+                        color={
+                          theme.colorScheme === "dark"
+                            ? theme.colors.dark[0]
+                            : theme.black
+                        }
+                        stroke={1.5}
+                      />
+                    </Dropzone.Idle>
+                  </Center>
+                </Group>
 
-              <Text ta="center" fw={700} fz="lg" mt="xl">
-                <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                <Dropzone.Reject>
-                  Only one Images, less than 10mb
-                </Dropzone.Reject>
-                <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
-              </Text>
-              <Text ta="center" fz="sm" my="xs" c="dimmed">
-                Drag&apos;n&apos;drop your image here to upload!
-                <br />
-                We can accept only one <i>.jpg/.png/.gif</i> file that is less
-                than 10mb in size.
-              </Text>
-            </div>
-          </Dropzone>
-        </div>
+                <Text ta="center" fw={700} fz="lg" mt="xl">
+                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                  <Dropzone.Reject>
+                    Only one Images, less than 10mb
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
+                </Text>
+                <Text ta="center" fz="sm" my="xs" c="dimmed">
+                  Drag&apos;n&apos;drop your image here to upload!
+                  <br />
+                  We can accept only one <i>.jpg/.png/.gif</i> file that is less
+                  than 10mb in size.
+                </Text>
+              </div>
+            </Dropzone>
+          </div>
+        </Container>
       )}
 
       {/* // Report form */}
@@ -252,8 +280,10 @@ function Form({ user }: AddFormProps) {
             tRPCcreateReport(values);
           }, handleErrors)}
         >
-          <div>imageId: {imageId}</div>
+          {/* <div>form.values.title: {form.values.title}</div> */}
+
           <Input
+            hidden
             type="text"
             {...form.getInputProps("imageId")}
             value={imageId}
@@ -276,7 +306,9 @@ function Form({ user }: AddFormProps) {
           />
 
           <Group position="right" mt="xl">
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={!form.isValid()}>
+              Create Report
+            </Button>
           </Group>
         </form>
       </Container>

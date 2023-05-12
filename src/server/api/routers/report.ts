@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { reportEditInput, reportInput } from "~/types"
+import { getReportsInput, reportEditInput, reportInput } from "~/types"
 
+import { Input } from "postcss";
 import { stringifyReportData } from "~/helpers";
 import { z, } from "zod";
 
@@ -33,11 +34,18 @@ export const reportRouter = createTRPCRouter({
   }),
 
   /**
-   * Get Reports by  UserId
+   * Get own Reports by authorId
    * @Input: userId: String 
    */
-  getOwnReports: protectedProcedure.query(async ({ ctx }) => {
+  getOwnReports: protectedProcedure.input(getReportsInput).query(async ({ ctx, input }) => {
+    
+    const { orderBy, desc } = input;
+
+
     const reports = await ctx.prisma.report.findMany({
+      orderBy: {
+        [orderBy]: desc ? 'desc' : 'asc'
+      },
       include: { 
         author: { select: { id: true, name: true, image: true } }, 
         image: { select: { id: true , publicId: true, cloudUrl: true } }, 
@@ -56,8 +64,6 @@ export const reportRouter = createTRPCRouter({
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),
     }));
-
-    
   }),
 
   /**

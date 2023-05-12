@@ -1,4 +1,5 @@
-import { Container, Grid, Title } from "@mantine/core";
+import { Button, Container, Grid, Title } from "@mantine/core";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -7,19 +8,29 @@ import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
 import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
+import { getReportsInput } from "~/types";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { useToggle } from "@mantine/hooks";
 
 export default function OwnReports() {
   const pageTitle = "My Reports";
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+
+  const [desc, setDesc] = useState(true);
+  const [sortBy, toggle] = useToggle(["updatedAt", "createdAt"]);
   const {
     data: reports,
     isLoading,
     isError,
-  } = api.reports.getOwnReports.useQuery();
-  console.log(reports);
+  } = api.reports.getOwnReports.useQuery({
+    orderBy: sortBy, // Set the desired orderBy field
+    desc: desc, // Set the desired order (true for descending, false for ascending)
+  });
+  // console.log(reports);
+
   const { data: session } = useSession();
   if (session) {
     if (isLoading) return <Loading />;
@@ -45,7 +56,9 @@ export default function OwnReports() {
         },
       ],
     };
-
+    function handleToggleDesc() {
+      setDesc((prev) => !prev);
+    }
     return (
       <>
         <Head>
@@ -55,7 +68,38 @@ export default function OwnReports() {
         </Head>
 
         <div className="flex w-full flex-col space-y-4">
-          <Title order={1}>{pageTitle}</Title>
+          <div className="flex items-center justify-between">
+            <Title order={1} className="inline">
+              {pageTitle}
+            </Title>
+            <div className="inline-flex space-x-4">
+              <Button
+                variant="outline"
+                radius="sm"
+                size="xs"
+                color={sortBy}
+                onClick={() => toggle()}
+              >
+                {sortBy == "createdAt" ? "created at" : "last updated"}
+              </Button>
+              <Button
+                variant="outline"
+                radius="sm"
+                size="xs"
+                leftIcon={
+                  desc ? (
+                    <IconChevronDown size="1rem" />
+                  ) : (
+                    <IconChevronUp size="1rem" />
+                  )
+                }
+                onClick={handleToggleDesc}
+              >
+                {!desc ? "ascending" : "descending"}
+              </Button>
+            </div>
+          </div>
+
           <Grid gutter="sm">
             {/* LOOP OVER REPORTS */}
             {reports.length ? (

@@ -1,4 +1,11 @@
-import { Button, Space, TextInput, Textarea, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Space,
+  TextInput,
+  Textarea,
+  Title,
+} from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
 
 import Head from "next/head";
@@ -40,8 +47,13 @@ const EditReport: NextPage = () => {
             content="Edit your grow report details on growagram.com"
           />
         </Head>
-
-        <div className="m-auto flex min-h-max flex-col space-y-4 ">
+        <Title order={1}>{pageTitle}</Title>
+        <Container
+          size="sm"
+          px={0}
+          className="flex w-full flex-col space-y-4"
+          mx="auto"
+        >
           {/* <Group position="left">
               <Link href="/account/reports">
                 <Button
@@ -53,8 +65,7 @@ const EditReport: NextPage = () => {
                 </Button>
               </Link>
             </Group> */}
-          <Title order={1}>{pageTitle}</Title>
-          <Link href={`/reports/${id as string}`}>
+          <Link href={`/reports/${router.query.id as string}`}>
             <Button>public view</Button>
           </Link>
           <TextInput withAsterisk label="Titel" defaultValue={report?.title} />
@@ -68,7 +79,7 @@ const EditReport: NextPage = () => {
           />
           <Space />
           <Button variant="outline">Save Report</Button>
-        </div>
+        </Container>
       </>
     );
   }
