@@ -176,12 +176,7 @@ export default function EditReport() {
             />
             <Space />
             <Group position="right" mt="xl">
-              <Button
-                fullWidth
-                variant="outline"
-                type="submit"
-                disabled={isLoading}
-              >
+              <Button variant="outline" type="submit" disabled={isLoading}>
                 {isLoading ? <Loader size={24} /> : "Submit"}
               </Button>
             </Group>

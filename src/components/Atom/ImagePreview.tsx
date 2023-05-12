@@ -97,7 +97,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface ImageCardProps {
-  link: string;
+  publicLink: string;
   image: string;
   title: string;
   description: string;
@@ -108,6 +108,7 @@ interface ImageCardProps {
 }
 
 export function ImagePreview({
+  publicLink,
   image,
   title,
   description,
@@ -125,7 +126,7 @@ export function ImagePreview({
       className={classes.card}
       radius="md"
       component="a"
-      // href={link}
+      href={publicLink}
       // target="_blank"
     >
       <div

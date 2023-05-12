@@ -198,7 +198,7 @@ function Form({ user }: AddFormProps) {
                 image={cloudUrl}
                 title={form.values.title}
                 description={form.values.description}
-                link="#"
+                publicLink="#"
                 authorName={user.name as string}
                 authorImageUrl={user.image as string}
                 comments={42}

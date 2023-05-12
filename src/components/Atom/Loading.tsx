@@ -1,8 +1,19 @@
 import { Container, Loader, LoadingOverlay } from "@mantine/core";
 
-const Loading = () => {
+interface LoadingProps {
+  isLoading: boolean;
+}
+
+const Loading = ({ isLoading }: LoadingProps) => {
   // return <Container className="text-4xl">Loading... 🔄</Container>;
-  return <LoadingOverlay visible />;
+  return (
+    <LoadingOverlay
+      mt={120}
+      overlayBlur={20}
+      transitionDuration={600}
+      visible={isLoading}
+    />
+  );
 };
 
 export default Loading;

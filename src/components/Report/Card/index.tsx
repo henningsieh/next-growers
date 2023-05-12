@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Badge,
   Blockquote,
   Box,
@@ -16,6 +17,7 @@ import {
   IconAlertTriangleFilled,
   IconCannabis,
   IconEdit,
+  IconHeart,
   IconSeeding,
 } from "@tabler/icons-react";
 import { Locale, Report } from "~/types";
@@ -55,7 +57,6 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface FakeCardBadgeProps {
-  image: string;
   country: string;
   badges: {
     emoji: string;
@@ -69,7 +70,6 @@ interface ReportCardProps extends FakeCardBadgeProps {
 }
 
 export default function ReportCard({
-  image,
   country,
   badges,
   report,
@@ -152,7 +152,7 @@ export default function ReportCard({
           image={report.imageCloudUrl as string}
           title={report.title}
           description={report.description}
-          link={`/reports/${report.id}`}
+          publicLink={`/reports/${report.id}`}
           authorName={report.authorName as string}
           authorImageUrl={report.authorImage as string}
           comments={42}
@@ -160,31 +160,30 @@ export default function ReportCard({
         />
       </Card.Section>
 
-      <Group position="apart">
-        <Paper maw="13.2rem" fz="md" fw={500}>
-          {report.description}
-        </Paper>
-        <Box>
-          <Badge size="sm">{country}</Badge>
-        </Box>
-      </Group>
       <Card.Section className={classes.section} mt="md">
-        <Group position="left">
-          <Tooltip
-            transitionProps={{ transition: "skew-down", duration: 300 }}
-            label="Germination"
-            color="green"
-            withArrow
-            arrowPosition="center"
-          >
-            <IconSeeding color="green" />
-          </Tooltip>
-          <Text className={classes.label} c="dimmed">
-            {sanatizeDateString(report.createdAt, Locale.EN)}
-          </Text>
+        <Group position="apart">
+          <Group position="left">
+            <Tooltip
+              transitionProps={{ transition: "skew-down", duration: 300 }}
+              label="Germination"
+              color="green"
+              withArrow
+              arrowPosition="center"
+            >
+              <IconSeeding color="green" />
+            </Tooltip>
+            <Text className={classes.label} c="dimmed">
+              {sanatizeDateString(report.createdAt, Locale.EN)}
+            </Text>
+          </Group>
+          <Badge size="sm">{country}</Badge>
+          <ActionIcon variant="" radius="xl" size={36}>
+            <IconHeart size="1.1rem" className={classes.like} stroke={1.5} />
+          </ActionIcon>
         </Group>
       </Card.Section>
 
+      {/* // Tags */}
       <Card.Section className={classes.section}>
         <Text mt="xs" className={classes.label} c="dimmed">
           Tags:
@@ -194,6 +193,7 @@ export default function ReportCard({
         </Group>
       </Card.Section>
 
+      {/* // Session buttons */}
       {session && session.user.id == report.authorId && (
         <Group mt="xs" position="apart">
           <Button

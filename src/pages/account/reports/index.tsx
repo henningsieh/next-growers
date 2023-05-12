@@ -1,4 +1,11 @@
-import { Button, Container, Grid, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Grid,
+  LoadingOverlay,
+  Skeleton,
+  Title,
+} from "@mantine/core";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 import type { GetServerSidePropsContext } from "next";
@@ -15,11 +22,9 @@ import { useState } from "react";
 import { useToggle } from "@mantine/hooks";
 
 export default function OwnReports() {
-  const pageTitle = "My Reports";
+  const [desc, setDesc] = useState(true);
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
-
-  const [desc, setDesc] = useState(true);
   const [sortBy, toggle] = useToggle(["updatedAt", "createdAt"]);
   const {
     data: reports,
@@ -33,7 +38,6 @@ export default function OwnReports() {
 
   const { data: session } = useSession();
   if (session) {
-    if (isLoading) return <Loading />;
     if (isError) return <LoadingError />;
 
     // Fake Data for Fake Card
@@ -59,6 +63,7 @@ export default function OwnReports() {
     function handleToggleDesc() {
       setDesc((prev) => !prev);
     }
+    const pageTitle = "My Reports";
     return (
       <>
         <Head>
@@ -66,7 +71,12 @@ export default function OwnReports() {
           <meta name="description" content="My grow reports on growagram.com" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-
+        <LoadingOverlay
+          mt={120}
+          visible={isLoading}
+          overlayBlur={20}
+          transitionDuration={600}
+        />
         {/* // Main Content Container */}
         <Container size="xl" className="flex w-full flex-col space-y-4">
           {/* // Header with Title and Sorting */}
@@ -105,10 +115,11 @@ export default function OwnReports() {
             </div>
           </div>
           {/* // Header End */}
+          {/* <Skeleton visible={isLoading}> */}
           {/* // Report Grid */}
           <Grid gutter="sm">
             {/* LOOP OVER REPORTS */}
-            {reports.length ? (
+            {reports && reports.length ? (
               reports.map((report) => {
                 return (
                   <Grid.Col key={report.id} xs={12} sm={6} md={4} lg={3} xl={3}>
@@ -136,6 +147,7 @@ export default function OwnReports() {
               </div>
             )}
           </Grid>
+          {/* </Skeleton> */}
         </Container>
       </>
     );
