@@ -41,6 +41,10 @@ export const userSetUSerNameInput = z.object({
 export const imageUploadInput = z.object({
   fileName: z.string(),  
 })
+export const LikeReportInput = z.object({
+  userId: z.string(),
+  reportId: z.string(),
+})
 
 export interface ImageUploadResponse {
   success: boolean;
@@ -54,3 +58,4 @@ export enum Locale {
   EN = "en",
   DE = "de",
 }
+
