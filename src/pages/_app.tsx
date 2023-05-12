@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "~/styles/globals.css";
 
-import {
-  Box,
-  ColorSchemeProvider,
-  LoadingOverlay,
-  MantineProvider,
-} from "@mantine/core";
+import { Box, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import AppLayout from "~/layout/AppLayout";
@@ -78,25 +73,30 @@ const MyApp: AppType<{ session: Session | null }> = ({
         withGlobalStyles
         withNormalizeCSS
         theme={{
+          loader: "bars",
           fontFamily: `'Roboto Slab', sans-serif`,
           colorScheme, // get light/dark from local storage state
           primaryColor: "orange",
           breakpoints: {
-            xs: "32em",
-            sm: "44em",
-            md: "60em",
-            lg: "86em",
-            xl: "102em",
+            // 1 Spalte
+            sm: "38em",
+            // 2 Spalten
+            md: "58em",
+            // 4 Spalten
+            lg: "76em",
+            // 4 Spalten
+            xl: "112em",
+            // 6 Spalten
           },
           components: {
             Container: {
               defaultProps: {
                 sizes: {
-                  xs: 540,
-                  sm: 720,
-                  md: 960,
-                  lg: 1140,
-                  xl: 1600,
+                  xs: 515, //  32em x 16px
+                  sm: 720, //  45em x 16px
+                  md: 960, //  60em x 16px
+                  lg: 1440, //  90em x 16px
+                  xl: 1856, // 116em x 16px
                 },
               },
             },
@@ -171,17 +171,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
       >
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
-          <Box>
-            <Toaster />
-            <AppLayout>
-              <LoadingOverlay
-                visible={isLoading}
-                transitionDuration={300}
-                overlayBlur={5}
-              />
-              <Component {...pageProps} />
-            </AppLayout>
-          </Box>
+          <Toaster />
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>
