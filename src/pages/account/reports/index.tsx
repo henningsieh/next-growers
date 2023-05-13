@@ -1,12 +1,21 @@
 import {
+  Box,
   Button,
+  Card,
   Container,
   Grid,
   LoadingOverlay,
+  NativeSelect,
   Skeleton,
   Title,
 } from "@mantine/core";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import {
+  IconCalendarEvent,
+  IconChevronDown,
+  IconChevronDownLeft,
+  IconChevronUp,
+  IconClockDown,
+} from "@tabler/icons-react";
 
 import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -23,7 +32,8 @@ import { useToggle } from "@mantine/hooks";
 
 export default function OwnReports() {
   const [desc, setDesc] = useState(true);
-  const [sortBy, toggle] = useToggle(["updatedAt", "createdAt"]);
+  // const [sortBy, toggle] = useToggle(["updatedAt", "createdAt"]);
+  const [sortBy, setSortBy] = useState("updatedAt");
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -78,7 +88,7 @@ export default function OwnReports() {
           transitionDuration={600}
         />
         {/* // Main Content Container */}
-        <Container size="xl" className="flex w-full flex-col space-y-4">
+        <Container size="xl" className="flex w-full flex-col space-y-2">
           {/* // Header with Title and Sorting */}
           <div className="flex items-center justify-between">
             {/* // Title */}
@@ -86,33 +96,29 @@ export default function OwnReports() {
               {pageTitle}
             </Title>
 
-            {/* // Sorting Buttons */}
-            <div className="inline-flex space-x-4">
-              <Button
-                variant="outline"
-                radius="sm"
+            {/* // Sorting Panel */}
+            <Box p={0} m={0} className="inline-flex space-x-4">
+              <NativeSelect
+                variant="default"
+                value={sortBy}
+                onChange={(event) => setSortBy(event.currentTarget.value)}
                 size="xs"
-                color={sortBy}
-                onClick={() => toggle()}
-              >
-                {sortBy == "createdAt" ? "created at" : "last updated"}
+                placeholder="Pick a hashtag"
+                data={[
+                  { value: "createdAt", label: "Created at" },
+                  { value: "updatedAt", label: "Updated at" },
+                ]}
+                icon={<IconCalendarEvent size="1rem" />}
+              />
+              <Button variant="default" size="xs" onClick={handleToggleDesc}>
+                {desc ? (
+                  <IconChevronDown size="1rem" />
+                ) : (
+                  <IconChevronUp size="1rem" />
+                )}
+                {/* {!desc ? "ascending" : "descending"} */}
               </Button>
-              <Button
-                variant="outline"
-                radius="sm"
-                size="xs"
-                leftIcon={
-                  desc ? (
-                    <IconChevronDown size="1rem" />
-                  ) : (
-                    <IconChevronUp size="1rem" />
-                  )
-                }
-                onClick={handleToggleDesc}
-              >
-                {!desc ? "ascending" : "descending"}
-              </Button>
-            </div>
+            </Box>
           </div>
           {/* // Header End */}
           {/* <Skeleton visible={isLoading}> */}
