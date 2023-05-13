@@ -60,3 +60,10 @@ export enum Locale {
   EN = "en",
   DE = "de",
 }
+
+export interface SortingPanelProps {
+  sortBy: string;
+  setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  desc: boolean;
+  handleToggleDesc: () => void;
+}

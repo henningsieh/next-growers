@@ -1,23 +1,36 @@
-import { Container, Grid, LoadingOverlay, Title } from "@mantine/core";
+import { Container, Grid, Title } from "@mantine/core";
 
 import Head from "next/head";
 import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
+import SortingPanel from "~/components/Atom/SortingPanel";
+import type { SortingPanelProps } from "~/types";
 import { api } from "~/utils/api";
+import { useState } from "react";
 
 export default function AllReports() {
   const pageTitle = "Explore Reports";
+  const [desc, setDesc] = useState(true);
+  const [sortBy, setSortBy] = useState("updatedAt");
 
-  // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+  // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
     data: reports,
     isLoading,
     isError,
-  } = api.reports.getAllReports.useQuery();
+  } = api.reports.getAllReports.useQuery({
+    orderBy: sortBy, // Set the desired orderBy field
+    desc: desc, // Set the desired order (true for descending, false for ascending)
+  });
 
-  // if (isLoading) return "";
-  if (isError) return <LoadingError />;
+  /* // Props for Sorting Panel */
+  const sortingPanelProps: SortingPanelProps = {
+    sortBy,
+    setSortBy,
+    desc,
+    handleToggleDesc: () => setDesc((prev) => !prev),
+  };
 
   // Fake Data for Fake Card
   const cardProps = {
@@ -38,6 +51,8 @@ export default function AllReports() {
     ],
   };
 
+  // if (isLoading) return "";
+  if (isError) return <LoadingError />;
   return (
     <>
       <Head>
@@ -57,6 +72,7 @@ export default function AllReports() {
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
+          <SortingPanel {...sortingPanelProps} />
         </div>
         {/* // Header End */}
 

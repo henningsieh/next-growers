@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Card,
+  Center,
   Group,
   Paper,
   Text,
@@ -167,10 +168,13 @@ export default function ReportCard({
         // Snapshot the previous value
         const previousReports = trpc.reports.getAllReports.getData();
         // Optimistically update to the new value
-        trpc.reports.getAllReports.setData(undefined, (prev) => {
-          if (!prev) return previousReports;
-          return prev.filter((report) => report.id !== deletedReportId);
-        });
+        trpc.reports.getAllReports.setData(
+          { orderBy: "createdAt", desc: true },
+          (prev) => {
+            if (!prev) return previousReports;
+            return prev.filter((report) => report.id !== deletedReportId);
+          }
+        );
         // Return a context object with the snapshotted value
         return { previousReports };
       }
@@ -186,7 +190,7 @@ export default function ReportCard({
           );
         } else {
           trpc.reports.getAllReports.setData(
-            undefined,
+            { orderBy: "createdAt", desc: true },
             () => context.previousReports
           );
         }
@@ -323,22 +327,21 @@ export default function ReportCard({
           <Group position="left">
             <Tooltip
               transitionProps={{ transition: "skew-down", duration: 300 }}
-              label="Germination"
+              label="Germination Date"
               color="green"
-              withArrow
+              // withArrow
               arrowPosition="center"
             >
-              <IconCannabis color="green" />
+              <Center>
+                <IconCannabis size="1.6rem" color="green" />
+                <Text className={classes.label} c="dimmed">
+                  {sanatizeDateString(report.createdAt, Locale.EN)}
+                </Text>
+              </Center>
             </Tooltip>
-            <Text className={classes.label} c="dimmed">
-              {sanatizeDateString(report.createdAt, Locale.EN)}
-            </Text>
           </Group>
           {/* // Stage / Date */}
           <Group position="left">
-            <Text className={classes.label} c="dimmed">
-              {sanatizeDateString(report.createdAt, Locale.EN)}
-            </Text>
             <Tooltip
               transitionProps={{ transition: "skew-down", duration: 300 }}
               label="Seedling"
@@ -346,7 +349,12 @@ export default function ReportCard({
               withArrow
               arrowPosition="center"
             >
-              <IconSeeding color="green" />
+              <Center>
+                <Text className={classes.label} c="dimmed">
+                  {sanatizeDateString(report.createdAt, Locale.EN)}
+                </Text>
+                <IconSeeding size="1.6rem" color="green" />
+              </Center>
             </Tooltip>
           </Group>
         </Group>
