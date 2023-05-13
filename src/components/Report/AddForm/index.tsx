@@ -32,8 +32,11 @@ import { handleDrop } from "~/helpers";
 import { reportInput } from "~/types";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
+
+interface AddFormProps {
+  user: User;
+}
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -66,13 +69,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface AddFormProps {
-  user: User;
-}
-
 function Form({ user }: AddFormProps) {
-  const { data: session } = useSession();
-
   const router = useRouter();
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
@@ -115,7 +112,7 @@ function Form({ user }: AddFormProps) {
 
   const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
     onMutate: (newReportDB) => {
-      console.log("END api.reports.create.useMutation");
+      console.log("START api.reports.create.useMutation");
       console.log("newReportDB", newReportDB);
     },
     // If the mutation fails,
@@ -158,7 +155,7 @@ function Form({ user }: AddFormProps) {
     },
   });
 
-  if (!session) return <AccessDenied />;
+  if (!user) return <AccessDenied />;
 
   return (
     <>
@@ -174,7 +171,7 @@ function Form({ user }: AddFormProps) {
 
         {cloudUrl ? (
           <>
-            <Container className="relative" size="md" px={0}>
+            <Container className="relative" px={0}>
               <Box
                 className="
               absolute
@@ -203,7 +200,7 @@ function Form({ user }: AddFormProps) {
                 publicLink="#"
                 authorName={user.name as string}
                 authorImageUrl={user.image as string}
-                comments={42}
+                comments={89}
                 views={183}
               />
             </Container>

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import {
   ActionIcon,
   Badge,
@@ -18,17 +22,20 @@ import {
   IconCannabis,
   IconEdit,
   IconHeart,
+  IconHeartFilled,
   IconSeeding,
 } from "@tabler/icons-react";
-import { Locale, Report } from "~/types";
 
-import { IconTimelineEventPlus } from "@tabler/icons-react";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import Link from "next/link";
-import UserAvatar from "../../Atom/UserAvatar";
+import { Locale } from "~/types";
+import type { Report } from "~/types";
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/helpers";
+import { toast } from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -75,9 +82,56 @@ export default function ReportCard({
   report,
   procedure,
 }: ReportCardProps) {
+  const queryClient = useQueryClient();
+
   const trpc = api.useContext();
+  const { data: session } = useSession();
+
+  const { mutate: likeReportMutation } = api.like.likeReport.useMutation({
+    onMutate: async ({ userId, reportId }) => {
+      // Cancel any outgoing refetches so they don't overwrite our optimistic update
+      await trpc.reports.getOwnReports.cancel();
+      // Snapshot the previous reports
+      const previousReports = trpc.reports.getOwnReports.getData();
+      // Optimistically add the new like
+      trpc.reports.getOwnReports.setData(
+        { orderBy: "createdAt", desc: true },
+        (prev) => {
+          console.log(prev); //FIXME: prev is EMPTY
+          if (!prev) return previousReports;
+
+          return prev.map((report) => {
+            //identify report to set like on
+            if (report.id === reportId) {
+              // append the new entry to likes array
+              alert("push");
+              report.likes.push({
+                id: userId,
+                name: session?.user.name as string,
+              });
+            }
+            return report;
+          });
+        }
+      );
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      console.error(error.message);
+    },
+    onSuccess: (likedReport) => {
+      toast.success("Report liked successfully!");
+      console.debug("likedReport", likedReport);
+    },
+    // Always refetch after error or success:
+    onSettled: async () => {
+      await trpc.reports.getOwnReports.invalidate();
+      await trpc.reports.getAllReports.invalidate();
+    },
+  });
+
   const { mutate: deleteMutation } = api.reports.deleteOwnReport.useMutation({
-    onMutate: async (deletedReportId) => {
+    onMutate: async (deletedReportId: string) => {
       if (procedure == "own") {
         // Cancel any outgoing refetches so they don't overwrite optimistic update
         await trpc.reports.getOwnReports.cancel();
@@ -87,6 +141,7 @@ export default function ReportCard({
         trpc.reports.getOwnReports.setData(
           { orderBy: "createdAt", desc: true },
           (prev) => {
+            console.log("PREV", prev);
             if (!prev) return previousReports;
             return prev.filter((report) => report.id !== deletedReportId);
           }
@@ -131,6 +186,17 @@ export default function ReportCard({
     },
   });
 
+  const handleLikeReport = () => {
+    // Ensure that the user is authenticated
+    if (!session) {
+      // Redirect to login or show a login prompt
+      return;
+    }
+
+    // Call the likeReport mutation
+    likeReportMutation({ userId: session.user.id, reportId: report.id });
+  };
+
   const { classes, theme } = useStyles();
 
   const features = badges.map((badge) => (
@@ -143,8 +209,8 @@ export default function ReportCard({
       {badge.label}
     </Badge>
   ));
-  const { data: session } = useSession();
 
+  const [showLikes, setShowLikes] = useState(false);
   return (
     <Card withBorder radius="sm" p="sm" className={classes.card}>
       <Card.Section>
@@ -160,13 +226,29 @@ export default function ReportCard({
         />
       </Card.Section>
 
-      <Card.Section className={classes.section} mt="md">
+      <Card.Section className={classes.section} mt={4}>
         <Group position="apart">
+          {/* // Stage / Date */}
           <Group position="left">
             <Tooltip
               transitionProps={{ transition: "skew-down", duration: 300 }}
               label="Germination"
               color="green"
+              withArrow
+              arrowPosition="center"
+            >
+              <IconCannabis color="green" />
+            </Tooltip>
+            <Text className={classes.label} c="dimmed">
+              {sanatizeDateString(report.createdAt, Locale.EN)}
+            </Text>
+          </Group>
+          {/* // Stage / Date */}
+          <Group position="left">
+            <Tooltip
+              transitionProps={{ transition: "skew-down", duration: 300 }}
+              label="Seedling"
+              color="teal"
               withArrow
               arrowPosition="center"
             >
@@ -176,15 +258,131 @@ export default function ReportCard({
               {sanatizeDateString(report.createdAt, Locale.EN)}
             </Text>
           </Group>
-          <Badge size="sm">{country}</Badge>
-          <ActionIcon variant="" radius="xl" size={36}>
-            <IconHeart size="1.1rem" className={classes.like} stroke={1.5} />
-          </ActionIcon>
+          {/* // ❤️ */}
+          <Group spacing={4} position="right">
+            <Box fz="sm" p={0} m={0}>
+              {report.likes.length}
+            </Box>
+            <Box pr={4} m={0} className="relative">
+              <ActionIcon
+                onMouseEnter={() => void setShowLikes(true)}
+                onMouseLeave={() => void setShowLikes(false)}
+                variant=""
+                radius="xl"
+                p={0}
+                m={0}
+                size={24}
+                onClick={handleLikeReport}
+              >
+                {report.likes.find((like) => like.id === session?.user.id) ? (
+                  <>
+                    <IconHeartFilled
+                      size="1.2rem"
+                      className={classes.like}
+                      stroke={1.5}
+                    />
+                  </>
+                ) : (
+                  <IconHeart
+                    size="1.2rem"
+                    className={classes.like}
+                    stroke={1.5}
+                  />
+                )}
+              </ActionIcon>
+              {/* // Likes Tooltip */}
+              {!!report.likes.length && showLikes && (
+                <Paper
+                  withBorder
+                  className="absolute bottom-full right-0 z-10 m-0 w-max rounded p-0 text-right"
+                >
+                  {report.likes.map((like) => (
+                    <Box
+                      key={like.id}
+                      mx={10}
+                      fz={"xs"}
+                      className="whitespace-no-wrap"
+                    >
+                      {like.name}
+                    </Box>
+                  ))}
+                  <Text fz="xs" td="overline" pr={4} fs="italic">
+                    {report.likes.length} Like
+                    {report.likes.length > 1 ? "s" : ""} 👍
+                  </Text>
+                </Paper>
+              )}
+            </Box>
+          </Group>
+        </Group>
+      </Card.Section>
+      <Card.Section className={classes.section} mt={4}>
+        <Group position="apart">
+          {/* // Badge */}
+          <Badge px={2} color="yellow" size="sm" radius="sm" variant="filled">
+            {country}
+          </Badge>
+          <Group spacing={4} position="right">
+            {/* // ❤️ */}
+            <Box fz="sm" p={0} m={0}>
+              {report.likes.length}
+            </Box>
+            <Box pr={4} m={0} className="relative">
+              <ActionIcon
+                onMouseEnter={() => void setShowLikes(true)}
+                onMouseLeave={() => void setShowLikes(false)}
+                variant=""
+                radius="xl"
+                p={0}
+                m={0}
+                size={24}
+                onClick={handleLikeReport}
+              >
+                {report.likes.find((like) => like.id === session?.user.id) ? (
+                  <>
+                    <IconHeartFilled
+                      size="1.2rem"
+                      className={classes.like}
+                      stroke={1.5}
+                    />
+                  </>
+                ) : (
+                  <IconHeart
+                    size="1.2rem"
+                    className={classes.like}
+                    stroke={1.5}
+                  />
+                )}
+              </ActionIcon>
+              {/* // Likes Tooltip */}
+              {!!report.likes.length && showLikes && (
+                <Paper
+                  withBorder
+                  className="absolute bottom-full right-0 z-10 m-0 w-max rounded p-0 text-right"
+                >
+                  {report.likes.map((like) => (
+                    <Box
+                      key={like.id}
+                      mx={10}
+                      fz={"xs"}
+                      className="whitespace-no-wrap"
+                    >
+                      {like.name}
+                    </Box>
+                  ))}
+                  <Text fz="xs" td="overline" pr={4} fs="italic">
+                    {report.likes.length} Like
+                    {report.likes.length > 1 ? "s" : ""} 👍
+                  </Text>
+                </Paper>
+              )}
+            </Box>
+          </Group>
         </Group>
       </Card.Section>
 
       {/* // Tags */}
-      <Card.Section className={classes.section}>
+      <Card.Section className={classes.section} mt={0}>
         <Text mt="xs" className={classes.label} c="dimmed">
           Tags:
         </Text>
@@ -226,10 +424,6 @@ export default function ReportCard({
               <IconEdit className="ml-2" height={22} stroke={1.5} />
             </Button>
           </Link>
-          {/* 
-          <ActionIcon variant="default" radius="sm" size={38}>
-            <IconHeart width={22} className={classes.like} stroke={1.5} />
-          </ActionIcon> */}
         </Group>
       )}
     </Card>

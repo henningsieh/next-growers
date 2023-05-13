@@ -15,9 +15,20 @@ export const reportRouter = createTRPCRouter({
       include: { 
         author: { select: { id: true, name: true, image: true } }, 
         image: { select: { id: true , publicId: true, cloudUrl: true } }, 
+        Like: { // Include the Like relation and select the user who liked the report
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              }
+            }
+          }
+        },
       },
     });
-    return reports.map(({ id, image, title, description, author, createdAt, updatedAt }) => ({
+    return reports.map(({ id, image, title, description, author, Like ,createdAt, updatedAt }) => ({
       id,
       imagePublicId: image?.publicId,
       imageCloudUrl: image?.cloudUrl,
@@ -28,7 +39,8 @@ export const reportRouter = createTRPCRouter({
       authorImage: author?.image,
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),
-    }));
+      likes: Like.map(({ user }) => ({ id: user.id, name: user.name })), // Map the Like relation to extract user information
+     }));
   }),
 
   /**
@@ -47,10 +59,21 @@ export const reportRouter = createTRPCRouter({
       include: { 
         author: { select: { id: true, name: true, image: true } }, 
         image: { select: { id: true , publicId: true, cloudUrl: true } }, 
+        Like: { // Include the Like relation and select the user who liked the report
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              }
+            }
+          }
+        },
       },
       where: { authorId: ctx.session.user.id },
     });
-    return reports.map(({ id, image, title, description, author, createdAt, updatedAt }) => ({
+    return reports.map(({ id, image, title, description, author, Like, createdAt, updatedAt }) => ({
       id,
       imagePublicId: image?.publicId,
       imageCloudUrl: image?.cloudUrl,
@@ -61,6 +84,7 @@ export const reportRouter = createTRPCRouter({
       authorImage: author?.image,
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),
+      likes: Like.map(({ user }) => ({ id: user.id, name: user.name })), // Map the Like relation to extract user information
     }));
   }),
 

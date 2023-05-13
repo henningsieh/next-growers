@@ -23,9 +23,9 @@ import { useToggle } from "@mantine/hooks";
 
 export default function OwnReports() {
   const [desc, setDesc] = useState(true);
+  const [sortBy, toggle] = useToggle(["updatedAt", "createdAt"]);
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
-  const [sortBy, toggle] = useToggle(["updatedAt", "createdAt"]);
   const {
     data: reports,
     isLoading,

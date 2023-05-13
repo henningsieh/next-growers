@@ -23,7 +23,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   useEffect(() => {
     Router.events.on("routeChangeStart", (url) => {
       setIsLoading(true);
-      console.log("url", url);
+      console.log("isLoading", url);
     });
 
     Router.events.on("routeChangeComplete", (url) => {
@@ -33,7 +33,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     Router.events.on("routeChangeError", (url) => {
       setIsLoading(false);
     });
-  }, [Router]);
+  }, []);
 
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));

@@ -190,6 +190,7 @@ export const handleDrop = async (
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function stringifyReportData(report: any): Report {
   return {
     id: report?.id,
@@ -200,6 +201,7 @@ export function stringifyReportData(report: any): Report {
     authorId: report?.author?.id,
     authorName: report?.author?.name,
     authorImage: report?.author?.image,
+    likes: report?.likes || [], // set likes to an empty array if undefined
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     createdAt: report?.createdAt?.toISOString(),
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -217,13 +219,13 @@ export function sanatizeDateString(originalDateString: string, locale: Locale) {
     // intl. date
     const intlFormatter = new Intl.DateTimeFormat("en-US", options);
     const intlDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
-    console.log(intlDate);
+    // console.log(intlDate);
     return intlDate;
   } else {
     // german date
     const germanFormatter = new Intl.DateTimeFormat("de-DE", options);
     const germanDate = germanFormatter.format(reportStartDate); // "11. Mai 2023"
-    console.log(germanDate);
+    // console.log(germanDate);
     return germanDate;
   }
 }

@@ -86,7 +86,7 @@ const useStyles = createStyles((theme) => ({
 
   bodyText: {
     color: theme.colors.dark[9],
-    marginLeft: rem(7),
+    marginRight: rem(7),
     fontWeight: "bold",
   },
 
@@ -121,10 +121,11 @@ export function ImagePreview({
 
   return (
     <Card
+      withBorder
       p="lg"
       shadow="lg"
       className={classes.card}
-      radius="md"
+      radius="sm"
       component="a"
       href={publicLink}
       // target="_blank"
@@ -144,6 +145,7 @@ export function ImagePreview({
         />
       </Box>
 
+      {/* Cite blockquote */}
       <Box pos="absolute" className="-m-5">
         {/* Blockquote */}
         <Blockquote className={classes.cite} cite={authorName}>
@@ -165,24 +167,24 @@ export function ImagePreview({
 
           <Group spacing="lg">
             <Center>
+              <Text size="sm" className={classes.bodyText}>
+                {views}
+              </Text>
               <IconEye
                 size="1.2rem"
                 stroke={2.5}
                 color={theme.colors.dark[5]}
               />
-              <Text size="sm" className={classes.bodyText}>
-                {views}
-              </Text>
             </Center>
             <Center>
+              <Text size="sm" className={classes.bodyText}>
+                {comments}
+              </Text>
               <IconMessageCircle
                 size="1rem"
                 stroke={2.5}
                 color={theme.colors.dark[6]}
               />
-              <Text size="sm" className={classes.bodyText}>
-                {comments}
-              </Text>
             </Center>
           </Group>
         </Group>

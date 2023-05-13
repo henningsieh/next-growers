@@ -21,7 +21,7 @@ export default function AllReports() {
 
   // Fake Data for Fake Card
   const cardProps = {
-    country: "Zkittlez",
+    country: "Sativa",
     badges: [
       {
         emoji: "☀️",
@@ -48,13 +48,7 @@ export default function AllReports() {
         />
       </Head>
       <Loading isLoading={isLoading} />
-      {/* 
-      <LoadingOverlay
-        mt={120}
-        visible={isLoading}
-        overlayBlur={20}
-        transitionDuration={600}
-      /> */}
+
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-4">
         {/* // Header with Title */}
@@ -101,6 +95,4 @@ export default function AllReports() {
       </Container>
     </>
   );
-
-  return <Container className="text-center text-4xl">Access Denied</Container>;
 }
