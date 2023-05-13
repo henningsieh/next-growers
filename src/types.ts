@@ -15,11 +15,11 @@ export const reportInput = z.object({
     .string()
     .min(8, { message: "Title should have at least 8 letters" })
     .max(32, { message: "Title should have max 32 letters" }),
-  description: z.string()
+  description: z
+    .string()
     .min(12, { message: "Description should have at least 12 letters" })
     .max(64, { message: "Description should have max 64 letters" }),
-  imageId: z.string()
-    .min(1, { message: "Header image is missing" }),
+  imageId: z.string().min(1, { message: "Header image is missing" }),
 });
 
 export const getReportsInput = z.object({
@@ -35,16 +35,18 @@ export const reportEditInput = z.object({
 
 export const userSetUSerNameInput = z.object({
   id: z.string().min(1),
-  name: z.string().min(6).max(100),  
-})
+  name: z.string().min(6).max(100),
+});
 
 export const imageUploadInput = z.object({
-  fileName: z.string(),  
-})
+  fileName: z.string(),
+});
 export const LikeReportInput = z.object({
-  userId: z.string(),
   reportId: z.string(),
-})
+});
+export const DeleteLikeInput = z.object({
+  reportId: z.string(),
+});
 
 export interface ImageUploadResponse {
   success: boolean;
@@ -58,4 +60,3 @@ export enum Locale {
   EN = "en",
   DE = "de",
 }
-

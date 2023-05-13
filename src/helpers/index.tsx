@@ -184,7 +184,7 @@ export const handleDrop = async (
         throw new Error("File uploaded NOT successfully");
       }
     } catch (error) {
-      console.log(error);
+      console.debug(error);
       throw new Error("Error uploading file");
     }
   }

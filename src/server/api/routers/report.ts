@@ -39,7 +39,7 @@ export const reportRouter = createTRPCRouter({
       authorImage: author?.image,
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),
-      likes: Like.map(({ user }) => ({ id: user.id, name: user.name })), // Map the Like relation to extract user information
+      likes: Like.map(({ id, user }) => ({ id, userId: user.id, name: user.name })), // Map the Like relation to extract user information
      }));
   }),
 
@@ -84,7 +84,7 @@ export const reportRouter = createTRPCRouter({
       authorImage: author?.image,
       createdAt: createdAt.toISOString(),
       updatedAt: updatedAt.toISOString(),
-      likes: Like.map(({ user }) => ({ id: user.id, name: user.name })), // Map the Like relation to extract user information
+      likes: Like.map(({ id, user }) => ({ id, userId: user.id, name: user.name })),    
     }));
   }),
 

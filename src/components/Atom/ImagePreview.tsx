@@ -6,7 +6,6 @@ import {
   Card,
   Center,
   Group,
-  Space,
   Text,
   createStyles,
   getStylesRef,
@@ -15,7 +14,6 @@ import {
 import { IconEye, IconMessageCircle } from "@tabler/icons-react";
 
 import UserAvatar from "./UserAvatar";
-import { report } from "process";
 
 const useStyles = createStyles((theme) => ({
   card: {

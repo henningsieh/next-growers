@@ -1,16 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import {
   ActionIcon,
   Badge,
-  Blockquote,
   Box,
   Button,
   Card,
   Group,
-  Image,
   Paper,
   Text,
   Tooltip,
@@ -33,7 +27,6 @@ import type { Report } from "~/types";
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/helpers";
 import { toast } from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -54,6 +47,7 @@ const useStyles = createStyles((theme) => ({
 
   like: {
     color: theme.colors.red[6],
+    transition: "transform 0.3s ease-in-out",
   },
 
   label: {
@@ -82,13 +76,14 @@ export default function ReportCard({
   report,
   procedure,
 }: ReportCardProps) {
-  const queryClient = useQueryClient();
+  const { classes, theme } = useStyles();
+  const { data: session } = useSession();
+  const [showLikes, setShowLikes] = useState(false);
 
   const trpc = api.useContext();
-  const { data: session } = useSession();
 
   const { mutate: likeReportMutation } = api.like.likeReport.useMutation({
-    onMutate: async ({ userId, reportId }) => {
+    onMutate: async ({ reportId }) => {
       // Cancel any outgoing refetches so they don't overwrite our optimistic update
       await trpc.reports.getOwnReports.cancel();
       // Snapshot the previous reports
@@ -97,7 +92,7 @@ export default function ReportCard({
       trpc.reports.getOwnReports.setData(
         { orderBy: "createdAt", desc: true },
         (prev) => {
-          console.log(prev); //FIXME: prev is EMPTY
+          console.log("prev", prev); //FIXME: prev is EMPTY
           if (!prev) return previousReports;
 
           return prev.map((report) => {
@@ -106,7 +101,8 @@ export default function ReportCard({
               // append the new entry to likes array
 
               report.likes.push({
-                id: userId,
+                id: "",
+                userId: session?.user.id as string,
                 name: session?.user.name as string,
               });
             }
@@ -125,6 +121,23 @@ export default function ReportCard({
     },
     // Always refetch after error or success:
     onSettled: async () => {
+      await trpc.reports.getOwnReports.invalidate();
+      await trpc.reports.getAllReports.invalidate();
+    },
+  });
+
+  const { mutate: deleteLikeMutation } = api.like.deleteLike.useMutation({
+    onError: (error) => {
+      console.error(error);
+      // Handle error, e.g., show an error message
+    },
+    onSuccess: (res) => {
+      // Handle success, e.g., update UI
+      toast.success("Your like has been removed!");
+      console.debug("success.res", res);
+    },
+    onSettled: async () => {
+      // Trigger any necessary refetch or invalidation, e.g., refetch the report data
       await trpc.reports.getOwnReports.invalidate();
       await trpc.reports.getAllReports.invalidate();
     },
@@ -194,10 +207,19 @@ export default function ReportCard({
     }
 
     // Call the likeReport mutation
-    likeReportMutation({ userId: session.user.id, reportId: report.id });
+    likeReportMutation({ reportId: report.id });
   };
 
-  const { classes, theme } = useStyles();
+  const handleDisLikeReport = () => {
+    // Ensure that the user is authenticated
+    if (!session) {
+      // Redirect to login or show a login prompt
+      return;
+    }
+
+    // Call the likeReport mutation
+    deleteLikeMutation({ reportId: report.id });
+  };
 
   const features = badges.map((badge) => (
     <Badge
@@ -210,7 +232,6 @@ export default function ReportCard({
     </Badge>
   ));
 
-  const [showLikes, setShowLikes] = useState(false);
   return (
     <Card withBorder radius="sm" p="sm" className={classes.card}>
       <Card.Section>
@@ -228,73 +249,52 @@ export default function ReportCard({
 
       <Card.Section className={classes.section} mt={4}>
         <Group position="apart">
-          {/* // Stage / Date */}
-          <Group position="left">
-            <Tooltip
-              transitionProps={{ transition: "skew-down", duration: 300 }}
-              label="Germination"
-              color="green"
-              withArrow
-              arrowPosition="center"
-            >
-              <IconCannabis color="green" />
-            </Tooltip>
-            <Text className={classes.label} c="dimmed">
-              {sanatizeDateString(report.createdAt, Locale.EN)}
-            </Text>
-          </Group>
-          {/* // Stage / Date */}
-          <Group position="left">
-            <Tooltip
-              transitionProps={{ transition: "skew-down", duration: 300 }}
-              label="Seedling"
-              color="teal"
-              withArrow
-              arrowPosition="center"
-            >
-              <IconSeeding color="green" />
-            </Tooltip>
-            <Text className={classes.label} c="dimmed">
-              {sanatizeDateString(report.createdAt, Locale.EN)}
-            </Text>
-          </Group>
-          {/* // ❤️ */}
+          {/* // Badge */}
+          <Badge px={2} color="yellow" size="sm" radius="sm" variant="filled">
+            {country}
+          </Badge>
+
           <Group spacing={4} position="right">
-            <Box fz="sm" p={0} m={0}>
+            {/* // ❤️ */}
+            <Box fz="sm" p={1} m={1}>
               {report.likes.length}
             </Box>
             <Box pr={4} m={0} className="relative">
               <ActionIcon
+                variant="default"
+                className="cursor-default"
                 onMouseEnter={() => void setShowLikes(true)}
                 onMouseLeave={() => void setShowLikes(false)}
-                variant=""
-                radius="xl"
+                radius="sm"
                 p={0}
-                m={0}
-                size={24}
-                onClick={handleLikeReport}
+                mr={-4}
+                size={25}
               >
-                {report.likes.find((like) => like.id === session?.user.id) ? (
-                  <>
-                    <IconHeartFilled
-                      size="1.2rem"
-                      className={classes.like}
-                      stroke={1.5}
-                    />
-                  </>
+                {report.likes.find(
+                  (like) => like.userId === session?.user.id
+                ) ? (
+                  <IconHeartFilled
+                    onClick={handleDisLikeReport}
+                    size="1.2rem"
+                    className={`${classes.like} icon-transition`}
+                    stroke={1.5}
+                  />
                 ) : (
                   <IconHeart
+                    onClick={handleLikeReport}
                     size="1.2rem"
-                    className={classes.like}
+                    className={`${classes.like} icon-transition`}
                     stroke={1.5}
                   />
                 )}
               </ActionIcon>
               {/* // Likes Tooltip */}
-              {!!report.likes.length && showLikes && (
+              {!!report.likes.length && (
                 <Paper
                   withBorder
-                  className="absolute bottom-full right-0 z-10 m-0 w-max rounded p-0 text-right"
+                  className={`duration-400 absolute bottom-full right-0 z-10 m-0 w-max rounded p-0 text-right transition-opacity ${
+                    showLikes ? "opacity-100" : "opacity-0"
+                  }`}
                 >
                   {report.likes.map((like) => (
                     <Box
@@ -316,67 +316,38 @@ export default function ReportCard({
           </Group>
         </Group>
       </Card.Section>
+
       <Card.Section className={classes.section} mt={4}>
         <Group position="apart">
-          {/* // Badge */}
-          <Badge px={2} color="yellow" size="sm" radius="sm" variant="filled">
-            {country}
-          </Badge>
-          <Group spacing={4} position="right">
-            {/* // ❤️ */}
-            <Box fz="sm" p={0} m={0}>
-              {report.likes.length}
-            </Box>
-            <Box pr={4} m={0} className="relative">
-              <ActionIcon
-                onMouseEnter={() => void setShowLikes(true)}
-                onMouseLeave={() => void setShowLikes(false)}
-                variant=""
-                radius="xl"
-                p={0}
-                m={0}
-                size={24}
-                onClick={handleLikeReport}
-              >
-                {report.likes.find((like) => like.id === session?.user.id) ? (
-                  <>
-                    <IconHeartFilled
-                      size="1.2rem"
-                      className={classes.like}
-                      stroke={1.5}
-                    />
-                  </>
-                ) : (
-                  <IconHeart
-                    size="1.2rem"
-                    className={classes.like}
-                    stroke={1.5}
-                  />
-                )}
-              </ActionIcon>
-              {/* // Likes Tooltip */}
-              {!!report.likes.length && showLikes && (
-                <Paper
-                  withBorder
-                  className="absolute bottom-full right-0 z-10 m-0 w-max rounded p-0 text-right"
-                >
-                  {report.likes.map((like) => (
-                    <Box
-                      key={like.id}
-                      mx={10}
-                      fz={"xs"}
-                      className="whitespace-no-wrap"
-                    >
-                      {like.name}
-                    </Box>
-                  ))}
-                  <Text fz="xs" td="overline" pr={4} fs="italic">
-                    {report.likes.length} Like
-                    {report.likes.length > 1 ? "s" : ""} 👍
-                  </Text>
-                </Paper>
-              )}
-            </Box>
+          {/* // Stage / Date */}
+          <Group position="left">
+            <Tooltip
+              transitionProps={{ transition: "skew-down", duration: 300 }}
+              label="Germination"
+              color="green"
+              withArrow
+              arrowPosition="center"
+            >
+              <IconCannabis color="green" />
+            </Tooltip>
+            <Text className={classes.label} c="dimmed">
+              {sanatizeDateString(report.createdAt, Locale.EN)}
+            </Text>
+          </Group>
+          {/* // Stage / Date */}
+          <Group position="left">
+            <Text className={classes.label} c="dimmed">
+              {sanatizeDateString(report.createdAt, Locale.EN)}
+            </Text>
+            <Tooltip
+              transitionProps={{ transition: "skew-down", duration: 300 }}
+              label="Seedling"
+              color="green"
+              withArrow
+              arrowPosition="center"
+            >
+              <IconSeeding color="green" />
+            </Tooltip>
           </Group>
         </Group>
       </Card.Section>
