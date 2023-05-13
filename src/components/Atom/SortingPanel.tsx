@@ -15,6 +15,9 @@ export default function SortingPanel({
 }: SortingPanelProps) {
   return (
     <Box p={0} m={0} className="inline-flex space-x-4">
+      <Button variant="default" size="xs" onClick={handleToggleDesc}>
+        {desc ? <IconChevronDown size="1rem" /> : <IconChevronUp size="1rem" />}
+      </Button>
       <NativeSelect
         variant="default"
         value={sortBy}
@@ -27,9 +30,6 @@ export default function SortingPanel({
         ]}
         icon={<IconCalendarEvent size="1rem" />}
       />
-      <Button variant="default" size="xs" onClick={handleToggleDesc}>
-        {desc ? <IconChevronDown size="1rem" /> : <IconChevronUp size="1rem" />}
-      </Button>
     </Box>
   );
 }
