@@ -2,8 +2,6 @@ import {
   ActionIcon,
   Box,
   Button,
-  Card,
-  Center,
   Container,
   Group,
   Input,
@@ -17,7 +15,6 @@ import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import {
   IconCloudUpload,
   IconDownload,
-  IconPhotoCancel,
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";

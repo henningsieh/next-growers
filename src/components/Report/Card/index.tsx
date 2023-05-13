@@ -20,11 +20,11 @@ import {
   IconHeartFilled,
   IconSeeding,
 } from "@tabler/icons-react";
-import { Locale, ReportCardProps } from "~/types";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import Link from "next/link";
-import type { Report } from "~/types";
+import { Locale } from "~/types";
+import type { ReportCardProps } from "~/types";
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/helpers";
 import { toast } from "react-hot-toast";
@@ -64,7 +64,7 @@ export default function ReportCard({
   report,
   procedure,
 }: ReportCardProps) {
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
   const { data: session } = useSession();
   const [showLikes, setShowLikes] = useState(false);
 
@@ -214,9 +214,17 @@ export default function ReportCard({
 
   const features = badges.map((badge) => (
     <Badge
-      px={0}
-      color={theme.colorScheme === "dark" ? "dark" : "gray"}
       key={badge.label}
+      variant="gradient"
+      gradient={{ from: "orange", to: "grape" }}
+      fz="0.7rem"
+      fw="lighter"
+      pl={4}
+      pr={6}
+      m={4}
+      w={120}
+      // color={theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"}
+
       leftSection={badge.emoji}
     >
       {badge.label}

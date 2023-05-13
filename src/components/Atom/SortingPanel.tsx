@@ -5,7 +5,7 @@ import { IconCalendarEvent, IconChevronDown } from "@tabler/icons-react";
 import React, { Dispatch, SetStateAction } from "react";
 
 import { IconChevronUp } from "@tabler/icons-react";
-import { SortingPanelProps } from "~/types";
+import type { SortingPanelProps } from "~/types";
 
 export default function SortingPanel({
   sortBy,

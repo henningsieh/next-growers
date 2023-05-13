@@ -1,6 +1,7 @@
-import { Container, Grid, LoadingOverlay, Title } from "@mantine/core";
+import { Container, Grid, Title } from "@mantine/core";
 
 import Head from "next/head";
+import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
 import SortingPanel from "~/components/Atom/SortingPanel";
@@ -40,16 +41,16 @@ export default function OwnReports() {
     country: "Zkittlez",
     badges: [
       {
-        emoji: "☀️",
-        label: "Outdoor",
+        emoji: "💡",
+        label: "LED",
       },
       {
-        emoji: "🌲",
-        label: "Sativa",
+        emoji: "🥥",
+        label: "Coco",
       },
       {
-        emoji: "🌊",
-        label: "pure water",
+        emoji: "💎",
+        label: "mineral",
       },
     ],
   };
@@ -68,12 +69,8 @@ export default function OwnReports() {
         <meta name="description" content="My grow reports on growagram.com" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <LoadingOverlay
-        mt={120}
-        visible={isLoading}
-        overlayBlur={20}
-        transitionDuration={600}
-      />
+      <Loading isLoading={isLoading} />
+
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title and Sorting */}

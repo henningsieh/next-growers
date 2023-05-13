@@ -6,7 +6,6 @@ import type {
 } from "next";
 
 import Head from "next/head";
-import type { Report } from "~/types";
 import { api } from "~/utils/api";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";

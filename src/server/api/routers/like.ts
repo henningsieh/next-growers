@@ -1,8 +1,10 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 import { DeleteLikeInput } from "../../../types";
 import { LikeReportInput } from "~/types";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Prisma } from "@prisma/client";
 
 export const likeRouter = createTRPCRouter({
   likeReport: protectedProcedure
