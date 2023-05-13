@@ -21,6 +21,7 @@ const useStyles = createStyles((theme) => ({
   card: {
     position: "relative",
     height: rem(280),
+
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[6]
@@ -33,9 +34,11 @@ const useStyles = createStyles((theme) => ({
 
   cite: {
     color: theme.colors.gray[4],
+    width: "100%",
   },
 
   image: {
+    width: "100%",
     ...theme.fn.cover(),
     ref: getStylesRef("image"),
     backgroundSize: "cover",
@@ -55,6 +58,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   content: {
+    width: "100%",
     height: "105%",
     position: "relative",
     display: "flex",
@@ -128,6 +132,7 @@ export function ImagePreview({
       radius="sm"
       component="a"
       href={publicLink}
+      style={{ display: "block", width: "100%" }}
       // target="_blank"
     >
       <div

@@ -104,7 +104,7 @@ export default function ReportCard({
             //identify report to set like on
             if (report.id === reportId) {
               // append the new entry to likes array
-              alert("push");
+
               report.likes.push({
                 id: userId,
                 name: session?.user.name as string,

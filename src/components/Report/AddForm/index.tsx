@@ -2,6 +2,7 @@ import {
   ActionIcon,
   Box,
   Button,
+  Card,
   Center,
   Container,
   Group,
@@ -171,7 +172,7 @@ function Form({ user }: AddFormProps) {
 
         {cloudUrl ? (
           <>
-            <Container className="relative" px={0}>
+            <Box className="relative" px={0}>
               <Box
                 className="
               absolute
@@ -203,7 +204,7 @@ function Form({ user }: AddFormProps) {
                 comments={89}
                 views={183}
               />
-            </Container>
+            </Box>
           </>
         ) : (
           <div className={classes.wrapper}>
@@ -213,7 +214,7 @@ function Form({ user }: AddFormProps) {
               openRef={openReference}
               onDrop={handleDropWrapper}
               onChange={(e) => {
-                alert(e.currentTarget);
+                console.debug(e.currentTarget);
               }}
               className={classes.dropzone}
               // radius="md"
@@ -290,6 +291,15 @@ function Form({ user }: AddFormProps) {
             {...form.getInputProps("imageId")}
             value={imageId}
           />
+          <Textarea
+            withAsterisk
+            label="Boxkquote cite:"
+            placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
+            mt="sm"
+            autosize
+            minRows={3}
+            {...form.getInputProps("description")}
+          />
           <TextInput
             withAsterisk
             label="Report title: "
@@ -297,19 +307,10 @@ function Form({ user }: AddFormProps) {
             mt="sm"
             {...form.getInputProps("title")}
           />
-          <Textarea
-            withAsterisk
-            label="Report description:"
-            placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
-            mt="sm"
-            autosize
-            minRows={6}
-            {...form.getInputProps("description")}
-          />
 
           <Group position="right" mt="xl">
             <Button type="submit" disabled={!form.isValid()}>
-              Create Report
+              Continue
             </Button>
           </Group>
         </form>
