@@ -20,10 +20,10 @@ import {
   IconHeartFilled,
   IconSeeding,
 } from "@tabler/icons-react";
+import { Locale, ReportCardProps } from "~/types";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import Link from "next/link";
-import { Locale } from "~/types";
 import type { Report } from "~/types";
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/helpers";
@@ -57,19 +57,6 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 700,
   },
 }));
-
-interface FakeCardBadgeProps {
-  country: string;
-  badges: {
-    emoji: string;
-    label: string;
-  }[];
-}
-
-interface ReportCardProps extends FakeCardBadgeProps {
-  report: Report;
-  procedure: "all" | "own";
-}
 
 export default function ReportCard({
   country,

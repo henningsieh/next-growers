@@ -67,3 +67,16 @@ export interface SortingPanelProps {
   desc: boolean;
   handleToggleDesc: () => void;
 }
+
+export interface FakeCardBadgeProps {
+  country: string;
+  badges: {
+    emoji: string;
+    label: string;
+  }[];
+}
+
+export interface ReportCardProps extends FakeCardBadgeProps {
+  report: Report;
+  procedure: "all" | "own";
+}
