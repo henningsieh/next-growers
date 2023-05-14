@@ -1,20 +1,22 @@
+import { ChangeEvent, useState } from "react";
 import { Container, Grid, Title } from "@mantine/core";
 
 import Head from "next/head";
 import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
+import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
 import type { SortingPanelProps } from "~/types";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 
 export default function OwnReports() {
   const pageTitle = "My Reports";
   const { data: session } = useSession();
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
+  const [searchString, setSearchString] = useState("");
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -22,6 +24,7 @@ export default function OwnReports() {
     isLoading,
     isError,
   } = api.reports.getOwnReports.useQuery({
+    search: searchString,
     orderBy: sortBy, // Set the desired orderBy field
     desc: desc, // Set the desired order (true for descending, false for ascending)
   });
@@ -54,6 +57,9 @@ export default function OwnReports() {
       },
     ],
   };
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchString(event.target.value);
+  };
 
   if (!session)
     return (
@@ -79,6 +85,7 @@ export default function OwnReports() {
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
+          <SearchInput value={searchString} onChange={handleSearchChange} />
 
           <SortingPanel {...sortingPanelProps} />
         </div>

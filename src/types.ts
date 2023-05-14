@@ -25,6 +25,7 @@ export const reportInput = z.object({
 export const getReportsInput = z.object({
   orderBy: z.string().min(1),
   desc: z.boolean(),
+  search: z.string(),
 });
 
 export const reportEditInput = z.object({

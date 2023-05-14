@@ -12,8 +12,32 @@ export const reportRouter = createTRPCRouter({
   getAllReports: publicProcedure
     .input(getReportsInput)
     .query(async ({ ctx, input }) => {
-      const { orderBy, desc } = input;
+      const { orderBy, desc, search } = input;
       const reports = await ctx.prisma.report.findMany({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+            {
+              author: {
+                name: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+          ],
+        },
         orderBy: {
           [orderBy]: desc ? "desc" : "asc",
         },
@@ -55,11 +79,12 @@ export const reportRouter = createTRPCRouter({
           authorImage: author?.image,
           createdAt: createdAt.toISOString(),
           updatedAt: updatedAt.toISOString(),
+          // Map the Like relation to extract user information
           likes: Like.map(({ id, user }) => ({
             id,
             userId: user.id,
             name: user.name,
-          })), // Map the Like relation to extract user information
+          })),
         })
       );
     }),
@@ -71,9 +96,34 @@ export const reportRouter = createTRPCRouter({
   getOwnReports: protectedProcedure
     .input(getReportsInput)
     .query(async ({ ctx, input }) => {
-      const { orderBy, desc } = input;
+      const { orderBy, desc, search } = input;
 
       const reports = await ctx.prisma.report.findMany({
+        where: {
+          authorId: ctx.session.user.id,
+          OR: [
+            {
+              title: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+            {
+              description: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+            {
+              author: {
+                name: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+          ],
+        },
         orderBy: {
           [orderBy]: desc ? "desc" : "asc",
         },
@@ -93,7 +143,6 @@ export const reportRouter = createTRPCRouter({
             },
           },
         },
-        where: { authorId: ctx.session.user.id },
       });
       return reports.map(
         ({

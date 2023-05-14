@@ -78,7 +78,7 @@ export default function ReportCard({
       const previousReports = trpc.reports.getOwnReports.getData();
       // Optimistically add the new like
       trpc.reports.getOwnReports.setData(
-        { orderBy: "createdAt", desc: true },
+        { search: "", orderBy: "createdAt", desc: true },
         (prev) => {
           console.log("prev", prev); //FIXME: prev is EMPTY
           if (!prev) return previousReports;
@@ -140,7 +140,7 @@ export default function ReportCard({
         const previousReports = trpc.reports.getOwnReports.getData();
         // Optimistically update to the new value
         trpc.reports.getOwnReports.setData(
-          { orderBy: "createdAt", desc: true },
+          { search: "", orderBy: "createdAt", desc: true },
           (prev) => {
             console.log("PREV", prev);
             if (!prev) return previousReports;
@@ -156,7 +156,7 @@ export default function ReportCard({
         const previousReports = trpc.reports.getAllReports.getData();
         // Optimistically update to the new value
         trpc.reports.getAllReports.setData(
-          { orderBy: "createdAt", desc: true },
+          { search: "", orderBy: "createdAt", desc: true },
           (prev) => {
             if (!prev) return previousReports;
             return prev.filter((report) => report.id !== deletedReportId);
@@ -172,12 +172,12 @@ export default function ReportCard({
       if (!!context) {
         if (procedure == "own") {
           trpc.reports.getOwnReports.setData(
-            { orderBy: "createdAt", desc: true },
+            { search: "", orderBy: "createdAt", desc: true },
             () => context.previousReports
           );
         } else {
           trpc.reports.getAllReports.setData(
-            { orderBy: "createdAt", desc: true },
+            { search: "", orderBy: "createdAt", desc: true },
             () => context.previousReports
           );
         }

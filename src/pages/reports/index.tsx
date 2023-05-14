@@ -1,18 +1,21 @@
-import { Container, Grid, Title } from "@mantine/core";
+import { Container, Grid, TextInput, Title } from "@mantine/core";
+import { useEffect, useRef, useState } from "react";
 
+import type { ChangeEvent } from "react";
 import Head from "next/head";
 import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
+import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
 import type { SortingPanelProps } from "~/types";
 import { api } from "~/utils/api";
-import { useState } from "react";
 
 export default function AllReports() {
   const pageTitle = "Explore Reports";
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
+  const [searchString, setSearchString] = useState("");
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -20,6 +23,7 @@ export default function AllReports() {
     isLoading,
     isError,
   } = api.reports.getAllReports.useQuery({
+    search: searchString,
     orderBy: sortBy, // Set the desired orderBy field
     desc: desc, // Set the desired order (true for descending, false for ascending)
   });
@@ -50,6 +54,9 @@ export default function AllReports() {
       },
     ],
   };
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchString(event.target.value);
+  };
 
   // if (isLoading) return "";
   if (isError) return <LoadingError />;
@@ -72,6 +79,7 @@ export default function AllReports() {
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
+          <SearchInput value={searchString} onChange={handleSearchChange} />
           <SortingPanel {...sortingPanelProps} />
         </div>
         {/* // Header End */}
