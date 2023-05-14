@@ -217,8 +217,8 @@ export default function ReportCard({
       key={badge.label}
       variant="gradient"
       gradient={{ from: "orange", to: "grape" }}
-      fz="0.7rem"
-      fw="lighter"
+      fz="0.6rem"
+      fw="bolder"
       pl={4}
       pr={6}
       m={4}

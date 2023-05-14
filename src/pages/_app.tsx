@@ -45,8 +45,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
         withNormalizeCSS
         theme={{
           loader: "bars",
-          fontFamily: `'Roboto Slab', sans-serif`,
-          colorScheme, // get light/dark from local storage state
+          colorScheme,
+          fontFamily: `'Lato', sans-serif`,
+          headings: {
+            fontFamily: `'Open Sans', sans-serif`,
+            sizes: {
+              h1: { fontSize: "1.66rem" },
+            },
+          },
           primaryColor: "orange",
           breakpoints: {
             // 1 Spalte
