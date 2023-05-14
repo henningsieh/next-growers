@@ -374,7 +374,7 @@ export default function ReportCard({
             color="red"
             radius="sm"
             style={{ flex: 0 }}
-            className="border-1 border-red-600"
+            className="border-1 cursor-default border-red-600"
             onClick={() => {
               deleteMutation(report.id);
             }}
