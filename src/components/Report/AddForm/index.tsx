@@ -181,6 +181,7 @@ function Form({ user }: AddFormProps) {
               "
               >
                 <ActionIcon
+                  title="delete this image"
                   onClick={() => {
                     setImageId("");
                     setCloudUrl("");

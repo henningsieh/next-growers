@@ -32,7 +32,7 @@ const useStyles = createStyles((theme) => ({
 
   cite: {
     fontFamily: `'Roboto Slab', sans-serif`,
-    fontSize: "1.3rem",
+    fontSize: "1.2rem",
     color: theme.colors.gray[4],
     width: "100%",
   },
@@ -52,8 +52,6 @@ const useStyles = createStyles((theme) => ({
     right: 0,
     bottom: 0,
     backgroundImage:
-      // "linear-gradient(180deg, rgba(255,102,0,1) 10%, rgba(255,255,255,0) 33%, rgba(0,0,0,0.8927171210280987) 75%)",
-      // "linear-gradient(180deg, rgba(205,82,0,1) 20%, rgba(255,255,255,0) 60%, rgba(0,0,0,0.8927171210280987) 75%)",
       "linear-gradient(180deg, rgba(0,0,0,0.8170868689272583) 20%, rgba(255,255,255,0) 70%, rgba(255,102,0,1) 100%)",
   },
 
@@ -64,14 +62,13 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
-    zIndex: 1,
+    zIndex: 11,
   },
   deleteButtonWrapper: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    padding: "0.5rem" /* 
-    zIndex: 100, */,
+    padding: "0.5rem",
   },
 
   deleteButton: {
@@ -142,7 +139,7 @@ export function ImagePreview({
       <div className={classes.overlay} />
 
       {/* Avatar */}
-      <Box pos="absolute" className="z-10 -ml-2 pt-6">
+      <Box pos="absolute" className=" z-20 -ml-2 pt-6">
         <UserAvatar
           userName={authorName}
           imageUrl={authorImageUrl}

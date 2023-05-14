@@ -23,16 +23,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   useRouteLoader();
 
-  const preferredColorScheme = "dark"; //useColorScheme(); // set initial theme
-
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
-    key: "mantine-color-scheme",
+    key: "color-scheme",
     defaultValue: "dark",
     getInitialValueInEffect: true,
   });
 
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+
+  if (!colorScheme) return null;
 
   return (
     <ColorSchemeProvider

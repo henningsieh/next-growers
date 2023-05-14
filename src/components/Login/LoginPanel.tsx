@@ -1,4 +1,4 @@
-import { Button, Group, Menu, Modal } from "@mantine/core";
+import { ActionIcon, Button, Group, Menu, Modal } from "@mantine/core";
 import {
   IconLogout,
   IconPhoto,
@@ -47,14 +47,17 @@ export default function LoginModal() {
           <Menu shadow="md" width={200}>
             <Menu.Target>
               {/* <Button>Toggle menu</Button> */}
+              {/* <ActionIcon> */}
               <Avatar
                 src={session.user.image}
                 className="cursor-pointer"
                 variant="outline"
-                radius="xl"
+                radius="sm"
                 size="md"
+                p={2}
                 color="grape"
               />
+              {/* </ActionIcon> */}
             </Menu.Target>
 
             <Menu.Dropdown>

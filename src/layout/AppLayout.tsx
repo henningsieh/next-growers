@@ -2,6 +2,7 @@
 
 import { type ReactNode } from "react";
 import {
+  ActionIcon,
   Anchor,
   Box,
   Burger,
@@ -13,6 +14,7 @@ import {
   Group,
   Header,
   HoverCard,
+  Paper,
   ScrollArea,
   SimpleGrid,
   Text,
@@ -187,7 +189,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         height={60}
         style={{
           position: "fixed",
-          zIndex: 10,
+          zIndex: 25,
           maxWidth: "1856px",
           width: "100%",
           margin: "0px auto",
@@ -196,19 +198,21 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
       >
         <Group position="apart" sx={{ height: "100%" }}>
           <Group>
-            <Burger
-              size={30}
-              pl={0}
-              pr={0}
-              opened={drawerOpened}
-              onClick={toggleDrawer}
-              className={classes.hiddenDesktop}
-            />
+            <Paper withBorder>
+              <Burger
+                size={22}
+                // pl={0}
+                // pr={0}
+                opened={drawerOpened}
+                onClick={toggleDrawer}
+                className={classes.hiddenDesktop}
+              />
+            </Paper>
             <Link href="/reports">
               <Image
                 className="rounded-sm"
-                height={18}
-                width={74}
+                height={36}
+                width={82}
                 alt="GrowAGram Logo"
                 src="/growagram-logo-wide-magenta-gradient.png"
               />
@@ -300,7 +304,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         // padding="md"
         title="Navigation"
         className={classes.hiddenDesktop}
-        zIndex={10}
+        zIndex={25}
       >
         <ScrollArea
           onClick={closeDrawer} // -> menu self close on item click

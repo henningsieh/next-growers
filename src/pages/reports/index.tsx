@@ -1,4 +1,11 @@
-import { Container, Grid, TextInput, Title } from "@mantine/core";
+import {
+  Box,
+  Container,
+  Grid,
+  TextInput,
+  Title,
+  createStyles,
+} from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 
 import type { ChangeEvent } from "react";
@@ -11,12 +18,25 @@ import SortingPanel from "~/components/Atom/SortingPanel";
 import type { SortingPanelProps } from "~/types";
 import { api } from "~/utils/api";
 
+const useStyles = createStyles((theme) => ({
+  hiddenMobile: {
+    [theme.fn.smallerThan("md")]: {
+      display: "none",
+    },
+  },
+
+  hiddenDesktop: {
+    [theme.fn.largerThan("md")]: {
+      display: "none",
+    },
+  },
+}));
 export default function AllReports() {
   const pageTitle = "Explore Reports";
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
-
+  const { classes, theme } = useStyles();
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
     data: reports,
@@ -72,17 +92,22 @@ export default function AllReports() {
       <Loading isLoading={isLoading} />
 
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-1">
+      <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
-          <SearchInput value={searchString} onChange={handleSearchChange} />
+          <Box pr={35} className={classes.hiddenMobile}>
+            <SearchInput value={searchString} onChange={handleSearchChange} />
+          </Box>
           <SortingPanel {...sortingPanelProps} />
         </div>
         {/* // Header End */}
+        <Box className={classes.hiddenDesktop}>
+          <SearchInput value={searchString} onChange={handleSearchChange} />
+        </Box>
 
         {!isLoading && (
           <Grid gutter="sm">

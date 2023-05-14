@@ -9,7 +9,8 @@ type SearchInputProps = {
 const SearchInput = ({ value, onChange }: SearchInputProps) => {
   return (
     <TextInput
-      pr={4}
+      // pr={4}
+      miw={380}
       pt={3}
       size="sm"
       placeholder="Full text search"

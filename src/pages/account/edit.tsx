@@ -94,7 +94,7 @@ export default function EditReport() {
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {pageTitle}

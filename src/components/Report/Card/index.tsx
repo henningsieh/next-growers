@@ -260,10 +260,12 @@ export default function ReportCard({
             </Box>
             <Box pr={4} m={0} className="relative">
               <ActionIcon
+                title="give props to grower"
                 variant="default"
                 className="cursor-default"
                 onMouseEnter={() => void setShowLikes(true)}
                 onMouseLeave={() => void setShowLikes(false)}
+                onBlur={() => setShowLikes(false)}
                 radius="sm"
                 p={0}
                 mr={-4}
@@ -293,7 +295,7 @@ export default function ReportCard({
                   withBorder
                   className={`duration-400 absolute bottom-full right-0 z-10 m-0 w-max rounded p-0 text-right transition-opacity ${
                     showLikes ? "opacity-100" : "opacity-0"
-                  }`}
+                  } z-30`}
                 >
                   {report.likes.map((like) => (
                     <Box
