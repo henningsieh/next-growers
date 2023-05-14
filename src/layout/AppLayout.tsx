@@ -198,11 +198,9 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
       >
         <Group position="apart" sx={{ height: "100%" }}>
           <Group>
-            <Paper withBorder>
+            <Paper>
               <Burger
-                size={22}
-                // pl={0}
-                // pr={0}
+                size={40}
                 opened={drawerOpened}
                 onClick={toggleDrawer}
                 className={classes.hiddenDesktop}
@@ -211,8 +209,8 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
             <Link href="/reports">
               <Image
                 className="rounded-sm"
-                height={36}
-                width={82}
+                height={40}
+                width={86}
                 alt="GrowAGram Logo"
                 src="/growagram-logo-wide-magenta-gradient.png"
               />
