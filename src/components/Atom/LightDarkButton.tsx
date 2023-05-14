@@ -1,6 +1,6 @@
 import {
+  ActionIcon,
   Group,
-  Switch,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
@@ -10,25 +10,17 @@ export default function LightDarkButton() {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
-
+  const dark = colorScheme === "dark";
   return (
     <Group position="center" my={0}>
-      <Switch
-        style={{
-          zIndex: 50000,
-        }}
-        checked={colorScheme === "dark"}
-        onChange={() => toggleColorScheme()}
-        size="sm"
-        onLabel={<IconSun color={theme.white} size="1.25rem" stroke={1.5} />}
-        offLabel={
-          <IconMoonStars
-            color={theme.colors.gray[6]}
-            size="1.25rem"
-            stroke={1.5}
-          />
-        }
-      />
+      <ActionIcon
+        variant="outline"
+        color={dark ? theme.colors.pink[5] : "gray"}
+        onClick={() => toggleColorScheme()}
+        title="Toggle color scheme"
+      >
+        {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
+      </ActionIcon>
     </Group>
   );
 }

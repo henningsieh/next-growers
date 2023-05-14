@@ -68,8 +68,8 @@ const useStyles = createStyles((theme) => ({
     position: "absolute",
     bottom: 0,
     right: 0,
-    padding: "0.5rem",
-    zIndex: 100,
+    padding: "0.5rem" /* 
+    zIndex: 100, */,
   },
 
   deleteButton: {
@@ -140,7 +140,7 @@ export function ImagePreview({
       <div className={classes.overlay} />
 
       {/* Avatar */}
-      <Box pos="absolute" className="-ml-2 pt-6">
+      <Box pos="absolute" className="z-10 -ml-2 pt-6">
         <UserAvatar
           userName={authorName}
           imageUrl={authorImageUrl}

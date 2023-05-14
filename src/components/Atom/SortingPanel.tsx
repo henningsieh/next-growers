@@ -1,7 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Box, Button, NativeSelect } from "@mantine/core";
-import { IconCalendarEvent, IconChevronDown } from "@tabler/icons-react";
+import {
+  IconCalendarDown,
+  IconCalendarEvent,
+  IconCalendarUp,
+  IconChevronDown,
+  IconClockDown,
+  IconClockUp,
+  IconSortAscending,
+  IconSortAscending2,
+  IconSortDescending,
+  IconSortDescending2,
+} from "@tabler/icons-react";
 import React, { Dispatch, SetStateAction } from "react";
 
 import { IconChevronUp } from "@tabler/icons-react";
@@ -14,21 +25,43 @@ export default function SortingPanel({
   handleToggleDesc,
 }: SortingPanelProps) {
   return (
-    <Box p={0} m={0} className="inline-flex space-x-4">
-      <Button variant="default" size="xs" onClick={handleToggleDesc}>
-        {desc ? <IconChevronDown size="1rem" /> : <IconChevronUp size="1rem" />}
+    <Box pt={3} m={0} className="inline-flex space-x-1">
+      <Button
+        c="dimmed"
+        variant="default"
+        px={4}
+        size="sm"
+        onClick={handleToggleDesc}
+      >
+        {desc ? (
+          <IconSortDescending2 size="1.2rem" />
+        ) : (
+          <IconSortAscending2 size="1.2rem" />
+        )}
       </Button>
       <NativeSelect
         variant="default"
         value={sortBy}
         onChange={(event) => setSortBy(event.currentTarget.value)}
-        size="xs"
-        placeholder="Pick a hashtag"
+        size="sm"
+        placeholder="Sort by..."
         data={[
           { value: "createdAt", label: "Created at" },
           { value: "updatedAt", label: "Updated at" },
         ]}
-        icon={<IconCalendarEvent size="1rem" />}
+        icon={
+          sortBy === "createdAt" ? (
+            desc ? (
+              <IconCalendarDown size="1.46rem" />
+            ) : (
+              <IconCalendarUp size="1.4rem" />
+            )
+          ) : desc ? (
+            <IconClockDown size="1.2rem" />
+          ) : (
+            <IconClockUp size="1.2rem" />
+          )
+        }
       />
     </Box>
   );

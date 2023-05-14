@@ -14,61 +14,31 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { api } from "~/utils/api";
 import { appWithTranslation } from "next-i18next";
+import { useLocalStorage } from "@mantine/hooks";
+import { useRouteLoader } from "~/helpers/routeLoader";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    Router.events.on("routeChangeStart", (url) => {
-      setIsLoading(true);
-      console.log("isLoading", url);
-    });
-
-    Router.events.on("routeChangeComplete", (url) => {
-      setIsLoading(false);
-    });
-
-    Router.events.on("routeChangeError", (url) => {
-      setIsLoading(false);
-    });
-  }, []);
-
-  const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+  useRouteLoader();
 
   const preferredColorScheme = "dark"; //useColorScheme(); // set initial theme
 
-  const [colorScheme, setColorScheme] =
-    useState<ColorScheme>(preferredColorScheme);
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    key: "mantine-color-scheme",
+    defaultValue: "dark",
+    getInitialValueInEffect: true,
+  });
+
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
   return (
     <ColorSchemeProvider
       colorScheme={colorScheme}
       toggleColorScheme={toggleColorScheme}
     >
-      {/*       <Global
-        styles={[
-          {
-            "@font-face": {
-              fontFamily: "Greycliff CF",
-              src: `url('${bold}') format("woff2")`,
-              fontWeight: 700,
-              fontStyle: "normal",
-            },
-          },
-          {
-            "@font-face": {
-              fontFamily: "Greycliff CF",
-              src: `url('${heavy}') format("woff2")`,
-              fontWeight: 900,
-              fontStyle: "normal",
-            },
-          },
-        ]}
-      /> */}
       {/* https://stackoverflow.com/questions/74555403/how-to-change-hover-color-in-mantine-ui-menu */}
       <MantineProvider
         withGlobalStyles

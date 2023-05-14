@@ -23,7 +23,6 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
         variant="outline"
         radius="xl"
         size={avatarRadius}
-        color="grape"
       />
     </Tooltip>
   );

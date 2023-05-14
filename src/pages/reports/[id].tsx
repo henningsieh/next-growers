@@ -118,7 +118,7 @@ export default function ReportDetails(
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-4">
+      <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between">
           {/* // Title */}

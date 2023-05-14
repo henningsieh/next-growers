@@ -48,7 +48,7 @@ const EditReport: NextPage = () => {
       </Head>
       <Loading isLoading={isLoading} />
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-4">
+      <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between">
           {/* // Title */}
@@ -62,7 +62,7 @@ const EditReport: NextPage = () => {
         <Container
           size="sm"
           px={0}
-          className="flex w-full flex-col space-y-4"
+          className="flex w-full flex-col space-y-1"
           mx="auto"
         >
           {/* <Group position="left">

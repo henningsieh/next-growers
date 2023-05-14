@@ -160,7 +160,7 @@ function Form({ user }: AddFormProps) {
       <Container
         size="sm"
         px={0}
-        className="flex w-full flex-col space-y-4"
+        className="flex w-full flex-col space-y-1"
         mx="auto"
       >
         {/* // Upload Panel */}
