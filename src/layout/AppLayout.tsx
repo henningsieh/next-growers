@@ -38,6 +38,7 @@ import LoginPanel from "../components/Login/LoginPanel";
 import Image from "next/image";
 import Link from "next/link";
 import LightDarkButton from "../components/Atom/LightDarkButton";
+import Notifications from "~/components/Notifications";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -289,6 +290,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           // className={classes.hiddenMobile}
           >
             <LightDarkButton />
+            <Notifications />
             <LoginPanel />
           </Group>
           {/* <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} /> */}

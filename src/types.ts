@@ -81,3 +81,9 @@ export interface ReportCardProps extends FakeCardBadgeProps {
   report: Report;
   procedure: "all" | "own";
 }
+
+export type NotificationEventMap =
+  | "LIKE_CREATED"
+  | "COMMENT_CREATED"
+  | "POST_CREATED"
+  | "REPORT_CREATED";

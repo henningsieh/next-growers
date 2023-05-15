@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 import { userSetUSerNameInput } from "~/types";
+import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
   saveOwnUsername: protectedProcedure

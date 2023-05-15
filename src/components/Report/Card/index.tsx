@@ -260,7 +260,7 @@ export default function ReportCard({
             <Box fz="sm" p={1} m={1}>
               {report.likes.length}
             </Box>
-            <Box pr={4} m={0} className="relative">
+            <Box className="relative">
               <ActionIcon
                 title="give props to grower"
                 variant="default"
@@ -306,12 +306,7 @@ export default function ReportCard({
                       style={transitionStyles}
                     >
                       {report.likes.map((like) => (
-                        <Box
-                          key={like.id}
-                          mx={10}
-                          fz={"xs"}
-                          className="whitespace-no-wrap"
-                        >
+                        <Box key={like.id} mx={10} fz={"xs"}>
                           {like.name}
                         </Box>
                       ))}
