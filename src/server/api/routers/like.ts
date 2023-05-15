@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { NotificationEvent, Prisma } from "@prisma/client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 import { DeleteLikeInput } from "../../../types";
 import { LikeReportInput } from "~/types";
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Prisma } from "@prisma/client";
 
 export const likeRouter = createTRPCRouter({
   likeReport: protectedProcedure
@@ -58,7 +58,22 @@ export const likeRouter = createTRPCRouter({
           },
         },
       });
-
+      // Create a notification for the report author
+      await ctx.prisma.notification.create({
+        data: {
+          recipient: {
+            connect: {
+              id: existingReport.authorId,
+            },
+          },
+          event: NotificationEvent.LIKE_CREATED,
+          like: {
+            connect: {
+              id: like.id,
+            },
+          },
+        },
+      });
       return like;
     }),
 

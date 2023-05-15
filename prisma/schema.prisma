@@ -13,11 +13,38 @@ enum Role {
   ADMIN
 }
 
+enum NotificationEvent {
+  LIKE_CREATED
+  COMMENT_CREATED
+  POST_CREATED
+  REPORT_CREATED
+}
+
+model Notification {
+  id          String            @id @default(cuid())
+  recipient   User              @relation(fields: [recipientId], references: [id])
+  recipientId String
+  event       NotificationEvent
+  readAt      DateTime?
+  like        Like?             @relation(fields: [likeId], references: [id])
+  likeId      String?
+  comment     Comment?          @relation(fields: [commentId], references: [id])
+  commentId   String?
+  post        Post?             @relation(fields: [postId], references: [id])
+  postId      String?
+  report      Report?           @relation(fields: [reportId], references: [id])
+  reportId    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
   password      String?
   image         String?
+  imageId       String?
   role          Role      @default(USER)
   email         String?   @unique
   emailVerified DateTime?
@@ -26,10 +53,11 @@ model User {
   reports       Report[] // One User has many Reports
   posts         Post[] // One User has many Posts
   comments      Comment[] // One User has many Comments
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  imageId       String?
-  Like          Like[]
+  likes         Like[]
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notification Notification[]
 }
 
 model Image {
@@ -53,10 +81,11 @@ model Report {
   posts       Post[] // One Report has many Posts
   contests    Contest[] @relation("ReportToContest") //many2many
   products    Product[] // One Report has many Products
+  likes       Like[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Like      Like[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notification Notification[]
 
   @@index([authorId], name: "authorId_idx")
 }
@@ -70,8 +99,9 @@ model Like {
   post     Post?   @relation(fields: [postId], references: [id])
   postId   String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notification Notification[]
 
   @@unique([userId, postId])
   @@unique([userId, reportId])
@@ -96,6 +126,7 @@ model Post {
   id       String    @id @default(cuid())
   title    String
   content  String
+  likes    Like[]
   comments Comment[] // One Post has many Comments
 
   reportId String // One Report has many Posts
@@ -104,9 +135,9 @@ model Post {
   authorId String
   author   User   @relation(fields: [authorId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Like      Like[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notification Notification[]
 }
 
 model Comment {
@@ -118,8 +149,9 @@ model Comment {
   postId   String? // One Post has many Comments
   post     Post?   @relation(fields: [postId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notification Notification[]
 }
 
 model Company {
