@@ -9,6 +9,7 @@ import {
   Paper,
   Text,
   Tooltip,
+  Transition,
   createStyles,
   rem,
 } from "@mantine/core";
@@ -67,6 +68,7 @@ export default function ReportCard({
   const { classes } = useStyles();
   const { data: session } = useSession();
   const [showLikes, setShowLikes] = useState(false);
+  const [showLikesTooltip, showLetlikesTooltip] = useState(false);
 
   const trpc = api.useContext();
 
@@ -291,27 +293,35 @@ export default function ReportCard({
               </ActionIcon>
               {/* // Likes Tooltip */}
               {!!report.likes.length && (
-                <Paper
-                  withBorder
-                  className={`duration-400 absolute bottom-full right-0 z-10 m-0 w-max rounded p-0 text-right transition-opacity ${
-                    showLikes ? "opacity-100" : "opacity-0"
-                  } z-30`}
+                <Transition
+                  mounted={showLikes}
+                  transition="pop-bottom-right"
+                  duration={100}
+                  timingFunction="ease-in-out"
                 >
-                  {report.likes.map((like) => (
-                    <Box
-                      key={like.id}
-                      mx={10}
-                      fz={"xs"}
-                      className="whitespace-no-wrap"
+                  {(transitionStyles) => (
+                    <Paper
+                      withBorder
+                      className={`absolute bottom-full right-0 z-40 m-0 -mr-1 mb-2 w-max rounded p-0 text-right`}
+                      style={transitionStyles}
                     >
-                      {like.name}
-                    </Box>
-                  ))}
-                  <Text fz="xs" td="overline" pr={4} fs="italic">
-                    {report.likes.length} Like
-                    {report.likes.length > 1 ? "s" : ""} 👍
-                  </Text>
-                </Paper>
+                      {report.likes.map((like) => (
+                        <Box
+                          key={like.id}
+                          mx={10}
+                          fz={"xs"}
+                          className="whitespace-no-wrap"
+                        >
+                          {like.name}
+                        </Box>
+                      ))}
+                      <Text fz="xs" td="overline" pr={4} fs="italic">
+                        {report.likes.length} Like
+                        {report.likes.length > 1 ? "s" : ""} 👍
+                      </Text>
+                    </Paper>
+                  )}
+                </Transition>
               )}
             </Box>
           </Group>
@@ -323,11 +333,11 @@ export default function ReportCard({
           {/* // Stage / Date */}
           <Group position="left">
             <Tooltip
-              transitionProps={{ transition: "skew-down", duration: 300 }}
+              transitionProps={{ transition: "pop-bottom-left", duration: 100 }}
               label="Germination Date"
               color="green"
-              // withArrow
-              arrowPosition="center"
+              withArrow
+              arrowPosition="side"
             >
               <Center>
                 <IconCannabis size="1.6rem" color="green" />
@@ -340,11 +350,14 @@ export default function ReportCard({
           {/* // Stage / Date */}
           <Group position="left">
             <Tooltip
-              transitionProps={{ transition: "skew-down", duration: 300 }}
+              transitionProps={{
+                transition: "pop-bottom-right",
+                duration: 100,
+              }}
               label="Seedling"
               color="green"
               withArrow
-              arrowPosition="center"
+              arrowPosition="side"
             >
               <Center>
                 <Text className={classes.label} c="dimmed">

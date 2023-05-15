@@ -189,7 +189,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         height={60}
         style={{
           position: "fixed",
-          zIndex: 25,
+          zIndex: 100,
           maxWidth: "1856px",
           width: "100%",
           margin: "0px auto",
@@ -302,7 +302,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         // padding="md"
         title="Navigation"
         className={classes.hiddenDesktop}
-        zIndex={25}
+        zIndex={100}
       >
         <ScrollArea
           onClick={closeDrawer} // -> menu self close on item click

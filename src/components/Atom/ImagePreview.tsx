@@ -17,6 +17,7 @@ import UserAvatar from "./UserAvatar";
 
 const useStyles = createStyles((theme) => ({
   card: {
+    zIndex: 40,
     position: "relative",
     height: rem(280),
 
@@ -62,7 +63,7 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
-    zIndex: 11,
+    zIndex: 12,
   },
   deleteButtonWrapper: {
     position: "absolute",
@@ -86,7 +87,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   bodyText: {
-    color: theme.colors.dark[9],
+    color: theme.colors.dark[4],
     marginRight: rem(7),
     fontWeight: "bold",
   },

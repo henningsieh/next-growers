@@ -10,13 +10,13 @@ const SearchInput = ({ value, onChange }: SearchInputProps) => {
   return (
     <TextInput
       // pr={4}
-      miw={380}
       pt={3}
+      miw={300}
       size="sm"
-      placeholder="Full text search"
       type="text"
       value={value}
       onChange={onChange}
+      placeholder="Full text search"
     />
   );
 };

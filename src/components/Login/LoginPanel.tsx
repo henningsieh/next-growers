@@ -44,7 +44,7 @@ export default function LoginModal() {
       {/* // Open Modal from Navbar */}
       <Group position="center">
         {status === "authenticated" ? (
-          <Menu shadow="md" width={200}>
+          <Menu shadow="xl" width={200}>
             <Menu.Target>
               {/* <Button>Toggle menu</Button> */}
               {/* <ActionIcon> */}
@@ -53,8 +53,8 @@ export default function LoginModal() {
                 className="cursor-pointer"
                 variant="outline"
                 radius="sm"
-                size="md"
-                p={2}
+                size={32}
+                p={0}
                 color="grape"
               />
               {/* </ActionIcon> */}
