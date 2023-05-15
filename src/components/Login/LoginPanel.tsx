@@ -106,7 +106,7 @@ export default function LoginModal() {
             <Button
               className="cursor-default"
               variant="default"
-              size={"xs"}
+              size={"sm"}
               onClick={open}
             >
               Sign in 🔒

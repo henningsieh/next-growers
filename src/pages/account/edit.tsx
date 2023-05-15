@@ -30,10 +30,9 @@ import { z } from "zod";
 
 export default function EditReport() {
   const pageTitle = "Edit Profile";
-  const { data: session } = useSession();
-  const [opened, setOpened] = useState(false);
+  const { data: session, status, update } = useSession();
+  const [appNotificationOpened, setOpened] = useState(false);
   const theme = useMantineTheme();
-
   /**
    * function: setRandomUsername()
    */
@@ -48,10 +47,10 @@ export default function EditReport() {
   const validateFormSchema = z.object({
     name: z
       .string()
-      .min(6, { message: "Username must have at least 6 letters" }),
-    /* .refine((value) => !/\s/.test(value), {
+      .min(6, { message: "Username must have at least 6 letters" })
+      .refine((value) => !/\s/.test(value), {
         message: "Userame must not contain whitespace characters",
-      }), */
+      }),
     email: z.string().email({ message: "Invalid email address" }),
   });
 
@@ -69,6 +68,7 @@ export default function EditReport() {
         setOpened(true);
       },
       onSettled() {
+        void update();
         setTimeout(() => {
           setOpened(false);
         }, 2500);
@@ -186,7 +186,7 @@ export default function EditReport() {
       <AppNotification
         title="Success"
         text="Your username has been saved to database."
-        opened={opened}
+        opened={appNotificationOpened}
       />
     </>
   );

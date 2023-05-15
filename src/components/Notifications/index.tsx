@@ -3,34 +3,18 @@ import {
   Badge,
   Box,
   Button,
-  Card,
   Container,
-  Divider,
-  Group,
   Indicator,
-  NavLink,
-  Space,
   createStyles,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import {
-  IconActivity,
-  IconBell,
-  IconCircleOff,
-  IconGauge,
-  IconHeartFilled,
-  IconHome,
-  IconHome2,
-  IconNews,
-} from "@tabler/icons-react";
+import { IconBell, IconHeartFilled } from "@tabler/icons-react";
 import React, { useState } from "react";
 
-import { IconChevronRight } from "@tabler/icons-react";
 import { IconEyeCheck } from "@tabler/icons-react";
-import { IconHeart } from "@tabler/icons-react";
 import Link from "next/link";
-import { NotificationEventMap } from "~/types";
+import type { NotificationEventMap } from "~/types";
 import { Paper } from "@mantine/core";
 import { Transition } from "@mantine/core";
 import { api } from "~/utils/api";
@@ -68,11 +52,12 @@ const Notifications = () => {
       {/* Notification Icon */}
       <Box>
         <ActionIcon
+          onClick={() => setOpen(!open)}
+          onBlur={() => setOpen(false)}
+          title="Notifications"
           style={{ position: "relative" }}
-          className="cursor-default"
           size={32}
           variant="outline"
-          onClick={() => setOpen(!open)}
           color={dark ? theme.colors.pink[5] : "gray"}
         >
           <Indicator
@@ -82,7 +67,12 @@ const Notifications = () => {
             withBorder
             processing
           >
-            <IconBell size="1.4rem" />
+            <IconBell
+              color={theme.primaryColor}
+              className="cursor-default"
+              size="1.6rem"
+              stroke={1.5}
+            />
           </Indicator>
         </ActionIcon>
       </Box>
@@ -109,7 +99,7 @@ const Notifications = () => {
           >
             <Container miw={280} p={4} className="space-y-1">
               <Box>
-                {!isLoading && notifications?.length ? (
+                {!isLoading && !isError && notifications?.length ? (
                   notifications.map((notification) => (
                     <Box
                       p={2}

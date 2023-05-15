@@ -39,6 +39,7 @@ import Image from "next/image";
 import Link from "next/link";
 import LightDarkButton from "../components/Atom/LightDarkButton";
 import Notifications from "~/components/Notifications";
+import { useSession } from "next-auth/react";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -184,6 +185,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     toggleLinks();
   };
 
+  const { status } = useSession();
   return (
     <>
       <Header
@@ -290,7 +292,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           // className={classes.hiddenMobile}
           >
             <LightDarkButton />
-            <Notifications />
+            {status === "authenticated" && <Notifications />}
             <LoginPanel />
           </Group>
           {/* <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} /> */}

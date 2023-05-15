@@ -14,6 +14,7 @@ export default function LightDarkButton() {
   return (
     <Group position="center" my={0}>
       <ActionIcon
+        className="cursor-default"
         size={32}
         variant="outline"
         color={dark ? theme.colors.pink[5] : "gray"}
