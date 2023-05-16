@@ -8,8 +8,8 @@ const Loading = ({ isLoading }: LoadingProps) => {
   return (
     <LoadingOverlay
       mt={60}
-      overlayBlur={5}
-      transitionDuration={700}
+      overlayBlur={2}
+      transitionDuration={600}
       visible={isLoading}
     />
   );

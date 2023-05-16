@@ -35,9 +35,9 @@ export default function SortingPanel({
         onClick={handleToggleDesc}
       >
         {desc ? (
-          <IconSortDescending2 size="1.2rem" />
+          <IconSortDescending2 size="1.4rem" />
         ) : (
-          <IconSortAscending2 size="1.2rem" />
+          <IconSortAscending2 size="1.4rem" />
         )}
       </Button>
       <NativeSelect
@@ -53,14 +53,14 @@ export default function SortingPanel({
         icon={
           sortBy === "createdAt" ? (
             desc ? (
-              <IconCalendarDown size="1.46rem" />
+              <IconCalendarDown size="1.4rem" />
             ) : (
               <IconCalendarUp size="1.4rem" />
             )
           ) : desc ? (
-            <IconClockDown size="1.2rem" />
+            <IconClockDown size="1.4rem" />
           ) : (
-            <IconClockUp size="1.2rem" />
+            <IconClockUp size="1.4rem" />
           )
         }
       />

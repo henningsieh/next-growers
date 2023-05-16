@@ -5,6 +5,7 @@ import {
   Container,
   Group,
   Input,
+  LoadingOverlay,
   Text,
   TextInput,
   Textarea,
@@ -165,8 +166,6 @@ function Form({ user }: AddFormProps) {
       >
         {/* // Upload Panel */}
 
-        <Loading isLoading={isUploading} />
-
         {cloudUrl ? (
           <>
             <Box className="relative" px={0}>
@@ -175,7 +174,7 @@ function Form({ user }: AddFormProps) {
               absolute
               right-2
               top-2
-              z-10
+              z-50
                 flex                
                 justify-end  
               "
@@ -206,6 +205,11 @@ function Form({ user }: AddFormProps) {
           </>
         ) : (
           <div className={classes.wrapper}>
+            <LoadingOverlay
+              visible={isUploading}
+              transitionDuration={600}
+              overlayBlur={2}
+            />
             <Dropzone
               h={rem(280)}
               multiple={false} // only one header image!
@@ -291,7 +295,7 @@ function Form({ user }: AddFormProps) {
           />
           <Textarea
             withAsterisk
-            label="Boxkquote cite:"
+            label="Bockquote cite (appears at the top):"
             placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
             mt="sm"
             autosize
@@ -300,7 +304,7 @@ function Form({ user }: AddFormProps) {
           />
           <TextInput
             withAsterisk
-            label="Report title: "
+            label="Main report title: "
             placeholder="John Doe"
             mt="sm"
             {...form.getInputProps("title")}

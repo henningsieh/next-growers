@@ -137,7 +137,12 @@ export function ImagePreview({
       >
         <div
           className={classes.image}
-          style={{ backgroundImage: `url(${image})` }}
+          style={{
+            backgroundImage: `url(${image})`,
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+          }}
         />
         <div className={classes.overlay} />
 

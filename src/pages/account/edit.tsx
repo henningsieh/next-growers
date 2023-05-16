@@ -115,7 +115,7 @@ export default function EditReport() {
               icon={<IconAlertCircle size="1rem" />}
               title="You don't have a username yet!"
               color="red"
-              variant="filled"
+              variant="outline"
             >
               <Box className="">
                 You need to set a Username first before exploroing all the
@@ -177,7 +177,7 @@ export default function EditReport() {
             <Space />
             <Group position="right" mt="xl">
               <Button variant="outline" type="submit" disabled={isLoading}>
-                {isLoading ? <Loader size={24} /> : "Submit"}
+                {isLoading ? <Loader size={24} /> : "Save Profile"}
               </Button>
             </Group>
           </form>

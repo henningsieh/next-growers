@@ -121,7 +121,7 @@ export default function OwnReports() {
         <Box pos="relative">
           <LoadingOverlay
             visible={isLoading}
-            transitionDuration={2700}
+            transitionDuration={600}
             overlayBlur={2}
           />
           <Grid gutter="sm">

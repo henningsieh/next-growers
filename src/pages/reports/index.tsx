@@ -1,5 +1,7 @@
 import {
+  Alert,
   Box,
+  Center,
   Container,
   Grid,
   LoadingOverlay,
@@ -9,6 +11,7 @@ import {
 
 import type { ChangeEvent } from "react";
 import Head from "next/head";
+import { IconAlertCircle } from "@tabler/icons-react";
 import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
 import SearchInput from "~/components/Atom/SearchInput";
@@ -112,7 +115,7 @@ export default function AllReports() {
         <Box pos="relative">
           <LoadingOverlay
             visible={isLoading}
-            transitionDuration={700}
+            transitionDuration={600}
             overlayBlur={2}
           />
           {!isLoading && (
@@ -138,19 +141,20 @@ export default function AllReports() {
                   );
                 })
               ) : (
-                <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
-                  <div className="hero-content flex-col md:flex-row">
-                    {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
-                    <div className="text-center">
-                      <h1 className="whitespace-nowrap text-3xl font-bold">
-                        No Reports found! 😢
-                      </h1>
-                      <p className="error py-6 text-lg font-bold">
-                        You haven&apos;t created any reports yet.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <Container>
+                  <Center>
+                    <Alert
+                      p="xl"
+                      m="xl"
+                      icon={<IconAlertCircle size="1rem" />}
+                      title="No report where found!"
+                      color="red"
+                      variant="outline"
+                    >
+                      Something went wrong.
+                    </Alert>
+                  </Center>
+                </Container>
               )}
             </Grid>
           )}

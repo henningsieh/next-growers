@@ -78,7 +78,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
             Button: {
               defaultProps: {
-                variant: "outline",
+                variant: "filled",
               },
               styles: (theme) => ({
                 root: {
@@ -88,19 +88,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
                     theme.colorScheme === "dark"
                       ? "#FF4200 !important"
                       : "#FF6600 !important",
-                       */
+ */
+                  button: {},
                   color:
                     theme.colorScheme === "dark"
                       ? theme.colors.gray[0]
                       : theme.black,
-                  /* 
+
                   "&:hover": {
+                    cursor: "default",
                     backgroundColor:
-                      theme.colorScheme === "dark"
-                        ? "#FF5500 !important"
-                        : "#FF7700 !important",
+                      theme.colorScheme === "dark" ? "#FF5500" : "#FF7700",
                   },
-                   */
                 },
               }),
             },
@@ -117,14 +116,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
                   ? theme.colors.dark[0]
                   : theme.black,
               lineHeight: theme.lineHeight,
-            },
-
-            ".your-class": {
-              backgroundColor: "red",
-            },
-
-            "#your-id > [data-active]": {
-              backgroundColor: "pink",
             },
 
             "*, *::before, *::after": {
