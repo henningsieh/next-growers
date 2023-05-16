@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "~/styles/globals.css";
 
@@ -8,6 +7,7 @@ import { useEffect, useState } from "react";
 import AppLayout from "~/layout/AppLayout";
 import type { AppType } from "next/app";
 import type { ColorScheme } from "@mantine/core";
+import Loading from "~/components/Atom/Loading";
 import Router from "next/router";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
@@ -21,7 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
-  useRouteLoader();
+  const isLoading = useRouteLoader();
 
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: "color-scheme",
@@ -31,8 +31,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
-
-  if (!colorScheme) return null;
 
   return (
     <ColorSchemeProvider
@@ -109,16 +107,24 @@ const MyApp: AppType<{ session: Session | null }> = ({
           },
           globalStyles: (theme) => ({
             body: {
-              ...theme.fn.fontStyles() /* 
+              ...theme.fn.fontStyles(),
               backgroundColor:
                 theme.colorScheme === "dark"
-                  ? theme.colors.dark[8]
-                  : theme.colors.gray[1], */,
+                  ? theme.colors.dark[7]
+                  : theme.white,
               color:
                 theme.colorScheme === "dark"
-                  ? theme.colors.dark[1]
-                  : theme.colors.gray[8],
+                  ? theme.colors.dark[0]
+                  : theme.black,
               lineHeight: theme.lineHeight,
+            },
+
+            ".your-class": {
+              backgroundColor: "red",
+            },
+
+            "#your-id > [data-active]": {
+              backgroundColor: "pink",
             },
 
             "*, *::before, *::after": {
@@ -149,6 +155,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
           <Toaster />
+          <Loading isLoading={isLoading} />
           <AppLayout>
             <Component {...pageProps} />
           </AppLayout>

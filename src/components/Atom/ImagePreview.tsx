@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import { IconEye, IconMessageCircle } from "@tabler/icons-react";
 
+import Link from "next/link";
 import UserAvatar from "./UserAvatar";
 
 const useStyles = createStyles((theme) => ({
@@ -122,78 +123,79 @@ export function ImagePreview({
   const { classes, theme } = useStyles();
 
   return (
-    <Card
-      withBorder
-      p="lg"
-      shadow="lg"
-      className={classes.card}
-      radius="sm"
-      component="a"
-      href={publicLink}
-      style={{ display: "block", width: "100%" }}
-      // target="_blank"
-    >
-      <div
-        className={classes.image}
-        style={{ backgroundImage: `url(${image})` }}
-      />
-      <div className={classes.overlay} />
-
-      {/* Avatar */}
-      <Box pos="absolute" className=" z-20 -ml-2 pt-6">
-        <UserAvatar
-          userName={authorName}
-          imageUrl={authorImageUrl}
-          avatarRadius="md"
+    <Link href={publicLink}>
+      <Card
+        withBorder
+        p="lg"
+        shadow="lg"
+        className={classes.card}
+        radius="sm"
+        // component="a"
+        // href={publicLink}
+        style={{ display: "block", width: "100%" }}
+        // target="_blank"
+      >
+        <div
+          className={classes.image}
+          style={{ backgroundImage: `url(${image})` }}
         />
-      </Box>
+        <div className={classes.overlay} />
 
-      {/* Cite blockquote */}
-      <Box pos="absolute" className="-m-5">
-        {/* Blockquote */}
-        <Blockquote className={classes.cite} cite={authorName}>
-          {description}
-        </Blockquote>
-      </Box>
+        {/* Avatar */}
+        <Box pos="absolute" className=" z-20 -ml-2 pt-6">
+          <UserAvatar
+            userName={authorName}
+            imageUrl={authorImageUrl}
+            avatarRadius="md"
+          />
+        </Box>
 
-      <div className={classes.content}>
-        {/* Title */}
-        <Text size="lg" className={classes.title} weight={500}>
-          {title}
-        </Text>
+        {/* Cite blockquote */}
+        <Box pos="absolute" className="-m-5">
+          {/* Blockquote */}
+          <Blockquote className={classes.cite} cite={authorName}>
+            {description}
+          </Blockquote>
+        </Box>
 
-        {/* Subline */}
-        <Group position="apart" spacing="xs">
-          <Text size="sm" className={classes.author}>
-            {authorName}
+        <div className={classes.content}>
+          {/* Title */}
+          <Text size="lg" className={classes.title} weight={500}>
+            {title}
           </Text>
 
-          <Group spacing="lg">
-            <Center>
-              <Text size="sm" className={classes.bodyText}>
-                {views}
-              </Text>
-              <IconEye
-                size="1.2rem"
-                stroke={2.5}
-                color={theme.colors.dark[5]}
-              />
-            </Center>
-            <Center>
-              <Text size="sm" className={classes.bodyText}>
-                {comments}
-              </Text>
-              <IconMessageCircle
-                size="1rem"
-                stroke={2.5}
-                color={theme.colors.dark[6]}
-              />
-            </Center>
-          </Group>
-        </Group>
+          {/* Subline */}
+          <Group position="apart" spacing="xs">
+            <Text size="sm" className={classes.author}>
+              {authorName}
+            </Text>
 
-        {/* Delete Button */}
-        {/*<div className={classes.deleteButtonWrapper}>
+            <Group spacing="lg">
+              <Center>
+                <Text size="sm" className={classes.bodyText}>
+                  {views}
+                </Text>
+                <IconEye
+                  size="1.2rem"
+                  stroke={2.5}
+                  color={theme.colors.dark[5]}
+                />
+              </Center>
+              <Center>
+                <Text size="sm" className={classes.bodyText}>
+                  {comments}
+                </Text>
+                <IconMessageCircle
+                  size="1rem"
+                  stroke={2.5}
+                  color={theme.colors.dark[6]}
+                />
+              </Center>
+            </Group>
+          </Group>
+
+          {/* Delete Button */}
+          {/*<div className={classes.deleteButtonWrapper}>
                      <button
             onClick={() => {
               alert("delete");
@@ -203,7 +205,8 @@ export function ImagePreview({
             Delete Image
           </button>
         </div> */}
-      </div>
-    </Card>
+        </div>
+      </Card>
+    </Link>
   );
 }

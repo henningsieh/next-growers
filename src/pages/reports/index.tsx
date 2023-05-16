@@ -2,21 +2,20 @@ import {
   Box,
   Container,
   Grid,
-  TextInput,
+  LoadingOverlay,
   Title,
   createStyles,
 } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
 
 import type { ChangeEvent } from "react";
 import Head from "next/head";
-import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
 import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
 import type { SortingPanelProps } from "~/types";
 import { api } from "~/utils/api";
+import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   hiddenMobile: {
@@ -89,7 +88,7 @@ export default function AllReports() {
           content="GrowAGram is a community for sharing and discovering tips, techniques, and insights on growing plants. Join our community and upload your own reports to share your successes and learn from others."
         />
       </Head>
-      <Loading isLoading={isLoading} />
+      {/* <Loading isLoading={isLoading} /> */}
 
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">
@@ -109,38 +108,53 @@ export default function AllReports() {
           <SearchInput value={searchString} onChange={handleSearchChange} />
         </Box>
 
-        {!isLoading && (
-          <Grid gutter="sm">
-            {/* LOOP OVER REPORTS */}
-            {reports.length ? (
-              reports.map((report) => {
-                return (
-                  <Grid.Col key={report.id} xs={12} sm={6} md={4} lg={3} xl={2}>
-                    <ReportCard
-                      procedure="all"
-                      {...cardProps}
-                      report={report}
-                    />
-                  </Grid.Col>
-                );
-              })
-            ) : (
-              <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
-                <div className="hero-content flex-col md:flex-row">
-                  {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
-                  <div className="text-center">
-                    <h1 className="whitespace-nowrap text-3xl font-bold">
-                      No Reports found! 😢
-                    </h1>
-                    <p className="error py-6 text-lg font-bold">
-                      You haven&apos;t created any reports yet.
-                    </p>
+        {/* // Report Grid */}
+        <Box pos="relative">
+          <LoadingOverlay
+            visible={isLoading}
+            transitionDuration={700}
+            overlayBlur={2}
+          />
+          {!isLoading && (
+            <Grid gutter="sm">
+              {/* LOOP OVER REPORTS */}
+              {reports.length ? (
+                reports.map((report) => {
+                  return (
+                    <Grid.Col
+                      key={report.id}
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      lg={3}
+                      xl={2}
+                    >
+                      <ReportCard
+                        procedure="all"
+                        {...cardProps}
+                        report={report}
+                      />
+                    </Grid.Col>
+                  );
+                })
+              ) : (
+                <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
+                  <div className="hero-content flex-col md:flex-row">
+                    {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
+                    <div className="text-center">
+                      <h1 className="whitespace-nowrap text-3xl font-bold">
+                        No Reports found! 😢
+                      </h1>
+                      <p className="error py-6 text-lg font-bold">
+                        You haven&apos;t created any reports yet.
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </Grid>
-        )}
+              )}
+            </Grid>
+          )}
+        </Box>
       </Container>
     </>
   );

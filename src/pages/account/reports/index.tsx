@@ -1,4 +1,11 @@
-import { Box, Container, Grid, Title, createStyles } from "@mantine/core";
+import {
+  Box,
+  Container,
+  Grid,
+  LoadingOverlay,
+  Title,
+  createStyles,
+} from "@mantine/core";
 
 import type { ChangeEvent } from "react";
 import Head from "next/head";
@@ -91,7 +98,6 @@ export default function OwnReports() {
         <meta name="description" content="My grow reports on growagram.com" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Loading isLoading={isLoading} />
 
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">
@@ -112,38 +118,51 @@ export default function OwnReports() {
         </Box>
 
         {/* // Report Grid */}
-        <Grid gutter="sm">
-          {/* LOOP OVER REPORTS */}
-          {reports && reports.length
-            ? reports.map((report) => {
-                return (
-                  <Grid.Col key={report.id} xs={12} sm={6} md={4} lg={3} xl={3}>
-                    <ReportCard
-                      {...cardProps}
-                      procedure="own"
-                      report={report}
-                    />
-                  </Grid.Col>
-                );
-              })
-            : // rendering "not found" only if isLoading is false
-              !isLoading && (
-                <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
-                  <div className="hero-content flex-col md:flex-row">
-                    {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
-                    <div className="text-center">
-                      <h1 className="whitespace-nowrap text-3xl font-bold">
-                        No Reports found! 😢
-                      </h1>
-                      <p className="error py-6 text-lg font-bold">
-                        You haven&apos;t created any reports yet.
-                      </p>
+        <Box pos="relative">
+          <LoadingOverlay
+            visible={isLoading}
+            transitionDuration={2700}
+            overlayBlur={2}
+          />
+          <Grid gutter="sm">
+            {/* LOOP OVER REPORTS */}
+            {reports && reports.length
+              ? reports.map((report) => {
+                  return (
+                    <Grid.Col
+                      key={report.id}
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      lg={3}
+                      xl={3}
+                    >
+                      <ReportCard
+                        {...cardProps}
+                        procedure="own"
+                        report={report}
+                      />
+                    </Grid.Col>
+                  );
+                })
+              : // rendering "not found" only if isLoading is false
+                !isLoading && (
+                  <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
+                    <div className="hero-content flex-col md:flex-row">
+                      {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
+                      <div className="text-center">
+                        <h1 className="whitespace-nowrap text-3xl font-bold">
+                          No Reports found! 😢
+                        </h1>
+                        <p className="error py-6 text-lg font-bold">
+                          You haven&apos;t created any reports yet.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-        </Grid>
-        {/* </Skeleton> */}
+                )}
+          </Grid>
+        </Box>
       </Container>
     </>
   );
