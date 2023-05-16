@@ -22,17 +22,17 @@ enum NotificationEvent {
 
 model Notification {
   id          String            @id @default(cuid())
-  recipient   User              @relation(fields: [recipientId], references: [id])
+  recipient   User              @relation(fields: [recipientId], references: [id], onDelete: Cascade)
   recipientId String
   event       NotificationEvent
   readAt      DateTime?
-  like        Like?             @relation(fields: [likeId], references: [id])
+  like        Like?             @relation(fields: [likeId], references: [id], onDelete: Cascade)
   likeId      String?
-  comment     Comment?          @relation(fields: [commentId], references: [id])
+  comment     Comment?          @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId   String?
-  post        Post?             @relation(fields: [postId], references: [id])
+  post        Post?             @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId      String?
-  report      Report?           @relation(fields: [reportId], references: [id])
+  report      Report?           @relation(fields: [reportId], references: [id], onDelete: Cascade)
   reportId    String?
 
   createdAt DateTime @default(now())
@@ -64,7 +64,7 @@ model Image {
   id       String  @id @default(cuid())
   publicId String
   cloudUrl String
-  report   Report? @relation(fields: [reportId], references: [id])
+  report   Report? @relation(fields: [reportId], references: [id], onDelete: Cascade)
   reportId String? @unique
 
   createdAt DateTime @default(now())
@@ -76,7 +76,7 @@ model Report {
   title       String
   image       Image?
   description String
-  author      User      @relation(fields: [authorId], references: [id])
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String // One User has many Reports
   posts       Post[] // One Report has many Posts
   contests    Contest[] @relation("ReportToContest") //many2many
@@ -92,11 +92,11 @@ model Report {
 
 model Like {
   id       String  @id @default(cuid())
-  user     User    @relation(fields: [userId], references: [id])
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
-  report   Report? @relation(fields: [reportId], references: [id])
+  report   Report? @relation(fields: [reportId], references: [id], onDelete: Cascade)
   reportId String?
-  post     Post?   @relation(fields: [postId], references: [id])
+  post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId   String?
 
   createdAt    DateTime       @default(now())
@@ -114,9 +114,9 @@ model Product {
   description String
 
   reportId  String // One Report has many Products
-  report    Report  @relation(fields: [reportId], references: [id])
+  report    Report  @relation(fields: [reportId], references: [id], onDelete: Cascade)
   companyId String // One Company has many Products
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,10 +130,10 @@ model Post {
   comments Comment[] // One Post has many Comments
 
   reportId String // One Report has many Posts
-  report   Report @relation(fields: [reportId], references: [id])
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
   authorId String
-  author   User   @relation(fields: [authorId], references: [id])
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -145,9 +145,9 @@ model Comment {
   content String
 
   authorId String // One User has many Comments
-  author   User    @relation(fields: [authorId], references: [id])
+  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   postId   String? // One Post has many Comments
-  post     Post?   @relation(fields: [postId], references: [id])
+  post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -171,7 +171,7 @@ model Contest {
   reports Report[] @relation("ReportToContest") //many2many
 
   companyId String // One Company has many Contests 
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
