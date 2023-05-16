@@ -118,8 +118,7 @@ export default function EditReport() {
               variant="outline"
             >
               <Box className="">
-                You need to set a Username first before exploroing all the
-                grows.
+                You must first set a username before you can explore all grows.
               </Box>
             </Alert>
           )}

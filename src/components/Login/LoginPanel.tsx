@@ -12,10 +12,24 @@ import { Avatar } from "@mantine/core";
 import Link from "next/link";
 import LoginForm from "./LoginForm";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 export default function LoginModal() {
-  const { data: session, status } = useSession();
   const [opened, { open, close }] = useDisclosure(false);
+
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    async function redirectToEditAccount() {
+      if (!session?.user.name && router.asPath != "/account/edit") {
+        await router.push("/account/edit");
+      }
+    }
+    void redirectToEditAccount();
+  }, [session, router]);
+
   /*   const form = useForm({
     initialValues: {
       email: '',

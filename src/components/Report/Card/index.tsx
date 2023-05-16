@@ -66,53 +66,25 @@ export default function ReportCard({
   procedure,
 }: ReportCardProps) {
   const { classes } = useStyles();
-  const { data: session } = useSession();
+  const { data: session, status, update } = useSession();
   const [showLikes, setShowLikes] = useState(false);
-  const [showLikesTooltip, showLetlikesTooltip] = useState(false);
 
   const trpc = api.useContext();
 
   const { mutate: likeReportMutation } = api.like.likeReport.useMutation({
-    onMutate: async ({ reportId }) => {
-      // Cancel any outgoing refetches so they don't overwrite our optimistic update
-      await trpc.reports.getOwnReports.cancel();
-      // Snapshot the previous reports
-      const previousReports = trpc.reports.getOwnReports.getData();
-      // Optimistically add the new like
-      trpc.reports.getOwnReports.setData(
-        { search: "", orderBy: "createdAt", desc: true },
-        (prev) => {
-          console.log("prev", prev); //FIXME: prev is EMPTY
-          if (!prev) return previousReports;
-
-          return prev.map((report) => {
-            //identify report to set like on
-            if (report.id === reportId) {
-              // append the new entry to likes array
-
-              report.likes.push({
-                id: "",
-                userId: session?.user.id as string,
-                name: session?.user.name as string,
-              });
-            }
-            return report;
-          });
-        }
-      );
-    },
     onError: (error) => {
       toast.error(error.message);
       console.error(error.message);
     },
     onSuccess: (likedReport) => {
+      // void update();
       toast.success("Report liked successfully!");
       console.debug("likedReport", likedReport);
     },
     // Always refetch after error or success:
     onSettled: async () => {
-      await trpc.reports.getOwnReports.invalidate();
-      await trpc.reports.getAllReports.invalidate();
+      await trpc.notifications.getNotificationsByUserId.invalidate();
+      await trpc.reports.invalidate();
     },
   });
 
@@ -122,14 +94,13 @@ export default function ReportCard({
       // Handle error, e.g., show an error message
     },
     onSuccess: (res) => {
-      // Handle success, e.g., update UI
       toast.success("Your like has been removed!");
       console.debug("success.res", res);
     },
     onSettled: async () => {
       // Trigger any necessary refetch or invalidation, e.g., refetch the report data
-      await trpc.reports.getOwnReports.invalidate();
-      await trpc.reports.getAllReports.invalidate();
+      await trpc.notifications.getNotificationsByUserId.invalidate();
+      await trpc.reports.invalidate();
     },
   });
 
@@ -205,7 +176,7 @@ export default function ReportCard({
 
   const handleDisLikeReport = () => {
     // Ensure that the user is authenticated
-    if (!session) {
+    if (status !== "authenticated") {
       // Redirect to login or show a login prompt
       return;
     }

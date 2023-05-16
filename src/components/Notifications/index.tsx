@@ -15,11 +15,15 @@ import React, { useState } from "react";
 
 import { IconEyeCheck } from "@tabler/icons-react";
 import Link from "next/link";
-import type { NotificationEventMap } from "~/types";
+import { Notifications } from "~/types";
+import type { Notification, NotificationEventMap } from "~/types";
 import { Paper } from "@mantine/core";
 import { Transition } from "@mantine/core";
 import { api } from "~/utils/api";
+import { toast } from "react-hot-toast";
 import { useClickOutside } from "@mantine/hooks";
+import { useSession } from "next-auth/react";
+import { hasUnreadNotifications } from "~/helpers";
 
 const useStyles = createStyles((theme) => ({
   like: {
@@ -29,6 +33,14 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const Notifications = () => {
+  const [open, setOpen] = useState(false);
+  const { colorScheme } = useMantineColorScheme();
+  const { classes } = useStyles();
+  const theme = useMantineTheme();
+  const dark = colorScheme === "dark";
+  const clickOutsidePaper = useClickOutside(() => setOpen(false));
+  const { data: session, status, update } = useSession();
+
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
     data: notifications,
@@ -36,13 +48,51 @@ const Notifications = () => {
     isError,
   } = api.notifications.getNotificationsByUserId.useQuery();
   console.debug(notifications);
+  const trpc = api.useContext();
 
-  const [open, setOpen] = useState(false);
-  const { colorScheme } = useMantineColorScheme();
-  const { classes } = useStyles();
-  const theme = useMantineTheme();
-  const dark = colorScheme === "dark";
-  const clickOutsidePaper = useClickOutside(() => setOpen(false));
+  const { mutate: markAllNotificationsAsReadMutation } =
+    api.notifications.markAllNotificationsAsRead.useMutation({
+      onError: (error) => {
+        console.error(error);
+        // Handle error, e.g., show an error message
+      },
+      onSuccess: (res) => {
+        toast.success("markAllNotificationsAsRead!");
+        console.debug("success.res", res);
+      },
+      onSettled: async () => {
+        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        await trpc.notifications.getNotificationsByUserId.invalidate();
+      },
+    });
+
+  const { mutate: markNotificationAsReadMutation } =
+    api.notifications.markNotificationAsRead.useMutation({
+      onError: (error) => {
+        console.error(error);
+        // Handle error, e.g., show an error message
+      },
+      onSuccess: (res) => {
+        toast.success("markNotificationAsRead!");
+        console.debug("success.res", res);
+      },
+      onSettled: async () => {
+        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        await trpc.notifications.getNotificationsByUserId.invalidate();
+      },
+    });
+
+  const handleMarkAllNotificationsAsRead = () => {
+    // Ensure that the user is authenticated
+    // Call the likeReport mutation
+    if (status === "authenticated") markAllNotificationsAsReadMutation();
+  };
+  const handleMarkNotificationAsRead = (notidicationId: string) => {
+    // Ensure that the user is authenticated
+    // Call the likeReport mutationnotification.id
+    if (status === "authenticated")
+      markNotificationAsReadMutation(notidicationId);
+  };
 
   const notificationEvents: Record<NotificationEventMap, string> = {
     LIKE_CREATED: "likes",
@@ -50,33 +100,32 @@ const Notifications = () => {
     POST_CREATED: "Post Created",
     REPORT_CREATED: "Report Created",
   };
+
   return (
     <div style={{ position: "relative" }}>
       {/* Notification Icon */}
       <Box>
         <ActionIcon
           onClick={() => setOpen(!open)}
-          // onBlur={() => setOpen(false)}
           title="Notifications"
           style={{ position: "relative" }}
           size={32}
           variant="outline"
           color={dark ? theme.colors.pink[5] : "gray"}
         >
-          <Indicator
-            color={theme.colors.pink[7]}
-            position="bottom-end"
-            size={16}
-            withBorder
-            processing
-          >
-            <IconBell
-              color={theme.primaryColor}
-              // className="cursor-default"
-              size="1.5rem"
-              stroke={1.5}
-            />
-          </Indicator>
+          {hasUnreadNotifications(notifications as Notifications) ? (
+            <Indicator
+              color={theme.colors.pink[7]}
+              position="bottom-end"
+              size={16}
+              withBorder
+              processing
+            >
+              <IconBell color={theme.primaryColor} size="1.5rem" stroke={1.5} />
+            </Indicator>
+          ) : (
+            <IconBell color={theme.primaryColor} size="1.5rem" stroke={1.5} />
+          )}
         </ActionIcon>
       </Box>
 
@@ -106,6 +155,9 @@ const Notifications = () => {
                 {!isLoading && !isError && notifications?.length ? (
                   notifications.map((notification) => (
                     <Box
+                      onClick={() => {
+                        handleMarkNotificationAsRead(notification.id);
+                      }}
                       p={2}
                       // my={4}
                       key={notification.id}
@@ -146,16 +198,18 @@ const Notifications = () => {
                             Report
                           </Box>
                           <Center>
-                            <Badge
-                              mt={0}
-                              pt={0}
-                              fz={8}
-                              size="xs"
-                              variant="filled"
-                              color="pink"
-                            >
-                              new
-                            </Badge>
+                            {!notification.readAt && (
+                              <Badge
+                                mt={0}
+                                pt={0}
+                                fz={8}
+                                size="xs"
+                                variant="filled"
+                                color="pink"
+                              >
+                                new
+                              </Badge>
+                            )}
                           </Center>
                         </div>
                       </Link>
@@ -167,6 +221,9 @@ const Notifications = () => {
                 {/* <Divider /> */}
                 {!isLoading && !isError && notifications?.length > 0 && (
                   <Button
+                    onClick={() => {
+                      handleMarkAllNotificationsAsRead();
+                    }}
                     // fullWidth
                     px="sm"
                     my={4}

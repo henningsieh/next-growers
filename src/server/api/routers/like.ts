@@ -108,7 +108,7 @@ export const likeRouter = createTRPCRouter({
           console.debug(error.message);
           throw new Error(`Failed to delete like: ${error.message}`);
         } else {
-          throw new Error("Error uploading file");
+          throw new Error("Failed to delete like");
         }
       }
 

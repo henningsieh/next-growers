@@ -10,6 +10,11 @@ export type Report = getAllReportsOutput[number];
 type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
 export type OwnReport = getOwnReportsOutput[number];
 
+type getAllNotificationsOutput =
+  RouterOutput["notifications"]["getNotificationsByUserId"];
+export type Notifications = getAllNotificationsOutput;
+export type Notification = getAllNotificationsOutput[number];
+
 export const reportInput = z.object({
   title: z
     .string()

@@ -2,9 +2,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { Dispatch, SetStateAction } from "react";
-import type { ImageUploadResponse, Locale, Report } from "~/types";
+import type {
+  ImageUploadResponse,
+  Locale,
+  Notification,
+  Report,
+} from "~/types";
 
 import axios from "axios";
+
+export function hasUnreadNotifications(notifications: Notification[]): boolean {
+  return (
+    notifications &&
+    notifications.some((notification) => notification.readAt === null)
+  );
+}
 
 export function getUsername(): string {
   const usernames: string[] = [

@@ -185,7 +185,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     toggleLinks();
   };
 
-  const { status } = useSession();
+  const { data: session, status, update } = useSession();
   return (
     <>
       <Header
