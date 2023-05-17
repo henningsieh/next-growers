@@ -20,6 +20,7 @@ import AppNotification from "~/components/Atom/Notification";
 import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { IconAlertCircle } from "@tabler/icons-react";
+import Image from "next/image";
 import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next";
@@ -108,6 +109,17 @@ export default function EditReport() {
           className="flex w-full flex-col space-y-1"
           mx="auto"
         >
+          <Group position="left" mt="xl">
+            <Box mb="xl">
+              <Image
+                className="... rounded-md"
+                height={220}
+                width={220}
+                src={session.user.image as string}
+                alt={`${session.user.name as string}'s Profile Image`}
+              />
+            </Box>
+          </Group>
           {/* // Error if no Username */}
           {!session?.user.name && (
             <Alert

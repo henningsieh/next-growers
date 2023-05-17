@@ -281,7 +281,7 @@ export const reportRouter = createTRPCRouter({
       });
     }),
 
-  saveOwnReport: protectedProcedure
+  saveReport: protectedProcedure
     .input(reportEditInput)
     .mutation(async ({ ctx, input }) => {
       // First, check if the report exists

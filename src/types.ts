@@ -35,8 +35,14 @@ export const getReportsInput = z.object({
 
 export const reportEditInput = z.object({
   id: z.string().min(1),
-  title: z.string().min(1).max(100),
-  description: z.string().min(1).max(1000),
+  title: z
+    .string()
+    .min(8, { message: "Title should have at least 8 letters" })
+    .max(32, { message: "Title should have max 32 letters" }),
+  description: z
+    .string()
+    .min(12, { message: "Description should have at least 12 letters" })
+    .max(64, { message: "Description should have max 64 letters" }),
 });
 
 export const userSetUSerNameInput = z.object({

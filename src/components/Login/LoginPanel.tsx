@@ -23,8 +23,13 @@ export default function LoginModal() {
 
   useEffect(() => {
     async function redirectToEditAccount() {
-      if (!session?.user.name && router.asPath != "/account/edit") {
-        await router.push("/account/edit");
+      const editProfilePath = "/account/edit";
+      if (
+        status === "authenticated" &&
+        !session?.user.name &&
+        router.asPath != editProfilePath
+      ) {
+        await router.push(editProfilePath);
       }
     }
     void redirectToEditAccount();

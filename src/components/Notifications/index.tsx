@@ -47,7 +47,7 @@ const Notifications = () => {
     isLoading,
     isError,
   } = api.notifications.getNotificationsByUserId.useQuery();
-  console.debug(notifications);
+  // console.debug(notifications);
   const trpc = api.useContext();
 
   const { mutate: markAllNotificationsAsReadMutation } =

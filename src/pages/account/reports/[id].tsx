@@ -7,6 +7,7 @@ import {
   Title,
 } from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
+import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import Head from "next/head";
@@ -16,10 +17,12 @@ import LoadingError from "~/components/Atom/LoadingError";
 import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
+import { reportEditInput } from "~/types";
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
-const EditReport: NextPage = () => {
+function EditReport() {
   const pageTitle = "Edit Report";
   const router = useRouter();
 
@@ -33,8 +36,51 @@ const EditReport: NextPage = () => {
   } = api.reports.getReportById.useQuery(useRouter().query.id as string);
   const report = result;
   // if (isLoading) return <Loading />;
-  if (isError) return <LoadingError />;
 
+  const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation({
+    onMutate: (savedReport) => {
+      console.debug("START api.reports.create.useMutation");
+      console.debug("newReportDB", savedReport);
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, newReport, context) => {
+      toast.error("An error occured when saving your report");
+      if (!context) return;
+      console.debug(context);
+    },
+    onSuccess: (newReportDB) => {
+      toast.success(`Report ID: ${newReportDB.id} was saved`);
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      console.debug("END api.reports.create.useMutation");
+    },
+  });
+
+  const form = useForm({
+    validate: zodResolver(reportEditInput),
+    validateInputOnChange: true,
+    initialValues: {
+      id: report?.id as string,
+      title: report?.title as string,
+      description: report?.description as string,
+    },
+  });
+  const handleErrors = (errors: typeof form.errors) => {
+    // console.log(errors);
+    if (errors.description) {
+      toast.error(errors.description as string);
+    }
+    if (errors.title) {
+      toast.error(errors.title as string);
+    }
+    if (errors.imageId) {
+      toast.error(errors.imageId as string);
+    }
+  };
+
+  if (isError) return <LoadingError />;
   if (!session?.user) return <AccessDenied />;
 
   return (
@@ -65,42 +111,47 @@ const EditReport: NextPage = () => {
           className="flex w-full flex-col space-y-1"
           mx="auto"
         >
-          {/* <Group position="left">
-              <Link href="/account/reports">
-                <Button
-                  variant="default"
-                  // onClick={() => router.back()}
-                >
-                  <IconBackspace className="mr-2" height={24} stroke={1.5} />{" "}
-                  Your Reports
-                </Button>
-              </Link>
-            </Group> */}
           <Link href={`/reports/${router.query.id as string}`}>
             <Button>public view</Button>
           </Link>
-          <TextInput withAsterisk label="Titel" defaultValue={report?.title} />
-          <Textarea
-            withAsterisk
-            label="Description"
-            placeholder="Welcome to the high life with our epic cannabis grow report! Follow along as we document the journey of cultivating the finest strains of cannabis, from seed to harvest. Our expert growers will share their tips and tricks for producing big, beautiful buds that will blow your mind. Get ready to learn about the best nutrients, lighting, and growing techniques for cultivating potent and flavorful cannabis. Whether you're a seasoned cultivator or just starting out, our cannabis grow report has something for everyone. So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
-            autosize
-            minRows={6}
-            defaultValue={report?.description}
-          />
-          <Space />
-          <Button variant="outline">Save Report</Button>
+
+          {/* // Report form */}
+          <form
+            onSubmit={form.onSubmit((values) => {
+              console.log(form.values);
+              // send imageId as formField so that the report can be related
+              form.setValues({ id: report?.id });
+              tRPCsaveReport(values);
+            }, handleErrors)}
+          >
+            <TextInput
+              withAsterisk
+              label="Titel"
+              {...form.getInputProps("title")}
+            />
+            <Textarea
+              withAsterisk
+              label="Description"
+              placeholder="Welcome to the high life with our epic cannabis grow report! Follow along as we document the journey of cultivating the finest strains of cannabis, from seed to harvest. Our expert growers will share their tips and tricks for producing big, beautiful buds that will blow your mind. Get ready to learn about the best nutrients, lighting, and growing techniques for cultivating potent and flavorful cannabis. Whether you're a seasoned cultivator or just starting out, our cannabis grow report has something for everyone. So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
+              autosize
+              minRows={6}
+              {...form.getInputProps("description")}
+            />
+            <Space />
+            <Button variant="outline">Save Report</Button>
+          </form>
         </Container>
       </Container>
     </>
   );
-};
+}
 
 export default EditReport;
 
 /**
  * PROTECTED PAGE
  */
+
 export async function getServerSideProps(ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];

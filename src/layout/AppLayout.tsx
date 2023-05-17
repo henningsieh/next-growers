@@ -203,7 +203,8 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           <Group>
             <Paper>
               <Burger
-                size={40}
+                p={0}
+                size={36}
                 opened={drawerOpened}
                 onClick={toggleDrawer}
                 className={classes.hiddenDesktop}

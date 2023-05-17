@@ -24,7 +24,6 @@ import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
-import Loading from "~/components/Atom/Loading";
 import type { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
@@ -105,7 +104,7 @@ function Form({ user }: AddFormProps) {
       setIsUploading
     ).catch((error) => {
       // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
-      console.log(error);
+      console.debug(error);
     });
   };
 
@@ -168,6 +167,8 @@ function Form({ user }: AddFormProps) {
 
         {cloudUrl ? (
           <>
+            {" "}
+            {/* // Image Preview */}
             <Box className="relative" px={0}>
               <Box
                 className="
@@ -204,6 +205,7 @@ function Form({ user }: AddFormProps) {
             </Box>
           </>
         ) : (
+          /* // Dropzone */
           <div className={classes.wrapper}>
             <LoadingOverlay
               visible={isUploading}

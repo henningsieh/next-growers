@@ -83,7 +83,7 @@ export default function ReportCard({
     },
     // Always refetch after error or success:
     onSettled: async () => {
-      await trpc.notifications.getNotificationsByUserId.invalidate();
+      await trpc.notifications.invalidate();
       await trpc.reports.invalidate();
     },
   });
