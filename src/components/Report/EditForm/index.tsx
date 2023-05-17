@@ -6,6 +6,7 @@ import {
   Group,
   Input,
   LoadingOverlay,
+  MultiSelect,
   NumberInput,
   Text,
   TextInput,
@@ -19,11 +20,11 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
+import type { Report, Strains } from "~/types";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRef, useState } from "react";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
-import type { Report } from "~/types";
 import { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
@@ -35,6 +36,7 @@ import { z } from "zod";
 interface EditFormProps {
   report: Report;
   user: User;
+  strains: Strains;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -72,7 +74,7 @@ export function EditForm(props: EditFormProps) {
   const router = useRouter();
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
-  const { report: reportfromProps, user: user } = props;
+  const { report: reportfromProps, strains: allStrains, user: user } = props;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploading, setIsUploading] = useState(false);
@@ -120,6 +122,7 @@ export function EditForm(props: EditFormProps) {
       id: report.id,
       title: report.title,
       description: report.description,
+      strains: report.strains.map((strain) => strain.id),
     },
   });
 
@@ -127,6 +130,7 @@ export function EditForm(props: EditFormProps) {
     id: string;
     title: string;
     description: string;
+    strains: string[];
   }) => {
     tRPCsaveReport(values);
     console.debug(values);
@@ -158,6 +162,7 @@ export function EditForm(props: EditFormProps) {
       console.debug(error);
     });
   };
+  const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   return (
     <>
       <Container mt="sm" className="flex w-full flex-col space-y-4">
@@ -282,6 +287,22 @@ export function EditForm(props: EditFormProps) {
             label="Title"
             {...form.getInputProps("title")}
           />
+
+          <MultiSelect
+            {...form.getInputProps("strains")}
+            data={allStrains.map((strain) => ({
+              value: strain.id,
+              label: strain.name,
+            }))}
+            // defaultValue={report.strains.map((strain) => strain.id)}
+            label="Strain(s) you are growing"
+            placeholder="Pick all that you like"
+            searchable
+            searchValue={strainsSarchValue}
+            onSearchChange={onSttrinsSearchChange}
+            nothingFound="Nothing found"
+          />
+
           {/* 
         <NumberInput
           withAsterisk

@@ -1,5 +1,6 @@
 import { Container, Title } from "@mantine/core";
 import type {
+  GetServerSidePropsContext,
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
@@ -10,8 +11,10 @@ import { EditForm } from "~/components/Report/EditForm";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import { appRouter } from "~/server/api/root";
+import { authOptions } from "~/server/auth";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { createServerSideHelpers } from "@trpc/react-query/server";
+import { getServerSession } from "next-auth";
 import { prisma } from "~/server/db";
 import { stringifyReportData } from "~/helpers";
 import superjson from "superjson";
@@ -40,43 +43,76 @@ import { useSession } from "next-auth/react";
 export async function getStaticProps(
   context: GetStaticPropsContext<{ id: string }>
 ) {
-  const id = context.params?.id as string;
-
+  const reportIdfromUrl = context.params?.id as string;
+  /* 
   const helpers = createServerSideHelpers({
     router: appRouter,
     ctx: createInnerTRPCContext({ session: null }),
     transformer: superjson,
-  });
+  }); */
 
   // Prefetching the report from prisma
-  const result = await prisma.report.findUnique({
+  const reportResult = await prisma.report.findUnique({
     include: {
       author: { select: { id: true, name: true, image: true } },
       image: { select: { id: true, publicId: true, cloudUrl: true } },
+      strains: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          effects: true,
+          flavors: true,
+        },
+      },
     },
     where: {
-      id: id,
+      id: reportIdfromUrl,
     },
   });
   console.debug(
     "getStaticProps 🤖",
     "...prefetching the report's dataset from db"
   );
-  const report = stringifyReportData(result);
+  const report = stringifyReportData(reportResult);
+
+  const strains = await prisma.cannabisStrain.findMany({
+    orderBy: {
+      name: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      effects: true,
+      flavors: true,
+      type: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  const allCannabisStrains = strains.map((strain) => ({
+    ...strain,
+    createdAt: strain.createdAt.toISOString(),
+    updatedAt: strain.updatedAt.toISOString(),
+  }));
 
   // Prefetching the `reports.getReportById` query here.
+  /* 
   await helpers.reports.getReportById.prefetch(id);
   console.debug(
     "getStaticProps 🤖",
     "...prefetching tRPC `reports.getReportById` query"
-  );
+  ); */
 
   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
   return {
     props: {
-      trpcState: helpers.dehydrate(),
-      id: id,
+      // trpcState: helpers.dehydrate(),
+      // id: reportIdfromUrl,
       report: report,
+      allStrains: allCannabisStrains,
     },
     revalidate: 5,
   };
@@ -115,9 +151,9 @@ export default function ReportDetails(
 
   // This report will HOPEFULLY 🙏 be immediately available as it's prefetched from db.
   // const { report: reportFromDB } = props;
-  const { report: reportFromDB, id: reportId } = props;
+  const { report: reportFromDB, allStrains: allStrains } = props;
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   if (!session?.user) return <AccessDenied />;
   return (
@@ -142,7 +178,11 @@ export default function ReportDetails(
         {/* // Header End */}
       </Container>
 
-      <EditForm report={reportFromDB} user={session.user} />
+      <EditForm
+        report={reportFromDB}
+        strains={allStrains}
+        user={session?.user}
+      />
 
       {/* ================================= */}
       {/* // Props report output */}
@@ -166,3 +206,19 @@ export default function ReportDetails(
     </>
   );
 }
+
+/**
+ * PROTECTED PAGE
+ */
+/* 
+export async function getServerSideProps(ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) {
+  return {
+    props: {
+      session: await getServerSession(ctx.req, ctx.res, authOptions),
+    },
+  };
+}
+ */

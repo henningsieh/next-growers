@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { Dispatch, SetStateAction } from "react";
-import type {
+import {
   ImageUploadResponse,
   Locale,
   Notification,
   Report,
+  reportInput,
 } from "~/types";
 
 import axios from "axios";
@@ -210,6 +211,7 @@ export function stringifyReportData(report: any): Report {
     imageCloudUrl: report?.image?.cloudUrl,
     title: report?.title,
     description: report?.description,
+    strains: report?.strains,
     authorId: report?.author?.id,
     authorName: report?.author?.name,
     authorImage: report?.author?.image,

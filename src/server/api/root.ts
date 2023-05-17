@@ -4,6 +4,7 @@ import { imageRouter } from "./routers/image";
 import { likeRouter } from "./routers/like";
 import { notificationRouter } from "./routers/notification";
 import { reportRouter } from "~/server/api/routers/report";
+import { strainRouter } from "./routers/strains";
 import { userRouter } from "~/server/api/routers/user";
 
 /**
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   upload: imageRouter,
   like: likeRouter,
   notifications: notificationRouter,
+  strains: strainRouter,
 });
 
 // export type definition of API

@@ -5,8 +5,10 @@ import {
   Button,
   Card,
   Center,
+  Flex,
   Group,
   Paper,
+  Space,
   Text,
   Tooltip,
   Transition,
@@ -185,22 +187,28 @@ export default function ReportCard({
     deleteLikeMutation({ reportId: report.id });
   };
 
-  const features = badges.map((badge) => (
+  const cannabisIcon = (
+    // <ActionIcon size="xs" color="blue" radius="xl" variant="transparent">
+    <IconCannabis size={rem(14)} />
+    // </ActionIcon>
+  );
+
+  const reportStrains = report.strains.map((badge) => (
     <Badge
-      key={badge.label}
+      key={badge.id}
       variant="gradient"
       gradient={{ from: "orange", to: "grape" }}
       fz="0.6rem"
       fw="bolder"
-      pl={4}
-      pr={6}
-      m={4}
-      w={120}
+      px={4}
+      mt={0}
+      mb={0}
       // color={theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"}
 
-      leftSection={badge.emoji}
+      leftSection={cannabisIcon}
+      // leftSection={badge.emoji}
     >
-      {badge.label}
+      {badge.name}
     </Badge>
   ));
 
@@ -220,13 +228,12 @@ export default function ReportCard({
       </Card.Section>
 
       <Card.Section className={classes.section} mt={4}>
-        <Group position="apart">
-          {/* // Badge */}
-          <Badge px={2} color="yellow" size="sm" radius="sm" variant="filled">
-            {country}
-          </Badge>
-
-          <Group spacing={4} position="right">
+        <Flex justify="space-between">
+          <Group position="left" className="inline-flex space-y-0">
+            {/* Strains */}
+            {reportStrains}
+          </Group>
+          <Flex align="flex-start">
             {/* // ❤️ */}
             <Box fz="sm" p={1} m={1}>
               {report.likes.length}
@@ -290,8 +297,8 @@ export default function ReportCard({
                 </Transition>
               )}
             </Box>
-          </Group>
-        </Group>
+          </Flex>
+        </Flex>
       </Card.Section>
 
       <Card.Section className={classes.section} mt={4}>
@@ -336,15 +343,16 @@ export default function ReportCard({
         </Group>
       </Card.Section>
 
-      {/* // Tags */}
+      {/* // Strains */}
+      {/* 
       <Card.Section className={classes.section} mt={0}>
         <Text mt="xs" className={classes.label} c="dimmed">
-          Tags:
+          Strains in this Grow:
         </Text>
         <Group spacing={7} mt={4}>
-          {features}
+          {reportStrains}
         </Group>
-      </Card.Section>
+      </Card.Section> */}
 
       {/* // Session buttons */}
       {session && session.user.id == report.authorId && (

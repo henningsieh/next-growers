@@ -15,6 +15,10 @@ type getAllNotificationsOutput =
 export type Notifications = getAllNotificationsOutput;
 export type Notification = getAllNotificationsOutput[number];
 
+type getAllStrainsOutput = RouterOutput["strains"]["getAllStrains"];
+export type Strains = getAllStrainsOutput;
+export type Strain = getAllStrainsOutput[number];
+
 export const reportInput = z.object({
   title: z
     .string()
@@ -43,6 +47,9 @@ export const reportEditInput = z.object({
     .string()
     .min(12, { message: "Description should have at least 12 letters" })
     .max(64, { message: "Description should have max 64 letters" }),
+  strains: z
+    .array(z.string())
+    .min(1, { message: "Report should have at least 1 strain" }),
 });
 
 export const userSetUSerNameInput = z.object({

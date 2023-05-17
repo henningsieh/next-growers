@@ -44,6 +44,7 @@ export const reportRouter = createTRPCRouter({
         include: {
           author: { select: { id: true, name: true, image: true } },
           image: { select: { id: true, publicId: true, cloudUrl: true } },
+          strains: true,
           likes: {
             // Include the Like relation and select the user who liked the report
             include: {
@@ -64,6 +65,7 @@ export const reportRouter = createTRPCRouter({
           image,
           title,
           description,
+          strains,
           author,
           likes,
           createdAt,
@@ -74,6 +76,7 @@ export const reportRouter = createTRPCRouter({
           imageCloudUrl: image?.cloudUrl,
           title,
           description,
+          strains,
           authorId: author?.id,
           authorName: author?.name,
           authorImage: author?.image,
@@ -130,6 +133,7 @@ export const reportRouter = createTRPCRouter({
         include: {
           author: { select: { id: true, name: true, image: true } },
           image: { select: { id: true, publicId: true, cloudUrl: true } },
+          strains: true,
           likes: {
             // Include the Like relation and select the user who liked the report
             include: {
@@ -150,6 +154,7 @@ export const reportRouter = createTRPCRouter({
           image,
           title,
           description,
+          strains,
           author,
           likes,
           createdAt,
@@ -160,6 +165,7 @@ export const reportRouter = createTRPCRouter({
           imageCloudUrl: image?.cloudUrl,
           title,
           description,
+          strains,
           authorId: author?.id,
           authorName: author?.name,
           authorImage: author?.image,
@@ -185,6 +191,7 @@ export const reportRouter = createTRPCRouter({
         include: {
           author: { select: { id: true, name: true, image: true } },
           image: { select: { id: true, publicId: true, cloudUrl: true } },
+          strains: true,
         },
         where: {
           id: input,
@@ -196,6 +203,7 @@ export const reportRouter = createTRPCRouter({
         imageCloudUrl: report?.image?.cloudUrl,
         title: report?.title,
         description: report?.description,
+        strains: report?.strains,
         authorId: report?.author?.id,
         authorName: report?.author?.name,
         authorImage: report?.author?.image,
@@ -296,17 +304,20 @@ export const reportRouter = createTRPCRouter({
         throw new Error("You are not authorized to edit this report");
       }
 
-      // Create or update the report
+      // Update the report
+      const { strains, ...inputData } = input;
       const data = {
-        ...input,
+        ...inputData,
         authorId: ctx.session.user.id,
+        strains: {
+          set: strains.map((strainId) => ({ id: strainId })),
+        },
       };
-      const report = await ctx.prisma.report.upsert({
+      const report = await ctx.prisma.report.update({
         where: {
           id: input.id,
         },
-        create: data,
-        update: data,
+        data,
       });
 
       return report;

@@ -20,6 +20,12 @@ enum NotificationEvent {
   REPORT_CREATED
 }
 
+enum CannabisStraintype {
+  Indica
+  Sativa
+  Hybrid
+}
+
 model Notification {
   id          String            @id @default(cuid())
   recipient   User              @relation(fields: [recipientId], references: [id], onDelete: Cascade)
@@ -71,17 +77,32 @@ model Image {
   updatedAt DateTime @updatedAt
 }
 
+model CannabisStrain {
+  id          String             @id @default(cuid())
+  name        String             @unique
+  description String?
+  effects     String[]
+  flavors     String[]
+  type        CannabisStraintype
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  report    Report?  @relation(fields: [reportId], references: [id])
+  reportId  String?
+}
+
 model Report {
-  id          String    @id @default(cuid())
+  id          String           @id @default(cuid())
   title       String
   image       Image?
   description String
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId    String // One User has many Reports
   posts       Post[] // One Report has many Posts
-  contests    Contest[] @relation("ReportToContest") //many2many
+  contests    Contest[]        @relation("ReportToContest") //many2many
   products    Product[] // One Report has many Products
   likes       Like[]
+  strains     CannabisStrain[]
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt

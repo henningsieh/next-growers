@@ -39,6 +39,15 @@ export async function getStaticProps(
     include: {
       author: { select: { id: true, name: true, image: true } },
       image: { select: { id: true, publicId: true, cloudUrl: true } },
+      strains: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          effects: true,
+          flavors: true,
+        },
+      },
     },
     where: {
       id: id,
@@ -50,7 +59,7 @@ export async function getStaticProps(
   );
   const report = stringifyReportData(result);
 
-  // Prefetching the `reports.getReportById` query here.
+  // Prefetching the `reports.getReportById` query
   await helpers.reports.getReportById.prefetch(id);
   console.debug(
     "getStaticProps 🤖",
