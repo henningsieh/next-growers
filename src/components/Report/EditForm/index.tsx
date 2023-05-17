@@ -25,8 +25,10 @@ import { useRef, useState } from "react";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import type { Report } from "~/types";
 import { User } from "next-auth";
+import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
 import { reportEditInput } from "~/types";
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { z } from "zod";
 
@@ -87,15 +89,61 @@ export function EditForm(props: EditFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cloudUrl, setCloudUrl] = useState("");
 
-  const form = useForm({
-    validate: zodResolver(reportEditInput),
-    initialValues: {
-      id: reportfromProps.id,
-      title: reportfromProps.title,
-      description: reportfromProps.description,
+  const trpc = api.useContext();
+  const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation({
+    onMutate: (savedReport) => {
+      console.log("START api.reports.saveReport.useMutation");
+      console.log("newReportDB", savedReport);
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, newReport, context) => {
+      toast.error("An error occured when saving your report");
+      if (!context) return;
+      console.debug(context);
+    },
+    onSuccess: (savedReport) => {
+      toast.success("our report was successfully saved");
+      console.debug(savedReport);
+      // Navigate to the new report page
+      // void router.push(`/account/reports/${newReportDB.id}`);
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      console.log("END api.reports.saveReport.useMutation");
     },
   });
 
+  const form = useForm({
+    validate: zodResolver(reportEditInput),
+    initialValues: {
+      id: report.id,
+      title: report.title,
+      description: report.description,
+    },
+  });
+
+  const submitEditReportForm = (values: {
+    id: string;
+    title: string;
+    description: string;
+  }) => {
+    tRPCsaveReport(values);
+    console.debug(values);
+  };
+
+  const handleErrors = (errors: typeof form.errors) => {
+    console.log(errors);
+    if (errors.id) {
+      toast.error(errors.id as string);
+    }
+    if (errors.title) {
+      toast.error(errors.title as string);
+    }
+    if (errors.imageId) {
+      toast.error(errors.imageId as string);
+    }
+  };
   const handleDropWrapper = (files: File[]): void => {
     // handleDrop calls the /api/upload endpoint
     setIsUploading(true);
@@ -110,7 +158,6 @@ export function EditForm(props: EditFormProps) {
       console.debug(error);
     });
   };
-
   return (
     <>
       <Container mt="sm" className="flex w-full flex-col space-y-4">
@@ -218,8 +265,12 @@ export function EditForm(props: EditFormProps) {
           </div>
         )}
 
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
-          <Input hidden {...form.getInputProps("id")} />
+        <form
+          onSubmit={form.onSubmit((values) => {
+            submitEditReportForm(values);
+          }, handleErrors)}
+        >
+          {/* <Input hidden {...form.getInputProps("id")} /> */}
           <TextInput
             withAsterisk
             label="Bockquote cite (appears at the top):"

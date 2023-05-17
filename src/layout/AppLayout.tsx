@@ -200,16 +200,16 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         }}
       >
         <Group position="apart" sx={{ height: "100%" }}>
-          <Group>
-            <Paper>
+          <Group ml={0}>
+            <Box className={classes.hiddenDesktop}>
               <Burger
                 p={0}
+                m={0}
                 size={36}
                 opened={drawerOpened}
                 onClick={toggleDrawer}
-                className={classes.hiddenDesktop}
               />
-            </Paper>
+            </Box>
             <Link href="/reports">
               <Image
                 className="rounded-sm"
