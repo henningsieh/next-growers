@@ -33,7 +33,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 export default function OwnReports() {
-  const pageTitle = "My Reports";
+  const pageTitle = "My Grows";
   const { data: session } = useSession();
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");

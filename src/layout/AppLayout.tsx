@@ -114,13 +114,13 @@ const mockdata = [
   {
     icon: IconMessageCircle,
     title: "CannabisAnbauen.net",
-    description: "Willkommen im CannabisAnbauen.net Forum!",
+    description: "A very cool and friendly german forum! 🤞",
     url: "https://forum.cannabisanbauen.net/",
   },
   {
     icon: IconMapPin,
-    title: "Meetups and Events",
-    description: "Connect in person with fellow growers near you.",
+    title: "Cannabis Social Clubs",
+    description: "Find a Social Club nearby you! (...coming soon 👀)",
   },
   {
     icon: IconUsers,
@@ -226,10 +226,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
             className={classes.hiddenMobile}
           >
             <Link href="/" className={classes.link}>
-              Home
+              Landing Page
             </Link>
             <Link href="/reports" className={classes.link}>
-              Explore Reports
+              Explore all Grows
             </Link>
             <HoverCard
               width={600}
@@ -285,9 +285,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
                 </div>
               </HoverCard.Dropdown>
             </HoverCard>
+            {/* 
             <Link href="/t3-app-info" className={classes.link}>
               T3 Stack
-            </Link>
+            </Link> */}
           </Group>
           <Group
           // className={classes.hiddenMobile}
@@ -321,10 +322,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           />
 
           <Link href="/" className={classes.link}>
-            Home
+            Landing Page
           </Link>
           <Link href="/reports" className={classes.link}>
-            Explore Reports
+            Explore all Grows
           </Link>
           <UnstyledButton
             className={classes.link}
@@ -338,9 +339,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
             </Center>
           </UnstyledButton>
           <Collapse in={linksOpened}>{links}</Collapse>
+          {/* 
           <Link href="/t3-app-info" className={classes.link}>
             T3 Stack
-          </Link>
+          </Link> */}
 
           <Divider
             my="sm"

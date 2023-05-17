@@ -147,7 +147,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export default function ReportDetails(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
-  const pageTitle = "Edit Report Details";
+  const pageTitle = "Edit Grow Details";
 
   // This report will HOPEFULLY 🙏 be immediately available as it's prefetched from db.
   // const { report: reportFromDB } = props;
@@ -186,22 +186,12 @@ export default function ReportDetails(
 
       {/* ================================= */}
       {/* // Props report output */}
-      <Container size="sm" p={0} className="flex w-full flex-col space-y-1">
+      <Container size="md" pt="xl" className="flex w-full flex-col space-y-1">
         {/* // Add Component */}
-        <h1>from DB</h1>
-        <h2>Title: {reportFromDB.title}</h2>
-        <p>Created {reportFromDB.createdAt}</p>
-        <p>{reportFromDB.description}</p>
-        <h2>Raw data:</h2>
+        <Title order={2}>raw dataset from db*</Title>
+        <Title order={3}>*still in beta 🤓</Title>
+
         <div>{JSON.stringify(reportFromDB, null, 4)}</div>
-        {/* 
-        <hr />
-        <h1>from tRPC</h1>
-        <h2>Title: {report?.title}</h2>
-        <p>Created {report?.createdAt}</p>
-        <p>{report?.description}</p>
-        <h2>Raw data:</h2>
-        <pre>{JSON.stringify(report, null, 4)}</pre> */}
       </Container>
     </>
   );

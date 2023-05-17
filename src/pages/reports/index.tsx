@@ -34,7 +34,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 export default function AllReports() {
-  const pageTitle = "Explore Reports";
+  const pageTitle = "All Grows";
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");

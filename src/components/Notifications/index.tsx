@@ -10,7 +10,12 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { IconBell, IconHeartFilled } from "@tabler/icons-react";
+import {
+  IconBell,
+  IconCheck,
+  IconHeartFilled,
+  IconX,
+} from "@tabler/icons-react";
 import React, { useState } from "react";
 
 import { IconEyeCheck } from "@tabler/icons-react";
@@ -24,6 +29,7 @@ import { toast } from "react-hot-toast";
 import { useClickOutside } from "@mantine/hooks";
 import { useSession } from "next-auth/react";
 import { hasUnreadNotifications } from "~/helpers";
+import { notifications as appNotification } from "@mantine/notifications";
 
 const useStyles = createStyles((theme) => ({
   like: {
@@ -57,7 +63,22 @@ const Notifications = () => {
         // Handle error, e.g., show an error message
       },
       onSuccess: (res) => {
-        toast.success("markAllNotificationsAsRead!");
+        appNotification.show({
+          id: "hello-there",
+          withCloseButton: true,
+          onClose: () => console.log("unmounted"),
+          onOpen: () => console.log("mounted"),
+          autoClose: 5000,
+          title: "Success",
+          message: "All notifications have been marked as read",
+          color: "green",
+          icon: <IconCheck />,
+          className: "my-notification-class",
+          // style: { backgroundColor: "red" },
+          // sx: { backgroundColor: "red" },
+          loading: false,
+        });
+        // toast.success("markAllNotificationsAsRead!");
         console.debug("success.res", res);
       },
       onSettled: async () => {
@@ -106,12 +127,13 @@ const Notifications = () => {
       {/* Notification Icon */}
       <Box>
         <ActionIcon
+          className="cursor-default"
           onClick={() => setOpen(!open)}
           title="Notifications"
           style={{ position: "relative" }}
           size={32}
           variant="outline"
-          color={dark ? theme.colors.pink[5] : "gray"}
+          color={dark ? "orange" : "gray"}
         >
           {hasUnreadNotifications(notifications as Notifications) ? (
             <Indicator
@@ -121,10 +143,10 @@ const Notifications = () => {
               withBorder
               processing
             >
-              <IconBell color={theme.primaryColor} size="1.5rem" stroke={1.5} />
+              <IconBell size="1.5rem" stroke={1.5} />
             </Indicator>
           ) : (
-            <IconBell color={theme.primaryColor} size="1.5rem" stroke={1.5} />
+            <IconBell size="1.5rem" stroke={1.5} />
           )}
         </ActionIcon>
       </Box>

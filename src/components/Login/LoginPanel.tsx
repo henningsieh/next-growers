@@ -83,27 +83,30 @@ export default function LoginModal() {
               <Menu.Label>High</Menu.Label>
               <Link href="/account/edit">
                 <Menu.Item icon={<IconUser size={14} />}>
-                  Edit Profile
+                  Edit my Profile
                 </Menu.Item>
               </Link>
               {/* <Menu.Item icon={<IconMessageCircle size={14} />}>
                 Messages
               </Menu.Item> */}
               <Link href="/account/reports">
-                <Menu.Item icon={<IconPhoto size={14} />}>My Reports</Menu.Item>
+                <Menu.Item icon={<IconPhoto size={14} />}>
+                  Explore my Grows
+                </Menu.Item>
               </Link>
               <Link href="/account/reports/create">
                 <Menu.Item icon={<IconSquarePlus size={14} />}>
-                  Add Report
+                  Create new Grow
                 </Menu.Item>
               </Link>
+              {/* 
               <Menu.Item
                 icon={<IconSearch size={14} />}
                 // Shotcut Indicator
                 // rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
               >
                 Search
-              </Menu.Item>
+              </Menu.Item> */}
 
               <Menu.Divider />
 
