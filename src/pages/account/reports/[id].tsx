@@ -1,164 +1,168 @@
-import {
-  Button,
-  Container,
-  Space,
-  TextInput,
-  Textarea,
-  Title,
-} from "@mantine/core";
-import type { GetServerSidePropsContext, NextPage } from "next";
-import { useForm, zodResolver } from "@mantine/form";
+import { Container, Title } from "@mantine/core";
+import type {
+  GetStaticPaths,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from "next";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
+import { EditForm } from "~/components/Report/EditForm";
 import Head from "next/head";
-import Link from "next/link";
-import Loading from "~/components/Atom/Loading";
-import LoadingError from "~/components/Atom/LoadingError";
 import { api } from "~/utils/api";
-import { authOptions } from "~/server/auth";
-import { getServerSession } from "next-auth";
-import { reportEditInput } from "~/types";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
+import { appRouter } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { prisma } from "~/server/db";
+import { stringifyReportData } from "~/helpers";
+import superjson from "superjson";
 import { useSession } from "next-auth/react";
 
-function EditReport() {
-  const pageTitle = "Edit Report";
-  const router = useRouter();
+/**
+ * getStaticProps
+ * @param context : GetStaticPropsContext<{ id: string }>
+ * @returns : (property) props: {
+                trpcState: DehydratedState;
+                id: string;
+                report: {
+                    id: string;
+                    imagePublicId: string | undefined;
+                    imageCloudUrl: string | undefined;
+                    title: string;
+                    description: string;
+                    ... 5 more ...;
+                    likes: {
+                        ...;
+                    }[];
+                  };
+                }
+              }
+ */
+export async function getStaticProps(
+  context: GetStaticPropsContext<{ id: string }>
+) {
+  const id = context.params?.id as string;
+
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: createInnerTRPCContext({ session: null }),
+    transformer: superjson,
+  });
+
+  // Prefetching the report from prisma
+  const result = await prisma.report.findUnique({
+    include: {
+      author: { select: { id: true, name: true, image: true } },
+      image: { select: { id: true, publicId: true, cloudUrl: true } },
+    },
+    where: {
+      id: id,
+    },
+  });
+  console.debug(
+    "getStaticProps 🤖",
+    "...prefetching the report's dataset from db"
+  );
+  const report = stringifyReportData(result);
+
+  // Prefetching the `reports.getReportById` query here.
+  await helpers.reports.getReportById.prefetch(id);
+  console.debug(
+    "getStaticProps 🤖",
+    "...prefetching tRPC `reports.getReportById` query"
+  );
+
+  // Make sure to return { props: { trpcState: helpers.dehydrate() } }
+  return {
+    props: {
+      trpcState: helpers.dehydrate(),
+      id: id,
+      report: report,
+    },
+    revalidate: 5,
+  };
+}
+/**
+ * getStaticPaths
+ * @param reports: { id: string }[]
+ * @returns { paths[] }
+ */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const reports = await prisma.report.findMany({
+    select: {
+      id: true,
+    },
+  });
+  return {
+    paths: reports.map((report) => ({
+      params: {
+        id: report.id,
+      },
+    })),
+    // https://nextjs.org/docs/pages/api-reference/functions/get-static-paths#fallback-blocking
+    fallback: "blocking",
+  };
+};
+
+/**
+ * @Page ReportDetails
+ * @param props: { trpcState: DehydratedState, id: string, report: Report }
+ * @returns HTML Component
+ */
+export default function ReportDetails(
+  props: InferGetStaticPropsType<typeof getStaticProps>
+) {
+  const pageTitle = "Edit Report Details";
+
+  // This report will HOPEFULLY 🙏 be immediately available as it's prefetched from db.
+  // const { report: reportFromDB } = props;
+  const { report: reportFromDB, id: reportId } = props;
 
   const { data: session } = useSession();
 
-  // FETCH REPORT BY ID
-  const {
-    data: result,
-    isLoading,
-    isError,
-  } = api.reports.getReportById.useQuery(useRouter().query.id as string);
-  const report = result;
-  // if (isLoading) return <Loading />;
-
-  const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation({
-    onMutate: (savedReport) => {
-      console.debug("START api.reports.create.useMutation");
-      console.debug("newReportDB", savedReport);
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, newReport, context) => {
-      toast.error("An error occured when saving your report");
-      if (!context) return;
-      console.debug(context);
-    },
-    onSuccess: (newReportDB) => {
-      toast.success(`Report ID: ${newReportDB.id} was saved`);
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      console.debug("END api.reports.create.useMutation");
-    },
-  });
-
-  const form = useForm({
-    validate: zodResolver(reportEditInput),
-    validateInputOnChange: true,
-    initialValues: {
-      id: report?.id as string,
-      title: report?.title as string,
-      description: report?.description as string,
-    },
-  });
-  const handleErrors = (errors: typeof form.errors) => {
-    // console.log(errors);
-    if (errors.description) {
-      toast.error(errors.description as string);
-    }
-    if (errors.title) {
-      toast.error(errors.title as string);
-    }
-    if (errors.imageId) {
-      toast.error(errors.imageId as string);
-    }
-  };
-
-  if (isError) return <LoadingError />;
   if (!session?.user) return <AccessDenied />;
-
   return (
     <>
       <Head>
         <title>{`GrowAGram | ${pageTitle}`}</title>
         <meta
           name="description"
-          content="Edit your grow report details on growagram.com"
+          content="Create your grow report on growagram.com"
         />
       </Head>
-      <Loading isLoading={isLoading} />
+
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-1">
+      <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title */}
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-4">
           {/* // Title */}
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
         </div>
         {/* // Header End */}
+      </Container>
 
-        {/* // Edit Form */}
-        <Container
-          size="sm"
-          px={0}
-          className="flex w-full flex-col space-y-1"
-          mx="auto"
-        >
-          <Link href={`/reports/${router.query.id as string}`}>
-            <Button>public view</Button>
-          </Link>
+      <EditForm report={reportFromDB} user={session.user} />
 
-          {/* // Report form */}
-          <form
-            onSubmit={form.onSubmit((values) => {
-              console.log(form.values);
-              // send imageId as formField so that the report can be related
-              form.setValues({ id: report?.id });
-              tRPCsaveReport(values);
-            }, handleErrors)}
-          >
-            <TextInput
-              withAsterisk
-              label="Titel"
-              {...form.getInputProps("title")}
-            />
-            <Textarea
-              withAsterisk
-              label="Description"
-              placeholder="Welcome to the high life with our epic cannabis grow report! Follow along as we document the journey of cultivating the finest strains of cannabis, from seed to harvest. Our expert growers will share their tips and tricks for producing big, beautiful buds that will blow your mind. Get ready to learn about the best nutrients, lighting, and growing techniques for cultivating potent and flavorful cannabis. Whether you're a seasoned cultivator or just starting out, our cannabis grow report has something for everyone. So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
-              autosize
-              minRows={6}
-              {...form.getInputProps("description")}
-            />
-            <Space />
-            <Button variant="outline">Save Report</Button>
-          </form>
-        </Container>
+      {/* ================================= */}
+      {/* // Props report output */}
+      <Container size="sm" p={0} className="flex w-full flex-col space-y-1">
+        {/* // Add Component */}
+        <h1>from DB</h1>
+        <h2>Title: {reportFromDB.title}</h2>
+        <p>Created {reportFromDB.createdAt}</p>
+        <p>{reportFromDB.description}</p>
+        <h2>Raw data:</h2>
+        <div>{JSON.stringify(reportFromDB, null, 4)}</div>
+        {/* 
+        <hr />
+        <h1>from tRPC</h1>
+        <h2>Title: {report?.title}</h2>
+        <p>Created {report?.createdAt}</p>
+        <p>{report?.description}</p>
+        <h2>Raw data:</h2>
+        <pre>{JSON.stringify(report, null, 4)}</pre> */}
       </Container>
     </>
   );
-}
-
-export default EditReport;
-
-/**
- * PROTECTED PAGE
- */
-
-export async function getServerSideProps(ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) {
-  return {
-    props: {
-      session: await getServerSession(ctx.req, ctx.res, authOptions),
-    },
-  };
 }

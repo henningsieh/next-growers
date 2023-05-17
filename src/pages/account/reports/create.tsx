@@ -2,7 +2,7 @@ import { Container, Title } from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import AddReport from "~/components/Report/AddForm";
+import AddForm from "~/components/Report/AddForm";
 import Head from "next/head";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
@@ -37,7 +37,7 @@ const CreateReport: NextPage = () => {
         {/* // Header End */}
         {/* // Add Component */}
 
-        <AddReport user={session.user} />
+        <AddForm user={session.user} />
       </Container>
     </>
   );
