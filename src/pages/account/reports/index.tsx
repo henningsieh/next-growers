@@ -108,13 +108,21 @@ export default function OwnReports() {
             {pageTitle}
           </Title>
           <Box pr={35} className={classes.hiddenMobile}>
-            <SearchInput value={searchString} onChange={handleSearchChange} />
+            <SearchInput
+              value={searchString}
+              setSearchString={setSearchString}
+              onChange={handleSearchChange}
+            />
           </Box>
           <SortingPanel {...sortingPanelProps} />
         </div>
         {/* // Header End */}
         <Box className={classes.hiddenDesktop}>
-          <SearchInput value={searchString} onChange={handleSearchChange} />
+          <SearchInput
+            value={searchString}
+            setSearchString={setSearchString}
+            onChange={handleSearchChange}
+          />
         </Box>
 
         {/* // Report Grid */}
@@ -141,6 +149,7 @@ export default function OwnReports() {
                         {...cardProps}
                         procedure="own"
                         report={report}
+                        setSearchString={setSearchString}
                       />
                     </Grid.Col>
                   );

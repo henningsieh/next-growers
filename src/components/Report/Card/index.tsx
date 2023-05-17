@@ -66,6 +66,7 @@ export default function ReportCard({
   badges,
   report,
   procedure,
+  setSearchString,
 }: ReportCardProps) {
   const { classes } = useStyles();
   const { data: session, status, update } = useSession();
@@ -194,22 +195,27 @@ export default function ReportCard({
   );
 
   const reportStrains = report.strains.map((badge) => (
-    <Badge
-      key={badge.id}
-      variant="gradient"
-      gradient={{ from: "orange", to: "grape" }}
-      fz="0.6rem"
-      fw="bolder"
-      px={4}
-      mt={0}
-      mb={0}
-      // color={theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"}
+    <Box key={badge.id}>
+      <Badge
+        className="cursor-pointer"
+        onClick={() => {
+          setSearchString(`strain:${badge.name}`);
+        }}
+        variant="gradient"
+        gradient={{ from: "orange", to: "grape" }}
+        fz="0.6rem"
+        fw="bolder"
+        px={4}
+        mt={0}
+        mb={0}
+        // color={theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"}
 
-      leftSection={cannabisIcon}
-      // leftSection={badge.emoji}
-    >
-      {badge.name}
-    </Badge>
+        leftSection={cannabisIcon}
+        // leftSection={badge.emoji}
+      >
+        {badge.name}
+      </Badge>
+    </Box>
   ));
 
   return (

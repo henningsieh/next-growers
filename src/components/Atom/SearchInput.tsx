@@ -1,12 +1,22 @@
-import type { ChangeEvent } from "react";
-import { TextInput } from "@mantine/core";
+import { ActionIcon, TextInput } from "@mantine/core";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { IconCrossFilled, IconX } from "@tabler/icons-react";
 
 type SearchInputProps = {
   value: string;
+  setSearchString: Dispatch<SetStateAction<string>>;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-const SearchInput = ({ value, onChange }: SearchInputProps) => {
+const SearchInput = ({
+  value,
+  setSearchString,
+  onChange,
+}: SearchInputProps) => {
+  const clearValue = () => {
+    setSearchString("");
+  };
+
   return (
     <TextInput
       // pr={4}
@@ -17,6 +27,11 @@ const SearchInput = ({ value, onChange }: SearchInputProps) => {
       value={value}
       onChange={onChange}
       placeholder="Full text search"
+      rightSection={
+        <ActionIcon>
+          <IconX onClick={clearValue} size={14} stroke={1.5} />
+        </ActionIcon>
+      }
     />
   );
 };

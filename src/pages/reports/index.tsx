@@ -102,13 +102,21 @@ export default function AllReports() {
             {pageTitle}
           </Title>
           <Box pr={35} className={classes.hiddenMobile}>
-            <SearchInput value={searchString} onChange={handleSearchChange} />
+            <SearchInput
+              value={searchString}
+              setSearchString={setSearchString}
+              onChange={handleSearchChange}
+            />
           </Box>
           <SortingPanel {...sortingPanelProps} />
         </div>
         {/* // Header End */}
         <Box className={classes.hiddenDesktop}>
-          <SearchInput value={searchString} onChange={handleSearchChange} />
+          <SearchInput
+            setSearchString={setSearchString}
+            value={searchString}
+            onChange={handleSearchChange}
+          />
         </Box>
 
         {/* // Report Grid */}
@@ -136,6 +144,7 @@ export default function AllReports() {
                         procedure="all"
                         {...cardProps}
                         report={report}
+                        setSearchString={setSearchString}
                       />
                     </Grid.Col>
                   );

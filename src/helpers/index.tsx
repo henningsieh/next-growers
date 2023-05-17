@@ -2,15 +2,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import type { Dispatch, SetStateAction } from "react";
-import {
+import type {
   ImageUploadResponse,
   Locale,
   Notification,
   Report,
-  reportInput,
 } from "~/types";
 
 import axios from "axios";
+import { reportInput } from "~/types";
 
 export function hasUnreadNotifications(notifications: Notification[]): boolean {
   return (
