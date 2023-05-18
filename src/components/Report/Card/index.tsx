@@ -24,11 +24,13 @@ import {
   IconSeeding,
 } from "@tabler/icons-react";
 
+import { IconCheck } from "@tabler/icons-react";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import Link from "next/link";
 import { Locale } from "~/types";
 import type { ReportCardProps } from "~/types";
 import { api } from "~/utils/api";
+import { notifications } from "@mantine/notifications";
 import { sanatizeDateString } from "~/helpers";
 import { toast } from "react-hot-toast";
 import { useSession } from "next-auth/react";
@@ -74,14 +76,27 @@ export default function ReportCard({
 
   const trpc = api.useContext();
 
+  const likeSuccessfulMsg = {
+    title: "Success",
+    message: "Woohoo... you ❤️ this Grow!",
+    color: "green",
+    icon: <IconCheck />,
+    loading: false,
+  };
+  const dislikeSuccessfulMsg = {
+    title: "Success",
+    message: "Woohoo... you ❤️ this Grow!",
+    color: "green",
+    icon: <IconCheck />,
+    loading: false,
+  };
   const { mutate: likeReportMutation } = api.like.likeReport.useMutation({
     onError: (error) => {
       toast.error(error.message);
       console.error(error.message);
     },
     onSuccess: (likedReport) => {
-      // void update();
-      toast.success("Report liked successfully!");
+      notifications.show(likeSuccessfulMsg);
       console.debug("likedReport", likedReport);
     },
     // Always refetch after error or success:
@@ -97,8 +112,7 @@ export default function ReportCard({
       // Handle error, e.g., show an error message
     },
     onSuccess: (res) => {
-      toast.success("Your like has been removed!");
-      console.debug("success.res", res);
+      notifications.show(dislikeSuccessfulMsg);
     },
     onSettled: async () => {
       // Trigger any necessary refetch or invalidation, e.g., refetch the report data

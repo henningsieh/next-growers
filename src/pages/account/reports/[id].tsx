@@ -7,6 +7,7 @@ import type {
 } from "next";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
+import AddPost from "~/components/AddPost";
 import { EditForm } from "~/components/Report/EditForm";
 import Head from "next/head";
 import { api } from "~/utils/api";
@@ -183,6 +184,8 @@ export default function ReportDetails(
         strains={allStrains}
         user={session?.user}
       />
+
+      <AddPost report={reportFromDB} />
 
       {/* ================================= */}
       {/* // Props report output */}

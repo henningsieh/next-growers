@@ -63,23 +63,7 @@ const Notifications = () => {
         // Handle error, e.g., show an error message
       },
       onSuccess: (res) => {
-        appNotification.show({
-          id: "hello-there",
-          withCloseButton: true,
-          onClose: () => console.log("unmounted"),
-          onOpen: () => console.log("mounted"),
-          autoClose: 5000,
-          title: "Success",
-          message: "All notifications have been marked as read",
-          color: "green",
-          icon: <IconCheck />,
-          className: "my-notification-class",
-          // style: { backgroundColor: "red" },
-          // sx: { backgroundColor: "red" },
-          loading: false,
-        });
-        // toast.success("markAllNotificationsAsRead!");
-        console.debug("success.res", res);
+        appNotification.show(markAllReadMessage);
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
@@ -115,6 +99,14 @@ const Notifications = () => {
       markNotificationAsReadMutation(notidicationId);
   };
 
+  const markAllReadMessage = {
+    title: "Success",
+    message: "All notifications have been marked as read",
+    color: "green",
+    icon: <IconCheck />,
+    loading: false,
+  };
+
   const notificationEvents: Record<NotificationEventMap, string> = {
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "Comment Created",
@@ -125,31 +117,29 @@ const Notifications = () => {
   return (
     <div style={{ position: "relative" }}>
       {/* Notification Icon */}
-      <Box>
-        <ActionIcon
-          className="cursor-default"
-          onClick={() => setOpen(!open)}
-          title="Notifications"
-          style={{ position: "relative" }}
-          size={32}
-          variant="outline"
-          color={dark ? "orange" : "gray"}
-        >
-          {hasUnreadNotifications(notifications as Notifications) ? (
-            <Indicator
-              color={theme.colors.pink[7]}
-              position="bottom-end"
-              size={16}
-              withBorder
-              processing
-            >
-              <IconBell size="1.5rem" stroke={1.5} />
-            </Indicator>
-          ) : (
+      <ActionIcon
+        className="cursor-default"
+        onClick={() => setOpen(!open)}
+        title="Notifications"
+        style={{ position: "relative" }}
+        size={32}
+        variant="outline"
+        color={dark ? "orange" : "gray"}
+      >
+        {hasUnreadNotifications(notifications as Notifications) ? (
+          <Indicator
+            color={theme.colors.pink[7]}
+            position="bottom-end"
+            size={16}
+            withBorder
+            processing
+          >
             <IconBell size="1.5rem" stroke={1.5} />
-          )}
-        </ActionIcon>
-      </Box>
+          </Indicator>
+        ) : (
+          <IconBell size="1.5rem" stroke={1.5} />
+        )}
+      </ActionIcon>
 
       {/* Dropdown */}
       <Transition

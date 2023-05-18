@@ -31,21 +31,22 @@ export default function SortingPanel({
         c="dimmed"
         variant="default"
         px={4}
-        size="sm"
+        size="xs"
         onClick={handleToggleDesc}
       >
         {desc ? (
-          <IconSortDescending2 size="1.4rem" />
+          <IconSortDescending2 size="1.2rem" />
         ) : (
-          <IconSortAscending2 size="1.4rem" />
+          <IconSortAscending2 size="1.2rem" />
         )}
       </Button>
       <NativeSelect
         variant="default"
         value={sortBy}
         onChange={(event) => setSortBy(event.currentTarget.value)}
-        size="sm"
+        size="xs"
         placeholder="Sort by..."
+        fz="xs"
         data={[
           { value: "createdAt", label: "Created at" },
           { value: "updatedAt", label: "Updated at" },
@@ -53,14 +54,14 @@ export default function SortingPanel({
         icon={
           sortBy === "createdAt" ? (
             desc ? (
-              <IconCalendarDown size="1.4rem" />
+              <IconCalendarDown size="1.2rem" />
             ) : (
-              <IconCalendarUp size="1.4rem" />
+              <IconCalendarUp size="1.2rem" />
             )
           ) : desc ? (
-            <IconClockDown size="1.4rem" />
+            <IconClockDown size="1.2rem" />
           ) : (
-            <IconClockUp size="1.4rem" />
+            <IconClockUp size="1.2rem" />
           )
         }
       />
