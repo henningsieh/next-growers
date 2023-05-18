@@ -1,24 +1,18 @@
-import { Container, Title } from "@mantine/core";
+import { Container, Space, Title } from "@mantine/core";
 import type {
   GetServerSidePropsContext,
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
+import { Link, RichTextEditor } from "@mantine/tiptap";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AddPost from "~/components/AddPost";
 import { EditForm } from "~/components/Report/EditForm";
 import Head from "next/head";
-import { api } from "~/utils/api";
-import { appRouter } from "~/server/api/root";
-import { authOptions } from "~/server/auth";
-import { createInnerTRPCContext } from "~/server/api/trpc";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { getServerSession } from "next-auth";
 import { prisma } from "~/server/db";
 import { stringifyReportData } from "~/helpers";
-import superjson from "superjson";
 import { useSession } from "next-auth/react";
 
 /**
@@ -45,7 +39,7 @@ export async function getStaticProps(
   context: GetStaticPropsContext<{ id: string }>
 ) {
   const reportIdfromUrl = context.params?.id as string;
-  /* 
+  /*
   const helpers = createServerSideHelpers({
     router: appRouter,
     ctx: createInnerTRPCContext({ session: null }),
@@ -100,7 +94,7 @@ export async function getStaticProps(
   }));
 
   // Prefetching the `reports.getReportById` query here.
-  /* 
+  /*
   await helpers.reports.getReportById.prefetch(id);
   console.debug(
     "getStaticProps 🤖",
@@ -185,6 +179,8 @@ export default function ReportDetails(
         user={session?.user}
       />
 
+      <Space h="xl" />
+
       <AddPost report={reportFromDB} />
 
       {/* ================================= */}
@@ -203,7 +199,7 @@ export default function ReportDetails(
 /**
  * PROTECTED PAGE
  */
-/* 
+/*
 export async function getServerSideProps(ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];

@@ -314,7 +314,7 @@ export function EditForm(props: EditFormProps) {
  */}
           <Group position="right" mt="xl">
             <Button variant="outline" type="submit">
-              Submit
+              Save Grow
             </Button>
           </Group>
         </form>

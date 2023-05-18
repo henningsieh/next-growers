@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 import type { AppRouter } from "./server/api/root";
 import type { inferRouterOutputs } from "@trpc/server";
