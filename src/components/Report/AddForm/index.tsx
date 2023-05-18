@@ -223,7 +223,7 @@ function Form({ user }: AddFormProps) {
               className={classes.dropzone}
               // radius="md"
               accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-              maxSize={10 * 1024 ** 2}
+              maxSize={4.5 * 1024 ** 2}
             >
               <div style={{ pointerEvents: "none" }}>
                 <Group position="center">

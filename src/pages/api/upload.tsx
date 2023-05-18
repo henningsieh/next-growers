@@ -24,9 +24,9 @@ const readUploadedFile = (
     };
   }
   /**
-   * @see: https://github.com/node-formidable/formidable#options
+   * @see:
    */
-  options.maxFileSize = 4718590; // 4,5 MB Vercel Limit :(
+  options.maxFileSize = 4000 * 1024 * 1024;
   const form = formidable(options);
 
   return new Promise((resolve, reject) => {

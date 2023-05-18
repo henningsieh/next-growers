@@ -143,7 +143,7 @@ export default function OwnReports() {
                       sm={6}
                       md={4}
                       lg={3}
-                      xl={3}
+                      xl={2}
                     >
                       <ReportCard
                         {...cardProps}
