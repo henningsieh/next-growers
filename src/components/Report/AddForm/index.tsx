@@ -27,7 +27,7 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 import type { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
-import { reportInput } from "~/types";
+import { reportCreateInput } from "~/types";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -144,7 +144,7 @@ function Form({ user }: AddFormProps) {
   };
 
   const form = useForm({
-    validate: zodResolver(reportInput),
+    validate: zodResolver(reportCreateInput),
     validateInputOnChange: true,
     initialValues: {
       title: "",

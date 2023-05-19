@@ -49,7 +49,7 @@ export const postRouter = createTRPCRouter({
    * Get post by id
    * @Input: postId: String
    */
-  getPostById: publicProcedure
+  getPostDbInput: publicProcedure
     .input(z.string().min(1))
     .query(async ({ ctx, input }) => {
       const postId = input;
@@ -64,12 +64,13 @@ export const postRouter = createTRPCRouter({
         throw new Error(`Report with id ${postId} does not exist`);
       }
 
-      const { date, createdAt, updatedAt, ...temppost } = post;
-
+      const { id, createdAt, updatedAt, ...postDbInput } = post;
+      /* 
       const formattedPost = {
         date: date.toISOString(),
         ...temppost,
       };
-      return formattedPost;
+      return formattedPost; */
+      return postDbInput;
     }),
 });

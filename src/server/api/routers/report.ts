@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { getReportsInput, reportEditInput, reportInput } from "~/types";
+import { getReportsInput, reportCreateInput, reportEditInput } from "~/types";
 
 import { z } from "zod";
 
@@ -312,7 +312,7 @@ export const reportRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(reportInput)
+    .input(reportCreateInput)
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.report.create({
         data: {

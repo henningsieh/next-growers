@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
   Box,
   Button,
@@ -10,13 +12,13 @@ import {
   Title,
 } from "@mantine/core";
 import { Editor, useEditor } from "@tiptap/react";
+import type { Post, PostDbInput, Report } from "~/types";
 import React, { FormEvent, useEffect, useRef } from "react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import { DateInput } from "@mantine/dates";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
-import type { Report } from "~/types";
 import { RichTextEditor } from "@mantine/tiptap";
 import StarterKit from "@tiptap/starter-kit";
 import SubScript from "@tiptap/extension-subscript";
@@ -72,7 +74,7 @@ const AddPost = (props: AddPostProps) => {
       .string()
       .min(8, { message: "Title should have at least 8 letters" })
       .max(32, { message: "Title should have max 32 letters" }),
-    description: z.string(),
+    content: z.string(),
   });
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -82,7 +84,7 @@ const AddPost = (props: AddPostProps) => {
       date: new Date(),
       day: timeDifferenceDays,
       title: "",
-      description: "",
+      content: "",
     },
   });
 
@@ -90,11 +92,18 @@ const AddPost = (props: AddPostProps) => {
     date: Date;
     day: number;
     title: string;
-    description: string;
+    content: string;
   }) {
     const editorHtml = editor?.getHTML() as string;
-    values.description = editorHtml;
+    values.content = editorHtml;
     console.debug(values);
+    const savePost: PostDbInput = {
+      ...values,
+      reportId: report.id,
+      authorId: report.authorId,
+      stage: "SEEDLING_STAGE",
+      lightHoursPerDay: null,
+    };
   }
 
   return (
@@ -170,7 +179,7 @@ const AddPost = (props: AddPostProps) => {
             label="Update text"
             placeholder=""
             mt="sm"
-            {...form.getInputProps("description")}
+            {...form.getInputProps("content")}
           />
 
           <RichTextEditor editor={editor}>

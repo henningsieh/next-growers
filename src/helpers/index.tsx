@@ -10,7 +10,6 @@ import type {
 } from "~/types";
 
 import axios from "axios";
-import { reportInput } from "~/types";
 
 export function hasUnreadNotifications(notifications: Notification[]): boolean {
   return (

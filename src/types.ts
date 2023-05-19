@@ -16,6 +16,8 @@ type getPostsByReportIdOutput = RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
 
+export type PostDbInput = RouterOutput["posts"]["getPostDbInput"];
+
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
 export type Notifications = getAllNotificationsOutput;
@@ -25,22 +27,22 @@ type getAllStrainsOutput = RouterOutput["strains"]["getAllStrains"];
 export type Strains = getAllStrainsOutput;
 export type Strain = getAllStrainsOutput[number];
 
-export const reportInput = z.object({
+export const getReportsInput = z.object({
+  orderBy: z.string().min(1),
+  desc: z.boolean(),
+  search: z.string(),
+});
+
+export const reportCreateInput = z.object({
   title: z
     .string()
     .min(8, { message: "Title should have at least 8 letters" })
     .max(32, { message: "Title should have max 32 letters" }),
   description: z
     .string()
-    .min(12, { message: "Description should have at least 12 letters" })
-    .max(64, { message: "Description should have max 64 letters" }),
+    .min(12, { message: "Content should have at least 12 letters" })
+    .max(64, { message: "Content should have max 64 letters" }),
   imageId: z.string().min(1, { message: "Header image is missing" }),
-});
-
-export const getReportsInput = z.object({
-  orderBy: z.string().min(1),
-  desc: z.boolean(),
-  search: z.string(),
 });
 
 export const reportEditInput = z.object({
@@ -51,8 +53,8 @@ export const reportEditInput = z.object({
     .max(32, { message: "Title should have max 32 letters" }),
   description: z
     .string()
-    .min(12, { message: "Description should have at least 12 letters" })
-    .max(64, { message: "Description should have max 64 letters" }),
+    .min(12, { message: "Content should have at least 12 letters" })
+    .max(64, { message: "Content should have max 64 letters" }),
   strains: z
     .array(z.string())
     .min(1, { message: "Report should have at least 1 strain" }),
