@@ -7,7 +7,14 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
+    dangerouslyAllowSVG: true,
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+        port: "",
+        pathname: "/**",
+      },
       {
         protocol: "https",
         hostname: "forum.cannabisanbauen.net",

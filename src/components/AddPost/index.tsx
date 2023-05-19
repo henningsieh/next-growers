@@ -47,14 +47,14 @@ const AddPost = (props: AddPostProps) => {
     content,
   });
 
+  if (report == null) return null;
+
   const reportStartDate = new Date(report.createdAt);
   reportStartDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   reportStartDate.setDate(reportStartDate.getDate());
-
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setDate(currentDate.getDate());
-
   // Calculate the difference in milliseconds
   const timeDifferenceMs = currentDate.getTime() - reportStartDate.getTime();
 
@@ -62,13 +62,12 @@ const AddPost = (props: AddPostProps) => {
   const timeDifferenceDays = Math.floor(
     timeDifferenceMs / (1000 * 60 * 60 * 24)
   );
-
   const schema = z.object({
     date: z.date().refine((value) => value >= reportStartDate, {
       message:
         "Date should be greater than or equal to the report's start date (germination date)",
     }),
-    day: z.number().min(1, { message: "Day of Growmust be greater than zero" }),
+    day: z.number().min(0, { message: "Day of Growmust be greater than zero" }),
     title: z
       .string()
       .min(8, { message: "Title should have at least 8 letters" })
@@ -76,6 +75,7 @@ const AddPost = (props: AddPostProps) => {
     description: z.string(),
   });
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validate: zodResolver(schema),
     initialValues: {
@@ -94,7 +94,7 @@ const AddPost = (props: AddPostProps) => {
   }) {
     const editorHtml = editor?.getHTML() as string;
     values.description = editorHtml;
-    console.log(values);
+    console.debug(values);
   }
 
   return (
@@ -121,12 +121,15 @@ const AddPost = (props: AddPostProps) => {
 
                 const reportStartDate = new Date(report.createdAt);
                 reportStartDate.setHours(0, 0, 0, 0);
-                reportStartDate.setDate(reportStartDate.getDate() - 1);
+                reportStartDate.setDate(reportStartDate.getDate());
                 const timeDifferenceMs =
                   selectedDate.getTime() - reportStartDate.getTime();
                 const timeDifferenceDays = Math.floor(
                   timeDifferenceMs / (1000 * 60 * 60 * 24)
                 );
+                console.debug("reportStartDate", reportStartDate);
+                console.debug("currentDate", currentDate);
+                console.debug("timeDifferenceDays", timeDifferenceDays);
 
                 form.setFieldValue("day", timeDifferenceDays);
               }}
@@ -135,7 +138,7 @@ const AddPost = (props: AddPostProps) => {
               ml="sm"
               withAsterisk
               label="Day of Grow"
-              description="this calculates"
+              description="Start is day 0"
               placeholder="1"
               mt="sm"
               {...form.getInputProps("day")}
@@ -144,7 +147,7 @@ const AddPost = (props: AddPostProps) => {
 
                 const reportStartDate = new Date(report.createdAt);
                 reportStartDate.setHours(0, 0, 0, 0);
-                reportStartDate.setDate(reportStartDate.getDate() - 1);
+                reportStartDate.setDate(reportStartDate.getDate());
 
                 const newDate = new Date(
                   reportStartDate.getTime() + newDay * 24 * 60 * 60 * 1000

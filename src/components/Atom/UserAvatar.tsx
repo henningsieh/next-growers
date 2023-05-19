@@ -14,11 +14,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   return (
     <Tooltip label={userName} /* color={theme.colors.orange[5]} */ withArrow>
       <Avatar
-        src={
-          imageUrl
-            ? imageUrl
-            : `https://ui-avatars.com/api/?name=${userName as string}`
-        }
+        src={imageUrl}
         className="cursor-pointer"
         variant="outline"
         radius="xl"

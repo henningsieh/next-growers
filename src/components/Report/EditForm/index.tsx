@@ -105,7 +105,7 @@ export function EditForm(props: EditFormProps) {
       console.debug(context);
     },
     onSuccess: (savedReport) => {
-      toast.success("our report was successfully saved");
+      toast.success("Your report was successfully saved");
       console.debug(savedReport);
       // Navigate to the new report page
       // void router.push(`/account/reports/${newReportDB.id}`);
@@ -119,10 +119,10 @@ export function EditForm(props: EditFormProps) {
   const form = useForm({
     validate: zodResolver(reportEditInput),
     initialValues: {
-      id: report.id,
-      title: report.title,
-      description: report.description,
-      strains: report.strains.map((strain) => strain.id),
+      id: report?.id,
+      title: report?.title,
+      description: report?.description,
+      strains: report?.strains.map((strain) => strain.id),
     },
   });
 
@@ -165,145 +165,146 @@ export function EditForm(props: EditFormProps) {
   const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   return (
     <>
-      <Container mt="sm" className="flex w-full flex-col space-y-4">
-        {/* // Upload Panel */}
-        {reportfromProps.imageCloudUrl ? (
-          <>
-            {/* // Image Preview */}
-            <Box className="relative" px={0}>
-              <Box className="absolute right-2 top-2 z-50 flex justify-end">
-                <ActionIcon
-                  title="delete this image"
-                  onClick={() => {
-                    setImageId("");
-                    setCloudUrl("");
-                  }}
-                  color="red"
-                  variant="filled"
-                >
-                  <IconTrashXFilled size="lg" />
-                </ActionIcon>
+      {" "}
+      {reportfromProps && (
+        <Container mt="sm" className="flex w-full flex-col space-y-4">
+          {/* // Upload Panel */}
+          {reportfromProps.imageCloudUrl ? (
+            <>
+              {/* // Image Preview */}
+              <Box className="relative" px={0}>
+                <Box className="absolute right-2 top-2 z-50 flex justify-end">
+                  <ActionIcon
+                    title="delete this image"
+                    onClick={() => {
+                      setImageId("");
+                      setCloudUrl("");
+                    }}
+                    color="red"
+                    variant="filled"
+                  >
+                    <IconTrashXFilled size="lg" />
+                  </ActionIcon>
+                </Box>
+                <ImagePreview
+                  image={reportfromProps.imageCloudUrl}
+                  title={form.values.title}
+                  description={form.values.description}
+                  publicLink="#"
+                  authorName={user.name as string}
+                  authorImageUrl={user.image as string}
+                  comments={89}
+                  views={183}
+                />
               </Box>
-              <ImagePreview
-                image={reportfromProps.imageCloudUrl}
-                title={form.values.title}
-                description={form.values.description}
-                publicLink="#"
-                authorName={user.name as string}
-                authorImageUrl={user.image as string}
-                comments={89}
-                views={183}
+            </>
+          ) : (
+            /* // Dropzone */
+            <div className={classes.wrapper}>
+              <LoadingOverlay
+                visible={isUploading}
+                transitionDuration={600}
+                overlayBlur={2}
               />
-            </Box>
-          </>
-        ) : (
-          /* // Dropzone */
-          <div className={classes.wrapper}>
-            <LoadingOverlay
-              visible={isUploading}
-              transitionDuration={600}
-              overlayBlur={2}
+              <Dropzone
+                h={rem(280)}
+                multiple={false} // only one header image!
+                openRef={openReference}
+                onDrop={handleDropWrapper}
+                onChange={(e) => {
+                  console.debug(e.currentTarget);
+                }}
+                className={classes.dropzone}
+                // radius="md"
+                accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+                maxSize={10 * 1024 ** 2}
+              >
+                <div style={{ pointerEvents: "none" }}>
+                  <Group position="center">
+                    {/* <Center> */}
+                    <Dropzone.Accept>
+                      <IconDownload
+                        size={rem(50)}
+                        color={
+                          theme.colorScheme === "dark"
+                            ? theme.colors.blue[0]
+                            : theme.white
+                        }
+                        stroke={1.5}
+                      />
+                    </Dropzone.Accept>
+                    <Dropzone.Reject>
+                      <IconX
+                        size={rem(50)}
+                        color={theme.colors.red[6]}
+                        stroke={1.5}
+                      />
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      <IconCloudUpload
+                        size={rem(50)}
+                        color={
+                          theme.colorScheme === "dark"
+                            ? theme.colors.dark[0]
+                            : theme.black
+                        }
+                        stroke={1.5}
+                      />
+                    </Dropzone.Idle>
+                    {/* </Center> */}
+                  </Group>
+
+                  <Text ta="center" fw={700} fz="lg" mt="xl">
+                    <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                    <Dropzone.Reject>
+                      Only one Images, less than 10mb
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
+                  </Text>
+                  <Text ta="center" fz="sm" my="xs" c="dimmed">
+                    Drag&apos;n&apos;drop your image here to upload!
+                    <br />
+                    We can accept only one <i>.jpg/.png/.gif</i> file that is
+                    less than 10mb in size.
+                  </Text>
+                </div>
+              </Dropzone>
+            </div>
+          )}
+
+          <form
+            onSubmit={form.onSubmit((values) => {
+              submitEditReportForm(values);
+            }, handleErrors)}
+          >
+            {/* <Input hidden {...form.getInputProps("id")} /> */}
+            <TextInput
+              withAsterisk
+              label="Bockquote cite (appears at the top):"
+              mt="sm"
+              {...form.getInputProps("description")}
             />
-            <Dropzone
-              h={rem(280)}
-              multiple={false} // only one header image!
-              openRef={openReference}
-              onDrop={handleDropWrapper}
-              onChange={(e) => {
-                console.debug(e.currentTarget);
-              }}
-              className={classes.dropzone}
-              // radius="md"
-              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-              maxSize={10 * 1024 ** 2}
-            >
-              <div style={{ pointerEvents: "none" }}>
-                <Group position="center">
-                  {/* <Center> */}
-                  <Dropzone.Accept>
-                    <IconDownload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.blue[0]
-                          : theme.white
-                      }
-                      stroke={1.5}
-                    />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX
-                      size={rem(50)}
-                      color={theme.colors.red[6]}
-                      stroke={1.5}
-                    />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconCloudUpload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.dark[0]
-                          : theme.black
-                      }
-                      stroke={1.5}
-                    />
-                  </Dropzone.Idle>
-                  {/* </Center> */}
-                </Group>
+            <TextInput
+              withAsterisk
+              label="Title"
+              {...form.getInputProps("title")}
+            />
 
-                <Text ta="center" fw={700} fz="lg" mt="xl">
-                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                  <Dropzone.Reject>
-                    Only one Images, less than 10mb
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
-                </Text>
-                <Text ta="center" fz="sm" my="xs" c="dimmed">
-                  Drag&apos;n&apos;drop your image here to upload!
-                  <br />
-                  We can accept only one <i>.jpg/.png/.gif</i> file that is less
-                  than 10mb in size.
-                </Text>
-              </div>
-            </Dropzone>
-          </div>
-        )}
+            <MultiSelect
+              {...form.getInputProps("strains")}
+              data={allStrains.map((strain) => ({
+                value: strain.id,
+                label: strain.name,
+              }))}
+              label="Strain(s) you are growing"
+              placeholder="Pick strins"
+              searchable
+              searchValue={strainsSarchValue}
+              onSearchChange={onSttrinsSearchChange}
+              nothingFound="Nothing found"
+            />
 
-        <form
-          onSubmit={form.onSubmit((values) => {
-            submitEditReportForm(values);
-          }, handleErrors)}
-        >
-          {/* <Input hidden {...form.getInputProps("id")} /> */}
-          <TextInput
-            withAsterisk
-            label="Bockquote cite (appears at the top):"
-            mt="sm"
-            {...form.getInputProps("description")}
-          />
-          <TextInput
-            withAsterisk
-            label="Title"
-            {...form.getInputProps("title")}
-          />
-
-          <MultiSelect
-            {...form.getInputProps("strains")}
-            data={allStrains.map((strain) => ({
-              value: strain.id,
-              label: strain.name,
-            }))}
-            // defaultValue={report.strains.map((strain) => strain.id)}
-            label="Strain(s) you are growing"
-            placeholder="Pick all that you like"
-            searchable
-            searchValue={strainsSarchValue}
-            onSearchChange={onSttrinsSearchChange}
-            nothingFound="Nothing found"
-          />
-
-          {/* 
+            {/* 
         <NumberInput
           withAsterisk
           label="Age"
@@ -312,13 +313,14 @@ export function EditForm(props: EditFormProps) {
           {...form.getInputProps("age")}
         />
  */}
-          <Group position="right" mt="xl">
-            <Button variant="outline" type="submit">
-              Save Grow
-            </Button>
-          </Group>
-        </form>
-      </Container>
+            <Group position="right" mt="xl">
+              <Button variant="outline" type="submit">
+                Save Grow
+              </Button>
+            </Group>
+          </form>
+        </Container>
+      )}
     </>
   );
 }

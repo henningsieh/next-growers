@@ -26,6 +26,12 @@ enum CannabisStraintype {
   Hybrid
 }
 
+enum GrowStage {
+  SEEDLING_STAGE
+  VEGETATIVE_STAGE
+  FLOWERING_STAGE
+}
+
 model Notification {
   id          String            @id @default(cuid())
   recipient   User              @relation(fields: [recipientId], references: [id], onDelete: Cascade)
@@ -111,6 +117,27 @@ model Report {
   @@index([authorId], name: "authorId_idx")
 }
 
+model Post {
+  id               String    @id @default(cuid())
+  date             DateTime
+  title            String
+  stage            GrowStage @default(SEEDLING_STAGE)
+  lightHoursPerDay Int?
+  content          String
+  likes            Like[]
+  comments         Comment[] // One Post has many Comments
+
+  reportId String // One Report has many Posts
+  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notification Notification[]
+}
+
 model Like {
   id       String  @id @default(cuid())
   user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -141,24 +168,6 @@ model Product {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Post {
-  id       String    @id @default(cuid())
-  title    String
-  content  String
-  likes    Like[]
-  comments Comment[] // One Post has many Comments
-
-  reportId String // One Report has many Posts
-  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Notification Notification[]
 }
 
 model Comment {

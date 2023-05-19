@@ -10,9 +10,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 // import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 
-
-
-
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -21,8 +18,8 @@ import { prisma } from "~/server/db";
  */
 declare module "next-auth" {
   interface User {
-    id: string
-    role: string
+    id: string;
+    role: string;
   }
   interface Session extends DefaultSession {
     user: User & DefaultSession["user"];
@@ -42,21 +39,27 @@ export const authOptions: NextAuthOptions = {
       user: {
         ...session.user,
         id: user.id,
-        image: user.image ? user.image : `https://ui-avatars.com/api/?name=${user.name as string}`,
-        role: user.role
+        image: user.image
+          ? user.image
+          : `https://ui-avatars.com/api/?name=${user.name as string}`,
+        role: user.role,
       },
     }),
   },
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID : '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ? process.env.GOOGLE_CLIENT_SECRET : '',
+      clientId: process.env.GOOGLE_CLIENT_ID
+        ? process.env.GOOGLE_CLIENT_ID
+        : "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+        ? process.env.GOOGLE_CLIENT_SECRET
+        : "",
     }),
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
-      
+
       // LOG VERIFYLINK TO CONSOLE IN DEVELOPMENT MODE ONLY
       ...(process.env.NODE_ENV !== "production"
         ? {
@@ -89,4 +92,3 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
-

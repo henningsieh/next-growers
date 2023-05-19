@@ -69,6 +69,7 @@ export async function getStaticProps(
     "getStaticProps 🤖",
     "...prefetching the report's dataset from db"
   );
+
   const report = stringifyReportData(reportResult);
 
   const strains = await prisma.cannabisStrain.findMany({
@@ -102,15 +103,19 @@ export async function getStaticProps(
   ); */
 
   // Make sure to return { props: { trpcState: helpers.dehydrate() } }
-  return {
-    props: {
-      // trpcState: helpers.dehydrate(),
-      // id: reportIdfromUrl,
-      report: report,
-      allStrains: allCannabisStrains,
-    },
-    revalidate: 5,
-  };
+  if (!!report) {
+    return {
+      props: {
+        // trpcState: helpers.dehydrate(),
+        // id: reportIdfromUrl,
+        report: report.id ? report : null,
+        allStrains: allCannabisStrains,
+      },
+      revalidate: 5,
+    };
+  } else {
+    return null;
+  }
 }
 /**
  * getStaticPaths
@@ -173,25 +178,33 @@ export default function ReportDetails(
         {/* // Header End */}
       </Container>
 
-      <EditForm
-        report={reportFromDB}
-        strains={allStrains}
-        user={session?.user}
-      />
+      {reportFromDB && (
+        <>
+          <EditForm
+            report={reportFromDB}
+            strains={allStrains}
+            user={session?.user}
+          />
 
-      <Space h="xl" />
+          <Space h="xl" />
 
-      <AddPost report={reportFromDB} />
+          <AddPost report={reportFromDB} />
 
-      {/* ================================= */}
-      {/* // Props report output */}
-      <Container size="md" pt="xl" className="flex w-full flex-col space-y-1">
-        {/* // Add Component */}
-        <Title order={2}>raw dataset from db*</Title>
-        <Title order={3}>*still in beta 🤓</Title>
+          {/* ================================= */}
+          {/* // Props report output */}
+          <Container
+            size="md"
+            pt="xl"
+            className="flex w-full flex-col space-y-1"
+          >
+            {/* // Add Component */}
+            <Title order={2}>raw dataset from db*</Title>
+            <Title order={3}>*still in beta 🤓</Title>
 
-        <div>{JSON.stringify(reportFromDB, null, 4)}</div>
-      </Container>
+            <div>{JSON.stringify(reportFromDB, null, 4)}</div>
+          </Container>
+        </>
+      )}
     </>
   );
 }
