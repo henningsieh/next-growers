@@ -18,6 +18,15 @@ export function hasUnreadNotifications(notifications: Notification[]): boolean {
   );
 }
 
+export function formatLabel(key: string): string {
+  // Convert snake case to title case
+  const words = key.split("_");
+  const formattedWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  );
+  return formattedWords.join(" ");
+}
+
 export function getUsername(): string {
   const usernames: string[] = [
     "Green Thumb",

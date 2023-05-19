@@ -121,7 +121,7 @@ model Post {
   id               String    @id @default(cuid())
   date             DateTime
   title            String
-  stage            GrowStage @default(SEEDLING_STAGE)
+  growStage        GrowStage @default(SEEDLING_STAGE)
   lightHoursPerDay Int?
   content          String
   likes            Like[]

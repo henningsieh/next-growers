@@ -20,7 +20,7 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import type { Report, Strains } from "~/types";
+import { Report, Strains, reportEditInput } from "~/types";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRef, useState } from "react";
 
@@ -28,7 +28,6 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
-import { reportEditInput } from "~/types";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { z } from "zod";

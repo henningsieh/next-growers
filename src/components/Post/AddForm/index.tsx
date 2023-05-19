@@ -8,16 +8,25 @@ import {
   Group,
   NumberInput,
   Paper,
+  Select,
   TextInput,
   Title,
 } from "@mantine/core";
 import { Editor, useEditor } from "@tiptap/react";
+import {
+  IconBulb,
+  IconCalendarEvent,
+  IconNumber,
+  IconSeeding,
+} from "@tabler/icons-react";
 import type { Post, PostDbInput, Report } from "~/types";
 import React, { FormEvent, useEffect, useRef } from "react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import { DateInput } from "@mantine/dates";
+import { GrowStage } from "~/types";
 import Highlight from "@tiptap/extension-highlight";
+import InputAddPostForm from "~/helpers/inputValidation";
 import Link from "@tiptap/extension-link";
 import { RichTextEditor } from "@mantine/tiptap";
 import StarterKit from "@tiptap/starter-kit";
@@ -25,6 +34,9 @@ import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
+import { api } from "~/utils/api";
+import { formatLabel } from "~/helpers";
+import { toast } from "react-hot-toast";
 import { z } from "zod";
 
 interface AddPostProps {
@@ -51,9 +63,31 @@ const AddPost = (props: AddPostProps) => {
 
   if (report == null) return null;
 
+  const { mutate: tRPCaddPostToReport } = api.posts.createPost.useMutation({
+    onMutate: (addPostToReport) => {
+      console.log("START posts.createPost.useMutation");
+      console.log("addPostToReport", addPostToReport);
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, newReport, context) => {
+      toast.error("An error occured when saving your report");
+      if (!context) return;
+      console.log(context);
+    },
+    onSuccess: (newReportDB) => {
+      toast.success("The update was saved to your report");
+      // Navigate to the new report page
+      // void router.push(`/account/reports/${newReportDB.id}`);
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      console.log("END posts.createPost.useMutation");
+    },
+  });
+
   const reportStartDate = new Date(report.createdAt);
   reportStartDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
-  reportStartDate.setDate(reportStartDate.getDate());
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setDate(currentDate.getDate());
@@ -64,27 +98,17 @@ const AddPost = (props: AddPostProps) => {
   const timeDifferenceDays = Math.floor(
     timeDifferenceMs / (1000 * 60 * 60 * 24)
   );
-  const schema = z.object({
-    date: z.date().refine((value) => value >= reportStartDate, {
-      message:
-        "Date should be greater than or equal to the report's start date (germination date)",
-    }),
-    day: z.number().min(0, { message: "Day of Growmust be greater than zero" }),
-    title: z
-      .string()
-      .min(8, { message: "Title should have at least 8 letters" })
-      .max(32, { message: "Title should have max 32 letters" }),
-    content: z.string(),
-  });
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
-    validate: zodResolver(schema),
+    validate: zodResolver(InputAddPostForm(reportStartDate)),
     initialValues: {
       date: new Date(),
       day: timeDifferenceDays,
       title: "",
       content: "",
+      growStage: GrowStage.VEGETATIVE_STAGE,
+      lightHoursPerDay: 12,
     },
   });
 
@@ -93,17 +117,23 @@ const AddPost = (props: AddPostProps) => {
     day: number;
     title: string;
     content: string;
+    growStage: GrowStage | undefined;
+    lightHoursPerDay: number;
   }) {
+    const { day, ...restValues } = values; // Omitting the 'day' field
+
     const editorHtml = editor?.getHTML() as string;
-    values.content = editorHtml;
-    console.debug(values);
+    restValues.content = editorHtml;
+
     const savePost: PostDbInput = {
-      ...values,
+      ...restValues,
+      growStage: restValues.growStage as GrowStage,
       reportId: report.id,
       authorId: report.authorId,
-      stage: "SEEDLING_STAGE",
-      lightHoursPerDay: null,
     };
+
+    console.debug(savePost);
+    tRPCaddPostToReport(savePost);
   }
 
   return (
@@ -113,58 +143,77 @@ const AddPost = (props: AddPostProps) => {
 
       <Box>
         <form
+          className="space-y-4"
           onSubmit={form.onSubmit((values) => {
             handleSubmit(values);
           })}
         >
-          <Flex className="justify-between" align="baseline">
+          <Flex className="justify-start space-x-2" align="flex-end">
             <DateInput
-              className="w-full"
-              size="sm"
               label="Select a date for this update"
               description="This handles the sorting of all updates of your Grow"
               withAsterisk
               {...form.getInputProps("date")}
               onChange={(selectedDate: Date) => {
-                form.setFieldValue("date", selectedDate);
+                const newDate = new Date(selectedDate);
+                newDate.setHours(reportStartDate.getHours());
+                newDate.setMinutes(reportStartDate.getMinutes());
+                newDate.setSeconds(reportStartDate.getSeconds());
+                newDate.setMilliseconds(reportStartDate.getMilliseconds());
 
-                const reportStartDate = new Date(report.createdAt);
-                reportStartDate.setHours(0, 0, 0, 0);
-                reportStartDate.setDate(reportStartDate.getDate());
+                form.setFieldValue("date", newDate);
+
                 const timeDifferenceMs =
                   selectedDate.getTime() - reportStartDate.getTime();
                 const timeDifferenceDays = Math.floor(
                   timeDifferenceMs / (1000 * 60 * 60 * 24)
                 );
-                console.debug("reportStartDate", reportStartDate);
-                console.debug("currentDate", currentDate);
-                console.debug("timeDifferenceDays", timeDifferenceDays);
 
                 form.setFieldValue("day", timeDifferenceDays);
               }}
+              className="w-full"
+              icon={<IconCalendarEvent size="1.2rem" />}
             />
             <NumberInput
-              ml="sm"
+              miw={90}
               withAsterisk
-              label="Day of Grow"
+              label="Grow day"
               description="Start is day 0"
               placeholder="1"
-              mt="sm"
               {...form.getInputProps("day")}
               onChange={(value: number) => {
                 const newDay = parseInt(value.toString(), 10);
 
-                const reportStartDate = new Date(report.createdAt);
-                reportStartDate.setHours(0, 0, 0, 0);
-                reportStartDate.setDate(reportStartDate.getDate());
+                const newDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
 
-                const newDate = new Date(
-                  reportStartDate.getTime() + newDay * 24 * 60 * 60 * 1000
-                );
+                // Set the day of the month while preserving the time
+                newDate.setUTCDate(newDate.getUTCDate() + newDay);
 
                 form.setFieldValue("date", newDate);
-                form.setFieldValue("day", newDay); // Convert newDay to a string
+                form.setFieldValue("day", newDay);
               }}
+              icon={<IconNumber size="1.2rem" />}
+            />
+            <NumberInput
+              miw={90}
+              min={0}
+              max={24}
+              label="Light hours"
+              description="Hours of light / day"
+              {...form.getInputProps("lightHoursPerDay")}
+              icon={<IconBulb size="1.2rem" />}
+            />
+            <Select
+              miw={180}
+              label="Grow stage"
+              description="Actual grow stage"
+              data={Object.keys(GrowStage).map((key) => ({
+                value: key,
+                label: formatLabel(key),
+              }))}
+              withAsterisk
+              {...form.getInputProps("growStage")}
+              icon={<IconSeeding size="1.2rem" />}
             />
           </Flex>
           <TextInput
@@ -173,14 +222,7 @@ const AddPost = (props: AddPostProps) => {
             placeholder="Titel of this Update"
             {...form.getInputProps("title")}
           />
-          <TextInput
-            hidden
-            withAsterisk
-            label="Update text"
-            placeholder=""
-            mt="sm"
-            {...form.getInputProps("content")}
-          />
+          <TextInput hidden {...form.getInputProps("content")} />
 
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>

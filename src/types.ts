@@ -16,7 +16,15 @@ type getPostsByReportIdOutput = RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
 
-export type PostDbInput = RouterOutput["posts"]["getPostDbInput"];
+export type PostDbInput = {
+  date: Date;
+  title: string;
+  growStage: GrowStage;
+  lightHoursPerDay: number | null;
+  content: string;
+  reportId: string;
+  authorId: string;
+};
 
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
@@ -44,7 +52,6 @@ export const reportCreateInput = z.object({
     .max(64, { message: "Content should have max 64 letters" }),
   imageId: z.string().min(1, { message: "Header image is missing" }),
 });
-
 export const reportEditInput = z.object({
   id: z.string().min(1),
   title: z
@@ -89,9 +96,9 @@ export enum Locale {
 }
 
 export enum GrowStage {
-  SEEDLING_STAGE = "Seedling Stage",
-  VEGETATIVE_STAGE = "Vegetative Stage",
-  FLOWERING_STAGE = "Flowering Stage",
+  SEEDLING_STAGE = "SEEDLING_STAGE",
+  VEGETATIVE_STAGE = "VEGETATIVE_STAGE",
+  FLOWERING_STAGE = "FLOWERING_STAGE",
 }
 
 export interface SortingPanelProps {

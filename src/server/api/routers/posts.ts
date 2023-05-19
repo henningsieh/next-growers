@@ -1,9 +1,77 @@
-import { GrowStage, Prisma } from "@prisma/client";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
+import { GrowStage } from "~/types";
 import { z } from "zod";
 
 export const postRouter = createTRPCRouter({
+  createPost: protectedProcedure
+    .input(
+      z.object({
+        date: z.date(),
+        title: z.string().min(1),
+        content: z.string().min(1),
+        growStage: z.nativeEnum(GrowStage), // Use z.nativeEnum to accept the GrowStage enum type
+        lightHoursPerDay: z.number().nullable(),
+        reportId: z.string().min(1),
+        authorId: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
+        date,
+        title,
+        content,
+        growStage,
+        lightHoursPerDay,
+        reportId,
+        authorId,
+      } = input;
+
+      const report = await ctx.prisma.report.findFirst({
+        where: {
+          id: reportId,
+        },
+      });
+
+      if (authorId != ctx.session.user.id) {
+        throw new Error("A SECURITY ISSSUE OCCURED.");
+      }
+
+      if (!report) {
+        throw new Error(`The report with id: ${reportId} does not exist`);
+      }
+
+      if (report.authorId != ctx.session.user.id) {
+        throw new Error(
+          `You are not the owner of this report with id: ${reportId}`
+        );
+      }
+
+      // const formattedDate = new Date(date);
+
+      const post = await ctx.prisma.post.create({
+        data: {
+          date,
+          title,
+          content,
+          growStage,
+          lightHoursPerDay,
+          report: {
+            connect: {
+              id: reportId,
+            },
+          },
+          author: {
+            connect: {
+              id: authorId,
+            },
+          },
+        },
+      });
+
+      return post;
+    }),
+
   /**
    * Get all posts for a report
    * @Input: reportId: String
@@ -46,7 +114,7 @@ export const postRouter = createTRPCRouter({
     }),
 
   /**
-   * Get post by id
+   * Get PostDbInput // ONLY NEEDED AS TYPE
    * @Input: postId: String
    */
   getPostDbInput: publicProcedure
