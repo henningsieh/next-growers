@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Flex,
+  Grid,
   Group,
   NumberInput,
   Paper,
@@ -17,6 +18,7 @@ import {
   IconBulb,
   IconCalendarEvent,
   IconNumber,
+  IconPlant,
   IconSeeding,
 } from "@tabler/icons-react";
 import type { Post, PostDbInput, Report } from "~/types";
@@ -26,7 +28,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
 import { GrowStage } from "~/types";
 import Highlight from "@tiptap/extension-highlight";
-import InputAddPostForm from "~/helpers/inputValidation";
+import { InputAddPostForm } from "~/helpers/inputValidation";
 import Link from "@tiptap/extension-link";
 import { RichTextEditor } from "@mantine/tiptap";
 import StarterKit from "@tiptap/starter-kit";
@@ -148,74 +150,87 @@ const AddPost = (props: AddPostProps) => {
             handleSubmit(values);
           })}
         >
-          <Flex className="justify-start space-x-2" align="flex-end">
-            <DateInput
-              label="Select a date for this update"
-              description="This handles the sorting of all updates of your Grow"
-              withAsterisk
-              {...form.getInputProps("date")}
-              onChange={(selectedDate: Date) => {
-                const newDate = new Date(selectedDate);
-                newDate.setHours(reportStartDate.getHours());
-                newDate.setMinutes(reportStartDate.getMinutes());
-                newDate.setSeconds(reportStartDate.getSeconds());
-                newDate.setMilliseconds(reportStartDate.getMilliseconds());
+          <Box>
+            <Grid gutter="sm">
+              <Grid.Col xs={6} sm={6} md={6} lg={6} xl={6}>
+                <Flex className="justify-start space-x-2" align="baseline">
+                  <NumberInput
+                    miw={90}
+                    withAsterisk
+                    label="Grow day"
+                    description="Start is day 0"
+                    placeholder="1"
+                    {...form.getInputProps("day")}
+                    onChange={(value: number) => {
+                      const newDay = parseInt(value.toString(), 10);
 
-                form.setFieldValue("date", newDate);
+                      const newDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
 
-                const timeDifferenceMs =
-                  selectedDate.getTime() - reportStartDate.getTime();
-                const timeDifferenceDays = Math.floor(
-                  timeDifferenceMs / (1000 * 60 * 60 * 24)
-                );
+                      // Set the day of the month while preserving the time
+                      newDate.setUTCDate(newDate.getUTCDate() + newDay);
 
-                form.setFieldValue("day", timeDifferenceDays);
-              }}
-              className="w-full"
-              icon={<IconCalendarEvent size="1.2rem" />}
-            />
-            <NumberInput
-              miw={90}
-              withAsterisk
-              label="Grow day"
-              description="Start is day 0"
-              placeholder="1"
-              {...form.getInputProps("day")}
-              onChange={(value: number) => {
-                const newDay = parseInt(value.toString(), 10);
+                      form.setFieldValue("date", newDate);
+                      form.setFieldValue("day", newDay);
+                    }}
+                    icon={<IconNumber size="1.2rem" />}
+                  />
+                  <DateInput
+                    label="Date for this update"
+                    description="Sets 'Updated at' of Grow"
+                    withAsterisk
+                    {...form.getInputProps("date")}
+                    onChange={(selectedDate: Date) => {
+                      const newDate = new Date(selectedDate); /* 
+                      newDate.setHours(reportStartDate.getHours());
+                      newDate.setMinutes(reportStartDate.getMinutes());
+                      newDate.setSeconds(reportStartDate.getSeconds());
+                      newDate.setMilliseconds(
+                        reportStartDate.getMilliseconds()
+                      ); */
 
-                const newDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+                      form.setFieldValue("date", newDate);
 
-                // Set the day of the month while preserving the time
-                newDate.setUTCDate(newDate.getUTCDate() + newDay);
+                      const timeDifferenceMs =
+                        selectedDate.getTime() - reportStartDate.getTime();
+                      const timeDifferenceDays = Math.floor(
+                        timeDifferenceMs / (1000 * 60 * 60 * 24)
+                      );
 
-                form.setFieldValue("date", newDate);
-                form.setFieldValue("day", newDay);
-              }}
-              icon={<IconNumber size="1.2rem" />}
-            />
-            <NumberInput
-              miw={90}
-              min={0}
-              max={24}
-              label="Light hours"
-              description="Hours of light / day"
-              {...form.getInputProps("lightHoursPerDay")}
-              icon={<IconBulb size="1.2rem" />}
-            />
-            <Select
-              miw={180}
-              label="Grow stage"
-              description="Actual grow stage"
-              data={Object.keys(GrowStage).map((key) => ({
-                value: key,
-                label: formatLabel(key),
-              }))}
-              withAsterisk
-              {...form.getInputProps("growStage")}
-              icon={<IconSeeding size="1.2rem" />}
-            />
-          </Flex>
+                      form.setFieldValue("day", timeDifferenceDays);
+                    }}
+                    className="w-full"
+                    icon={<IconCalendarEvent size="1.2rem" />}
+                  />
+                </Flex>
+              </Grid.Col>
+              <Grid.Col xs={6} sm={6} md={6} lg={6} xl={6}>
+                <Flex className="justify-start space-x-2" align="baseline">
+                  <NumberInput
+                    miw={90}
+                    min={0}
+                    max={24}
+                    label="Light hours"
+                    description="Light / day (h)"
+                    {...form.getInputProps("lightHoursPerDay")}
+                    icon={<IconBulb size="1.2rem" />}
+                  />
+                  <Select
+                    miw={180}
+                    label="Grow stage"
+                    description="Actual grow stage"
+                    data={Object.keys(GrowStage).map((key) => ({
+                      value: key,
+                      label: formatLabel(key),
+                    }))}
+                    withAsterisk
+                    {...form.getInputProps("growStage")}
+                    className="w-full"
+                    icon={<IconPlant size="1.2rem" />}
+                  />
+                </Flex>
+              </Grid.Col>
+            </Grid>
+          </Box>
           <TextInput
             withAsterisk
             label="Titel of this update"
@@ -223,7 +238,6 @@ const AddPost = (props: AddPostProps) => {
             {...form.getInputProps("title")}
           />
           <TextInput hidden {...form.getInputProps("content")} />
-
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
               <RichTextEditor.ControlsGroup>
@@ -267,9 +281,10 @@ const AddPost = (props: AddPostProps) => {
 
             <RichTextEditor.Content />
           </RichTextEditor>
-
           <Group position="right" mt="xl">
-            <Button type="submit">Submit</Button>
+            <Button w={180} variant="outline" type="submit">
+              Update Grow 🪴
+            </Button>
           </Group>
         </form>
       </Box>

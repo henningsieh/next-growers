@@ -28,8 +28,8 @@ const SearchInput = ({
       onChange={onChange}
       placeholder="Full text search"
       rightSection={
-        <ActionIcon>
-          <IconX onClick={clearValue} size={14} stroke={1.5} />
+        <ActionIcon size={18} variant="outline" className="cursor-default">
+          <IconX color="orange" onClick={clearValue} size={16} stroke={2} />
         </ActionIcon>
       }
     />

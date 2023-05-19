@@ -234,20 +234,25 @@ export function stringifyReportData(report: any): Report {
 export function sanatizeDateString(originalDateString: string, locale: Locale) {
   const reportStartDate = new Date(originalDateString);
   const options: Intl.DateTimeFormatOptions = {
-    dateStyle: "medium",
+    month: "long",
+    day: "numeric",
+    year: "numeric" /* 
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false, */,
   };
 
   if (locale === "en") {
     // intl. date
     const intlFormatter = new Intl.DateTimeFormat("en-US", options);
     const intlDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
-    // console.log(intlDate);
+    // console.debug(intlDate);
     return intlDate;
   } else {
     // german date
     const germanFormatter = new Intl.DateTimeFormat("de-DE", options);
     const germanDate = germanFormatter.format(reportStartDate); // "11. Mai 2023"
-    // console.log(germanDate);
+    // console.debug(germanDate);
     return germanDate;
   }
 }

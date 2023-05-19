@@ -17,7 +17,10 @@ import {
 } from "@mantine/core";
 import {
   IconAlertTriangleFilled,
+  IconCalendar,
+  IconCalendarEvent,
   IconCannabis,
+  IconClock,
   IconEdit,
   IconHeart,
   IconHeartFilled,
@@ -85,7 +88,7 @@ export default function ReportCard({
   };
   const dislikeSuccessfulMsg = {
     title: "Success",
-    message: "Woohoo... you ❤️ this Grow!",
+    message: "Oh no... you removed your Like! 😢",
     color: "green",
     icon: <IconCheck />,
     loading: false,
@@ -327,14 +330,16 @@ export default function ReportCard({
           <Group position="left">
             <Tooltip
               transitionProps={{ transition: "pop-bottom-left", duration: 100 }}
-              label="Germination Date"
+              label="Created at"
               color="green"
               withArrow
               arrowPosition="side"
             >
               <Center>
-                <IconCannabis size="1.6rem" color="green" />
-                <Text className={classes.label} c="dimmed">
+                <Box pr={4}>
+                  <IconCalendar size="1.2rem" />
+                </Box>
+                <Text className={`${classes.label} cursor-default`} c="dimmed">
                   {sanatizeDateString(report.createdAt, Locale.EN)}
                 </Text>
               </Center>
@@ -347,16 +352,18 @@ export default function ReportCard({
                 transition: "pop-bottom-right",
                 duration: 100,
               }}
-              label="Seedling"
+              label="Updated at"
               color="green"
               withArrow
               arrowPosition="side"
             >
               <Center>
-                <Text className={classes.label} c="dimmed">
-                  {sanatizeDateString(report.createdAt, Locale.EN)}
+                <Text className={`${classes.label} cursor-default`} c="dimmed">
+                  {sanatizeDateString(report.updatedAt, Locale.EN)}
                 </Text>
-                <IconSeeding size="1.6rem" color="green" />
+                <Box pl={4}>
+                  <IconClock size="1.2rem" />
+                </Box>
               </Center>
             </Tooltip>
           </Group>

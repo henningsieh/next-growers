@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const InputAddPostForm = (reportStartDate: Date) => {
+export const InputAddPostForm = (reportStartDate: Date) => {
   return z.object({
     date: z.date().refine((value) => value >= reportStartDate, {
       message:
@@ -17,5 +17,3 @@ const InputAddPostForm = (reportStartDate: Date) => {
       .min(1, { message: "Grow stage must be set with every update" }),
   });
 };
-
-export default InputAddPostForm;

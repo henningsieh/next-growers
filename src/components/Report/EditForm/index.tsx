@@ -16,6 +16,7 @@ import {
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import {
   IconCloudUpload,
+  IconDeviceFloppy,
   IconDownload,
   IconTrashXFilled,
   IconX,
@@ -313,8 +314,11 @@ export function EditForm(props: EditFormProps) {
         />
  */}
             <Group position="right" mt="xl">
-              <Button variant="outline" type="submit">
+              <Button w={180} variant="outline" type="submit">
                 Save Grow
+                <Box ml={12} mt={2}>
+                  <IconDeviceFloppy size={20} />
+                </Box>
               </Button>
             </Group>
           </form>
