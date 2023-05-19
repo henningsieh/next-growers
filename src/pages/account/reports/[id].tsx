@@ -8,7 +8,7 @@ import type {
 import { Link, RichTextEditor } from "@mantine/tiptap";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import AddPost from "~/components/AddPost";
+import AddPost from "~/components/Post/AddForm";
 import { EditForm } from "~/components/Report/EditForm";
 import Head from "next/head";
 import { prisma } from "~/server/db";
