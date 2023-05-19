@@ -3,6 +3,7 @@ import { exampleRouter } from "~/server/api/routers/example";
 import { imageRouter } from "./routers/image";
 import { likeRouter } from "./routers/like";
 import { notificationRouter } from "./routers/notification";
+import { postRouter } from "./routers/posts";
 import { reportRouter } from "~/server/api/routers/report";
 import { strainRouter } from "./routers/strains";
 import { userRouter } from "~/server/api/routers/user";
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   like: likeRouter,
   notifications: notificationRouter,
   strains: strainRouter,
+  posts: postRouter,
 });
 
 // export type definition of API

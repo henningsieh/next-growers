@@ -12,6 +12,10 @@ export type Report = getAllReportsOutput[number];
 type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
 export type OwnReport = getOwnReportsOutput[number];
 
+type getPostsByReportIdOutput = RouterOutput["posts"]["getPostsByReportId"];
+export type Posts = getPostsByReportIdOutput;
+export type Post = getPostsByReportIdOutput[number];
+
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
 export type Notifications = getAllNotificationsOutput;
@@ -80,6 +84,12 @@ export interface ImageUploadResponse {
 export enum Locale {
   EN = "en",
   DE = "de",
+}
+
+export enum GrowStage {
+  SEEDLING_STAGE = "Seedling Stage",
+  VEGETATIVE_STAGE = "Vegetative Stage",
+  FLOWERING_STAGE = "Flowering Stage",
 }
 
 export interface SortingPanelProps {
