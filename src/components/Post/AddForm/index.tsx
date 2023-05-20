@@ -155,29 +155,31 @@ const AddPost = (props: AddPostProps) => {
               <Grid.Col xs={6} sm={6} md={6} lg={6} xl={6}>
                 <Flex className="justify-start space-x-2" align="baseline">
                   <NumberInput
-                    miw={90}
-                    withAsterisk
                     label="Grow day"
                     description="Start is day 0"
+                    withAsterisk
                     placeholder="1"
+                    miw={90}
+                    icon={<IconNumber size="1.2rem" />}
                     {...form.getInputProps("day")}
                     onChange={(value: number) => {
-                      const newDay = parseInt(value.toString(), 10);
-
-                      const newDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
-
-                      // Set the day of the month while preserving the time
-                      newDate.setUTCDate(newDate.getUTCDate() + newDay);
-
-                      form.setFieldValue("date", newDate);
-                      form.setFieldValue("day", newDay);
+                      const growDayOffSet = parseInt(value.toString(), 10);
+                      if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
+                      const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+                      newPostDate.setUTCDate(
+                        newPostDate.getUTCDate() + growDayOffSet
+                      );
+                      form.setFieldValue("date", newPostDate);
+                      form.setFieldValue("day", growDayOffSet);
                     }}
-                    icon={<IconNumber size="1.2rem" />}
                   />
                   <DateInput
+                    miw={180}
                     label="Date for this update"
                     description="Sets 'Updated at' of Grow"
                     withAsterisk
+                    className="w-full"
+                    icon={<IconCalendarEvent size="1.2rem" />}
                     {...form.getInputProps("date")}
                     onChange={(selectedDate: Date) => {
                       const newDate = new Date(selectedDate); /* 
@@ -198,8 +200,6 @@ const AddPost = (props: AddPostProps) => {
 
                       form.setFieldValue("day", timeDifferenceDays);
                     }}
-                    className="w-full"
-                    icon={<IconCalendarEvent size="1.2rem" />}
                   />
                 </Flex>
               </Grid.Col>
