@@ -89,22 +89,18 @@ const MyApp: AppType<{ session: Session | null }> = ({
               styles: (theme) => ({
                 root: {
                   // overriding the tailwind overrides... 👀
-                  /* 
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? "#FF4200 !important"
-                      : "#FF6600 !important",
- */
                   button: {},
                   color:
                     theme.colorScheme === "dark"
-                      ? theme.colors.gray[0]
+                      ? theme.colors.gray[4]
                       : theme.black,
 
                   "&:hover": {
                     cursor: "default",
                     backgroundColor:
-                      theme.colorScheme === "dark" ? "#FF5500" : "#FF7700",
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[4]
+                        : "#FF7700",
                   },
                 },
               }),

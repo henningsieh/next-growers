@@ -18,6 +18,7 @@ import UserAvatar from "./UserAvatar";
 
 const useStyles = createStyles((theme) => ({
   card: {
+    transition: "transform 250ms ease, box-shadow 250ms ease",
     zIndex: 40,
     position: "relative",
     height: rem(280),
@@ -28,7 +29,7 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.gray[0],
 
     [`&:hover .${getStylesRef("image")}`]: {
-      transform: "scale(1.1)",
+      transform: "scale(1.02)",
     },
   },
 

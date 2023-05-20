@@ -41,6 +41,20 @@ import { useState } from "react";
 
 const useStyles = createStyles((theme) => ({
   card: {
+    transition: "transform 150ms ease, box-shadow 150ms ease",
+
+    "&:hover": {
+      // transform: "scale(1.004)",
+      // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+
+      // Add the desired box-shadow color here
+
+      // Add the desired box-shadow color and theme's md shadow here
+      boxShadow:
+        theme.colorScheme === "dark"
+          ? `0 0 4px ${theme.colors.pink[6]}`
+          : `0 0 8px ${theme.colors.orange[8]}`,
+    },
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
@@ -56,7 +70,7 @@ const useStyles = createStyles((theme) => ({
 
   like: {
     color: theme.colors.red[6],
-    transition: "transform 0.3s ease-in-out",
+    transition: "transform 2.3s ease-in-out",
   },
 
   label: {
@@ -371,7 +385,7 @@ export default function ReportCard({
       </Card.Section>
 
       {/* // Strains */}
-      {/* 
+      {/*
       <Card.Section className={classes.section} mt={0}>
         <Text mt="xs" className={classes.label} c="dimmed">
           Strains in this Grow:
@@ -404,9 +418,9 @@ export default function ReportCard({
           </Button>
           <Link href={`/account/reports/${report.id}`}>
             <Button
-              size="sm" /* 
+              size="sm" /*
               className="border-orange-600" */
-              variant="default"
+              variant="outline"
               radius="sm"
               style={{ flex: 1 }}
             >
