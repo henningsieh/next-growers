@@ -152,15 +152,16 @@ const AddPost = (props: AddPostProps) => {
         >
           <Box>
             <Grid gutter="sm">
-              <Grid.Col xs={6} sm={6} md={6} lg={6} xl={6}>
+              <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
                 <Flex className="justify-start space-x-2" align="baseline">
                   <NumberInput
                     label="Grow day"
                     description="Start is day 0"
-                    miw={90}
+                    w={142}
                     placeholder="1"
                     icon={<IconNumber size="1.2rem" />}
                     withAsterisk
+                    min={0}
                     {...form.getInputProps("day")}
                     onChange={(value: number) => {
                       const growDayOffSet = parseInt(value.toString(), 10);
@@ -176,26 +177,29 @@ const AddPost = (props: AddPostProps) => {
                   <DateInput
                     label="Date for this update"
                     description="Sets 'Updated at' of Grow"
-                    miw={180}
+                    valueFormat="MMM DD, YYYY HH:mm"
+                    // valueFormat="DD/MM/YYYY HH:mm:ss"
                     className="w-full"
                     icon={<IconCalendarEvent size="1.2rem" />}
                     withAsterisk
                     {...form.getInputProps("date")}
                     onChange={(selectedDate: Date) => {
-                      const newDate = new Date(selectedDate); /* 
+                      const newDate = new Date(selectedDate);
+                      /* 
                       newDate.setHours(reportStartDate.getHours());
                       newDate.setMinutes(reportStartDate.getMinutes());
                       newDate.setSeconds(reportStartDate.getSeconds());
-                      newDate.setMilliseconds(
-                        reportStartDate.getMilliseconds()
-                      ); */
+                      newDate.setMilliseconds(reportStartDate.getMilliseconds()); 
+                      */
 
                       form.setFieldValue("date", newDate);
 
-                      const timeDifferenceMs =
-                        selectedDate.getTime() - reportStartDate.getTime();
+                      /* const timeDifferenceMs =
+                        selectedDate.getTime() - reportStartDate.getTime(); */
+
                       const timeDifferenceDays = Math.floor(
-                        timeDifferenceMs / (1000 * 60 * 60 * 24)
+                        (selectedDate.getTime() - reportStartDate.getTime()) /
+                          (1000 * 60 * 60 * 24)
                       );
 
                       form.setFieldValue("day", timeDifferenceDays);
@@ -203,11 +207,11 @@ const AddPost = (props: AddPostProps) => {
                   />
                 </Flex>
               </Grid.Col>
-              <Grid.Col xs={6} sm={6} md={6} lg={6} xl={6}>
+              <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
                 <Flex className="justify-start space-x-2" align="baseline">
                   <NumberInput
                     label="Light hours"
-                    miw={90}
+                    w={142}
                     min={0}
                     max={24}
                     description="Light / day (h)"
@@ -215,7 +219,6 @@ const AddPost = (props: AddPostProps) => {
                     icon={<IconBulb size="1.2rem" />}
                   />
                   <Select
-                    miw={180}
                     label="Grow stage"
                     description="Actual grow stage"
                     data={Object.keys(GrowStage).map((key) => ({

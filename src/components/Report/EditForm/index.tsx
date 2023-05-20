@@ -265,8 +265,8 @@ export function EditForm(props: EditFormProps) {
                   <Text ta="center" fz="sm" my="xs" c="dimmed">
                     Drag&apos;n&apos;drop your image here to upload!
                     <br />
-                    We can accept only one <i>.jpg/.png/.gif</i> file that is
-                    less than 10mb in size.
+                    We only can accept one <i>.jpg/.png/.gif</i> file that is
+                    less than 4.5 MB in size.
                   </Text>
                 </div>
               </Dropzone>
@@ -305,15 +305,6 @@ export function EditForm(props: EditFormProps) {
               nothingFound="Nothing found"
             />
 
-            {/* 
-        <NumberInput
-          withAsterisk
-          label="Age"
-          placeholder="Your age"
-          mt="sm"
-          {...form.getInputProps("age")}
-        />
- */}
             <Group position="right" mt="xl">
               <Button w={180} variant="outline" type="submit">
                 Save Grow
