@@ -230,7 +230,7 @@ export default function ReportCard({
       <Badge
         className="cursor-pointer"
         onClick={() => {
-          setSearchString(`strain:${badge.name}`);
+          setSearchString(`strain:"${badge.name}"`);
         }}
         variant="gradient"
         gradient={{ from: "orange", to: "grape" }}

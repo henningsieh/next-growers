@@ -22,26 +22,22 @@ function splitSearchString(searchString: string): SplitObject {
   const splitObject: SplitObject = { strain: "", searchstring: "" };
 
   if (searchString.includes("strain:")) {
-    const searchStringParts = searchString.split(" ");
-    const strainIndex = searchStringParts.findIndex((part) =>
-      part.toLowerCase().startsWith("strain:")
-    );
+    const regex = /strain:"([^"]*)"|strain:([^ ]*)/i;
+    const matches = searchString.match(regex);
 
-    if (
-      strainIndex !== -1 &&
-      searchStringParts.length > 0 &&
-      !!searchStringParts[strainIndex]
-    ) {
-      splitObject.strain = searchStringParts[strainIndex]?.substring(
-        7
-      ) as string;
-      searchStringParts.splice(strainIndex, 1);
+    if (matches) {
+      const strainValue = matches[1] || matches[2];
+      const searchstring = searchString.replace(matches[0], "").trim();
+      splitObject.strain = strainValue?.trim() ?? "";
+      splitObject.searchstring = searchstring;
+    } else {
+      splitObject.searchstring = searchString;
     }
-    splitObject.searchstring = searchStringParts.join(" ");
   } else {
     splitObject.searchstring = searchString;
   }
 
+  console.debug("Split Object:", splitObject);
   return splitObject;
 }
 
