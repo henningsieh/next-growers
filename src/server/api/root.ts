@@ -1,6 +1,5 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { exampleRouter } from "~/server/api/routers/example";
-import { imageRouter } from "./routers/image";
 import { likeRouter } from "./routers/like";
 import { notificationRouter } from "./routers/notification";
 import { postRouter } from "./routers/posts";
@@ -17,7 +16,6 @@ export const appRouter = createTRPCRouter({
   example: exampleRouter,
   reports: reportRouter,
   user: userRouter,
-  upload: imageRouter,
   like: likeRouter,
   notifications: notificationRouter,
   strains: strainRouter,
