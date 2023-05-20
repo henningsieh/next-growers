@@ -78,7 +78,9 @@ export const InputCreatePost: (reportStartDate: Date) => ZodType = (
       .min(8, { message: "Title should have at least 8 letters" })
       .max(32, { message: "Title should have max 32 letters" }),
     content: z.string(),
-    lightHoursPerDay: z.number().nullable(),
+    lightHoursPerDay: z
+      .number({ invalid_type_error: "(h) must be set, may be 0" })
+      .nullable(),
     growStage: z
       .string()
       .min(1, { message: "Grow stage must be set with every update" }),
