@@ -299,7 +299,7 @@ export function EditForm(props: EditFormProps) {
             />
 
             <Grid gutter="sm">
-              <Grid.Col xs={12} sm={4} md={6} lg={6} xl={6}>
+              <Grid.Col xs={12} sm={4} md={3} lg={3} xl={2}>
                 <DateInput
                   label="Grow start date"
                   description="Sets 'Created at' of your Grow"
@@ -315,7 +315,7 @@ export function EditForm(props: EditFormProps) {
                   }}
                 />
               </Grid.Col>
-              <Grid.Col xs={12} sm={8} md={6} lg={6} xl={6}>
+              <Grid.Col xs={12} sm={8} md={9} lg={9} xl={10}>
                 <MultiSelect
                   label="Strain(s)"
                   description="Select all strain(s) you are growing"
@@ -337,7 +337,7 @@ export function EditForm(props: EditFormProps) {
               <Button w={180} variant="outline" type="submit">
                 Save Grow
                 <Box ml={12} mt={2}>
-                  <IconDeviceFloppy size={20} />
+                  <IconCloudUpload size={20} />
                 </Box>
               </Button>
             </Group>
