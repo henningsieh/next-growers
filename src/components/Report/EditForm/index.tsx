@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Container,
+  Grid,
   Group,
   Input,
   LoadingOverlay,
@@ -23,19 +24,19 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { Report, Strains } from "~/types";
+import type { Report, Strains } from "~/types";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRef, useState } from "react";
 
+import { DateInput } from "@mantine/dates";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { InputEditReport } from "~/helpers/inputValidation";
-import { User } from "next-auth";
+import type { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { z } from "zod";
-import { DateInput } from "@mantine/dates";
 
 interface EditFormProps {
   report: Report;
@@ -113,6 +114,7 @@ export function EditForm(props: EditFormProps) {
       console.debug(savedReport);
       // Navigate to the new report page
       // void router.push(`/account/reports/${newReportDB.id}`);
+      void router.reload();
     },
     // Always refetch after error or success:
     onSettled: () => {
@@ -290,39 +292,46 @@ export function EditForm(props: EditFormProps) {
               mt="sm"
               {...form.getInputProps("description")}
             />
-            <DateInput
-              label="Grow start date"
-              description="Sets 'Created at' of your Grow"
-              valueFormat="MMM DD, YYYY HH:mm"
-              maxDate={new Date()}
-              // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
-              className="w-full"
-              icon={<IconCalendar size="1.2rem" />}
-              withAsterisk
-              {...form.getInputProps("createdAt")}
-              onChange={(selectedDate: Date) => {
-                form.setFieldValue("createdAt", selectedDate);
-              }}
-            />
             <TextInput
               withAsterisk
               label="Title"
               {...form.getInputProps("title")}
             />
 
-            <MultiSelect
-              {...form.getInputProps("strains")}
-              data={allStrains.map((strain) => ({
-                value: strain.id,
-                label: strain.name,
-              }))}
-              label="Strain(s) you are growing"
-              placeholder="Pick strins"
-              searchable
-              searchValue={strainsSarchValue}
-              onSearchChange={onSttrinsSearchChange}
-              nothingFound="Nothing found"
-            />
+            <Grid gutter="sm">
+              <Grid.Col xs={12} sm={4} md={6} lg={6} xl={6}>
+                <DateInput
+                  label="Grow start date"
+                  description="Sets 'Created at' of your Grow"
+                  valueFormat="MMM DD, YYYY HH:mm"
+                  maxDate={new Date()}
+                  // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
+                  // className="w-full"
+                  icon={<IconCalendar size="1.2rem" />}
+                  withAsterisk
+                  {...form.getInputProps("createdAt")}
+                  onChange={(selectedDate: Date) => {
+                    form.setFieldValue("createdAt", selectedDate);
+                  }}
+                />
+              </Grid.Col>
+              <Grid.Col xs={12} sm={8} md={6} lg={6} xl={6}>
+                <MultiSelect
+                  label="Strain(s)"
+                  description="Select all strain(s) you are growing"
+                  placeholder="Pick strains of your Grow"
+                  {...form.getInputProps("strains")}
+                  data={allStrains.map((strain) => ({
+                    value: strain.id,
+                    label: strain.name,
+                  }))}
+                  searchable
+                  searchValue={strainsSarchValue}
+                  onSearchChange={onSttrinsSearchChange}
+                  nothingFound="Nothing found"
+                />
+              </Grid.Col>
+            </Grid>
 
             <Group position="right" mt="xl">
               <Button w={180} variant="outline" type="submit">

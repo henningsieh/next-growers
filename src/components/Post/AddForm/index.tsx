@@ -28,6 +28,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
 import { GrowStage } from "~/types";
 import Highlight from "@tiptap/extension-highlight";
+import { InputCreatePost } from "~/helpers/inputValidation";
 import Link from "@tiptap/extension-link";
 import { RichTextEditor } from "@mantine/tiptap";
 import StarterKit from "@tiptap/starter-kit";
@@ -39,7 +40,6 @@ import { api } from "~/utils/api";
 import { formatLabel } from "~/helpers";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
-import { InputCreatePost } from "~/helpers/inputValidation";
 
 interface AddPostProps {
   report: Report;
@@ -101,11 +101,15 @@ const AddPost = (props: AddPostProps) => {
     timeDifferenceMs / (1000 * 60 * 60 * 24)
   );
 
+  // Get today's date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validate: zodResolver(InputCreatePost(reportStartDate)),
     initialValues: {
-      date: new Date(),
+      date: today,
       day: timeDifferenceDays,
       title: "",
       content: "",
@@ -236,7 +240,7 @@ const AddPost = (props: AddPostProps) => {
           </Box>
           <TextInput
             withAsterisk
-            label="Titel of this update"
+            label="Titel for this update"
             placeholder="Titel of this Update"
             {...form.getInputProps("title")}
           />
@@ -284,6 +288,7 @@ const AddPost = (props: AddPostProps) => {
 
             <RichTextEditor.Content />
           </RichTextEditor>
+
           <Group position="right" mt="xl">
             <Button w={180} variant="outline" type="submit">
               Update Grow 🪴

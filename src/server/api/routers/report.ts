@@ -356,9 +356,9 @@ export const reportRouter = createTRPCRouter({
       }
 
       // Update the report
-      const { strains, ...inputData } = input;
+      const { strains, ...reportData } = input;
       const data = {
-        ...inputData,
+        ...reportData,
         authorId: ctx.session.user.id,
         strains: {
           set: strains.map((strainId) => ({ id: strainId })),

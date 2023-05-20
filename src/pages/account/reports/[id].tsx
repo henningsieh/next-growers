@@ -11,6 +11,7 @@ import AccessDenied from "~/components/Atom/AccessDenied";
 import AddPost from "~/components/Post/AddForm";
 import { EditForm } from "~/components/Report/EditForm";
 import Head from "next/head";
+import Loading from "~/components/Atom/Loading";
 import { prisma } from "~/server/db";
 import { stringifyReportData } from "~/helpers";
 import { useSession } from "next-auth/react";
@@ -87,7 +88,6 @@ export async function getStaticProps(
       updatedAt: true,
     },
   });
-
   const allCannabisStrains = strains.map((strain) => ({
     ...strain,
     createdAt: strain.createdAt.toISOString(),
@@ -155,7 +155,7 @@ export default function ReportDetails(
 
   const { data: session, status } = useSession();
 
-  if (!session?.user) return <AccessDenied />;
+  // if (!session?.user) return <AccessDenied />;
   return (
     <>
       <Head>
@@ -165,7 +165,6 @@ export default function ReportDetails(
           content="Create your grow report on growagram.com"
         />
       </Head>
-
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title */}
@@ -177,8 +176,8 @@ export default function ReportDetails(
         </div>
         {/* // Header End */}
       </Container>
-
-      {reportFromDB && (
+      <Loading isLoading={status === "loading"} />
+      {status === "authenticated" && reportFromDB && (
         <>
           <EditForm
             report={reportFromDB}
