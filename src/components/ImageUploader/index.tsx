@@ -13,6 +13,7 @@ import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import { Image, SimpleGrid, Text } from "@mantine/core";
 
 import type { FileWithPath } from "@mantine/dropzone";
+import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
 import { useState } from "react";
 
 interface ImageUploaderProps {
@@ -21,6 +22,10 @@ interface ImageUploaderProps {
 
 const ImageUploader = (props: ImageUploaderProps) => {
   const { reportId } = props;
+  const [imageIds, setImageIds] = useState<string[]>([]);
+  const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
+  const [cloudUrls, setCloudUrls] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const theme = useMantineTheme();
 
@@ -29,21 +34,31 @@ const ImageUploader = (props: ImageUploaderProps) => {
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
-      <>
-        <Image
-          key={index}
-          src={imageUrl}
-          imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
-          alt={`upload preview id ${index} `}
-        />
-        {imageUrl}
-      </>
+      <Image
+        key={index}
+        src={imageUrl}
+        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        alt={`upload preview id ${index} `}
+      />
     );
   });
 
   const handelDropWrapper = (files: FileWithPath[]) => {
+    setIsUploading(true);
     setFiles(files);
-    console.debug(files);
+
+    console.debug("handelDropWrapper", files);
+
+    // handleMultipleDrop calls the new /api/multi-upload endpoint
+    handleMultipleDrop(
+      files,
+      setImageIds,
+      setImagePublicIds,
+      setCloudUrls,
+      setIsUploading
+    ).catch((error) => {
+      console.debug(error);
+    });
   };
 
   return (

@@ -44,6 +44,14 @@ export interface ImageUploadResponse {
   cloudUrl: string;
 }
 
+export interface MultiUploadResponse {
+  success: boolean;
+  reportId: string;
+  imageIds: string[];
+  imagePublicIds: string[];
+  cloudUrls: string[];
+}
+
 export interface SortingPanelProps {
   sortBy: string;
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
