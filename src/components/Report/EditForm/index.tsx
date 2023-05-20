@@ -15,6 +15,8 @@ import {
 } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import {
+  IconCalendar,
+  IconCalendarEvent,
   IconCloudUpload,
   IconDeviceFloppy,
   IconDownload,
@@ -33,6 +35,7 @@ import { handleDrop } from "~/helpers";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { z } from "zod";
+import { DateInput } from "@mantine/dates";
 
 interface EditFormProps {
   report: Report;
@@ -124,6 +127,7 @@ export function EditForm(props: EditFormProps) {
       title: report?.title,
       description: report?.description,
       strains: report?.strains.map((strain) => strain.id),
+      createdAt: new Date(report?.createdAt), // new Date(), // Add the createdAt field with the current date
     },
   });
 
@@ -132,6 +136,7 @@ export function EditForm(props: EditFormProps) {
     title: string;
     description: string;
     strains: string[];
+    createdAt: Date; // Add the createdAt field to the values' type definition
   }) => {
     tRPCsaveReport(values);
     console.debug(values);
@@ -284,6 +289,20 @@ export function EditForm(props: EditFormProps) {
               label="Bockquote cite (appears at the top):"
               mt="sm"
               {...form.getInputProps("description")}
+            />
+            <DateInput
+              label="Grow start date"
+              description="Sets 'Created at' of your Grow"
+              valueFormat="MMM DD, YYYY HH:mm"
+              maxDate={new Date()}
+              // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
+              className="w-full"
+              icon={<IconCalendar size="1.2rem" />}
+              withAsterisk
+              {...form.getInputProps("createdAt")}
+              onChange={(selectedDate: Date) => {
+                form.setFieldValue("createdAt", selectedDate);
+              }}
             />
             <TextInput
               withAsterisk

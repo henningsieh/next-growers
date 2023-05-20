@@ -25,6 +25,7 @@ export const InputEditReport = z.object({
   strains: z
     .array(z.string())
     .min(1, { message: "Report should have at least 1 strain" }),
+  createdAt: z.date(),
 });
 
 export const InputGetReports = z.object({
