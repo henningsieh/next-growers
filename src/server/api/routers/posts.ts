@@ -1,21 +1,11 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-import { GrowStage } from "~/types";
+import { InputCreatePostServer } from "~/helpers/inputValidation";
 import { z } from "zod";
 
 export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
-    .input(
-      z.object({
-        date: z.date(),
-        title: z.string().min(1),
-        content: z.string().min(1),
-        growStage: z.nativeEnum(GrowStage), // Use z.nativeEnum to accept the GrowStage enum type
-        lightHoursPerDay: z.number().nullable(),
-        reportId: z.string().min(1),
-        authorId: z.string().min(1),
-      })
-    )
+    .input(InputCreatePostServer)
     .mutation(async ({ ctx, input }) => {
       const {
         date,
@@ -34,7 +24,9 @@ export const postRouter = createTRPCRouter({
       });
 
       if (authorId != ctx.session.user.id) {
-        throw new Error("A SECURITY ISSSUE OCCURED.");
+        throw new Error(
+          "A SECURITY ISSSUE OCCURED! (Missmatch: authorId != userId )"
+        );
       }
 
       if (!report) {

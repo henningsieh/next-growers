@@ -1,11 +1,11 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-import { userSetUSerNameInput } from "~/types";
+import { InputSetUserName } from "~/helpers/inputValidation";
 import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
   saveOwnUsername: protectedProcedure
-    .input(userSetUSerNameInput)
+    .input(InputSetUserName)
     .mutation(async ({ ctx, input }) => {
       // First, check if the user exists
       const existingUser = await ctx.prisma.user.findUnique({

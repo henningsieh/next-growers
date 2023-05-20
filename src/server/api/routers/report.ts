@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { getReportsInput, reportCreateInput, reportEditInput } from "~/types";
+import {
+  InputCreateReport,
+  InputEditReport,
+  InputGetReports,
+} from "~/helpers/inputValidation";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 import { z } from "zod";
 
@@ -42,7 +50,7 @@ export const reportRouter = createTRPCRouter({
    * Get all Reports with author information
    */
   getAllReports: publicProcedure
-    .input(getReportsInput)
+    .input(InputGetReports)
     .query(async ({ ctx, input }) => {
       const { orderBy, desc, search } = input;
 
@@ -140,7 +148,7 @@ export const reportRouter = createTRPCRouter({
    * @Input: userId: String
    */
   getOwnReports: protectedProcedure
-    .input(getReportsInput)
+    .input(InputGetReports)
     .query(async ({ ctx, input }) => {
       const { orderBy, desc, search } = input;
 
@@ -312,7 +320,7 @@ export const reportRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(reportCreateInput)
+    .input(InputCreateReport)
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.report.create({
         data: {
@@ -333,7 +341,7 @@ export const reportRouter = createTRPCRouter({
     }),
 
   saveReport: protectedProcedure
-    .input(reportEditInput)
+    .input(InputEditReport)
     .mutation(async ({ ctx, input }) => {
       // First, check if the report exists
       const existingReport = await ctx.prisma.report.findUnique({

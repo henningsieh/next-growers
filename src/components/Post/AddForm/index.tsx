@@ -28,7 +28,6 @@ import { useForm, zodResolver } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
 import { GrowStage } from "~/types";
 import Highlight from "@tiptap/extension-highlight";
-import { InputAddPostForm } from "~/helpers/inputValidation";
 import Link from "@tiptap/extension-link";
 import { RichTextEditor } from "@mantine/tiptap";
 import StarterKit from "@tiptap/starter-kit";
@@ -40,6 +39,7 @@ import { api } from "~/utils/api";
 import { formatLabel } from "~/helpers";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
+import { InputCreatePost } from "~/helpers/inputValidation";
 
 interface AddPostProps {
   report: Report;
@@ -103,7 +103,7 @@ const AddPost = (props: AddPostProps) => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
-    validate: zodResolver(InputAddPostForm(reportStartDate)),
+    validate: zodResolver(InputCreatePost(reportStartDate)),
     initialValues: {
       date: new Date(),
       day: timeDifferenceDays,
@@ -157,10 +157,10 @@ const AddPost = (props: AddPostProps) => {
                   <NumberInput
                     label="Grow day"
                     description="Start is day 0"
-                    withAsterisk
-                    placeholder="1"
                     miw={90}
+                    placeholder="1"
                     icon={<IconNumber size="1.2rem" />}
+                    withAsterisk
                     {...form.getInputProps("day")}
                     onChange={(value: number) => {
                       const growDayOffSet = parseInt(value.toString(), 10);
@@ -174,12 +174,12 @@ const AddPost = (props: AddPostProps) => {
                     }}
                   />
                   <DateInput
-                    miw={180}
                     label="Date for this update"
                     description="Sets 'Updated at' of Grow"
-                    withAsterisk
+                    miw={180}
                     className="w-full"
                     icon={<IconCalendarEvent size="1.2rem" />}
+                    withAsterisk
                     {...form.getInputProps("date")}
                     onChange={(selectedDate: Date) => {
                       const newDate = new Date(selectedDate); /* 
@@ -206,10 +206,10 @@ const AddPost = (props: AddPostProps) => {
               <Grid.Col xs={6} sm={6} md={6} lg={6} xl={6}>
                 <Flex className="justify-start space-x-2" align="baseline">
                   <NumberInput
+                    label="Light hours"
                     miw={90}
                     min={0}
                     max={24}
-                    label="Light hours"
                     description="Light / day (h)"
                     {...form.getInputProps("lightHoursPerDay")}
                     icon={<IconBulb size="1.2rem" />}

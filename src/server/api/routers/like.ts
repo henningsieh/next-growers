@@ -1,14 +1,12 @@
+import { InputDeletelike, InputLike } from "~/helpers/inputValidation";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NotificationEvent, Prisma } from "@prisma/client";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-import { DeleteLikeInput } from "../../../types";
-import { LikeReportInput } from "~/types";
-
 export const likeRouter = createTRPCRouter({
   likeReport: protectedProcedure
-    .input(LikeReportInput)
+    .input(InputLike)
     .mutation(async ({ ctx, input }) => {
       // Check if the report exists
       const existingReport = await ctx.prisma.report.findUnique({
@@ -78,7 +76,7 @@ export const likeRouter = createTRPCRouter({
     }),
 
   deleteLike: protectedProcedure
-    .input(DeleteLikeInput)
+    .input(InputDeletelike)
     .mutation(async ({ ctx, input }) => {
       // Check if the like exists
       const existingLike = await ctx.prisma.like.findFirst({

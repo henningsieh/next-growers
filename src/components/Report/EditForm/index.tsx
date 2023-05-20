@@ -21,11 +21,12 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { Report, Strains, reportEditInput } from "~/types";
+import { Report, Strains } from "~/types";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRef, useState } from "react";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
+import { InputEditReport } from "~/helpers/inputValidation";
 import { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
@@ -117,7 +118,7 @@ export function EditForm(props: EditFormProps) {
   });
 
   const form = useForm({
-    validate: zodResolver(reportEditInput),
+    validate: zodResolver(InputEditReport),
     initialValues: {
       id: report?.id,
       title: report?.title,

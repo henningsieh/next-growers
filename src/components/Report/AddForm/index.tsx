@@ -24,10 +24,10 @@ import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
+import { InputCreateReport } from "~/helpers/inputValidation";
 import type { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
-import { reportCreateInput } from "~/types";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -144,7 +144,7 @@ function Form({ user }: AddFormProps) {
   };
 
   const form = useForm({
-    validate: zodResolver(reportCreateInput),
+    validate: zodResolver(InputCreateReport),
     validateInputOnChange: true,
     initialValues: {
       title: "",
