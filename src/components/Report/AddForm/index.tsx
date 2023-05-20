@@ -87,15 +87,16 @@ function Form({ user }: AddFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cloudUrl, setCloudUrl] = useState("");
 
-  // Update the "imageId" state when the value of the "imageId" field in the form changes
+  // Update "imageId" state, if "imageId" form field value changes
   useEffect(() => {
     form.setFieldValue("imageId", imageId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageId]);
 
   const handleDropWrapper = (files: File[]): void => {
-    // handleDrop calls the /api/upload endpoint
     setIsUploading(true);
+
+    // handleDrop calls the /api/upload endpoint
     handleDrop(
       files,
       setImageId,
@@ -103,7 +104,6 @@ function Form({ user }: AddFormProps) {
       setCloudUrl,
       setIsUploading
     ).catch((error) => {
-      // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
       console.debug(error);
     });
   };
@@ -167,7 +167,6 @@ function Form({ user }: AddFormProps) {
 
         {cloudUrl ? (
           <>
-            {" "}
             {/* // Image Preview */}
             <Box className="relative" px={0}>
               <Box
@@ -214,7 +213,7 @@ function Form({ user }: AddFormProps) {
             />
             <Dropzone
               h={rem(280)}
-              multiple={false} // only one header image!
+              multiple={false} // only one image for now!
               openRef={openReference}
               onDrop={handleDropWrapper}
               onChange={(e) => {
@@ -223,7 +222,7 @@ function Form({ user }: AddFormProps) {
               className={classes.dropzone}
               // radius="md"
               accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-              maxSize={4.5 * 1024 ** 2}
+              maxSize={4.4 * 1024 ** 2} // trying to match the Vercel production environment post size limit which is about 4.5mb
             >
               <div style={{ pointerEvents: "none" }}>
                 <Group position="center">

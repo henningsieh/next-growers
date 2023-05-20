@@ -183,7 +183,7 @@ export const handleDrop = async (
   setIsUploading: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
   const formData = new FormData();
-  console.log("src\\helpers\\handleDrop:", files);
+  console.debug("src\\helpers\\handleDrop:", files);
   if (files && files[0]) {
     // files.map((file) => formData.append("image", file));
     formData.append("image", files[0]); // Assuming only one file is uploaded

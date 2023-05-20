@@ -16,16 +16,12 @@ const readUploadedFile = (
   saveLocally?: boolean
 ): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
   const options: formidable.Options = {};
+
   if (saveLocally) {
     options.uploadDir = path.join(process.cwd(), "/public/images");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    options.filename = (name, ext, path, form) => {
-      return `${Date.now()}_${path.originalFilename as string}`;
-    };
+    options.keepExtensions = true; // Keep the file extensions for multiple files
   }
-  /**
-   * @see:
-   */
+
   options.maxFileSize = 4000 * 1024 * 1024;
   const form = formidable(options);
 
@@ -39,12 +35,9 @@ const readUploadedFile = (
 
 const handler: NextApiHandler = async (req, res) => {
   const data = await readUploadedFile(req, false);
-
-  // console.log("readFile", data);
-
+  console.debug("readFile", data);
   if (!!data.files.image && !Array.isArray(data.files.image)) {
-    // handle the case where image is NOT an array
-
+    // now handle the case where image is NOT an array
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
@@ -78,7 +71,7 @@ const handler: NextApiHandler = async (req, res) => {
     console.log(`Public ID: ${result.public_id}`);
     console.log(`URL: ${result.secure_url}`);
 
-    // Create image dataset in db
+    // Create image in db
     const image = await prisma.image.create({
       data: {
         cloudUrl: result.secure_url,
@@ -86,7 +79,7 @@ const handler: NextApiHandler = async (req, res) => {
       },
     });
     console.log("prisma.image", image);
-    // return successfully the new image cloud url
+    // return informations about the public image in the cloud
     res.json({
       success: "true",
       imageId: image.id, // cloudinary public_id of uploaded image

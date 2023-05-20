@@ -55,6 +55,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
             fontFamily: `'Open Sans', sans-serif`,
             sizes: {
               h1: { fontSize: "1.66rem" },
+              h2: { fontSize: "1.42rem" },
+              h3: { fontSize: "1.28rem" },
             },
           },
           primaryColor: "orange",

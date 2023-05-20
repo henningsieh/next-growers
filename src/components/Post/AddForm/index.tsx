@@ -28,6 +28,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { DateInput } from "@mantine/dates";
 import { GrowStage } from "~/types";
 import Highlight from "@tiptap/extension-highlight";
+import ImageUploader from "~/components/ImageUploader";
 import { InputCreatePost } from "~/helpers/inputValidation";
 import Link from "@tiptap/extension-link";
 import { RichTextEditor } from "@mantine/tiptap";
@@ -147,7 +148,7 @@ const AddPost = (props: AddPostProps) => {
       {/* <Paper withBorder> */}
       <Title order={2}>Update your Grow </Title>
 
-      <Box>
+      <Box mt="sm">
         <form
           className="space-y-4"
           onSubmit={form.onSubmit((values) => {
@@ -215,10 +216,11 @@ const AddPost = (props: AddPostProps) => {
                 <Flex className="justify-start space-x-2" align="baseline">
                   <NumberInput
                     label="Light hours"
+                    description="Light / day (h)"
+                    withAsterisk
                     w={142}
                     min={0}
                     max={24}
-                    description="Light / day (h)"
                     {...form.getInputProps("lightHoursPerDay")}
                     icon={<IconBulb size="1.2rem" />}
                   />
@@ -245,6 +247,9 @@ const AddPost = (props: AddPostProps) => {
             {...form.getInputProps("title")}
           />
           <TextInput hidden {...form.getInputProps("content")} />
+
+          <ImageUploader reportId={report.id} />
+
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
               <RichTextEditor.ControlsGroup>
