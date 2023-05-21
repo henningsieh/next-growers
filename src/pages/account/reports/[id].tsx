@@ -191,7 +191,7 @@ export default function ReportDetails(
                 <EditForm
                   report={reportFromDB}
                   strains={allStrains}
-                  user={session?.user}
+                  user={session.user}
                 />
 
                 <Space h="xl" />

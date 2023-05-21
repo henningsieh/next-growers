@@ -49,7 +49,7 @@ const content =
   '<h1 style="text-align: center">Update your Grow with a nice rich text</h1><p><code>RichTextEditor</code> <mark>component focuses on usability </mark>and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports all of its features:</p><ul><li><p>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s></p></li><li><p>Headings (h1-h6)</p></li><li><p>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</p></li><li><p>Ordered and bullet lists* <sub>(*buggy: bullets and numbers are invisible ;-) )</sub></p></li><li><p>Text align&nbsp;</p></li><li><p>And all <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/extensions">other extensions</a></p></li></ul>';
 
 const AddPost = (props: AddPostProps) => {
-  const { report: report } = props;
+  const { report } = props;
 
   const editor = useEditor({
     extensions: [
@@ -292,7 +292,7 @@ const AddPost = (props: AddPostProps) => {
             <RichTextEditor.Content />
           </RichTextEditor>
 
-          <ImageUploader reportId={report.id} />
+          <ImageUploader report={report} />
 
           <Group position="right" mt="xl">
             <Button w={180} variant="outline" type="submit">

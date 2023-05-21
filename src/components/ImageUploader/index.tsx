@@ -10,20 +10,21 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
+import { IconArrowBigLeft, IconArrowBigRight } from "@tabler/icons-react";
 import { Image, SimpleGrid, Text } from "@mantine/core";
 
 import { Carousel } from "@mantine/carousel";
 import type { FileWithPath } from "@mantine/dropzone";
+import type { Report } from "~/types";
 import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
 import { useState } from "react";
 
 interface ImageUploaderProps {
-  reportId: string;
+  report: Report;
 }
 
 const ImageUploader = (props: ImageUploaderProps) => {
-  const { reportId } = props;
+  const { report } = props;
   const [imageIds, setImageIds] = useState<string[]>([]);
   const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
   const [cloudUrls, setCloudUrls] = useState<string[]>([]);
@@ -33,13 +34,13 @@ const ImageUploader = (props: ImageUploaderProps) => {
 
   const [files, setFiles] = useState<FileWithPath[]>([]);
 
-  const previews = files.map((file, index) => {
-    const imageUrl = URL.createObjectURL(file);
+  const previews = cloudUrls.map((cloudUrl, index) => {
+    // const imageUrl = URL.createObjectURL(file);
     return (
       <Carousel.Slide key={index}>
         <Image
-          src={imageUrl}
-          imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+          src={cloudUrl}
+          imageProps={{ onLoad: () => URL.revokeObjectURL(cloudUrl) }}
           alt={`upload preview id ${index} `}
         />
       </Carousel.Slide>
@@ -56,7 +57,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
     // handleMultipleDrop calls the new /api/multi-upload endpoint
     handleMultipleDrop(
       files,
-      reportId,
+      report,
       setImageIds,
       setImagePublicIds,
       setCloudUrls,
@@ -84,14 +85,29 @@ const ImageUploader = (props: ImageUploaderProps) => {
               <Box>
                 <Carousel
                   withIndicators
-                  height={200}
-                  slideSize="33.333333%"
-                  slideGap="md"
+                  height={90}
+                  previousControlIcon={
+                    <IconArrowBigLeft
+                      color={theme.colors.orange[7]}
+                      size={36}
+                      stroke={2}
+                    />
+                  }
+                  nextControlIcon={
+                    <IconArrowBigRight
+                      color={theme.colors.orange[7]}
+                      size={36}
+                      stroke={2}
+                    />
+                  }
+                  slideSize="20%"
+                  slideGap="xs"
                   loop
                   align="start"
                   breakpoints={[
                     { maxWidth: "md", slideSize: "25%" },
-                    { maxWidth: "sm", slideSize: "50%", slideGap: 0 },
+                    { maxWidth: "sm", slideSize: "25%" },
+                    { maxWidth: "xs", slideSize: "50%" },
                   ]}
                 >
                   {previews}

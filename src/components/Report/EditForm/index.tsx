@@ -25,13 +25,13 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import type { Report, Strains } from "~/types";
+import type { Session, User } from "next-auth";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRef, useState } from "react";
 
 import { DateInput } from "@mantine/dates";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { InputEditReport } from "~/helpers/inputValidation";
-import type { User } from "next-auth";
 import { api } from "~/utils/api";
 import { handleDrop } from "~/helpers";
 import { toast } from "react-hot-toast";

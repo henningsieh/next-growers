@@ -1,8 +1,10 @@
 import type { NextApiHandler, NextApiRequest } from "next";
 
 import type { Image } from "@prisma/client";
+import { authOptions } from "~/server/auth";
 import cloudinary from "~/utils/cloudinary";
 import formidable from "formidable";
+import { getServerSession } from "next-auth";
 import path from "path";
 import { prisma } from "~/server/db";
 
@@ -13,48 +15,61 @@ export const config = {
 };
 
 const handler: NextApiHandler = async (req, res) => {
-  const data = await readUploadedFile(req, false);
-  console.debug("readFile", data);
-  const files = data.files["images"];
+  const session = await getServerSession(req, res, authOptions);
 
-  const reportId = data.fields["reportId"] as string;
+  if (!session) {
+    res.status(401).json({ error: "unauthorized" });
+  } else {
+    const userId = session.user.id;
 
-  const imageIds: string[] = [];
-  const imagePublicIds: string[] = [];
-  const cloudUrls: string[] = [];
+    const data = await readUploadedFile(req, false);
+    const ownerId = data.fields["ownerId"] as string;
 
-  if (files) {
-    if (!Array.isArray(files)) {
-      // Handle the case where a single file is uploaded
-      const file = files;
-      await handleFileUpload(file, reportId);
+    if (!!!ownerId) res.status(400).json({ error: "ownerId is missing" });
+
+    const imageIds: string[] = [];
+    const imagePublicIds: string[] = [];
+    const cloudUrls: string[] = [];
+
+    const files = data.files["images"];
+
+    if (!files) {
+      res.status(400).json({ error: "no files attachted" });
     } else {
-      // await Promise.all(files.map(handleFileUpload));
-      // We have to collect all results
-      await Promise.all(
-        files.map(async (file) => {
-          const result = await handleFileUpload(file, reportId);
-          imageIds.push(result.id);
-          imagePublicIds.push(result.publicId);
-          cloudUrls.push(result.cloudUrl);
-        })
-      );
+      if (!Array.isArray(files)) {
+        // Handle the case where a single file is uploaded
+        const file = files;
+        const result = await handleFileUpload(file, ownerId);
+        imageIds.push(result.id);
+        imagePublicIds.push(result.publicId);
+        cloudUrls.push(result.cloudUrl);
+      } else {
+        // await Promise.all(files.map(handleFileUpload));
+        // We have to collect all results
+        await Promise.all(
+          files.map(async (file) => {
+            const result = await handleFileUpload(file, ownerId);
+            imageIds.push(result.id);
+            imagePublicIds.push(result.publicId);
+            cloudUrls.push(result.cloudUrl);
+          })
+        );
+      }
+      const response = {
+        success: true,
+        imageIds,
+        imagePublicIds,
+        cloudUrls,
+      };
+
+      res.json(response);
     }
   }
-
-  const response = {
-    success: true,
-    imageIds,
-    imagePublicIds,
-    cloudUrls,
-  };
-
-  res.json(response);
 };
 
 const handleFileUpload = async (
   file: formidable.File,
-  reportId: string
+  ownerId: string
 ): Promise<Image> => {
   const now = new Date();
   const year = now.getFullYear();
@@ -75,7 +90,7 @@ const handleFileUpload = async (
   }`;
 
   const result = await cloudinary.uploader.upload(file.filepath, {
-    public_id: publicIdWithTimestamp, //FIXME: filename is buggy!
+    public_id: publicIdWithTimestamp,
     quality: "auto",
     fetch_format: "auto",
     flags: "lossy",
@@ -86,10 +101,11 @@ const handleFileUpload = async (
   console.log(`Public ID: ${result.public_id}`);
   console.log(`URL: ${result.secure_url}`);
   console.log("cloudinaryResult", result);
-
+  console.debug("ownerId", ownerId);
   const image = await prisma.image.create({
     data: {
-      reportId: reportId,
+      ownerId: ownerId, //FIXME: owner has to be set!
+      // reportId: reportId,
       cloudUrl: result.secure_url,
       publicId: result.public_id,
     },
