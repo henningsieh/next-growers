@@ -75,14 +75,14 @@ const ImageUploader = (props: ImageUploaderProps) => {
           <div>
             <Box className="relative">
               <LoadingOverlay visible={isUploading} />
-              <Dropzone
-                accept={IMAGE_MIME_TYPE}
-                onDrop={handleMultipleDropWrapper}
-              >
-                <Text align="center">Drop images for this update here</Text>
-              </Dropzone>
-
               <Box>
+                <Dropzone
+                  accept={IMAGE_MIME_TYPE}
+                  onDrop={handleMultipleDropWrapper}
+                >
+                  <Text align="center">Drop images for this update here</Text>
+                </Dropzone>
+
                 <Carousel
                   withIndicators
                   height={90}
@@ -124,11 +124,12 @@ const ImageUploader = (props: ImageUploaderProps) => {
               </SimpleGrid> */}
             </Box>
           </div>
+          {/* 
           <Group position="right" mt="xl">
             <Button w={180} variant="outline" type="submit">
               Upload Images
             </Button>
-          </Group>
+          </Group> */}
         </Box>
       </Paper>
     </Container>

@@ -97,20 +97,19 @@ const handleFileUpload = async (
     invalidate: true,
   });
 
-  console.log(`✅ Successfully uploaded ${file.filepath}`);
-  console.log(`Public ID: ${result.public_id}`);
-  console.log(`URL: ${result.secure_url}`);
-  console.log("cloudinaryResult", result);
-  console.debug("ownerId", ownerId);
   const image = await prisma.image.create({
     data: {
-      ownerId: ownerId, //FIXME: owner has to be set!
-      // reportId: reportId,
+      ownerId: ownerId,
       cloudUrl: result.secure_url,
       publicId: result.public_id,
     },
   });
-  console.log("prisma.image", image);
+
+  console.debug(`✅ Successfully uploaded ${file.filepath}`);
+  console.debug("ownerId", ownerId);
+  console.debug("imageId", image.id);
+  console.debug(`Public ID: ${result.public_id}`);
+  console.debug(`URL: ${result.secure_url}`);
 
   return image;
 };
