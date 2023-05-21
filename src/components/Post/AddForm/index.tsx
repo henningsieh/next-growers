@@ -248,8 +248,6 @@ const AddPost = (props: AddPostProps) => {
           />
           <TextInput hidden {...form.getInputProps("content")} />
 
-          <ImageUploader reportId={report.id} />
-
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
               <RichTextEditor.ControlsGroup>
@@ -293,6 +291,8 @@ const AddPost = (props: AddPostProps) => {
 
             <RichTextEditor.Content />
           </RichTextEditor>
+
+          <ImageUploader reportId={report.id} />
 
           <Group position="right" mt="xl">
             <Button w={180} variant="outline" type="submit">

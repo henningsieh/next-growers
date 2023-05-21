@@ -20,15 +20,12 @@ export const handleMultipleDrop = async (
 
     files.forEach((file, index) => {
       // console.debug("file", file);
-      formData.append("image[]", file, `image_${index}`);
+      formData.append("images", file, `${file.name}`);
     });
 
     formData.append("reportId", reportId);
 
-    // formData.append("image", files[0]); // Assuming only one file is uploaded
-    // files.map((file) => formData.append("image", file)); // Now we are handling multiple file upload
-
-    // console.debug("formData.append", formData);
+    console.debug("formData.append", formData);
     try {
       const { data }: { data: MultiUploadResponse } = await axios.post(
         "/api/multiple-upload",
@@ -36,7 +33,7 @@ export const handleMultipleDrop = async (
       );
 
       if (data.success) {
-        console.log("MultiUploadResponse", data);
+        // console.log("MultiUploadResponse", data);
         // setting the image informations to the component state
         setImageIds(data.imageIds);
         setImagePublicIds(data.imagePublicIds);

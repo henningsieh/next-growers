@@ -1,5 +1,6 @@
 import type { NextApiHandler, NextApiRequest } from "next";
 
+import type { Image } from "@prisma/client";
 import cloudinary from "~/utils/cloudinary";
 import formidable from "formidable";
 import path from "path";
@@ -14,31 +15,47 @@ export const config = {
 const handler: NextApiHandler = async (req, res) => {
   const data = await readUploadedFile(req, false);
   console.debug("readFile", data);
+  const files = data.files["images"];
 
-  const files = data.files["image[]"];
+  const reportId = data.fields["reportId"] as string;
+
+  const imageIds: string[] = [];
+  const imagePublicIds: string[] = [];
+  const cloudUrls: string[] = [];
+
   if (files) {
     if (!Array.isArray(files)) {
       // Handle the case where a single file is uploaded
       const file = files;
-      await handleFileUpload(file);
+      await handleFileUpload(file, reportId);
     } else {
+      // await Promise.all(files.map(handleFileUpload));
       // We have to collect all results
-      await Promise.all(files.map(handleFileUpload));
+      await Promise.all(
+        files.map(async (file) => {
+          const result = await handleFileUpload(file, reportId);
+          imageIds.push(result.id);
+          imagePublicIds.push(result.publicId);
+          cloudUrls.push(result.cloudUrl);
+        })
+      );
     }
   }
 
-  /** return informations about the new public images in cloudinary
-    {
-      success: "true",
-      imageIds:                     // prisma: array of all saved Image Ids to db
-      imagePublicIds:               // cloudinary: array of all public_ids 
-      cloudUrls: result.secure_url, // cloudinary: array of all secure_urls
-    }
-  */
-  res.json({ success: true });
+  const response = {
+    success: true,
+    imageIds,
+    imagePublicIds,
+    cloudUrls,
+  };
+
+  res.json(response);
 };
 
-const handleFileUpload = async (file: formidable.File): Promise<void> => {
+const handleFileUpload = async (
+  file: formidable.File,
+  reportId: string
+): Promise<Image> => {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
@@ -57,9 +74,7 @@ const handleFileUpload = async (file: formidable.File): Promise<void> => {
     file.originalFilename?.split(".")[0] as string
   }`;
 
-  const localPathToImage = file.filepath;
-
-  const result = await cloudinary.uploader.upload(localPathToImage, {
+  const result = await cloudinary.uploader.upload(file.filepath, {
     public_id: publicIdWithTimestamp, //FIXME: filename is buggy!
     quality: "auto",
     fetch_format: "auto",
@@ -67,19 +82,21 @@ const handleFileUpload = async (file: formidable.File): Promise<void> => {
     invalidate: true,
   });
 
-  console.log(`✅ Successfully uploaded ${localPathToImage}`);
+  console.log(`✅ Successfully uploaded ${file.filepath}`);
   console.log(`Public ID: ${result.public_id}`);
   console.log(`URL: ${result.secure_url}`);
   console.log("cloudinaryResult", result);
 
   const image = await prisma.image.create({
     data: {
-      // FIXME: add connected postId
+      reportId: reportId,
       cloudUrl: result.secure_url,
       publicId: result.public_id,
     },
   });
   console.log("prisma.image", image);
+
+  return image;
 };
 
 const readUploadedFile = (

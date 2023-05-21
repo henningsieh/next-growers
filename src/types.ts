@@ -46,7 +46,7 @@ export interface ImageUploadResponse {
 
 export interface MultiUploadResponse {
   success: boolean;
-  reportId: string;
+  // reportId: string;
   imageIds: string[];
   imagePublicIds: string[];
   cloudUrls: string[];
