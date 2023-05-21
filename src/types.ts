@@ -39,7 +39,7 @@ export type Strain = getAllStrainsOutput[number];
 export interface ImageUploadResponse {
   success: boolean;
   imageId: string;
-  reportId: string;
+  // reportId: string;
   imagePublicId: string;
   cloudUrl: string;
 }

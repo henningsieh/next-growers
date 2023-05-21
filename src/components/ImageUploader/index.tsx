@@ -53,6 +53,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
     // handleMultipleDrop calls the new /api/multi-upload endpoint
     handleMultipleDrop(
       files,
+      reportId,
       setImageIds,
       setImagePublicIds,
       setCloudUrls,

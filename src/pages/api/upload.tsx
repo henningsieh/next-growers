@@ -83,7 +83,7 @@ const handler: NextApiHandler = async (req, res) => {
     res.json({
       success: "true",
       imageId: image.id, // cloudinary public_id of uploaded image
-      reportId: image.reportId, // cloudinary public_id of uploaded image
+      // reportId: image.reportId, // cloudinary public_id of uploaded image
       imagePublicId: result.public_id, // cloudinary public_id of uploaded image
       cloudUrl: result.secure_url, // cloudinary public secure_url to uploaded image
     });

@@ -1,10 +1,11 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { ImageUploadResponse, MultiUploadResponse } from "~/types";
 
+import type { MultiUploadResponse } from "~/types";
 import axios from "axios";
 
 export const handleMultipleDrop = async (
   files: File[],
+  reportId: string,
   setImageIds: Dispatch<SetStateAction<string[]>>,
   setImagePublicIds: Dispatch<SetStateAction<string[]>>,
   setCloudUrls: Dispatch<SetStateAction<string[]>>,
@@ -22,6 +23,8 @@ export const handleMultipleDrop = async (
       formData.append("image[]", file, `image_${index}`);
     });
 
+    formData.append("reportId", reportId);
+
     // formData.append("image", files[0]); // Assuming only one file is uploaded
     // files.map((file) => formData.append("image", file)); // Now we are handling multiple file upload
 
@@ -31,11 +34,9 @@ export const handleMultipleDrop = async (
         "/api/multiple-upload",
         formData
       );
-      console.debug("MultiUploadResponse", data);
 
       if (data.success) {
-        console.log("File uploaded successfully");
-        console.debug(data);
+        console.log("MultiUploadResponse", data);
         // setting the image informations to the component state
         setImageIds(data.imageIds);
         setImagePublicIds(data.imagePublicIds);

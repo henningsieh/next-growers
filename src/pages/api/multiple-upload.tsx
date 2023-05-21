@@ -11,30 +11,6 @@ export const config = {
   },
 };
 
-const readUploadedFile = (
-  req: NextApiRequest,
-  saveLocally?: boolean
-): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
-  const options: formidable.Options = {
-    multiples: true, // Enable parsing of multiple files with the same field name
-  };
-
-  if (saveLocally) {
-    options.uploadDir = path.join(process.cwd(), "/public/images");
-    options.keepExtensions = true; // Keep the file extensions for multiple files
-  }
-
-  options.maxFileSize = 4000 * 1024 * 1024;
-  const form = formidable(options);
-
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
-};
-
 const handler: NextApiHandler = async (req, res) => {
   const data = await readUploadedFile(req, false);
   console.debug("readFile", data);
@@ -46,11 +22,19 @@ const handler: NextApiHandler = async (req, res) => {
       const file = files;
       await handleFileUpload(file);
     } else {
-      // Handle the case where multiple files are uploaded
+      // We have to collect all results
       await Promise.all(files.map(handleFileUpload));
     }
   }
 
+  /** return informations about the new public images in cloudinary
+    {
+      success: "true",
+      imageIds:                     // prisma: array of all saved Image Ids to db
+      imagePublicIds:               // cloudinary: array of all public_ids 
+      cloudUrls: result.secure_url, // cloudinary: array of all secure_urls
+    }
+  */
   res.json({ success: true });
 };
 
@@ -76,7 +60,7 @@ const handleFileUpload = async (file: formidable.File): Promise<void> => {
   const localPathToImage = file.filepath;
 
   const result = await cloudinary.uploader.upload(localPathToImage, {
-    public_id: publicIdWithTimestamp,
+    public_id: publicIdWithTimestamp, //FIXME: filename is buggy!
     quality: "auto",
     fetch_format: "auto",
     flags: "lossy",
@@ -90,12 +74,36 @@ const handleFileUpload = async (file: formidable.File): Promise<void> => {
 
   const image = await prisma.image.create({
     data: {
-      // FIXME: add connected id of conntected entity
+      // FIXME: add connected postId
       cloudUrl: result.secure_url,
       publicId: result.public_id,
     },
   });
   console.log("prisma.image", image);
+};
+
+const readUploadedFile = (
+  req: NextApiRequest,
+  saveLocally?: boolean
+): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
+  const options: formidable.Options = {
+    multiples: true, // Enable parsing of multiple files with the same field name
+  };
+
+  if (saveLocally) {
+    options.uploadDir = path.join(process.cwd(), "/public/images");
+    options.keepExtensions = true; // Keep the file extensions for multiple files
+  }
+
+  options.maxFileSize = 4000 * 1024 * 1024;
+  const form = formidable(options);
+
+  return new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      resolve({ fields, files });
+    });
+  });
 };
 
 export default handler;
