@@ -1,17 +1,17 @@
 import {
   Box,
-  Button,
   Container,
-  Group,
   LoadingOverlay,
   Paper,
+  Space,
   Title,
   rem,
   useMantineTheme,
 } from "@mantine/core";
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import type { Dispatch, SetStateAction } from "react";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconArrowBigLeft, IconArrowBigRight } from "@tabler/icons-react";
-import { Image, SimpleGrid, Text } from "@mantine/core";
+import { Image, Text } from "@mantine/core";
 
 import { Carousel } from "@mantine/carousel";
 import type { FileWithPath } from "@mantine/dropzone";
@@ -21,11 +21,12 @@ import { useState } from "react";
 
 interface ImageUploaderProps {
   report: Report;
+  imageIds: string[];
+  setImageIds: Dispatch<SetStateAction<string[]>>;
 }
 
 const ImageUploader = (props: ImageUploaderProps) => {
-  const { report } = props;
-  const [imageIds, setImageIds] = useState<string[]>([]);
+  const { report, imageIds, setImageIds } = props;
   const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
   const [cloudUrls, setCloudUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -71,7 +72,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
     <Container p={0} size="md">
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
-          <Title order={3}>Upload images to this update </Title>
+          <Title order={3}>Append some images to this update</Title>
           <div>
             <Box className="relative">
               <LoadingOverlay visible={isUploading} />
@@ -82,7 +83,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
                 >
                   <Text align="center">Drop images for this update here</Text>
                 </Dropzone>
-
+                <Space h="sm" />
                 <Carousel
                   withIndicators
                   height={90}

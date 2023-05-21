@@ -15,6 +15,7 @@ export const postRouter = createTRPCRouter({
         lightHoursPerDay,
         reportId,
         authorId,
+        images, // Include the images field in the input
       } = input;
 
       const report = await ctx.prisma.report.findFirst({
@@ -57,6 +58,9 @@ export const postRouter = createTRPCRouter({
             connect: {
               id: authorId,
             },
+          },
+          images: {
+            connect: images.map((imageId) => ({ id: imageId })),
           },
         },
       });
@@ -118,19 +122,21 @@ export const postRouter = createTRPCRouter({
         where: {
           id: postId,
         },
+        include: {
+          images: {
+            select: {
+              id: true,
+            },
+          },
+        },
       });
 
       if (!post) {
-        throw new Error(`Report with id ${postId} does not exist`);
+        throw new Error(`Post with id ${postId} does not exist`);
       }
 
-      const { id, createdAt, updatedAt, ...postDbInput } = post;
-      /* 
-      const formattedPost = {
-        date: date.toISOString(),
-        ...temppost,
-      };
-      return formattedPost; */
-      return postDbInput;
+      const imageIds = post.images.map((image) => image.id);
+
+      return { ...post, images: imageIds };
     }),
 });

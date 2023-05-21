@@ -284,24 +284,25 @@ export function EditForm(props: EditFormProps) {
               submitEditReportForm(values);
             }, handleErrors)}
           >
-            {/* <Input hidden {...form.getInputProps("id")} /> */}
             <TextInput
-              withAsterisk
               label="Bockquote cite (appears at the top):"
+              description="This appears at the top of your Grow's main header image"
+              withAsterisk
               mt="sm"
               {...form.getInputProps("description")}
             />
             <TextInput
-              withAsterisk
               label="Title"
+              description="This appears as headline on your Grow's main details page"
+              withAsterisk
               {...form.getInputProps("title")}
             />
 
             <Grid gutter="sm">
-              <Grid.Col xs={12} sm={4} md={3} lg={3} xl={2}>
+              <Grid.Col xs={12} sm={4} md={3} lg={3} xl={3}>
                 <DateInput
                   label="Grow start date"
-                  description="Sets 'Created at' of your Grow"
+                  description="Sets 'Created at' date of your Grow"
                   valueFormat="MMM DD, YYYY HH:mm"
                   maxDate={new Date()}
                   // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
@@ -314,10 +315,10 @@ export function EditForm(props: EditFormProps) {
                   }}
                 />
               </Grid.Col>
-              <Grid.Col xs={12} sm={8} md={9} lg={9} xl={10}>
+              <Grid.Col xs={12} sm={8} md={9} lg={9} xl={9}>
                 <MultiSelect
                   label="Strain(s)"
-                  description="Select all strain(s) you are growing"
+                  description="Select all strain(s) of your Grow"
                   placeholder="Pick strains of your Grow"
                   {...form.getInputProps("strains")}
                   data={allStrains.map((strain) => ({

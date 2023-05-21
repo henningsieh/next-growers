@@ -131,7 +131,7 @@ function Form({ user }: AddFormProps) {
   });
 
   const handleErrors = (errors: typeof form.errors) => {
-    // console.log(errors);
+    console.log(errors);
     if (errors.description) {
       toast.error(errors.description as string);
     }

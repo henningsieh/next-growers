@@ -16,12 +16,14 @@ export type OwnReport = getOwnReportsOutput[number];
 type getPostsByReportIdOutput = RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
+// export type PostDbInput = RouterOutput["posts"]["getPostDbInput"];
 
 export type PostDbInput = {
   date: Date;
   title: string;
   growStage: GrowStage;
   lightHoursPerDay: number | null;
+  images: string[];
   content: string;
   reportId: string;
   authorId: string;
@@ -54,7 +56,7 @@ export interface MultiUploadResponse {
 
 export interface SortingPanelProps {
   sortBy: string;
-  setSortBy: React.Dispatch<React.SetStateAction<string>>;
+  setSortBy: Dispatch<SetStateAction<string>>;
   desc: boolean;
   handleToggleDesc: () => void;
 }

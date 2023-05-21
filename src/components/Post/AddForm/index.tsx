@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import {
   Box,
   Button,
@@ -22,7 +20,7 @@ import {
   IconSeeding,
 } from "@tabler/icons-react";
 import type { Post, PostDbInput, Report } from "~/types";
-import React, { FormEvent, useEffect, useRef } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import { DateInput } from "@mantine/dates";
@@ -50,6 +48,13 @@ const content =
 
 const AddPost = (props: AddPostProps) => {
   const { report } = props;
+  const [imageIds, setImageIds] = useState<string[]>([]);
+
+  // Update "images" form field value, if "imageIds" state changes
+  useEffect(() => {
+    form.setFieldValue("images", imageIds);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageIds]);
 
   const editor = useEditor({
     extensions: [
@@ -96,12 +101,10 @@ const AddPost = (props: AddPostProps) => {
   currentDate.setDate(currentDate.getDate());
   // Calculate the difference in milliseconds
   const timeDifferenceMs = currentDate.getTime() - reportStartDate.getTime();
-
   // Convert milliseconds to days
   const timeDifferenceDays = Math.floor(
     timeDifferenceMs / (1000 * 60 * 60 * 24)
   );
-
   // Get today's date
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
@@ -116,6 +119,7 @@ const AddPost = (props: AddPostProps) => {
       content: "",
       growStage: GrowStage.VEGETATIVE_STAGE,
       lightHoursPerDay: 12,
+      images: imageIds,
     },
   });
 
@@ -126,14 +130,16 @@ const AddPost = (props: AddPostProps) => {
     content: string;
     growStage: GrowStage | undefined;
     lightHoursPerDay: number;
+    images: string[];
   }) {
+    console.debug(values);
     const { day, ...restValues } = values; // Omitting the 'day' field
-
     const editorHtml = editor?.getHTML() as string;
     restValues.content = editorHtml;
 
     const savePost: PostDbInput = {
       ...restValues,
+      images: imageIds,
       growStage: restValues.growStage as GrowStage,
       reportId: report.id,
       authorId: report.authorId,
@@ -142,6 +148,18 @@ const AddPost = (props: AddPostProps) => {
     console.debug(savePost);
     tRPCaddPostToReport(savePost);
   }
+  const handleErrors = (errors: typeof form.errors) => {
+    console.debug(errors);
+    if (errors.id) {
+      toast.error(errors.id as string);
+    }
+    if (errors.title) {
+      toast.error(errors.title as string);
+    }
+    if (errors.images) {
+      toast.error(errors.images as string);
+    }
+  };
 
   return (
     <Container p={0} mt="lg" size="md">
@@ -152,9 +170,20 @@ const AddPost = (props: AddPostProps) => {
         <form
           className="space-y-4"
           onSubmit={form.onSubmit((values) => {
+            console.log("Form submitted");
+            console.debug(values);
             handleSubmit(values);
-          })}
+          }, handleErrors)}
         >
+          {imageIds.map((imageId, index) => (
+            <input
+              key={index}
+              type="hidden"
+              name={`images[${index}]`}
+              value={imageId}
+            />
+          ))}
+
           <Box>
             <Grid gutter="sm">
               <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
@@ -240,7 +269,11 @@ const AddPost = (props: AddPostProps) => {
               </Grid.Col>
             </Grid>
           </Box>
-          <ImageUploader report={report} />
+          <ImageUploader
+            report={report}
+            imageIds={imageIds}
+            setImageIds={setImageIds}
+          />
           <TextInput
             withAsterisk
             label="Titel for this update"
