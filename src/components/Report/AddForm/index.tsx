@@ -295,8 +295,9 @@ function Form({ user }: AddFormProps) {
             value={imageId}
           />
           <Textarea
+            label="Bockquote cite:"
+            description="This appears at the top of your Grow's main header image"
             withAsterisk
-            label="Bockquote cite (appears at the top):"
             placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
             mt="sm"
             autosize
@@ -304,9 +305,9 @@ function Form({ user }: AddFormProps) {
             {...form.getInputProps("description")}
           />
           <TextInput
+            label="Title:"
+            description="This appears as headline on your Grow's main details page"
             withAsterisk
-            label="Main report title: "
-            placeholder="John Doe"
             mt="sm"
             {...form.getInputProps("title")}
           />

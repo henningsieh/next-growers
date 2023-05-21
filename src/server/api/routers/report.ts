@@ -11,7 +11,6 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import type { SplitObject } from "~/types";
 import { splitSearchString } from "~/helpers";
 import { z } from "zod";
 
@@ -23,7 +22,6 @@ export const reportRouter = createTRPCRouter({
     .input(InputGetReports)
     .query(async ({ ctx, input }) => {
       const { orderBy, desc, search } = input;
-
       const { searchstring, strain } = splitSearchString(search);
 
       const reports = await ctx.prisma.report.findMany({
@@ -126,6 +124,7 @@ export const reportRouter = createTRPCRouter({
 
       const reports = await ctx.prisma.report.findMany({
         where: {
+          authorId: ctx.session.user.id,
           OR: [
             {
               title: {
@@ -335,13 +334,15 @@ export const reportRouter = createTRPCRouter({
       }
 
       // Update the report
-      const { strains, ...reportData } = input;
+      const { strains, createdAt, ...reportData } = input;
       const data = {
         ...reportData,
         authorId: ctx.session.user.id,
         strains: {
           set: strains.map((strainId) => ({ id: strainId })),
         },
+        createdAt: createdAt,
+        // updatedAt: createdAt,
       };
       const report = await ctx.prisma.report.update({
         where: {

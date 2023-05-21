@@ -11,6 +11,7 @@ import {
   NumberInput,
   Text,
   TextInput,
+  Textarea,
   createStyles,
   rem,
 } from "@mantine/core";
@@ -284,15 +285,18 @@ export function EditForm(props: EditFormProps) {
               submitEditReportForm(values);
             }, handleErrors)}
           >
-            <TextInput
-              label="Bockquote cite (appears at the top):"
+            <Textarea
+              label="Bockquote cite:"
               description="This appears at the top of your Grow's main header image"
+              placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
               withAsterisk
               mt="sm"
+              autosize
+              minRows={3}
               {...form.getInputProps("description")}
             />
             <TextInput
-              label="Title"
+              label="Title:"
               description="This appears as headline on your Grow's main details page"
               withAsterisk
               {...form.getInputProps("title")}
@@ -301,7 +305,7 @@ export function EditForm(props: EditFormProps) {
             <Grid gutter="sm">
               <Grid.Col xs={12} sm={4} md={3} lg={3} xl={3}>
                 <DateInput
-                  label="Grow start date"
+                  label="Grow start date:"
                   description="Sets 'Created at' date of your Grow"
                   valueFormat="MMM DD, YYYY HH:mm"
                   maxDate={new Date()}
@@ -317,7 +321,7 @@ export function EditForm(props: EditFormProps) {
               </Grid.Col>
               <Grid.Col xs={12} sm={8} md={9} lg={9} xl={9}>
                 <MultiSelect
-                  label="Strain(s)"
+                  label="Strain(s):"
                   description="Select all strain(s) of your Grow"
                   placeholder="Pick strains of your Grow"
                   {...form.getInputProps("strains")}
