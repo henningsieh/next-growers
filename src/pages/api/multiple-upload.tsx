@@ -83,13 +83,14 @@ const handleFileUpload = async (file: formidable.File): Promise<void> => {
     invalidate: true,
   });
 
-  console.log("cloudinaryResult", result);
   console.log(`✅ Successfully uploaded ${localPathToImage}`);
   console.log(`Public ID: ${result.public_id}`);
   console.log(`URL: ${result.secure_url}`);
+  console.log("cloudinaryResult", result);
 
   const image = await prisma.image.create({
     data: {
+      // FIXME: add connected id of conntected entity
       cloudUrl: result.secure_url,
       publicId: result.public_id,
     },

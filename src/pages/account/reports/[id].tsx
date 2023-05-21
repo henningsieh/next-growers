@@ -1,4 +1,4 @@
-import { Container, Space, Title } from "@mantine/core";
+import { Box, Container, LoadingOverlay, Space, Title } from "@mantine/core";
 import type {
   GetServerSidePropsContext,
   GetStaticPaths,
@@ -155,7 +155,8 @@ export default function ReportDetails(
 
   const { data: session, status } = useSession();
 
-  // if (!session?.user) return <AccessDenied />;
+  if (status === "unauthenticated") return <AccessDenied />;
+
   return (
     <>
       <Head>
@@ -165,45 +166,56 @@ export default function ReportDetails(
           content="Create your grow report on growagram.com"
         />
       </Head>
+
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-2">
+      <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <div className="flex items-center justify-between pt-4">
+        <div className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
         </div>
         {/* // Header End */}
-      </Container>
-      <Loading isLoading={status === "loading"} />
-      {status === "authenticated" && reportFromDB && (
-        <>
-          <EditForm
-            report={reportFromDB}
-            strains={allStrains}
-            user={session?.user}
+        <Box pos="relative">
+          <LoadingOverlay
+            visible={status === "loading"}
+            transitionDuration={1600}
+            overlayBlur={2}
           />
 
-          <Space h="xl" />
+          <>
+            {/* {status === "authenticated" && reportFromDB && ( */}
+            {status === "authenticated" && reportFromDB && (
+              <>
+                <EditForm
+                  report={reportFromDB}
+                  strains={allStrains}
+                  user={session?.user}
+                />
 
-          <AddPost report={reportFromDB} />
+                <Space h="xl" />
 
-          {/* ================================= */}
-          {/* // Props report output */}
-          <Container
-            size="md"
-            pt="xl"
-            className="flex w-full flex-col space-y-1"
-          >
-            {/* // Add Component */}
-            <Title order={2}>raw dataset from db*</Title>
-            <Title order={3}>*still in beta 🤓</Title>
+                {/* // Add Component */}
+                <AddPost report={reportFromDB} />
 
-            <div>{JSON.stringify(reportFromDB, null, 4)}</div>
-          </Container>
-        </>
-      )}
+                {/* ================================= */}
+                {/* // Props report output */}
+                <Container
+                  size="md"
+                  pt="xl"
+                  className="flex w-full flex-col space-y-1"
+                >
+                  <Title order={2}>raw dataset from db*</Title>
+                  <Title order={3}>*still in beta 🤓</Title>
+
+                  <div>{JSON.stringify(reportFromDB, null, 4)}</div>
+                </Container>
+              </>
+            )}
+          </>
+        </Box>
+      </Container>
     </>
   );
 }

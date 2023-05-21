@@ -144,7 +144,7 @@ const AddPost = (props: AddPostProps) => {
   }
 
   return (
-    <Container size="md">
+    <Container p={0} mt="lg" size="md">
       {/* <Paper withBorder> */}
       <Title order={2}>Update your Grow </Title>
 

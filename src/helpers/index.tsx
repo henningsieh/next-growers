@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type { Dispatch, SetStateAction } from "react";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import type {
   ImageUploadResponse,
   Locale,
   Notification,
   Report,
+  SplitObject,
 } from "~/types";
 
 import axios from "axios";
@@ -17,6 +18,36 @@ export function hasUnreadNotifications(notifications: Notification[]): boolean {
     notifications.some((notification) => notification.readAt === null)
   );
 }
+
+export function splitSearchString(searchString: string): SplitObject {
+  const splitObject: SplitObject = { strain: "", searchstring: "" };
+
+  if (searchString.includes("strain:")) {
+    const regex = /strain:"([^"]*)"|strain:([^ ]*)/i;
+    const matches = searchString.match(regex);
+
+    if (matches) {
+      const strainValue = matches[1] || matches[2];
+      const searchstring = searchString.replace(matches[0], "").trim();
+      splitObject.strain = strainValue?.trim() ?? "";
+      splitObject.searchstring = searchstring;
+    } else {
+      splitObject.searchstring = searchString;
+    }
+  } else {
+    splitObject.searchstring = searchString;
+  }
+
+  // console.debug("Split Object:", splitObject);
+  return splitObject;
+}
+
+export const handleSearchChange = (
+  event: ChangeEvent<HTMLInputElement>,
+  setSearchString: Dispatch<SetStateAction<string>>
+) => {
+  setSearchString(event.target.value);
+};
 
 export function formatLabel(key: string): string {
   // Convert snake case to title case

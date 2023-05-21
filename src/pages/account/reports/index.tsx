@@ -7,9 +7,9 @@ import {
   createStyles,
 } from "@mantine/core";
 
+import AccessDenied from "~/components/Atom/AccessDenied";
 import type { ChangeEvent } from "react";
 import Head from "next/head";
-import Loading from "~/components/Atom/Loading";
 import LoadingError from "~/components/Atom/LoadingError";
 import ReportCard from "~/components/Report/Card";
 import SearchInput from "~/components/Atom/SearchInput";
@@ -34,12 +34,13 @@ const useStyles = createStyles((theme) => ({
 }));
 export default function OwnReports() {
   const pageTitle = "My Grows";
-  const { data: session } = useSession();
+
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
 
   const { classes, theme } = useStyles();
+  const { data: session, status } = useSession();
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -84,10 +85,7 @@ export default function OwnReports() {
     setSearchString(event.target.value);
   };
 
-  if (!session)
-    return (
-      <Container className="text-center text-4xl">Access Denied</Container>
-    );
+  if (status === "unauthenticated") return <AccessDenied />;
 
   if (isError) return <LoadingError />;
 
@@ -116,7 +114,6 @@ export default function OwnReports() {
           </Box>
           <SortingPanel {...sortingPanelProps} />
         </div>
-        {/* // Header End */}
         <Box className={classes.hiddenDesktop}>
           <SearchInput
             value={searchString}
@@ -124,6 +121,7 @@ export default function OwnReports() {
             onChange={handleSearchChange}
           />
         </Box>
+        {/* // Header End */}
 
         {/* // Report Grid */}
         <Box pos="relative">

@@ -11,35 +11,9 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
+import type { SplitObject } from "~/types";
+import { splitSearchString } from "~/helpers";
 import { z } from "zod";
-
-interface SplitObject {
-  strain: string;
-  searchstring: string;
-}
-
-function splitSearchString(searchString: string): SplitObject {
-  const splitObject: SplitObject = { strain: "", searchstring: "" };
-
-  if (searchString.includes("strain:")) {
-    const regex = /strain:"([^"]*)"|strain:([^ ]*)/i;
-    const matches = searchString.match(regex);
-
-    if (matches) {
-      const strainValue = matches[1] || matches[2];
-      const searchstring = searchString.replace(matches[0], "").trim();
-      splitObject.strain = strainValue?.trim() ?? "";
-      splitObject.searchstring = searchstring;
-    } else {
-      splitObject.searchstring = searchString;
-    }
-  } else {
-    splitObject.searchstring = searchString;
-  }
-
-  console.debug("Split Object:", splitObject);
-  return splitObject;
-}
 
 export const reportRouter = createTRPCRouter({
   /**
@@ -148,31 +122,40 @@ export const reportRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { orderBy, desc, search } = input;
 
+      const { searchstring, strain } = splitSearchString(search);
+
       const reports = await ctx.prisma.report.findMany({
         where: {
-          authorId: ctx.session.user.id,
           OR: [
             {
               title: {
-                contains: search,
+                contains: searchstring,
                 mode: "insensitive",
               },
             },
             {
               description: {
-                contains: search,
+                contains: searchstring,
                 mode: "insensitive",
               },
             },
             {
               author: {
                 name: {
-                  contains: search,
+                  contains: searchstring,
                   mode: "insensitive",
                 },
               },
             },
           ],
+          strains: {
+            some: {
+              name: {
+                contains: strain,
+                mode: "insensitive",
+              },
+            },
+          },
         },
         orderBy: {
           [orderBy]: desc ? "desc" : "asc",
@@ -182,7 +165,7 @@ export const reportRouter = createTRPCRouter({
           image: { select: { id: true, publicId: true, cloudUrl: true } },
           strains: true,
           likes: {
-            // Include the Like relation and select the user who liked the report
+            // Include the Like relation and select the users who liked the report
             include: {
               user: {
                 select: {

@@ -74,6 +74,11 @@ export interface ReportCardProps extends FakeCardBadgeProps {
   setSearchString: Dispatch<SetStateAction<string>>;
 }
 
+export interface SplitObject {
+  strain: string;
+  searchstring: string;
+}
+
 export type NotificationEventMap =
   | "LIKE_CREATED"
   | "COMMENT_CREATED"

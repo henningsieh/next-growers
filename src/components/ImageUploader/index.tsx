@@ -3,6 +3,7 @@ import {
   Button,
   Container,
   Group,
+  LoadingOverlay,
   Paper,
   Title,
   rem,
@@ -43,11 +44,11 @@ const ImageUploader = (props: ImageUploaderProps) => {
     );
   });
 
-  const handelDropWrapper = (files: FileWithPath[]) => {
+  const handleMultipleDropWrapper = (files: FileWithPath[]) => {
     setIsUploading(true);
     setFiles(files);
 
-    console.debug("handelDropWrapper", files);
+    // console.debug("handelDropWrapper", files);
 
     // handleMultipleDrop calls the new /api/multi-upload endpoint
     handleMultipleDrop(
@@ -67,18 +68,25 @@ const ImageUploader = (props: ImageUploaderProps) => {
         <Title order={3}>Upload images to this update </Title>
         <Box className="space-y-2">
           <div>
-            <Dropzone accept={IMAGE_MIME_TYPE} onDrop={handelDropWrapper}>
-              <Text align="center">Drop images for this update here</Text>
-            </Dropzone>
+            <Box className="relative">
+              <LoadingOverlay visible={isUploading} />
+              <Dropzone
+                accept={IMAGE_MIME_TYPE}
+                onDrop={handleMultipleDropWrapper}
+              >
+                <Text align="center">Drop images for this update here</Text>
+              </Dropzone>
 
-            <Box>Preview Carousel</Box>
-            <SimpleGrid
-              cols={4}
-              breakpoints={[{ maxWidth: "xs", cols: 1 }]}
-              // mt={previews.length > 0 ? "xl" : 0}
-            >
-              {previews}
-            </SimpleGrid>
+              <Box>Preview Carousel</Box>
+
+              <SimpleGrid
+                cols={4}
+                breakpoints={[{ maxWidth: "xs", cols: 1 }]}
+                // mt={previews.length > 0 ? "xl" : 0}
+              >
+                {previews}
+              </SimpleGrid>
+            </Box>
           </div>
           <Group position="right" mt="xl">
             <Button w={180} variant="outline" type="submit">

@@ -173,9 +173,8 @@ export function EditForm(props: EditFormProps) {
   const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   return (
     <>
-      {" "}
       {reportfromProps && (
-        <Container mt="sm" className="flex w-full flex-col space-y-4">
+        <Container p={0} mt={4} className="flex w-full flex-col space-y-4">
           {/* // Upload Panel */}
           {reportfromProps.imageCloudUrl ? (
             <>

@@ -80,7 +80,6 @@ export default function AllReports() {
     setSearchString(event.target.value);
   };
 
-  // if (isLoading) return "";
   if (isError) return <LoadingError />;
   return (
     <>
@@ -123,8 +122,8 @@ export default function AllReports() {
         <Box pos="relative">
           <LoadingOverlay
             visible={isLoading}
-            transitionDuration={600}
-            overlayBlur={2}
+            transitionDuration={1600}
+            overlayBlur={20}
           />
           {!isLoading && (
             <Grid gutter="sm">
