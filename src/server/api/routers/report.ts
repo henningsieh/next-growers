@@ -237,6 +237,7 @@ export const reportRouter = createTRPCRouter({
               comments: true,
             },
           },
+          likes: true,
         },
         where: {
           id: input,
@@ -247,11 +248,26 @@ export const reportRouter = createTRPCRouter({
         ...reportFromDb,
         createdAt: reportFromDb?.createdAt.toISOString(),
         updatedAt: reportFromDb?.updatedAt.toISOString(),
+        likes: reportFromDb?.likes.map((like) => ({
+          ...like,
+          createdAt: like.createdAt.toISOString(),
+          updatedAt: like.updatedAt.toISOString(),
+        })),
         posts: reportFromDb?.posts.map((post) => ({
           ...post,
           date: post.date.toISOString(),
           createdAt: post.createdAt.toISOString(),
           updatedAt: post.updatedAt.toISOString(),
+          likes: post?.likes.map((like) => ({
+            ...like,
+            createdAt: like.createdAt.toISOString(),
+            updatedAt: like.updatedAt.toISOString(),
+          })),
+          comments: post.comments.map((comment) => ({
+            ...comment,
+            createdAt: comment.createdAt.toISOString(),
+            updatedAt: comment.updatedAt.toISOString(),
+          })),
         })),
       };
       return isoReportFromDb;

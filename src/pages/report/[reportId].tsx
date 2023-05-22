@@ -46,6 +46,7 @@ export async function getStaticProps(
           comments: true,
         },
       },
+      likes: true,
     },
     where: {
       id: reportId,
@@ -56,11 +57,26 @@ export async function getStaticProps(
     ...reportFromDb,
     createdAt: reportFromDb?.createdAt.toISOString(),
     updatedAt: reportFromDb?.updatedAt.toISOString(),
+    likes: reportFromDb?.likes.map((like) => ({
+      ...like,
+      createdAt: like.createdAt.toISOString(),
+      updatedAt: like.updatedAt.toISOString(),
+    })),
     posts: reportFromDb?.posts.map((post) => ({
       ...post,
       date: post.date.toISOString(),
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
+      likes: post?.likes.map((like) => ({
+        ...like,
+        createdAt: like.createdAt.toISOString(),
+        updatedAt: like.updatedAt.toISOString(),
+      })),
+      comments: post.comments.map((comment) => ({
+        ...comment,
+        createdAt: comment.createdAt.toISOString(),
+        updatedAt: comment.updatedAt.toISOString(),
+      })),
     })),
   };
   console.debug(
@@ -104,7 +120,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
  * @param props: { report: Report }
  * @returns React Functional Component
  */
-export default function ReportDetails(
+export default function PublicReport(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const { report: staticReportFromProps } = props;
