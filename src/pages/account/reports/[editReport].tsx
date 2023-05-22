@@ -37,9 +37,9 @@ import { useSession } from "next-auth/react";
               }
  */
 export async function getStaticProps(
-  context: GetStaticPropsContext<{ id: string }>
+  context: GetStaticPropsContext<{ editReport: string }>
 ) {
-  const reportIdfromUrl = context.params?.id as string;
+  const reportIdfromUrl = context.params?.editReport as string;
   /*
   const helpers = createServerSideHelpers({
     router: appRouter,
@@ -131,7 +131,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: reports.map((report) => ({
       params: {
-        id: report.id,
+        editReport: report.id,
       },
     })),
     // https://nextjs.org/docs/pages/api-reference/functions/get-static-paths#fallback-blocking
@@ -144,7 +144,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
  * @param props: { trpcState: DehydratedState, id: string, report: Report }
  * @returns HTML Component
  */
-export default function ReportDetails(
+export default function EditReportDetails(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const pageTitle = "Edit Grow Details";

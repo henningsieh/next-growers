@@ -256,7 +256,7 @@ export default function ReportCard({
           image={report.imageCloudUrl as string}
           title={report.title}
           description={report.description}
-          publicLink={`/reports/${report.id}`}
+          publicLink={`/report/${report.id}`}
           authorName={report.authorName as string}
           authorImageUrl={report.authorImage as string}
           comments={42}

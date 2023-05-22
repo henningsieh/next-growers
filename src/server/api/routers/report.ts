@@ -213,32 +213,48 @@ export const reportRouter = createTRPCRouter({
    * Get Report by Id
    * @Input: userId: String
    */
-  getReportById: publicProcedure
+  getIsoReportWithPostsFromDb: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const report = await ctx.prisma.report.findUnique({
+      const reportFromDb = await ctx.prisma.report.findUnique({
         include: {
           author: { select: { id: true, name: true, image: true } },
           image: { select: { id: true, publicId: true, cloudUrl: true } },
-          strains: true,
+          strains: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              effects: true,
+              flavors: true,
+            },
+          },
+          posts: {
+            include: {
+              author: { select: { id: true, name: true, image: true } },
+              images: { select: { id: true, publicId: true, cloudUrl: true } },
+              likes: true,
+              comments: true,
+            },
+          },
         },
         where: {
           id: input,
         },
       });
-      return {
-        id: report?.id,
-        imagePublicId: report?.image?.publicId,
-        imageCloudUrl: report?.image?.cloudUrl,
-        title: report?.title,
-        description: report?.description,
-        strains: report?.strains,
-        authorId: report?.author?.id,
-        authorName: report?.author?.name,
-        authorImage: report?.author?.image,
-        createdAt: report?.createdAt.toISOString(),
-        updatedAt: report?.updatedAt.toISOString(),
+      // Convert all Dates to IsoStrings
+      const isoReportFromDb = {
+        ...reportFromDb,
+        createdAt: reportFromDb?.createdAt.toISOString(),
+        updatedAt: reportFromDb?.updatedAt.toISOString(),
+        posts: reportFromDb?.posts.map((post) => ({
+          ...post,
+          date: post.date.toISOString(),
+          createdAt: post.createdAt.toISOString(),
+          updatedAt: post.updatedAt.toISOString(),
+        })),
       };
+      return isoReportFromDb;
     }),
 
   /**

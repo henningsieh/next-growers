@@ -109,7 +109,6 @@ export default function AllReports() {
           </Box>
           <SortingPanel {...sortingPanelProps} />
         </div>
-        {/* // Header End */}
         <Box className={classes.hiddenDesktop}>
           <SearchInput
             setSearchString={setSearchString}
@@ -117,13 +116,14 @@ export default function AllReports() {
             onChange={handleSearchChange}
           />
         </Box>
+        {/* // Header End */}
 
         {/* // Report Grid */}
         <Box pos="relative">
           <LoadingOverlay
             visible={isLoading}
-            transitionDuration={1600}
-            overlayBlur={20}
+            transitionDuration={600}
+            overlayBlur={2}
           />
           {!isLoading && (
             <Grid gutter="sm">
@@ -155,11 +155,11 @@ export default function AllReports() {
                       p="xl"
                       m="xl"
                       icon={<IconAlertCircle size="1rem" />}
-                      title="No report where found!"
+                      title="Empty search result"
                       color="red"
                       variant="outline"
                     >
-                      Something went wrong.
+                      No reports where found!
                     </Alert>
                   </Center>
                 </Container>

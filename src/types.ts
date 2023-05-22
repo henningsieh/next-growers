@@ -8,6 +8,8 @@ type RouterOutput = inferRouterOutputs<AppRouter>;
 type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
 export type Reports = getAllReportsOutput;
 export type Report = getAllReportsOutput[number];
+export type IsoReportWithPostsFromDb =
+  RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 
 type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
 export type OwnReports = getOwnReportsOutput;

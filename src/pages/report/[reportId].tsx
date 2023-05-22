@@ -1,4 +1,4 @@
-import { Container, Title } from "@mantine/core";
+import { Box, Container, Title } from "@mantine/core";
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -6,36 +6,26 @@ import type {
 } from "next";
 
 import Head from "next/head";
+import ReportDetailsHead from "~/components/Report/DetailsHead";
 import { api } from "~/utils/api";
 import { appRouter } from "~/server/api/root";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { prisma } from "~/server/db";
-import { stringifyReportData } from "~/helpers";
 import superjson from "superjson";
 
 /**
  * getStaticProps
  * @param context : GetStaticPropsContext<{ id: string }>
- * @returns : Promise<{props{
- *              trpcState: DehydratedState;
- *              id: string;
- *              report: Report
- *            }}>
+ * @returns : Promise<{props{ report: Report }}>
  */
 export async function getStaticProps(
-  context: GetStaticPropsContext<{ id: string }>
+  context: GetStaticPropsContext<{ reportId: string }>
 ) {
-  const id = context.params?.id as string;
-
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
-    transformer: superjson,
-  });
+  const reportId = context.params?.reportId as string;
 
   // Prefetching the report from prisma
-  const result = await prisma.report.findUnique({
+  const reportFromDb = await prisma.report.findUnique({
     include: {
       author: { select: { id: true, name: true, image: true } },
       image: { select: { id: true, publicId: true, cloudUrl: true } },
@@ -48,32 +38,43 @@ export async function getStaticProps(
           flavors: true,
         },
       },
+      posts: {
+        include: {
+          author: { select: { id: true, name: true, image: true } },
+          images: { select: { id: true, publicId: true, cloudUrl: true } },
+          likes: true,
+          comments: true,
+        },
+      },
     },
     where: {
-      id: id,
+      id: reportId,
     },
   });
+  // Convert all Dates to IsoStrings
+  const isoReportFromDb = {
+    ...reportFromDb,
+    createdAt: reportFromDb?.createdAt.toISOString(),
+    updatedAt: reportFromDb?.updatedAt.toISOString(),
+    posts: reportFromDb?.posts.map((post) => ({
+      ...post,
+      date: post.date.toISOString(),
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt.toISOString(),
+    })),
+  };
   console.debug(
     "getStaticProps 🤖",
     "...prefetching the report's dataset from db"
   );
-  const report = stringifyReportData(result);
 
-  // Prefetching the `reports.getReportById` query
-  await helpers.reports.getReportById.prefetch(id);
-  console.debug(
-    "getStaticProps 🤖",
-    "...prefetching tRPC `reports.getReportById` query"
-  );
+  console.dir(isoReportFromDb, { depth: null });
 
-  // Make sure to return { props: { trpcState: helpers.dehydrate() } }
   return {
     props: {
-      trpcState: helpers.dehydrate(),
-      id: id,
-      report: report,
+      report: isoReportFromDb,
     },
-    revalidate: 5,
+    revalidate: 10,
   };
 }
 /**
@@ -88,9 +89,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
     },
   });
   return {
-    paths: reports.map((report) => ({
+    paths: reports.map((staticReport) => ({
       params: {
-        id: report.id,
+        reportId: staticReport.id,
       },
     })),
     // https://nextjs.org/docs/pages/api-reference/functions/get-static-paths#fallback-blocking
@@ -100,21 +101,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 /**
  * @Page ReportDetails
- * @param props: { trpcState: DehydratedState, id: string, report: Report }
- * @returns HTML Component
+ * @param props: { report: Report }
+ * @returns React Functional Component
  */
 export default function ReportDetails(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
+  const { report: staticReportFromProps } = props;
   const pageTitle = "Report Details";
-
-  // This report will HOPEFULLY 🙏 be immediately available as it's prefetched from db.
-  // const { report: reportFromDB } = props;
-  const { report: reportFromDB, id: reportId } = props;
-
-  // This report query will HOPEFULLY 🙏 be immediately available as it's prefetched.
-  const queryResult = api.reports.getReportById.useQuery(reportId);
-  const { data: report } = queryResult;
 
   return (
     <>
@@ -136,20 +130,7 @@ export default function ReportDetails(
           </Title>
         </div>{" "}
         {/* // Header End */}
-        {/* // Add Component */}
-        <h1>from DB</h1>
-        <h2>Title: {reportFromDB.title}</h2>
-        <p>Created {reportFromDB.createdAt}</p>
-        <p>{reportFromDB.description}</p>
-        <h2>Raw data:</h2>
-        <pre>{JSON.stringify(reportFromDB, null, 4)}</pre>
-        <hr />
-        <h1>from tRPC</h1>
-        <h2>Title: {report?.title}</h2>
-        <p>Created {report?.createdAt}</p>
-        <p>{report?.description}</p>
-        <h2>Raw data:</h2>
-        <pre>{JSON.stringify(report, null, 4)}</pre>
+        <ReportDetailsHead report={staticReportFromProps} />
       </Container>
     </>
   );

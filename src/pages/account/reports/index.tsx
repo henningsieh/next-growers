@@ -58,7 +58,7 @@ export default function OwnReports() {
     sortBy,
     setSortBy,
     desc,
-    handleToggleDesc: () => setDesc((prev) => !prev),
+    handleToggleDesc: () => setDesc((previousSorting) => !previousSorting),
   };
 
   // Fake Data for Fake Card
