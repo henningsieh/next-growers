@@ -253,10 +253,10 @@ export default function ReportCard({
     <Card withBorder radius="sm" p="sm" className={classes.card}>
       <Card.Section>
         <ImagePreview
-          image={report.imageCloudUrl as string}
+          imageUrl={report.imageCloudUrl as string}
           title={report.title}
           description={report.description}
-          publicLink={`/report/${report.id}`}
+          publicLink={`/grow-report/${report.id}`}
           authorName={report.authorName as string}
           authorImageUrl={report.authorImage as string}
           comments={42}

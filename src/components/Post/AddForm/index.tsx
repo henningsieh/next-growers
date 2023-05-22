@@ -269,11 +269,6 @@ const AddPost = (props: AddPostProps) => {
               </Grid.Col>
             </Grid>
           </Box>
-          <ImageUploader
-            report={report}
-            imageIds={imageIds}
-            setImageIds={setImageIds}
-          />
           <TextInput
             withAsterisk
             label="Titel for this update"
@@ -325,6 +320,12 @@ const AddPost = (props: AddPostProps) => {
 
             <RichTextEditor.Content />
           </RichTextEditor>
+
+          <ImageUploader
+            report={report}
+            imageIds={imageIds}
+            setImageIds={setImageIds}
+          />
 
           <Group position="right" mt="xl">
             <Button w={180} variant="outline" type="submit">

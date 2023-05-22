@@ -195,7 +195,7 @@ export function EditForm(props: EditFormProps) {
                   </ActionIcon>
                 </Box>
                 <ImagePreview
-                  image={reportfromProps.imageCloudUrl}
+                  imageUrl={reportfromProps.imageCloudUrl}
                   title={form.values.title}
                   description={form.values.description}
                   publicLink="#"

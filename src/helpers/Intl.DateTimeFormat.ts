@@ -44,3 +44,24 @@ export const formattedDateTimeDeDE = dateTimeFormatterDeDE.format(
   new Date(isoString)
 );
 console.log(formattedDateTimeDeDE); // Output: "18. Mai 2023, 18:36"
+
+export function convertDatesToISO(obj: any): any {
+  if (obj instanceof Date) {
+    return obj.toISOString();
+  } else if (Array.isArray(obj)) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return obj.map((item) => convertDatesToISO(item));
+  } else if (typeof obj === "object" && obj !== null) {
+    const newObj: any = {};
+    for (const key in obj) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      if (obj.hasOwnProperty(key)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        newObj[key] = convertDatesToISO(obj[key]);
+      }
+    }
+    return newObj;
+  } else {
+    return obj;
+  }
+}

@@ -102,7 +102,7 @@ const useStyles = createStyles((theme) => ({
 
 interface ImageCardProps {
   publicLink: string;
-  image: string;
+  imageUrl: string;
   title: string;
   description: string;
   authorName: string;
@@ -113,7 +113,7 @@ interface ImageCardProps {
 
 export function ImagePreview({
   publicLink,
-  image,
+  imageUrl,
   title,
   description,
   authorName,
@@ -139,7 +139,7 @@ export function ImagePreview({
         <div
           className={classes.image}
           style={{
-            backgroundImage: `url(${image})`,
+            backgroundImage: `url(${imageUrl})`,
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",

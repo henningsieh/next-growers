@@ -158,7 +158,7 @@ function Form({ user }: AddFormProps) {
   return (
     <>
       <Container
-        size="sm"
+        size="md"
         px={0}
         className="flex w-full flex-col space-y-1"
         mx="auto"
@@ -192,7 +192,7 @@ function Form({ user }: AddFormProps) {
                 </ActionIcon>
               </Box>
               <ImagePreview
-                image={cloudUrl}
+                imageUrl={cloudUrl}
                 title={form.values.title}
                 description={form.values.description}
                 publicLink="#"

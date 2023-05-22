@@ -1,6 +1,7 @@
 import {
   Box,
   Container,
+  Group,
   LoadingOverlay,
   Paper,
   Space,
@@ -10,7 +11,12 @@ import {
 } from "@mantine/core";
 import type { Dispatch, SetStateAction } from "react";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { IconArrowBigLeft, IconArrowBigRight } from "@tabler/icons-react";
+import {
+  IconArrowBigLeft,
+  IconArrowBigRight,
+  IconCamera,
+  IconPhotoAi,
+} from "@tabler/icons-react";
 import { Image, Text } from "@mantine/core";
 
 import { Carousel } from "@mantine/carousel";
@@ -72,7 +78,10 @@ const ImageUploader = (props: ImageUploaderProps) => {
     <Container p={0} size="md">
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
-          <Title order={3}>Append some images to this update</Title>
+          <Group position="left">
+            <IconCamera color={theme.colors.orange[7]} />
+            <Title order={4}>Append some images to this update!</Title>
+          </Group>
           <div>
             <Box className="relative">
               <LoadingOverlay visible={isUploading} />
@@ -84,36 +93,38 @@ const ImageUploader = (props: ImageUploaderProps) => {
                   <Text align="center">Drop images for this update here</Text>
                 </Dropzone>
                 <Space h="sm" />
-                <Carousel
-                  withIndicators
-                  height={90}
-                  previousControlIcon={
-                    <IconArrowBigLeft
-                      color={theme.colors.orange[7]}
-                      size={36}
-                      stroke={2}
-                    />
-                  }
-                  nextControlIcon={
-                    <IconArrowBigRight
-                      color={theme.colors.orange[7]}
-                      size={36}
-                      stroke={2}
-                    />
-                  }
-                  slideSize="20%"
-                  slideGap="xs"
-                  loop
-                  align="start"
-                  breakpoints={[
-                    { maxWidth: "md", slideSize: "25%" },
-                    { maxWidth: "sm", slideSize: "25%" },
-                    { maxWidth: "xs", slideSize: "50%" },
-                  ]}
-                >
-                  {previews}
-                  {/* ...other slides */}
-                </Carousel>
+                <Paper withBorder>
+                  <Carousel
+                    withIndicators
+                    height={90}
+                    previousControlIcon={
+                      <IconArrowBigLeft
+                        color={theme.colors.orange[7]}
+                        size={28}
+                        stroke={2}
+                      />
+                    }
+                    nextControlIcon={
+                      <IconArrowBigRight
+                        color={theme.colors.orange[7]}
+                        size={28}
+                        stroke={2}
+                      />
+                    }
+                    slideSize="20%"
+                    slideGap="xs"
+                    loop
+                    align="start"
+                    breakpoints={[
+                      { maxWidth: "md", slideSize: "25%" },
+                      { maxWidth: "sm", slideSize: "25%" },
+                      { maxWidth: "xs", slideSize: "50%" },
+                    ]}
+                  >
+                    {previews}
+                    {/* ...other slides */}
+                  </Carousel>
+                </Paper>
               </Box>
               {/* 
               <SimpleGrid

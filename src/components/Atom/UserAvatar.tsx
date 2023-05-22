@@ -12,7 +12,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   avatarRadius,
 }) => {
   return (
-    <Tooltip label={userName} /* color={theme.colors.orange[5]} */ withArrow>
+    <Tooltip position="bottom" label={userName} color="grape" withArrow>
       <Avatar
         src={imageUrl}
         className="cursor-pointer"

@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Box,
   Button,
   Group,
   Menu,
@@ -11,13 +10,11 @@ import {
 import {
   IconLogout,
   IconPhoto,
-  IconSearch,
   IconSquarePlus,
   IconUser,
 } from "@tabler/icons-react";
 import { signOut, useSession } from "next-auth/react";
 
-import { Avatar } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 import LoginForm from "./LoginForm";

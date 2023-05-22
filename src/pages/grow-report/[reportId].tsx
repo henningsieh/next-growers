@@ -6,9 +6,13 @@ import type {
 } from "next";
 
 import Head from "next/head";
+import { ImagePreview } from "~/components/Atom/ImagePreview";
+import { IsoReportWithPostsFromDb } from "~/types";
+import { PostsCarousel } from "~/components/Posts/Carousel";
 import ReportDetailsHead from "~/components/Report/DetailsHead";
 import { api } from "~/utils/api";
 import { appRouter } from "~/server/api/root";
+import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { prisma } from "~/server/db";
@@ -52,22 +56,30 @@ export async function getStaticProps(
       id: reportId,
     },
   });
+
+  if (!reportFromDb) {
+    // Report not found, handle the error accordingly (e.g., redirect to an error page)
+    return {
+      notFound: true,
+    };
+  }
+
   // Convert all Dates to IsoStrings
-  const isoReportFromDb = {
+  /*   const isoReportFromDb = {
     ...reportFromDb,
-    createdAt: reportFromDb?.createdAt.toISOString(),
-    updatedAt: reportFromDb?.updatedAt.toISOString(),
-    likes: reportFromDb?.likes.map((like) => ({
+    createdAt: reportFromDb.createdAt.toISOString(),
+    updatedAt: reportFromDb.updatedAt.toISOString(),
+    likes: reportFromDb.likes.map((like) => ({
       ...like,
       createdAt: like.createdAt.toISOString(),
       updatedAt: like.updatedAt.toISOString(),
     })),
-    posts: reportFromDb?.posts.map((post) => ({
+    posts: reportFromDb.posts.map((post) => ({
       ...post,
       date: post.date.toISOString(),
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
-      likes: post?.likes.map((like) => ({
+      likes: post.likes.map((like) => ({
         ...like,
         createdAt: like.createdAt.toISOString(),
         updatedAt: like.updatedAt.toISOString(),
@@ -78,7 +90,12 @@ export async function getStaticProps(
         updatedAt: comment.updatedAt.toISOString(),
       })),
     })),
-  };
+  }; */
+
+  const isoReportFromDb = convertDatesToISO(
+    reportFromDb
+  ) as IsoReportWithPostsFromDb;
+
   console.debug(
     "getStaticProps 🤖",
     "...prefetching the report's dataset from db"
@@ -93,6 +110,7 @@ export async function getStaticProps(
     revalidate: 10,
   };
 }
+
 /**
  * getStaticPaths
  * @param reports: { id: string }[]
@@ -124,12 +142,14 @@ export default function PublicReport(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const { report: staticReportFromProps } = props;
-  const pageTitle = "Report Details";
+  const pageTitle = `${staticReportFromProps.title as string}`;
 
   return (
     <>
       <Head>
-        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <title>{`Grow "${pageTitle}" from ${
+          staticReportFromProps.author?.name as string
+        } | GrowAGram`}</title>
         <meta
           name="description"
           content="Create your grow report on growagram.com"
@@ -142,11 +162,40 @@ export default function PublicReport(
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
-            {pageTitle}
+            {`Grow "${pageTitle}" from ${
+              staticReportFromProps.author?.name as string
+            }`}
           </Title>
-        </div>{" "}
+        </div>
         {/* // Header End */}
-        <ReportDetailsHead report={staticReportFromProps} />
+        <Container
+          size="md"
+          px={0}
+          className="flex w-full flex-col space-y-1"
+          mx="auto"
+        >
+          <ImagePreview
+            authorName={staticReportFromProps.author?.name as string}
+            publicLink={`/grow-report/${staticReportFromProps.id as string}`}
+            imageUrl={staticReportFromProps.image?.cloudUrl as string}
+            title={""}
+            // title={staticReportFromProps.title as string}
+            description={staticReportFromProps.description as string}
+            authorImageUrl={staticReportFromProps.author?.image as string}
+            views={0}
+            comments={0}
+          />
+          {/* // Header with Title */}
+          <div className="flex items-center justify-between pt-2">
+            {/* // Title */}
+            <Title order={2} className="inline">
+              {staticReportFromProps.title}
+            </Title>
+          </div>
+          {/* // Header End */}
+          <PostsCarousel />
+        </Container>
+        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
       </Container>
     </>
   );
