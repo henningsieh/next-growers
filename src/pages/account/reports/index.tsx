@@ -32,7 +32,7 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
-export default function OwnReports() {
+export default function ProtectedOwnReports() {
   const pageTitle = "My Grows";
 
   const [desc, setDesc] = useState(true);

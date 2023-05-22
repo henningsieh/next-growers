@@ -1,4 +1,13 @@
-import { ActionIcon, Button, Group, Menu, Modal } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Group,
+  Menu,
+  Modal,
+  useMantineColorScheme,
+  useMantineTheme,
+} from "@mantine/core";
 import {
   IconLogout,
   IconPhoto,
@@ -9,6 +18,7 @@ import {
 import { signOut, useSession } from "next-auth/react";
 
 import { Avatar } from "@mantine/core";
+import Image from "next/image";
 import Link from "next/link";
 import LoginForm from "./LoginForm";
 import { useDisclosure } from "@mantine/hooks";
@@ -33,7 +43,7 @@ export default function LoginModal() {
       }
     }
     void redirectToEditAccount();
-  }, [session, router]);
+  }, [session, router, status]);
 
   /*   const form = useForm({
     initialValues: {
@@ -46,7 +56,10 @@ export default function LoginModal() {
       termsOfService: (value) => (value!==false ? null : 'You have to accept our terms of service!')
     },
   }); */
+  const theme = useMantineTheme();
 
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
   return (
     <>
       <Modal
@@ -67,15 +80,22 @@ export default function LoginModal() {
             <Menu.Target>
               {/* <Button>Toggle menu</Button> */}
               {/* <ActionIcon> */}
-              <Avatar
-                src={session.user.image}
-                className="cursor-pointer"
+              <ActionIcon
+                radius={3}
                 variant="outline"
-                radius="sm"
+                color={dark ? theme.primaryColor : "grape"}
                 size={32}
+                m={0}
                 p={0}
-                color="grape"
-              />
+              >
+                <Image
+                  className="... cursor-default rounded-sm"
+                  height={32}
+                  width={32}
+                  src={session.user.image as string}
+                  alt={`${session.user.name as string}'s Profile Image`}
+                />
+              </ActionIcon>
               {/* </ActionIcon> */}
             </Menu.Target>
 

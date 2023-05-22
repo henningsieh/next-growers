@@ -17,7 +17,7 @@ export default function LightDarkButton() {
         className="cursor-default"
         size={32}
         variant="outline"
-        color={dark ? "orange" : "gray"}
+        color={dark ? theme.primaryColor : "grape"}
         onClick={() => toggleColorScheme()}
         title="Toggle color scheme"
       >

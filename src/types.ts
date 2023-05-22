@@ -12,8 +12,8 @@ export type IsoReportWithPostsFromDb =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 
 type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
-export type OwnReports = getOwnReportsOutput;
-export type OwnReport = getOwnReportsOutput[number];
+// export type OwnReports = getOwnReportsOutput;
+// bexport type OwnReport = getOwnReportsOutput[number];
 
 type getPostsByReportIdOutput = RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;

@@ -48,10 +48,11 @@ export default function EditReport() {
   const validateFormSchema = z.object({
     name: z
       .string()
-      .min(6, { message: "Username must have at least 6 letters" })
-      .refine((value) => !/\s/.test(value), {
+      .min(6, { message: "Username must have at least 6 letters" }),
+    /*       .refine((value) => !/\s/.test(value), {
         message: "Userame must not contain whitespace characters",
       }),
+      */
     email: z.string().email({ message: "Invalid email address" }),
   });
 
@@ -109,12 +110,12 @@ export default function EditReport() {
           className="flex w-full flex-col space-y-1"
           mx="auto"
         >
-          <Group position="left" mt="xl">
-            <Box mb="xl">
+          <Group position="center" mt="xl">
+            <Box pb="xl">
               <Image
-                className="... rounded-md"
-                height={220}
-                width={220}
+                className="... rounded-full"
+                height={142}
+                width={142}
                 src={session.user.image as string}
                 alt={`${session.user.name as string}'s Profile Image`}
               />
@@ -165,6 +166,7 @@ export default function EditReport() {
                   label="Let AI generate my Username"
                 >
                   <ActionIcon
+                    className="cursor-default"
                     onClick={setRandomUsername}
                     size={28}
                     radius="sm"

@@ -193,10 +193,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         style={{
           position: "fixed",
           zIndex: 100,
-          maxWidth: "1856px",
+          maxWidth: "1852px",
           width: "100%",
           margin: "0px auto",
-          padding: "0 1.2rem",
+          padding: "0 1rem",
         }}
       >
         <Group position="apart" sx={{ height: "100%" }}>

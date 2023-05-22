@@ -124,7 +124,7 @@ const Notifications = () => {
         style={{ position: "relative" }}
         size={32}
         variant="outline"
-        color={dark ? "orange" : "gray"}
+        color={dark ? theme.primaryColor : "grape"}
       >
         {hasUnreadNotifications(notifications as Notifications) ? (
           <Indicator
