@@ -78,6 +78,11 @@ const useStyles = createStyles((theme) => ({
 
 export function EditForm(props: EditFormProps) {
   const router = useRouter();
+
+  const reportIdfromUrl = router.query.editReport;
+
+  console.log("reportIdfromUrl", reportIdfromUrl);
+
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
   const { report: reportfromProps, strains: allStrains, user: user } = props;
@@ -114,8 +119,8 @@ export function EditForm(props: EditFormProps) {
       toast.success("Your report was successfully saved");
       console.debug(savedReport);
       // Navigate to the new report page
-      // void router.push(`/account/reports/${newReportDB.id}`);
-      void router.reload();
+      void router.push(`/account/reports/${savedReport.id}`);
+      // void router.reload();
     },
     // Always refetch after error or success:
     onSettled: () => {

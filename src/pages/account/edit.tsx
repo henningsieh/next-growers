@@ -77,10 +77,7 @@ export default function EditReport() {
       },
     });
 
-  /**
-   * rendering the form if authenticated
-   */
-
+  // rendering the form if authenticated
   if (!session?.user) return <AccessDenied />;
 
   return (

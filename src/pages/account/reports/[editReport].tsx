@@ -14,6 +14,7 @@ import Head from "next/head";
 import Loading from "~/components/Atom/Loading";
 import { prisma } from "~/server/db";
 import { stringifyReportData } from "~/helpers";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 /**
@@ -117,6 +118,7 @@ export async function getStaticProps(
     return null;
   }
 }
+
 /**
  * getStaticPaths
  * @param reports: { id: string }[]
@@ -185,7 +187,6 @@ export default function EditReportDetails(
           />
 
           <>
-            {/* {status === "authenticated" && reportFromDB && ( */}
             {status === "authenticated" && reportFromDB && (
               <>
                 <EditForm
