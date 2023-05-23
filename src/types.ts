@@ -99,3 +99,8 @@ export enum GrowStage {
   VEGETATIVE_STAGE = "VEGETATIVE_STAGE",
   FLOWERING_STAGE = "FLOWERING_STAGE",
 }
+
+export enum Environment {
+  INDOOR = "Indoor",
+  OUTDOOR = "Outdoor",
+}

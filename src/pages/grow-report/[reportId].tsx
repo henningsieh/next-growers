@@ -5,6 +5,7 @@ import type {
   InferGetStaticPropsType,
 } from "next";
 
+import { Environment } from "~/types";
 import Head from "next/head";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { IsoReportWithPostsFromDb } from "~/types";
@@ -101,7 +102,7 @@ export async function getStaticProps(
     "...prefetching the report's dataset from db"
   );
 
-  console.dir(isoReportFromDb, { depth: null });
+  // console.dir(isoReportFromDb, { depth: null });
 
   return {
     props: {
@@ -113,7 +114,7 @@ export async function getStaticProps(
 
 /**
  * getStaticPaths
- * @param reports: { id: string }[]
+ * @param reports: { id: string; }[]
  * @returns { paths[] }
  */
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -155,7 +156,6 @@ export default function PublicReport(
           content="Create your grow report on growagram.com"
         />
       </Head>
-
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
@@ -189,13 +189,17 @@ export default function PublicReport(
           <div className="flex items-center justify-between pt-2">
             {/* // Title */}
             <Title order={2} className="inline">
-              {staticReportFromProps.title}
+              {
+                Environment[
+                  staticReportFromProps.environment as keyof typeof Environment
+                ]
+              }
             </Title>
           </div>
           {/* // Header End */}
           <PostsCarousel />
         </Container>
-        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
+        {<ReportDetailsHead report={staticReportFromProps} />}
       </Container>
     </>
   );

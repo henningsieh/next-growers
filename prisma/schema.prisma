@@ -101,18 +101,24 @@ model Image {
   ownerId   String
 }
 
+enum Environment {
+  INDOOR
+  OUTDOOR
+}
+
 model Report {
   id           String           @id @default(cuid())
+  author       User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId     String // One User has many Reports
   title        String
   image        Image?
   description  String
-  author       User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId     String // One User has many Reports
+  strains      CannabisStrain[]
+  environment  Environment?
   posts        Post[] // One Report has many Posts
+  likes        Like[]
   contests     Contest[]        @relation("ReportToContest") //many2many
   products     Product[] // One Report has many Products
-  likes        Like[]
-  strains      CannabisStrain[]
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
   Notification Notification[]
