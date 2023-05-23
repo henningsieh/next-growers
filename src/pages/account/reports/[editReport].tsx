@@ -5,158 +5,58 @@ import type {
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
+import { IsoReportWithPostsFromDb, Strains } from "~/types";
 import { Link, RichTextEditor } from "@mantine/tiptap";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AddPost from "~/components/Post/AddForm";
 import { EditForm } from "~/components/Report/EditForm";
 import Head from "next/head";
-import Loading from "~/components/Atom/Loading";
-import { prisma } from "~/server/db";
-import { stringifyReportData } from "~/helpers";
+import { api } from "~/utils/api";
+import { authOptions } from "~/server/auth";
+import { getServerSession } from "next-auth";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 /**
- * getStaticProps
- * @param context : GetStaticPropsContext<{ id: string }>
- * @returns : (property) props: {
-                trpcState: DehydratedState;
-                id: string;
-                report: {
-                    id: string;
-                    imagePublicId: string | undefined;
-                    imageCloudUrl: string | undefined;
-                    title: string;
-                    description: string;
-                    ... 5 more ...;
-                    likes: {
-                        ...;
-                    }[];
-                  };
-                }
-              }
+ * PROTECTED PAGE / PRELOAD SESSION
  */
-export async function getStaticProps(
-  context: GetStaticPropsContext<{ editReport: string }>
-) {
-  const reportIdfromUrl = context.params?.editReport as string;
-  /*
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
-    transformer: superjson,
-  }); */
-
-  // Prefetching the report from prisma
-  const reportResult = await prisma.report.findUnique({
-    include: {
-      author: { select: { id: true, name: true, image: true } },
-      image: { select: { id: true, publicId: true, cloudUrl: true } },
-      strains: {
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          effects: true,
-          flavors: true,
-        },
-      },
+export async function getServerSideProps(ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) {
+  return {
+    props: {
+      session: await getServerSession(ctx.req, ctx.res, authOptions),
     },
-    where: {
-      id: reportIdfromUrl,
-    },
-  });
-  console.debug(
-    "getStaticProps 🤖",
-    "...prefetching the report's dataset from db"
-  );
-
-  const report = stringifyReportData(reportResult);
-
-  const strains = await prisma.cannabisStrain.findMany({
-    orderBy: {
-      name: "asc",
-    },
-    select: {
-      id: true,
-      name: true,
-      description: true,
-      effects: true,
-      flavors: true,
-      type: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
-  const allCannabisStrains = strains.map((strain) => ({
-    ...strain,
-    createdAt: strain.createdAt.toISOString(),
-    updatedAt: strain.updatedAt.toISOString(),
-  }));
-
-  // Prefetching the `reports.getReportById` query here.
-  /*
-  await helpers.reports.getReportById.prefetch(id);
-  console.debug(
-    "getStaticProps 🤖",
-    "...prefetching tRPC `reports.getReportById` query"
-  ); */
-
-  // Make sure to return { props: { trpcState: helpers.dehydrate() } }
-  if (!!report) {
-    return {
-      props: {
-        // trpcState: helpers.dehydrate(),
-        // id: reportIdfromUrl,
-        report: report.id ? report : null,
-        allStrains: allCannabisStrains,
-      },
-      revalidate: 5,
-    };
-  } else {
-    return null;
-  }
+  };
 }
 
 /**
- * getStaticPaths
- * @param reports: { id: string }[]
- * @returns { paths[] }
- */
-export const getStaticPaths: GetStaticPaths = async () => {
-  const reports = await prisma.report.findMany({
-    select: {
-      id: true,
-    },
-  });
-  return {
-    paths: reports.map((report) => ({
-      params: {
-        editReport: report.id,
-      },
-    })),
-    // https://nextjs.org/docs/pages/api-reference/functions/get-static-paths#fallback-blocking
-    fallback: "blocking",
-  };
-};
-
-/**
  * @Page ReportDetails
- * @param props: { trpcState: DehydratedState, id: string, report: Report }
+ * @param props: { trpcState: DehydratedState, id: string }
  * @returns HTML Component
  */
-export default function EditReportDetails(
-  props: InferGetStaticPropsType<typeof getStaticProps>
-) {
+export default function EditReportDetails() {
   const pageTitle = "Edit Grow Details";
 
-  // This report will HOPEFULLY 🙏 be immediately available as it's prefetched from db.
-  // const { report: reportFromDB } = props;
-  const { report: reportFromDB, allStrains: allStrains } = props;
+  const router = useRouter();
+  const id = router.query.editReport as string;
+
+  // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+  const {
+    data: report,
+    isLoading: reportIsLoading,
+    isError: reportHasErrors,
+  } = api.reports.getIsoReportWithPostsFromDb.useQuery(id);
+  // FETCH ALL STRAINS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+  const {
+    data: strains,
+    isLoading: strainsAreLoading,
+    isError: strainsHaveErrors,
+  } = api.strains.getAllStrains.useQuery();
 
   const { data: session, status } = useSession();
-
   if (status === "unauthenticated") return <AccessDenied />;
 
   return (
@@ -181,58 +81,40 @@ export default function EditReportDetails(
         {/* // Header End */}
         <Box pos="relative">
           <LoadingOverlay
-            visible={status === "loading"}
-            transitionDuration={1600}
+            visible={status === "loading" || reportIsLoading}
+            transitionDuration={600}
             overlayBlur={2}
           />
 
-          <>
-            {status === "authenticated" && reportFromDB && (
-              <>
-                <EditForm
-                  report={reportFromDB}
-                  strains={allStrains}
-                  user={session.user}
-                />
+          {status === "authenticated" && !reportIsLoading && (
+            <>
+              <EditForm
+                report={report as IsoReportWithPostsFromDb}
+                strains={strains as Strains}
+                user={session.user}
+              />
 
-                <Space h="xl" />
+              <Space h="xl" />
 
-                {/* // Add Component */}
-                <AddPost report={reportFromDB} />
+              {/* // Add Component */}
+              <AddPost report={report as IsoReportWithPostsFromDb} />
 
-                {/* ================================= */}
-                {/* // Props report output */}
-                <Container
-                  size="md"
-                  pt="xl"
-                  className="flex w-full flex-col space-y-1"
-                >
-                  <Title order={2}>raw dataset from db*</Title>
-                  <Title order={3}>*still in beta 🤓</Title>
+              {/* ================================= */}
+              {/* // Props report output */}
+              <Container
+                size="md"
+                pt="xl"
+                className="flex w-full flex-col space-y-1"
+              >
+                <Title order={2}>raw dataset from db*</Title>
+                <Title order={3}>*still in beta 🤓</Title>
 
-                  <div>{JSON.stringify(reportFromDB, null, 4)}</div>
-                </Container>
-              </>
-            )}
-          </>
+                <div>{JSON.stringify(report, null, 4)}</div>
+              </Container>
+            </>
+          )}
         </Box>
       </Container>
     </>
   );
 }
-
-/**
- * PROTECTED PAGE
- */
-/*
-export async function getServerSideProps(ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) {
-  return {
-    props: {
-      session: await getServerSession(ctx.req, ctx.res, authOptions),
-    },
-  };
-}
- */

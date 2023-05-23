@@ -1,11 +1,11 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { MultiUploadResponse, Report } from "~/types";
+import type { IsoReportWithPostsFromDb, MultiUploadResponse } from "~/types";
 
 import axios from "axios";
 
 export const handleMultipleDrop = async (
   files: File[],
-  report: Report,
+  report: IsoReportWithPostsFromDb,
   setImageIds: Dispatch<SetStateAction<string[]>>,
   setImagePublicIds: Dispatch<SetStateAction<string[]>>,
   setCloudUrls: Dispatch<SetStateAction<string[]>>,
@@ -23,7 +23,7 @@ export const handleMultipleDrop = async (
       formData.append("images", file, `${file.name}`);
     });
 
-    formData.append("ownerId", report.authorId);
+    formData.append("ownerId", report.authorId as string);
 
     console.debug("formData", formData);
     try {

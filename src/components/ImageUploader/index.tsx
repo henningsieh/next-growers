@@ -18,15 +18,15 @@ import {
   IconPhotoAi,
 } from "@tabler/icons-react";
 import { Image, Text } from "@mantine/core";
+import type { IsoReportWithPostsFromDb, Report } from "~/types";
 
 import { Carousel } from "@mantine/carousel";
 import type { FileWithPath } from "@mantine/dropzone";
-import type { Report } from "~/types";
 import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
 import { useState } from "react";
 
 interface ImageUploaderProps {
-  report: Report;
+  report: IsoReportWithPostsFromDb;
   imageIds: string[];
   setImageIds: Dispatch<SetStateAction<string[]>>;
 }

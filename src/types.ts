@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 
 import type { AppRouter } from "./server/api/root";
+import { User } from "next-auth";
 import type { inferRouterOutputs } from "@trpc/server";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -8,6 +9,7 @@ type RouterOutput = inferRouterOutputs<AppRouter>;
 type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
 export type Reports = getAllReportsOutput;
 export type Report = getAllReportsOutput[number];
+
 export type IsoReportWithPostsFromDb =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 
@@ -39,6 +41,12 @@ export type Notification = getAllNotificationsOutput[number];
 type getAllStrainsOutput = RouterOutput["strains"]["getAllStrains"];
 export type Strains = getAllStrainsOutput;
 export type Strain = getAllStrainsOutput[number];
+
+export interface EditFormProps {
+  report: IsoReportWithPostsFromDb;
+  strains: Strains;
+  user: User;
+}
 
 export interface ImageUploadResponse {
   success: boolean;

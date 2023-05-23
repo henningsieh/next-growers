@@ -153,7 +153,7 @@ export default function PublicReport(
         } | GrowAGram`}</title>
         <meta
           name="description"
-          content="Create your grow report on growagram.com"
+          content="Create your grow report on growagram.com" //FIXME: SEO description
         />
       </Head>
       {/* // Main Content Container */}
@@ -162,9 +162,7 @@ export default function PublicReport(
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
-            {`Grow "${pageTitle}" from ${
-              staticReportFromProps.author?.name as string
-            }`}
+            {`${pageTitle}`}
           </Title>
         </div>
         {/* // Header End */}

@@ -64,7 +64,7 @@ export const postRouter = createTRPCRouter({
           },
         },
       });
-      console.debug("date", date);
+      // console.debug("date", date);
       // Update the `updated_at` field of the connected report
       await ctx.prisma.report.update({
         where: {

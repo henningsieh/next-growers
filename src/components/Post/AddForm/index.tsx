@@ -19,7 +19,12 @@ import {
   IconPlant,
   IconSeeding,
 } from "@tabler/icons-react";
-import type { Post, PostDbInput, Report } from "~/types";
+import type {
+  IsoReportWithPostsFromDb,
+  Post,
+  PostDbInput,
+  Report,
+} from "~/types";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { useForm, zodResolver } from "@mantine/form";
 
@@ -41,7 +46,7 @@ import { toast } from "react-hot-toast";
 import { z } from "zod";
 
 interface AddPostProps {
-  report: Report;
+  report: IsoReportWithPostsFromDb;
 }
 const content =
   '<h1 style="text-align: center">Update your Grow with a nice rich text</h1><p><code>RichTextEditor</code> <mark>component focuses on usability </mark>and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports  <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/extensions"> extensions.</a></p></li></ul>';
@@ -141,8 +146,8 @@ const AddPost = (props: AddPostProps) => {
       ...restValues,
       images: imageIds,
       growStage: restValues.growStage as GrowStage,
-      reportId: report.id,
-      authorId: report.authorId,
+      reportId: report.id as string,
+      authorId: report.authorId as string,
     };
 
     console.debug(savePost);

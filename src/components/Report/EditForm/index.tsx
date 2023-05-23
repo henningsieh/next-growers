@@ -16,6 +16,7 @@ import {
   rem,
 } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import type { EditFormProps, Report, Strains } from "~/types";
 import {
   IconCalendar,
   IconCalendarEvent,
@@ -25,7 +26,6 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import type { Report, Strains } from "~/types";
 import type { Session, User } from "next-auth";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRef, useState } from "react";
@@ -38,12 +38,6 @@ import { handleDrop } from "~/helpers";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { z } from "zod";
-
-interface EditFormProps {
-  report: Report;
-  user: User;
-  strains: Strains;
-}
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -77,15 +71,10 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export function EditForm(props: EditFormProps) {
-  const router = useRouter();
-
-  const reportIdfromUrl = router.query.editReport;
-
-  console.log("reportIdfromUrl", reportIdfromUrl);
+  const { report: reportfromProps, strains: allStrains, user: user } = props;
 
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
-  const { report: reportfromProps, strains: allStrains, user: user } = props;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploading, setIsUploading] = useState(false);
@@ -115,12 +104,14 @@ export function EditForm(props: EditFormProps) {
       if (!context) return;
       console.debug(context);
     },
-    onSuccess: (savedReport) => {
+    onSuccess: async (savedReport) => {
       toast.success("Your report was successfully saved");
       console.debug(savedReport);
       // Navigate to the new report page
-      void router.push(`/account/reports/${savedReport.id}`);
-      // void router.reload();
+      // void router.push(`/grow-report/${savedReport.id}`);
+      await trpc.reports.getIsoReportWithPostsFromDb.invalidate();
+      await trpc.reports.getAllReports.invalidate();
+      trpc.reports.getAllReports.getData();
     },
     // Always refetch after error or success:
     onSettled: () => {
@@ -131,10 +122,10 @@ export function EditForm(props: EditFormProps) {
   const form = useForm({
     validate: zodResolver(InputEditReport),
     initialValues: {
-      id: report?.id,
-      title: report?.title,
-      description: report?.description,
-      strains: report?.strains.map((strain) => strain.id),
+      id: report?.id as string,
+      title: report?.title as string,
+      description: report?.description as string,
+      strains: report.strains.map((strain) => strain.id),
       createdAt: new Date(report?.createdAt), // new Date(), // Add the createdAt field with the current date
     },
   });
@@ -144,14 +135,12 @@ export function EditForm(props: EditFormProps) {
     title: string;
     description: string;
     strains: string[];
-    createdAt: Date; // Add the createdAt field to the values' type definition
+    createdAt: Date;
   }) => {
     tRPCsaveReport(values);
-    console.debug(values);
   };
 
   const handleErrors = (errors: typeof form.errors) => {
-    console.log(errors);
     if (errors.id) {
       toast.error(errors.id as string);
     }
@@ -182,7 +171,7 @@ export function EditForm(props: EditFormProps) {
       {reportfromProps && (
         <Container p={0} mt={4} className="flex w-full flex-col space-y-4">
           {/* // Upload Panel */}
-          {reportfromProps.imageCloudUrl ? (
+          {reportfromProps.image?.cloudUrl ? (
             <>
               {/* // Image Preview */}
               <Box className="relative" px={0}>
@@ -200,10 +189,10 @@ export function EditForm(props: EditFormProps) {
                   </ActionIcon>
                 </Box>
                 <ImagePreview
-                  imageUrl={reportfromProps.imageCloudUrl}
+                  imageUrl={reportfromProps.image?.cloudUrl}
                   title={form.values.title}
                   description={form.values.description}
-                  publicLink="#"
+                  publicLink={`/grow-report/${report.id as string}`}
                   authorName={user.name as string}
                   authorImageUrl={user.image as string}
                   comments={89}

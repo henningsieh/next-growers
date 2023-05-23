@@ -7,7 +7,7 @@ export const dateFormatterEnUS = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
 });
 export const formattedDateEnUS = dateFormatterEnUS.format(new Date(isoString));
-console.log(formattedDateEnUS); // Output: "May 19, 2023"
+//console.log(formattedDateEnUS); // Output: "May 19, 2023"
 
 // Format: May 19, 2023, 06:36 PM (en-US)
 export const dateTimeFormatterEnUS = new Intl.DateTimeFormat("en-US", {
@@ -21,7 +21,7 @@ export const dateTimeFormatterEnUS = new Intl.DateTimeFormat("en-US", {
 export const formattedDateTimeEnUS = dateTimeFormatterEnUS.format(
   new Date(isoString)
 );
-console.log(formattedDateTimeEnUS); // Output: "May 19, 2023, 06:36 PM"
+// console.log(formattedDateTimeEnUS); // Output: "May 19, 2023, 06:36 PM"
 
 // Format: 18. Mai 2023 (de-DE)
 export const dateFormatterDeDE = new Intl.DateTimeFormat("de-DE", {
@@ -30,7 +30,7 @@ export const dateFormatterDeDE = new Intl.DateTimeFormat("de-DE", {
   year: "numeric",
 });
 export const formattedDateDeDE = dateFormatterDeDE.format(new Date(isoString));
-console.log(formattedDateDeDE); // Output: "18. Mai 2023"
+// console.log(formattedDateDeDE); // Output: "18. Mai 2023"
 
 // Format: 18. Mai 2023, 18:36 (de-DE)
 export const dateTimeFormatterDeDE = new Intl.DateTimeFormat("de-DE", {
@@ -43,7 +43,7 @@ export const dateTimeFormatterDeDE = new Intl.DateTimeFormat("de-DE", {
 export const formattedDateTimeDeDE = dateTimeFormatterDeDE.format(
   new Date(isoString)
 );
-console.log(formattedDateTimeDeDE); // Output: "18. Mai 2023, 18:36"
+//console.log(formattedDateTimeDeDE); // Output: "18. Mai 2023, 18:36"
 
 export function convertDatesToISO(obj: any): any {
   if (obj instanceof Date) {

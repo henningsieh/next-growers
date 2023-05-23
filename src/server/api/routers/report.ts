@@ -210,6 +210,69 @@ export const reportRouter = createTRPCRouter({
     }),
 
   /**
+   * Get IsoReportwithPosts by Id
+   * @Input: userId: String
+   */
+  getIsoReportsWithPostsFromDb: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.report
+      .findMany({
+        include: {
+          author: { select: { id: true, name: true, image: true } },
+          image: { select: { id: true, publicId: true, cloudUrl: true } },
+          strains: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              effects: true,
+              flavors: true,
+            },
+          },
+          posts: {
+            include: {
+              author: { select: { id: true, name: true, image: true } },
+              images: { select: { id: true, publicId: true, cloudUrl: true } },
+              likes: true,
+              comments: true,
+            },
+          },
+          likes: true,
+        },
+      })
+      .then((reportsFromDb) => {
+        // Convert all Dates to IsoStrings
+        const isoReportsFromDb = reportsFromDb.map((reportFromDb) => ({
+          ...reportFromDb,
+          createdAt: reportFromDb?.createdAt.toISOString(),
+          updatedAt: reportFromDb?.updatedAt.toISOString(),
+          likes: reportFromDb?.likes.map((like) => ({
+            ...like,
+            createdAt: like.createdAt.toISOString(),
+            updatedAt: like.updatedAt.toISOString(),
+          })),
+          posts: reportFromDb?.posts.map((post) => ({
+            ...post,
+            date: post.date.toISOString(),
+            createdAt: post.createdAt.toISOString(),
+            updatedAt: post.updatedAt.toISOString(),
+            likes: post?.likes.map((like) => ({
+              ...like,
+              createdAt: like.createdAt.toISOString(),
+              updatedAt: like.updatedAt.toISOString(),
+            })),
+            comments: post.comments.map((comment) => ({
+              ...comment,
+              createdAt: comment.createdAt.toISOString(),
+              updatedAt: comment.updatedAt.toISOString(),
+            })),
+          })),
+        }));
+
+        return isoReportsFromDb;
+      });
+  }),
+
+  /**
    * Get Report by Id
    * @Input: userId: String
    */
@@ -246,19 +309,19 @@ export const reportRouter = createTRPCRouter({
       // Convert all Dates to IsoStrings
       const isoReportFromDb = {
         ...reportFromDb,
-        createdAt: reportFromDb?.createdAt.toISOString(),
-        updatedAt: reportFromDb?.updatedAt.toISOString(),
-        likes: reportFromDb?.likes.map((like) => ({
+        createdAt: reportFromDb?.createdAt.toISOString() as string,
+        updatedAt: reportFromDb?.updatedAt.toISOString() as string,
+        likes: (reportFromDb?.likes || []).map((like) => ({
           ...like,
           createdAt: like.createdAt.toISOString(),
           updatedAt: like.updatedAt.toISOString(),
         })),
-        posts: reportFromDb?.posts.map((post) => ({
+        posts: (reportFromDb?.posts || []).map((post) => ({
           ...post,
           date: post.date.toISOString(),
           createdAt: post.createdAt.toISOString(),
           updatedAt: post.updatedAt.toISOString(),
-          likes: post?.likes.map((like) => ({
+          likes: (post?.likes || []).map((like) => ({
             ...like,
             createdAt: like.createdAt.toISOString(),
             updatedAt: like.updatedAt.toISOString(),
@@ -269,8 +332,8 @@ export const reportRouter = createTRPCRouter({
             updatedAt: comment.updatedAt.toISOString(),
           })),
         })),
+        strains: reportFromDb?.strains || [],
       };
-
       return isoReportFromDb;
     }),
 
