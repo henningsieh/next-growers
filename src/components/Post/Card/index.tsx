@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  Center,
   Group,
   Image,
   Text,
@@ -8,9 +9,16 @@ import {
   getStylesRef,
   rem,
 } from "@mantine/core";
+import {
+  IconGasStation,
+  IconGauge,
+  IconManualGearbox,
+  IconStar,
+  IconUsers,
+} from "@tabler/icons-react";
 
 import { Carousel } from "@mantine/carousel";
-import { IconStar } from "@tabler/icons-react";
+import { PostImagesCarousel } from "~/components/Post/ImageCarousel";
 
 const useStyles = createStyles((theme) => ({
   price: {
@@ -40,6 +48,39 @@ const useStyles = createStyles((theme) => ({
       width: rem(16),
     },
   },
+
+  section: {
+    padding: theme.spacing.md,
+    borderTop: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+    }`,
+  },
+
+  label: {
+    marginBottom: theme.spacing.xs,
+    lineHeight: 1,
+    fontWeight: 700,
+    fontSize: theme.fontSizes.xs,
+    letterSpacing: rem(-0.25),
+    textTransform: "uppercase",
+  },
+
+  icon: {
+    marginRight: rem(5),
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[2]
+        : theme.colors.gray[5],
+  },
+
+  footer: {
+    display: "flex",
+    justifyContent: "space-between",
+    padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
+    borderTop: `${rem(1)} solid ${
+      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
+    }`,
+  },
 }));
 
 const images = [
@@ -50,8 +91,54 @@ const images = [
   "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
 ];
 
-export function CarouselCard() {
+const mockdata = [
+  { label: "4 passengers", icon: IconUsers },
+  { label: "100 km/h in 4 seconds", icon: IconGauge },
+  { label: "Automatic gearbox", icon: IconManualGearbox },
+  { label: "Electric", icon: IconGasStation },
+];
+
+const data = {
+  image:
+    "https://images.unsplash.com/photo-1581889470536-467bdbe30cd0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
+  title: "Running challenge",
+  description:
+    "56 km this month • 17% improvement compared to last month • 443 place in global scoreboard",
+  stats: [
+    {
+      title: "Distance",
+      value: "27.4 km",
+    },
+    {
+      title: "Avg. speed",
+      value: "9.6 km/h",
+    },
+    {
+      title: "Score",
+      value: "88/100",
+    },
+  ],
+};
+
+const items = data.stats.map((stat) => (
+  <div key={stat.title}>
+    <Text size="xs" color="dimmed">
+      {stat.title}
+    </Text>
+    <Text weight={500} size="sm">
+      {stat.value}
+    </Text>
+  </div>
+));
+
+export function PostCard() {
   const { classes } = useStyles();
+  const features = mockdata.map((feature) => (
+    <Center key={feature.label}>
+      <feature.icon size="1.05rem" className={classes.icon} stroke={1.5} />
+      <Text size="xs">{feature.label}</Text>
+    </Center>
+  ));
 
   const slides = images.map((image) => (
     <Carousel.Slide key={image}>
@@ -62,17 +149,7 @@ export function CarouselCard() {
   return (
     <Card radius="md" withBorder padding="xl">
       <Card.Section>
-        <Carousel
-          withIndicators
-          loop
-          classNames={{
-            root: classes.carousel,
-            controls: classes.carouselControls,
-            indicator: classes.carouselIndicator,
-          }}
-        >
-          {slides}
-        </Carousel>
+        <PostImagesCarousel />
       </Card.Section>
 
       <Group position="apart" mt="lg">
@@ -87,6 +164,18 @@ export function CarouselCard() {
           </Text>
         </Group>
       </Group>
+
+      <Card.Section className={classes.section} mt="md">
+        <Text fz="sm" c="dimmed" className={classes.label}>
+          Basic configuration
+        </Text>
+
+        <Card.Section className={classes.footer}>{items}</Card.Section>
+
+        <Group spacing={8} mb={-8}>
+          {features}
+        </Group>
+      </Card.Section>
 
       <Text fz="sm" c="dimmed" mt="sm">
         Relax, rejuvenate and unplug in this unique contemporary Birdbox. Feel
@@ -107,6 +196,20 @@ export function CarouselCard() {
 
         <Button radius="md">Book now</Button>
       </Group>
+
+      <Card.Section>
+        <Carousel
+          withIndicators
+          loop
+          classNames={{
+            root: classes.carousel,
+            controls: classes.carouselControls,
+            indicator: classes.carouselIndicator,
+          }}
+        >
+          {slides}
+        </Carousel>
+      </Card.Section>
     </Card>
   );
 }

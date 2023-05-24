@@ -1,25 +1,23 @@
-import { Box, Container, Title } from "@mantine/core";
+import { Container, useMantineTheme, Title, Box } from "@mantine/core";
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
 
+import { DatePicker } from "@mantine/dates";
 import { Environment } from "~/types";
+import { Group } from "@mantine/core";
 import Head from "next/head";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
-import { IsoReportWithPostsFromDb } from "~/types";
-import { PostsCarousel } from "~/components/Posts/Carousel";
+import { type IsoReportWithPostsFromDb } from "~/types";
 import ReportDetailsHead from "~/components/Report/DetailsHead";
-import { api } from "~/utils/api";
-import { appRouter } from "~/server/api/root";
 import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
-import { createInnerTRPCContext } from "~/server/api/trpc";
-import { createServerSideHelpers } from "@trpc/react-query/server";
 import { prisma } from "~/server/db";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import superjson from "superjson";
-
+import { useState } from "react";
+import { useMediaQuery } from "@mantine/hooks";
+import { PostCard } from "~/components/Post/Card";
 /**
  * getStaticProps
  * @param context : GetStaticPropsContext<{ id: string }>
@@ -121,6 +119,27 @@ export default function PublicReport(
   const { report: staticReportFromProps } = props;
   const pageTitle = `${staticReportFromProps.title as string}`;
 
+  const theme = useMantineTheme();
+
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  /* 
+  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
+  */
+  const getResponsiveColumnCount = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
+
+  const [value, setValue] = useState<Date | null>(null);
+
+  const dateOfnewestPost = staticReportFromProps.posts.reduce(
+    (maxDate, post) => {
+      const postDate = new Date(post.date);
+      return postDate > maxDate ? postDate : maxDate;
+    },
+    new Date(0)
+  );
+
   return (
     <>
       <Head>
@@ -143,7 +162,7 @@ export default function PublicReport(
         </div>
         {/* // Header End */}
         <Container
-          size="md"
+          size="lg"
           px={0}
           className="flex w-full flex-col space-y-1"
           mx="auto"
@@ -159,21 +178,33 @@ export default function PublicReport(
             views={0}
             comments={0}
           />
-          {/* // Header with Title */}
-          <div className="flex items-center justify-between pt-2">
-            {/* // Title */}
-            <Title order={2} className="inline">
+          {/* // Grow Parameter: Environment, ... */}
+          <Box className="flex items-center justify-between pt-2">
+            <Title order={5} className="inline">
               {
                 Environment[
                   staticReportFromProps.environment as keyof typeof Environment
                 ]
               }
             </Title>
-          </div>
-          {/* // Header End */}
-          <PostsCarousel />
+          </Box>
+
+          {/* // Posts Date Picker */}
+          <Group position="center">
+            <DatePicker
+              defaultDate={new Date(staticReportFromProps.createdAt)}
+              minDate={new Date(staticReportFromProps.createdAt)}
+              maxDate={dateOfnewestPost}
+              value={value}
+              onChange={setValue}
+              numberOfColumns={getResponsiveColumnCount}
+            />
+          </Group>
+
+          {/* <PostCard /> */}
         </Container>
-        {<ReportDetailsHead report={staticReportFromProps} />}
+
+        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
       </Container>
     </>
   );

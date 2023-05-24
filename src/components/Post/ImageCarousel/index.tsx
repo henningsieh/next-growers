@@ -14,6 +14,7 @@ import { useMediaQuery } from "@mantine/hooks";
 const useStyles = createStyles((theme) => ({
   card: {
     height: rem(180),
+    // width: rem(200),
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -110,7 +111,7 @@ const data = [
   },
 ];
 
-export function PostsCarousel() {
+export function PostImagesCarousel() {
   const theme = useMantineTheme();
   const slides = data.map((item) => (
     <Carousel.Slide key={item.title}>
@@ -127,11 +128,11 @@ export function PostsCarousel() {
 
   return (
     <Carousel
-      slideSize="20%"
+      slideSize="25%"
       breakpoints={[
-        { maxWidth: "lg", slideSize: "25%" },
-        { maxWidth: "md", slideSize: "33.333%" },
-        { maxWidth: "sm", slideSize: "50%" },
+        { maxWidth: "lg", slideSize: "33.333%" },
+        { maxWidth: "md", slideSize: "50%" },
+        { maxWidth: "sm", slideSize: "100%" },
         { maxWidth: "xs", slideSize: "100%" },
       ]}
       slideGap="xs"
