@@ -1,24 +1,36 @@
 import {
   Button,
   Card,
-  Center,
   Group,
   Image,
+  Center,
+  Paper,
   Text,
+  useMantineTheme,
   createStyles,
   getStylesRef,
   rem,
 } from "@mantine/core";
 import {
+  IconCalendar,
+  IconClock,
   IconGasStation,
   IconGauge,
+  IconHome,
   IconManualGearbox,
   IconStar,
   IconUsers,
 } from "@tabler/icons-react";
 
 import { Carousel } from "@mantine/carousel";
-import { PostImagesCarousel } from "~/components/Post/ImageCarousel";
+import { type IsoReportWithPostsFromDb } from "~/types";
+import { useEffect, useState } from "react";
+import { sanatizeDateString } from "~/helpers";
+import { Locale } from "~/types";
+
+import { useRouter } from "next/router";
+
+import { useMediaQuery } from "@mantine/hooks";
 
 const useStyles = createStyles((theme) => ({
   price: {
@@ -83,78 +95,126 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const images = [
-  "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-  "https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-  "https://images.unsplash.com/photo-1605774337664-7a846e9cdf17?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-  "https://images.unsplash.com/photo-1554995207-c18c203602cb?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-  "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-];
+interface PostCardProps {
+  report: IsoReportWithPostsFromDb;
+  postId: string;
+}
 
-const mockdata = [
-  { label: "4 passengers", icon: IconUsers },
-  { label: "100 km/h in 4 seconds", icon: IconGauge },
-  { label: "Automatic gearbox", icon: IconManualGearbox },
-  { label: "Electric", icon: IconGasStation },
-];
+export function PostCard(props: PostCardProps) {
+  const [postHTMLContent, setPostHTMLContent] = useState("");
 
-const data = {
-  image:
-    "https://images.unsplash.com/photo-1581889470536-467bdbe30cd0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-  title: "Running challenge",
-  description:
-    "56 km this month • 17% improvement compared to last month • 443 place in global scoreboard",
-  stats: [
-    {
-      title: "Distance",
-      value: "27.4 km",
-    },
-    {
-      title: "Avg. speed",
-      value: "9.6 km/h",
-    },
-    {
-      title: "Score",
-      value: "88/100",
-    },
-  ],
-};
-
-const items = data.stats.map((stat) => (
-  <div key={stat.title}>
-    <Text size="xs" color="dimmed">
-      {stat.title}
-    </Text>
-    <Text weight={500} size="sm">
-      {stat.value}
-    </Text>
-  </div>
-));
-
-export function PostCard() {
   const { classes } = useStyles();
-  const features = mockdata.map((feature) => (
-    <Center key={feature.label}>
-      <feature.icon size="1.05rem" className={classes.icon} stroke={1.5} />
-      <Text size="xs">{feature.label}</Text>
+
+  const theme = useMantineTheme();
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  /* 
+  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
+  */
+  const getResponsiveImageHeight = xs
+    ? 460
+    : sm
+    ? 700
+    : md
+    ? 900
+    : lg
+    ? 1180
+    : 1390;
+
+  const { report, postId } = props;
+
+  const router = useRouter();
+
+  const post = report.posts.find((post) => post.id === postId);
+  const postImages = post?.images;
+
+  const postBasicData = {
+    image:
+      "https://images.unsplash.com/photo-1581889470536-467bdbe30cd0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
+    title: "Running challenge",
+    content: postHTMLContent,
+    details: [
+      {
+        title: "Date",
+        value: sanatizeDateString(
+          post?.date as string,
+          router.locale === "de" ? Locale.DE : Locale.EN
+        ),
+      },
+      {
+        title: "Grow Stage",
+        value: post?.growStage,
+      },
+      {
+        title: "Light (h) / Day",
+        value: post?.lightHoursPerDay,
+      },
+    ],
+  };
+
+  const growBasicData = [
+    {
+      label: sanatizeDateString(
+        report?.createdAt,
+        router.locale === "de" ? Locale.DE : Locale.EN
+      ),
+      icon: IconCalendar,
+    },
+    { label: report?.environment, icon: IconHome },
+    {
+      label: sanatizeDateString(
+        report?.updatedAt,
+        router.locale === "de" ? Locale.DE : Locale.EN
+      ),
+      icon: IconClock,
+    },
+  ];
+
+  const postData = postBasicData.details.map((basicData) => (
+    <div key={basicData.title}>
+      <Text size="xs" color="dimmed">
+        {basicData.title}
+      </Text>
+      <Text weight={500} size="sm">
+        {basicData.value}
+      </Text>
+    </div>
+  ));
+
+  useEffect(() => {
+    const post = report.posts.find((post) => post.id === postId);
+    if (post) {
+      setPostHTMLContent(post.content);
+    }
+  }, [report, postId]);
+
+  const growBasics = growBasicData.map((growBasic) => (
+    <Center key={growBasic.label}>
+      <growBasic.icon size="1.05rem" className={classes.icon} stroke={1.5} />
+      <Text size="xs">{growBasic.label}</Text>
     </Center>
   ));
 
-  const slides = images.map((image) => (
-    <Carousel.Slide key={image}>
-      <Image alt="" src={image} height={220} />
+  const postImagesSlides = postImages?.map((image) => (
+    <Carousel.Slide key={image.id}>
+      <Center>
+        <Image alt="" src={image.cloudUrl} width={getResponsiveImageHeight} />
+      </Center>
     </Carousel.Slide>
   ));
 
   return (
     <Card radius="md" withBorder padding="xl">
+      {/* 
       <Card.Section>
         <PostImagesCarousel />
-      </Card.Section>
+      </Card.Section> */}
 
-      <Group position="apart" mt="lg">
-        <Text fw={500} fz="lg">
-          Forde, Norway
+      <Group position="apart">
+        <Text fw={700} fz="lg">
+          {post?.title}
         </Text>
 
         <Group spacing={5}>
@@ -165,22 +225,28 @@ export function PostCard() {
         </Group>
       </Group>
 
-      <Card.Section className={classes.section} mt="md">
-        <Text fz="sm" c="dimmed" className={classes.label}>
-          Basic configuration
-        </Text>
-
-        <Card.Section className={classes.footer}>{items}</Card.Section>
-
-        <Group spacing={8} mb={-8}>
-          {features}
+      <Card.Section className={classes.section}>
+        <Group position="apart" spacing={8} mb={-8}>
+          {postData}
         </Group>
       </Card.Section>
+      {/* 
+      <Card.Section className={classes.section} mt="md">
+        <Text fz="sm" c="dimmed" className={classes.label}>
+          Grow Informations
+        </Text>
 
+        <Group spacing={8} mb={-8}>
+          {growBasics}
+        </Group>
+      </Card.Section>
+ */}
       <Text fz="sm" c="dimmed" mt="sm">
-        Relax, rejuvenate and unplug in this unique contemporary Birdbox. Feel
-        close to nature in ultimate comfort. Enjoy the view of the epic mountain
-        range of Blegja and the Førdefjord.
+        <Paper
+          px="sm"
+          py="lg"
+          dangerouslySetInnerHTML={{ __html: postHTMLContent }}
+        />
       </Text>
 
       <Group position="apart" mt="md">
@@ -197,6 +263,7 @@ export function PostCard() {
         <Button radius="md">Book now</Button>
       </Group>
 
+      {/* //BOTTOM CAROUSEL */}
       <Card.Section>
         <Carousel
           withIndicators
@@ -207,8 +274,18 @@ export function PostCard() {
             indicator: classes.carouselIndicator,
           }}
         >
-          {slides}
+          {postImagesSlides}
         </Carousel>
+      </Card.Section>
+
+      <Card.Section className={classes.section} mt="md">
+        <Text fz="sm" c="dimmed" className={classes.label}>
+          Grow Informations
+        </Text>
+
+        <Group spacing={8} mb={-8}>
+          {growBasics}
+        </Group>
       </Card.Section>
     </Card>
   );

@@ -61,8 +61,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
           },
           primaryColor: "orange",
           breakpoints: {
+            xs: "30em",
             // 1 Spalte
-            sm: "38em",
+            sm: "46em",
             // 2 Spalten
             md: "58em",
             // 4 Spalten

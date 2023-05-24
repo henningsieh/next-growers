@@ -192,9 +192,7 @@ const Notifications = () => {
                       })}
                     >
                       <Link
-                        href={`/grow-report/${
-                          notification.like?.reportId as string
-                        }`}
+                        href={`/grow/${notification.like?.reportId as string}`}
                       >
                         <div style={{ display: "flex" }}>
                           <Center>

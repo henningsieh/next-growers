@@ -17,7 +17,7 @@ import { prisma } from "~/server/db";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
-import { PostCard } from "~/components/Post/Card";
+import { PostImagesCarousel } from "~/components/Post/ImageCarousel";
 /**
  * getStaticProps
  * @param context : GetStaticPropsContext<{ id: string }>
@@ -175,12 +175,12 @@ export default function PublicReport(
         <Container
           size="lg"
           px={0}
-          className="flex w-full flex-col space-y-1"
+          className="flex w-full flex-col space-y-4"
           mx="auto"
         >
           <ImagePreview
             authorName={staticReportFromProps.author?.name as string}
-            publicLink={`/grow-report/${staticReportFromProps.id as string}`}
+            publicLink={`/grow/${staticReportFromProps.id as string}`}
             imageUrl={staticReportFromProps.image?.cloudUrl as string}
             title={""}
             // title={staticReportFromProps.title as string}
@@ -212,10 +212,11 @@ export default function PublicReport(
             />
           </Group>
 
+          <PostImagesCarousel />
           {/* <PostCard /> */}
         </Container>
 
-        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
+        <ReportDetailsHead report={staticReportFromProps} />
       </Container>
     </>
   );

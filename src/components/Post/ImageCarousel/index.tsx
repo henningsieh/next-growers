@@ -124,7 +124,7 @@ export function PostImagesCarousel() {
   const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
-  const breakpointNumber = xs ? 1 : sm ? 2 : md ? 3 : lg ? 4 : 5;
+  const breakpointNumber = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
 
   return (
     <Carousel

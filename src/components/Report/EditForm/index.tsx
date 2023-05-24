@@ -192,7 +192,7 @@ export function EditForm(props: EditFormProps) {
                   imageUrl={reportfromProps.image?.cloudUrl}
                   title={form.values.title}
                   description={form.values.description}
-                  publicLink={`/grow-report/${report.id as string}`}
+                  publicLink={`/grow/${report.id as string}`}
                   authorName={user.name as string}
                   authorImageUrl={user.image as string}
                   comments={89}
