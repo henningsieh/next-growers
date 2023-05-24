@@ -17,6 +17,7 @@ import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 import { createInnerTRPCContext } from "~/server/api/trpc";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { prisma } from "~/server/db";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import superjson from "superjson";
 
 /**
@@ -64,49 +65,24 @@ export async function getStaticProps(
       notFound: true,
     };
   }
-
-  // Convert all Dates to IsoStrings
-  /*   const isoReportFromDb = {
-    ...reportFromDb,
-    createdAt: reportFromDb.createdAt.toISOString(),
-    updatedAt: reportFromDb.updatedAt.toISOString(),
-    likes: reportFromDb.likes.map((like) => ({
-      ...like,
-      createdAt: like.createdAt.toISOString(),
-      updatedAt: like.updatedAt.toISOString(),
-    })),
-    posts: reportFromDb.posts.map((post) => ({
-      ...post,
-      date: post.date.toISOString(),
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt.toISOString(),
-      likes: post.likes.map((like) => ({
-        ...like,
-        createdAt: like.createdAt.toISOString(),
-        updatedAt: like.updatedAt.toISOString(),
-      })),
-      comments: post.comments.map((comment) => ({
-        ...comment,
-        createdAt: comment.createdAt.toISOString(),
-        updatedAt: comment.updatedAt.toISOString(),
-      })),
-    })),
-  }; */
-
   const isoReportFromDb = convertDatesToISO(
     reportFromDb
   ) as IsoReportWithPostsFromDb;
-
   console.debug(
     "getStaticProps 🤖",
     "...prefetching the report's dataset from db"
   );
-
   // console.dir(isoReportFromDb, { depth: null });
+
+  // Fetch translations using next-i18next
+  const translations = await serverSideTranslations(context.locale as string, [
+    "common",
+  ]);
 
   return {
     props: {
       report: isoReportFromDb,
+      ...translations,
     },
     revalidate: 10,
   };

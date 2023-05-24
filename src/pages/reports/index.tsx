@@ -8,6 +8,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
+import { type GetServerSideProps, type NextPage } from "next";
 
 import type { ChangeEvent } from "react";
 import Head from "next/head";
@@ -18,7 +19,9 @@ import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
 import type { SortingPanelProps } from "~/types";
 import { api } from "~/utils/api";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
+import { useTranslation } from "next-i18next";
 
 const useStyles = createStyles((theme) => ({
   hiddenMobile: {
@@ -33,7 +36,16 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
-export default function AllReports() {
+
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale as string, ["common"])),
+    },
+  };
+};
+
+const AllReportsPage: NextPage = () => {
   const pageTitle = "All Grows";
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
@@ -76,10 +88,12 @@ export default function AllReports() {
       },
     ],
   };
+
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);
   };
 
+  const { t, i18n } = useTranslation();
   if (isError) return <LoadingError />;
   return (
     <>
@@ -98,7 +112,7 @@ export default function AllReports() {
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
-            {pageTitle}
+            {t("common:reports-headline")}
           </Title>
           <Box pr={35} className={classes.hiddenMobile}>
             <SearchInput
@@ -170,4 +184,6 @@ export default function AllReports() {
       </Container>
     </>
   );
-}
+};
+
+export default AllReportsPage;

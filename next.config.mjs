@@ -1,9 +1,3 @@
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
- * This is especially useful for Docker builds.
- */
-await import("./src/env.mjs");
-
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
@@ -58,7 +52,9 @@ const config = {
   i18n: {
     defaultLocale: "en",
     locales: ["en", "de"],
-    // localeDetection: false,
+    localeDetection: false,
   },
 };
 export default config;
+
+await import("./src/env.mjs");

@@ -7,6 +7,9 @@ import {
   rem,
 } from "@mantine/core";
 
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+
 const useStyles = createStyles((theme) => ({
   hero: {
     position: "relative",
@@ -17,7 +20,7 @@ const useStyles = createStyles((theme) => ({
 
   container: {
     // height: rem(800),
-    height: "calc(100vh - 88px)",
+    height: "calc(100vh)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -74,6 +77,14 @@ const useStyles = createStyles((theme) => ({
 export default function LandingCard() {
   const { classes } = useStyles();
 
+  const router = useRouter();
+  const {
+    locale: activeLocale,
+    locales: availableLocales,
+    defaultLocale,
+  } = router;
+  const { t, i18n } = useTranslation(activeLocale);
+
   return (
     <div className={classes.hero}>
       <Overlay
@@ -87,26 +98,19 @@ export default function LandingCard() {
           🪴 Show Your Grow! 🚀
         </Title>
         <Text className={classes.description} size="xl" mt="xl">
-          At GrowAGram, we provide a platform for cannabis enthusiasts to
-          showcase their growing skills and share their knowledge.
+          {t("common:landing-text1")}
         </Text>
         <Text className={classes.description} size="xl" mt="xl">
-          As the legalization of cannabis approaches in Germany, we believe
-          it&apos;s important to build a community that celebrates the plant and
-          its unique growing process.
+          {t("common:landing-text2")}
         </Text>
         <button
           className="my-8 h-12 w-96 rounded-md bg-gradient-to-r
-        from-pink-600 via-red-600 to-orange-500 text-white"
+from-pink-600 via-red-600 to-orange-500 text-white"
         >
           COMING SOON... 🤞
         </button>
         <Text className={classes.description} size="md">
-          If you&apos;re passionate about growing cannabis or just starting out,
-          we invite you to explore our community and discover what makes us
-          unique. With our platform, you can easily create and share your
-          growing reports with the world, highlighting your progress, tools, and
-          feedings.
+          {t("common:landing-text3")}
         </Text>
       </Container>
       Foto von{" "}

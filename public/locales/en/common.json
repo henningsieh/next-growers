@@ -1,0 +1,10 @@
+{
+  "reports-headline": "All Grows",
+  "hello-frontend": "Hello from the frontend",
+  "switch-language": "Switch language",
+  "get-message": "Fetch message in English from the backend",
+  "message-success": "The API request was a success, the translation is coming from the backend!",
+  "landing-text1": "At GrowAGram, we provide a platform for cannabis enthusiasts to showcase their growing skills and share their knowledge.",
+  "landing-text2": "As the legalization of cannabis approaches in Germany, we believe it's important to build a community that celebrates the plant and its unique growing process.",
+  "landing-text3": "If you're passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings."
+}

@@ -40,6 +40,11 @@ import Link from "next/link";
 import LightDarkButton from "../components/Atom/LightDarkButton";
 import Notifications from "~/components/Notifications";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
+import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
+import { GetServerSideProps } from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -293,6 +298,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           <Group
           // className={classes.hiddenMobile}
           >
+            <LanguageSwitcher />
             <LightDarkButton />
             {status === "authenticated" && <Notifications />}
             <LoginPanel />

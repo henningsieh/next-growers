@@ -24,7 +24,7 @@ const Home: NextPage = () => {
           </h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+              className="flex max-w-xs flex-col gap-4 rounded-md bg-white/10 p-4 text-white hover:bg-white/20"
               href="https://create.t3.gg/en/usage/first-steps"
               target="_blank"
             >
@@ -35,7 +35,7 @@ const Home: NextPage = () => {
               </div>
             </Link>
             <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+              className="flex max-w-xs flex-col gap-4 rounded-md bg-white/10 p-4 text-white hover:bg-white/20"
               href="https://create.t3.gg/en/introduction"
               target="_blank"
             >
@@ -74,7 +74,7 @@ const AuthShowcase: React.FC = () => {
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
       <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+        className="rounded-md bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
         onClick={session ? () => void signOut() : () => void signIn()}
       >
         {session ? "Sign out" : "Sign in"}
