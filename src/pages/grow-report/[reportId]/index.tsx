@@ -97,13 +97,24 @@ export const getStaticPaths: GetStaticPaths = async () => {
       id: true,
     },
   });
-  return {
-    paths: reports.map((staticReport) => ({
+
+  const localizedPaths = reports.flatMap((staticReport) => [
+    {
       params: {
         reportId: staticReport.id,
       },
-    })),
-    // https://nextjs.org/docs/pages/api-reference/functions/get-static-paths#fallback-blocking
+      locale: "en",
+    },
+    {
+      params: {
+        reportId: staticReport.id,
+      },
+      locale: "de",
+    },
+  ]);
+
+  return {
+    paths: localizedPaths,
     fallback: "blocking",
   };
 };
