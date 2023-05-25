@@ -21,6 +21,7 @@ import LoginForm from "./LoginForm";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 export default function LoginModal() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -54,9 +55,12 @@ export default function LoginModal() {
     },
   }); */
   const theme = useMantineTheme();
-
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
+
+  const { locales, locale: activeLocale, defaultLocale } = router;
+  const { t, i18n } = useTranslation(activeLocale);
+
   return (
     <>
       <Modal
@@ -99,17 +103,21 @@ export default function LoginModal() {
             <Menu.Dropdown>
               <Menu.Label>High</Menu.Label>
               <Link href="/account/edit">
-                <Menu.Item icon={<IconUser size={14} />}>My Profile</Menu.Item>
+                <Menu.Item icon={<IconUser size={14} />}>
+                  {t("common:usermenu-myprofile")}
+                </Menu.Item>
               </Link>
               {/* <Menu.Item icon={<IconMessageCircle size={14} />}>
                 Messages
               </Menu.Item> */}
               <Link href="/account/reports">
-                <Menu.Item icon={<IconPhoto size={14} />}>My Grows</Menu.Item>
+                <Menu.Item icon={<IconPhoto size={14} />}>
+                  {t("common:usermenu-mygrows")}
+                </Menu.Item>
               </Link>
               <Link href="/account/reports/create">
-                <Menu.Item icon={<IconSquarePlus size={14} />}>
-                  Add new Grow
+                <Menu.Item bg="green" icon={<IconSquarePlus size={14} />}>
+                  {t("common:usermenu-addnewgrow")}
                 </Menu.Item>
               </Link>
               {/* 
@@ -132,7 +140,7 @@ export default function LoginModal() {
                 color="red"
                 icon={<IconLogout size={14} />}
               >
-                Sign out 👋
+                {t("common:usermenu-logout")}
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>

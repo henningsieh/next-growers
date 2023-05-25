@@ -3,20 +3,18 @@
 import { Box, Button, NativeSelect } from "@mantine/core";
 import {
   IconCalendarDown,
-  IconCalendarEvent,
   IconCalendarUp,
-  IconChevronDown,
   IconClockDown,
   IconClockUp,
-  IconSortAscending,
   IconSortAscending2,
-  IconSortDescending,
   IconSortDescending2,
 } from "@tabler/icons-react";
 import React, { Dispatch, SetStateAction } from "react";
 
 import { IconChevronUp } from "@tabler/icons-react";
 import type { SortingPanelProps } from "~/types";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 export default function SortingPanel({
   sortBy,
@@ -24,22 +22,16 @@ export default function SortingPanel({
   desc,
   handleToggleDesc,
 }: SortingPanelProps) {
+  const router = useRouter();
+
+  const { locales, locale: activeLocale, defaultLocale } = router;
+  const { t, i18n } = useTranslation(activeLocale);
+
+  const createdAtLabel = t("common:reports-createdAt");
+  const updatedAtLabel = t("common:reports-updatedAt");
+
   return (
     <Box pt={3} m={0} className="inline-flex space-x-1">
-      <Button
-        className="cursor-default"
-        c="dimmed"
-        variant="default"
-        px={4}
-        size="xs"
-        onClick={handleToggleDesc}
-      >
-        {desc ? (
-          <IconSortDescending2 size="1.2rem" />
-        ) : (
-          <IconSortAscending2 size="1.2rem" />
-        )}
-      </Button>
       <NativeSelect
         variant="default"
         value={sortBy}
@@ -48,8 +40,8 @@ export default function SortingPanel({
         placeholder="Sort by..."
         fz="xs"
         data={[
-          { value: "createdAt", label: "Created at" },
-          { value: "updatedAt", label: "Updated at" },
+          { value: "createdAt", label: createdAtLabel },
+          { value: "updatedAt", label: updatedAtLabel },
         ]}
         icon={
           sortBy === "createdAt" ? (
@@ -65,6 +57,20 @@ export default function SortingPanel({
           )
         }
       />
+      <Button
+        className="cursor-default"
+        c="dimmed"
+        variant="default"
+        px={4}
+        size="xs"
+        onClick={handleToggleDesc}
+      >
+        {desc ? (
+          <IconSortDescending2 size="1.2rem" />
+        ) : (
+          <IconSortAscending2 size="1.2rem" />
+        )}
+      </Button>
     </Box>
   );
 }

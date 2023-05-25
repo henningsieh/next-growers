@@ -19,17 +19,15 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 const LanguageSwitcher: NextPage = () => {
-  const router = useRouter();
   const { colorScheme } = useMantineColorScheme();
 
+  const router = useRouter();
   const { locales, locale: activeLocale, defaultLocale } = router;
-  console.log(locales, activeLocale, defaultLocale);
-
-  const { i18n } = useTranslation(activeLocale);
-
+  const { t, i18n } = useTranslation(activeLocale);
+  const switchLabel = t("common:app-switchlanguage");
   return (
     <>
-      <Group position="center">
+      <Group title={switchLabel} position="center">
         <SegmentedControl
           bottom={0}
           variant="filled"

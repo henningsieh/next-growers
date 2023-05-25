@@ -36,8 +36,10 @@ import { api } from "~/utils/api";
 import { notifications } from "@mantine/notifications";
 import { sanatizeDateString } from "~/helpers";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { useTranslation } from "next-i18next";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -87,11 +89,15 @@ export default function ReportCard({
   procedure,
   setSearchString,
 }: ReportCardProps) {
+  const trpc = api.useContext();
+  const router = useRouter();
+
+  const { locales, locale: activeLocale, defaultLocale } = router;
+  const { t, i18n } = useTranslation(activeLocale);
+
   const { classes } = useStyles();
   const { data: session, status, update } = useSession();
   const [showLikes, setShowLikes] = useState(false);
-
-  const trpc = api.useContext();
 
   const likeSuccessfulMsg = {
     title: "Success",
@@ -107,6 +113,7 @@ export default function ReportCard({
     icon: <IconCheck />,
     loading: false,
   };
+
   const { mutate: likeReportMutation } = api.like.likeReport.useMutation({
     onError: (error) => {
       toast.error(error.message);
@@ -344,7 +351,7 @@ export default function ReportCard({
           <Group position="left">
             <Tooltip
               transitionProps={{ transition: "pop-bottom-left", duration: 100 }}
-              label="Created at"
+              label={t("common:reports-createdAt")}
               color="green"
               withArrow
               arrowPosition="side"
@@ -354,7 +361,10 @@ export default function ReportCard({
                   <IconCalendar size="1.2rem" />
                 </Box>
                 <Text className={`${classes.label} cursor-default`} c="dimmed">
-                  {sanatizeDateString(report.createdAt, Locale.EN)}
+                  {sanatizeDateString(
+                    report.createdAt,
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN
+                  )}
                 </Text>
               </Center>
             </Tooltip>
@@ -366,14 +376,17 @@ export default function ReportCard({
                 transition: "pop-bottom-right",
                 duration: 100,
               }}
-              label="Updated at"
+              label={t("common:reports-updatedAt")}
               color="green"
               withArrow
               arrowPosition="side"
             >
               <Center>
                 <Text className={`${classes.label} cursor-default`} c="dimmed">
-                  {sanatizeDateString(report.updatedAt, Locale.EN)}
+                  {sanatizeDateString(
+                    report.updatedAt,
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN
+                  )}
                 </Text>
                 <Box pl={4}>
                   <IconClock size="1.2rem" />
@@ -409,7 +422,7 @@ export default function ReportCard({
               deleteMutation(report.id);
             }}
           >
-            Delete
+            {t("common:report-delete")}
             <IconAlertTriangleFilled
               className="ml-2"
               height={18}
@@ -424,7 +437,7 @@ export default function ReportCard({
               radius="sm"
               style={{ flex: 1 }}
             >
-              Edit
+              {t("common:report-edit")}
               <IconEdit className="ml-2" height={22} stroke={1.5} />
             </Button>
           </Link>

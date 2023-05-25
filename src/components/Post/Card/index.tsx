@@ -32,7 +32,7 @@ import { sanatizeDateString } from "~/helpers";
 import { Locale } from "~/types";
 
 import { useRouter } from "next/router";
-
+import { useTranslation } from "next-i18next";
 import { useMediaQuery } from "@mantine/hooks";
 
 const useStyles = createStyles((theme) => ({
@@ -107,6 +107,9 @@ interface PostCardProps {
 
 export function PostCard(props: PostCardProps) {
   const router = useRouter();
+  const { locales, locale: activeLocale, defaultLocale } = router;
+  const { t, i18n } = useTranslation(activeLocale);
+
   const [postHTMLContent, setPostHTMLContent] = useState("");
   const { report, postId } = props;
 
@@ -140,7 +143,7 @@ export function PostCard(props: PostCardProps) {
     {
       label: sanatizeDateString(
         report?.createdAt,
-        router.locale === "de" ? Locale.DE : Locale.EN
+        router.locale === Locale.DE ? Locale.DE : Locale.EN
       ),
       icon: IconCalendar,
     },
@@ -148,7 +151,7 @@ export function PostCard(props: PostCardProps) {
     {
       label: sanatizeDateString(
         report?.updatedAt,
-        router.locale === "de" ? Locale.DE : Locale.EN
+        router.locale === Locale.DE ? Locale.DE : Locale.EN
       ),
       icon: IconClock,
     },
@@ -201,7 +204,7 @@ export function PostCard(props: PostCardProps) {
           title: "Update from",
           value: sanatizeDateString(
             post?.date as string,
-            router.locale === "de" ? Locale.DE : Locale.EN
+            router.locale === Locale.DE ? Locale.DE : Locale.EN
           ),
         },
         {

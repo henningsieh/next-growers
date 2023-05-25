@@ -1,11 +1,17 @@
 {
-  "reports-headline": "All Grows",
-  "myreports-headline": "My Grows",
-  "hello-frontend": "Hello from the frontend",
-  "switch-language": "Switch language",
-  "get-message": "Fetch message in English from the backend",
-  "message-success": "The API request was a success, the translation is coming from the backend!",
+  "app-themetoggle": "Toggle light/dark color scheme",
+  "app-switchlanguage": "Switch language",
   "landing-text1": "At GrowAGram, we provide a platform for cannabis enthusiasts to showcase their growing skills and share their knowledge.",
   "landing-text2": "As the legalization of cannabis approaches in Germany, we believe it's important to build a community that celebrates the plant and its unique growing process.",
-  "landing-text3": "If you're passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings."
+  "landing-text3": "If you're passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.",
+  "myreports-headline": "My Grows",
+  "usermenu-myprofile": "My Profile",
+  "usermenu-mygrows": "My Grows",
+  "usermenu-addnewgrow": "Create new Grow",
+  "usermenu-logout": "Log me out... 👋",
+  "reports-headline": "All Grows",
+  "reports-createdAt": "created at",
+  "reports-updatedAt": "updated at",
+  "report-edit": "Edit",
+  "report-delete": "Delete"
 }

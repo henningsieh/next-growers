@@ -1,7 +1,11 @@
+import "dayjs/locale/de";
+import "dayjs/locale/en";
+
 import { Group, Indicator, Paper, useMantineTheme } from "@mantine/core";
 
 import { DatePicker } from "@mantine/dates";
-import React from "react";
+import { Locale } from "~/types";
+import { useRouter } from "next/router";
 
 interface PostsDatePickerProps {
   postDays: number[];
@@ -21,12 +25,13 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   getResponsiveColumnCount,
 }) => {
   const theme = useMantineTheme();
+  const router = useRouter();
 
   return (
     <Paper withBorder>
       <Group position="center">
         <DatePicker
-          locale="de"
+          locale={router.locale === Locale.DE ? Locale.DE : Locale.EN}
           size="md"
           renderDay={(date) => {
             const day = date.getDate();
