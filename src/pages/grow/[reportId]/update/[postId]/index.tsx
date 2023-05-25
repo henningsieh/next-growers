@@ -12,6 +12,7 @@ import type {
   InferGetStaticPropsType,
 } from "next";
 
+import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/router";
 import { DatePicker } from "@mantine/dates";
 import { Environment } from "~/types";
@@ -26,6 +27,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { PostCard } from "~/components/Post/Card";
+import PostsDatePicker from "~/components/Post/Datepicker";
+import { IconCalendarOff, IconCross } from "@tabler/icons-react";
 /**
  * getStaticProps
  * @param context : GetStaticPropsContext<{ reportId: string }>
@@ -136,8 +139,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
     );
   });
 
-  console.debug(paths);
-
   return {
     paths,
     fallback: "blocking",
@@ -179,7 +180,6 @@ export default function PublicReportPost(
     (post) => post.id === postIdfromProps
   );
   const postDate = new Date(post?.date as string);
-  const postDay = postDate.getTime();
   const postDays = staticReportFromProps.posts.map((post) =>
     new Date(post.date).getTime()
   );
@@ -197,20 +197,21 @@ export default function PublicReportPost(
     });
 
     if (matchingPost) {
-      console.log(matchingPost.id);
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
 
-      const newUrl = `/grow-report/${staticReportFromProps.id as string}/post/${
+      const newUrl = `/grow/${staticReportFromProps.id as string}/update/${
         matchingPost.id
       }`;
       window.history.pushState({}, "", newUrl);
       /* 
       void router.push(
-        `/grow-report/${staticReportFromProps.id as string}/post/${
+        `/grow-report/${staticReportFromProps.id as string}/update/${
           matchingPost.id
         }`
       ); */
+    } else {
+      notifications.show(noPostAtThisDay);
     }
   };
 
@@ -265,42 +266,14 @@ export default function PublicReportPost(
           </Box>
 
           {/* // Posts Date Picker */}
-          <Group position="center">
-            <DatePicker
-              locale="de"
-              size="sm"
-              renderDay={(date) => {
-                const day = date.getDate();
-                const calDay = date.getTime();
-                return (
-                  <Indicator
-                    className={
-                      postDays.includes(calDay) ? "" : "cursor-default"
-                    }
-                    disabled={!postDays.includes(calDay)}
-                    size={10}
-                    color={theme.colors.green[8]}
-                    offset={-2}
-                  >
-                    <div
-                      className={
-                        postDays.includes(calDay) ? "" : "cursor-default"
-                      }
-                    >
-                      {day}
-                    </div>
-                  </Indicator>
-                );
-              }}
-              defaultDate={selectedDate as Date}
-              value={selectedDate}
-              onChange={handleSelectDate}
-              maxDate={dateOfnewestPost}
-              minDate={dateOfGermination}
-              numberOfColumns={getResponsiveColumnCount}
-              maxLevel="month"
-            />
-          </Group>
+          <PostsDatePicker
+            postDays={postDays}
+            selectedDate={selectedDate}
+            handleSelectDate={handleSelectDate}
+            dateOfnewestPost={dateOfnewestPost}
+            dateOfGermination={dateOfGermination}
+            getResponsiveColumnCount={getResponsiveColumnCount}
+          />
 
           <Divider mt="xl" />
 
@@ -312,3 +285,11 @@ export default function PublicReportPost(
     </>
   );
 }
+
+export const noPostAtThisDay = {
+  title: "Success",
+  message: "Sorry... no update for this day! 😢",
+  color: "red",
+  icon: <IconCalendarOff />,
+  loading: false,
+};

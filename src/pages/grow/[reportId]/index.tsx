@@ -18,6 +18,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { PostImagesCarousel } from "~/components/Post/ImageCarousel";
+import PostsDatePicker from "~/components/Post/Datepicker";
+import { useRouter } from "next/router";
+
 /**
  * getStaticProps
  * @param context : GetStaticPropsContext<{ id: string }>
@@ -130,6 +133,7 @@ export default function PublicReport(
   const { report: staticReportFromProps } = props;
   const pageTitle = `${staticReportFromProps.title as string}`;
 
+  const router = useRouter();
   const theme = useMantineTheme();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
@@ -150,6 +154,38 @@ export default function PublicReport(
     },
     new Date(0)
   );
+
+  const [postId, setPostId] = useState<string>("");
+
+  const postDays = staticReportFromProps.posts.map((post) =>
+    new Date(post.date).getTime()
+  );
+  const dateOfGermination = new Date(staticReportFromProps.createdAt);
+  const [selectedDate, selectDate] = useState<Date | null>(null);
+
+  const handleSelectDate = (selectedDate: Date | null) => {
+    if (!selectedDate) {
+      return;
+    }
+
+    const matchingPost = staticReportFromProps.posts.find((post) => {
+      const postDate = new Date(post.date);
+      return selectedDate.toISOString() === postDate.toISOString();
+    });
+
+    if (matchingPost) {
+      selectDate(new Date(matchingPost.date));
+      setPostId(matchingPost.id);
+
+      const newUrl = `/grow/${staticReportFromProps.id as string}/update/${
+        matchingPost.id
+      }`;
+      // window.history.pushState({}, "", newUrl);
+      void router.push(
+        `/grow/${staticReportFromProps.id as string}/update/${matchingPost.id}`
+      );
+    }
+  };
 
   return (
     <>
@@ -201,22 +237,20 @@ export default function PublicReport(
           </Box>
 
           {/* // Posts Date Picker */}
-          <Group position="center">
-            <DatePicker
-              defaultDate={new Date(staticReportFromProps.createdAt)}
-              minDate={new Date(staticReportFromProps.createdAt)}
-              maxDate={dateOfnewestPost}
-              value={value}
-              onChange={setValue}
-              numberOfColumns={getResponsiveColumnCount}
-            />
-          </Group>
+          <PostsDatePicker
+            postDays={postDays}
+            selectedDate={selectedDate}
+            handleSelectDate={handleSelectDate}
+            dateOfnewestPost={dateOfnewestPost}
+            dateOfGermination={dateOfGermination}
+            getResponsiveColumnCount={getResponsiveColumnCount}
+          />
 
-          <PostImagesCarousel />
+          {/* <PostImagesCarousel /> */}
           {/* <PostCard /> */}
         </Container>
 
-        <ReportDetailsHead report={staticReportFromProps} />
+        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
       </Container>
     </>
   );

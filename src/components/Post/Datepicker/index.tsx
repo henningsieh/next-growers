@@ -34,13 +34,12 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
 
           return (
             <Indicator
-              className={isDisabled ? "" : "cursor-default"}
               disabled={isDisabled}
               size={10}
               color={theme.colors.green[8]}
               offset={-2}
             >
-              <div className={isDisabled ? "" : "cursor-default"}>{day}</div>
+              <div>{day}</div>
             </Indicator>
           );
         }}

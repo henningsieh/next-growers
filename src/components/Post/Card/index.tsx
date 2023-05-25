@@ -200,7 +200,11 @@ export function PostCard(props: PostCardProps) {
   const postImagesSlides = postImages?.map((image) => (
     <Carousel.Slide key={image.id}>
       <Center>
-        <Image alt="" src={image.cloudUrl} width={getResponsiveImageHeight} />
+        <Image
+          alt=""
+          src={image.cloudUrl}
+          height={getResponsiveImageHeight / 1.6}
+        />
       </Center>
     </Carousel.Slide>
   ));
@@ -243,9 +247,10 @@ export function PostCard(props: PostCardProps) {
  */}
       <Text fz="sm" c="dimmed" mt="sm">
         <Paper
-          px="sm"
-          py="lg"
-          dangerouslySetInnerHTML={{ __html: postHTMLContent }}
+          m="-md"
+          px="xs"
+          py="sm"
+          dangerouslySetInnerHTML={{ __html: postHTMLContent as TrustedHTML }}
         />
       </Text>
 

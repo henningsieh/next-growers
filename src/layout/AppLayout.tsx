@@ -34,7 +34,7 @@ import {
 } from "@tabler/icons-react";
 
 import { useDisclosure } from "@mantine/hooks";
-import LoginPanel from "../components/Login/LoginPanel";
+import LoginPanel from "../components/LoginPanel";
 import Image from "next/image";
 import Link from "next/link";
 import LightDarkButton from "../components/Atom/LightDarkButton";
