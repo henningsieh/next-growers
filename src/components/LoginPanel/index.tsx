@@ -28,6 +28,8 @@ export default function LoginModal() {
 
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { locales, locale: activeLocale, defaultLocale } = router;
+  const { t, i18n } = useTranslation(activeLocale);
 
   useEffect(() => {
     async function redirectToEditAccount() {
@@ -57,9 +59,6 @@ export default function LoginModal() {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-
-  const { locales, locale: activeLocale, defaultLocale } = router;
-  const { t, i18n } = useTranslation(activeLocale);
 
   return (
     <>

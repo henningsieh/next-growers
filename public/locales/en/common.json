@@ -13,5 +13,11 @@
   "reports-createdAt": "created at",
   "reports-updatedAt": "updated at",
   "report-edit": "Edit",
-  "report-delete": "Delete"
+  "report-delete": "Delete",
+  "addpost-headline": "Create a new Grow Update",
+  "addpost-growdaydescription": "Start is day 0",
+  "addpost-updatedatedescription": "Sets 'Updated at' of Grow",
+  "post-growday": "Grow day",
+  "post-updatedate": "Date of this Update",
+  "post-lighthperday": "Light (h) / Day"
 }

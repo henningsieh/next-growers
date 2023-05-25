@@ -127,25 +127,25 @@ model Report {
 }
 
 model Post {
-  id               String    @id @default(cuid())
+  id               String         @id @default(cuid())
+  reportId         String // One Report has many Posts
+  report           Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  authorId         String
+  author           User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   date             DateTime
-  growStage        GrowStage @default(SEEDLING_STAGE)
+  growStage        GrowStage      @default(SEEDLING_STAGE)
   lightHoursPerDay Int?
   title            String
   images           Image[]
   content          String
   likes            Like[]
   comments         Comment[] // One Post has many Comments
+  Notification     Notification[]
 
-  reportId String // One Report has many Posts
-  report   Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Notification Notification[]
+  @@unique([reportId, date])
 }
 
 model Like {

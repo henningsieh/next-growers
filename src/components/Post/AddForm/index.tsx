@@ -6,26 +6,19 @@ import {
   Grid,
   Group,
   NumberInput,
-  Paper,
   Select,
   TextInput,
   Title,
 } from "@mantine/core";
-import { Editor, useEditor } from "@tiptap/react";
 import {
   IconBulb,
   IconCalendarEvent,
+  IconCalendarOff,
   IconNumber,
   IconPlant,
-  IconSeeding,
 } from "@tabler/icons-react";
-import type {
-  IsoReportWithPostsFromDb,
-  Post,
-  PostDbInput,
-  Report,
-} from "~/types";
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import type { IsoReportWithPostsFromDb, PostDbInput } from "~/types";
+import React, { useEffect, useState } from "react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import { DateInput } from "@mantine/dates";
@@ -42,7 +35,11 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { api } from "~/utils/api";
 import { formatLabel } from "~/helpers";
+import { notifications } from "@mantine/notifications";
 import { toast } from "react-hot-toast";
+import { useEditor } from "@tiptap/react";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 import { z } from "zod";
 
 interface AddPostProps {
@@ -54,6 +51,10 @@ const content =
 const AddPost = (props: AddPostProps) => {
   const { report } = props;
   const [imageIds, setImageIds] = useState<string[]>([]);
+
+  const router = useRouter();
+  const { locales, locale: activeLocale, defaultLocale } = router;
+  const { t, i18n } = useTranslation(activeLocale);
 
   // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
@@ -70,7 +71,10 @@ const AddPost = (props: AddPostProps) => {
       Superscript,
       SubScript,
       Highlight,
-      TextAlign.configure({ types: ["heading", "paragraph"] }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+        alignments: ["left", "center", "justify"],
+      }),
     ],
     content,
   });
@@ -85,7 +89,7 @@ const AddPost = (props: AddPostProps) => {
     // If the mutation fails,
     // use the context returned from onMutate to roll back
     onError: (err, newReport, context) => {
-      toast.error("An error occured when saving your report");
+      notifications.show(onlyOnePostPerDayAllowed);
       if (!context) return;
       console.log(context);
     },
@@ -170,7 +174,7 @@ const AddPost = (props: AddPostProps) => {
   return (
     <Container p={0} mt="lg" size="md">
       {/* <Paper withBorder> */}
-      <Title order={2}>Update your Grow </Title>
+      <Title order={2}>{t("common:addpost-headline")}</Title>
 
       <Box mt="sm">
         <form
@@ -195,8 +199,8 @@ const AddPost = (props: AddPostProps) => {
               <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
                 <Flex className="justify-start space-x-2" align="baseline">
                   <NumberInput
-                    label="Grow day"
-                    description="Start is day 0"
+                    label={t("common:post-growday")}
+                    description={t("common:addpost-growdaydescription")}
                     w={142}
                     placeholder="1"
                     icon={<IconNumber size="1.2rem" />}
@@ -215,8 +219,8 @@ const AddPost = (props: AddPostProps) => {
                     }}
                   />
                   <DateInput
-                    label="Date for this update"
-                    description="Sets 'Updated at' of Grow"
+                    label={t("common:post-updatedate")}
+                    description={t("common:addpost-updatedatedescription")}
                     valueFormat="MMM DD, YYYY HH:mm"
                     // valueFormat="DD/MM/YYYY HH:mm:ss"
                     className="w-full"
@@ -319,8 +323,9 @@ const AddPost = (props: AddPostProps) => {
               <RichTextEditor.ControlsGroup>
                 <RichTextEditor.AlignLeft />
                 <RichTextEditor.AlignCenter />
+                {/* 
                 <RichTextEditor.AlignJustify />
-                <RichTextEditor.AlignRight />
+                <RichTextEditor.AlignRight /> */}
               </RichTextEditor.ControlsGroup>
             </RichTextEditor.Toolbar>
 
@@ -346,3 +351,11 @@ const AddPost = (props: AddPostProps) => {
 };
 
 export default AddPost;
+
+export const onlyOnePostPerDayAllowed = {
+  title: "Failure",
+  message: "You can only post one update per Day! 😢",
+  color: "red",
+  icon: <IconCalendarOff />,
+  loading: false,
+};

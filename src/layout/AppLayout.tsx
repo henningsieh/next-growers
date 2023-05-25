@@ -198,7 +198,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         style={{
           position: "fixed",
           zIndex: 100,
-          maxWidth: "1852px",
+          maxWidth: 1320, //same as <Container size="lg" />
           width: "100%",
           margin: "0px auto",
           padding: "0 1rem",

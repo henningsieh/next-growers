@@ -28,7 +28,7 @@ import {
 import { Carousel } from "@mantine/carousel";
 import { type IsoReportWithPostsFromDb } from "~/types";
 import { useEffect, useState } from "react";
-import { sanatizeDateString } from "~/helpers";
+import { formatLabel, sanatizeDateString } from "~/helpers";
 import { Locale } from "~/types";
 
 import { useRouter } from "next/router";
@@ -89,6 +89,13 @@ const useStyles = createStyles((theme) => ({
         ? theme.colors.dark[2]
         : theme.colors.gray[5],
   },
+
+  importedhtmlcontent: {
+    margin: 0,
+    padding: 0,
+    listStyleType: "initial",
+  },
+
   /* 
   footer: {
     display: "flex",
@@ -201,22 +208,22 @@ export function PostCard(props: PostCardProps) {
       content: postHTMLContent,
       details: [
         {
-          title: "Update from",
+          title: t("common:post-updatedate"),
           value: sanatizeDateString(
             post?.date as string,
             router.locale === Locale.DE ? Locale.DE : Locale.EN
           ),
         },
         {
-          title: "Grow Day",
+          title: t("common:post-growday"),
           value: postDayOfGrow,
         },
         {
           title: "Grow Stage",
-          value: post?.growStage,
+          value: formatLabel(post?.growStage as string),
         },
         {
-          title: "Light (h) / Day",
+          title: t("common:post-lighthperday"),
           value: post?.lightHoursPerDay,
         },
       ],
@@ -274,12 +281,17 @@ export function PostCard(props: PostCardProps) {
    */}
         <Text fz="sm" c="dimmed" mt="sm">
           <Paper
+            fz={18}
             withBorder
             p={theme.spacing.xs}
             mb={theme.spacing.sm}
             dangerouslySetInnerHTML={{ __html: postHTMLContent as TrustedHTML }}
           />
         </Text>
+        {/* 
+        <div className="importedhtmlcontent">
+          <div dangerouslySetInnerHTML={{ __html: postHTMLContent }} />
+        </div> */}
         {/*       
         <Card.Section className={classes.section} mt="md">
           <Group position="apart" mt="md">

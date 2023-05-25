@@ -40,6 +40,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
 
             return (
               <Indicator
+                className="z-20"
                 disabled={isDisabled}
                 size={10}
                 color={theme.colors.green[8]}
