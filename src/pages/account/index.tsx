@@ -6,6 +6,31 @@ import { useSession } from "next-auth/react";
 import { Container, Title } from "@mantine/core";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import Head from "next/head";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+/**
+ * PROTECTED PAGE with translations
+ * async getServerSideProps()
+ *
+ * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
+ * @returns : Promise<{props: { session: Session | null } | undefined;};}>
+ */
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{
+    translations: string | string[] | undefined;
+  }>
+) {
+  // Fetch translations using next-i18next
+  const translations = await serverSideTranslations(context.locale as string, [
+    "common",
+  ]);
+  return {
+    props: {
+      ...translations,
+      session: await getServerSession(context.req, context.res, authOptions),
+    },
+  };
+}
 
 export default function Page() {
   const pageTitle = "Your Account Settings";
@@ -39,19 +64,4 @@ export default function Page() {
       </Container>
     </>
   );
-}
-
-/**
- *
- * PROTECTED PAGE
- */
-export async function getServerSideProps(ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) {
-  return {
-    props: {
-      session: await getServerSession(ctx.req, ctx.res, authOptions),
-    },
-  };
 }

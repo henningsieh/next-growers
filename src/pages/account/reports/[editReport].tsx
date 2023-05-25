@@ -4,6 +4,7 @@ import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
+  NextPage,
 } from "next";
 import { IsoReportWithPostsFromDb, Strains } from "~/types";
 import { Link, RichTextEditor } from "@mantine/tiptap";
@@ -15,19 +16,30 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 /**
- * PROTECTED PAGE / PRELOAD SESSION
+ * PROTECTED PAGE with translations
+ * async getServerSideProps()
+ *
+ * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
+ * @returns : Promise<{props: { session: Session | null } | undefined;};}>
  */
-export async function getServerSideProps(ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) {
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{
+    translations: string | string[] | undefined;
+  }>
+) {
+  // Fetch translations using next-i18next
+  const translations = await serverSideTranslations(context.locale as string, [
+    "common",
+  ]);
   return {
     props: {
-      session: await getServerSession(ctx.req, ctx.res, authOptions),
+      ...translations,
+      session: await getServerSession(context.req, context.res, authOptions),
     },
   };
 }
@@ -37,7 +49,7 @@ export async function getServerSideProps(ctx: {
  * @param props: { trpcState: DehydratedState, id: string }
  * @returns HTML Component
  */
-export default function EditReportDetails() {
+const EditReportDetails: NextPage = () => {
   const pageTitle = "Edit Grow Details";
 
   const router = useRouter();
@@ -117,4 +129,6 @@ export default function EditReportDetails() {
       </Container>
     </>
   );
-}
+};
+
+export default EditReportDetails;

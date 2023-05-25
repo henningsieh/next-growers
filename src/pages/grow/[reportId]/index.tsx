@@ -20,6 +20,9 @@ import { useMediaQuery } from "@mantine/hooks";
 import { PostImagesCarousel } from "~/components/Post/ImageCarousel";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { useRouter } from "next/router";
+import { PostCard } from "~/components/Post/Card";
+import { notifications } from "@mantine/notifications";
+import { noPostAtThisDay } from "./update/[postId]";
 
 /**
  * getStaticProps
@@ -145,8 +148,6 @@ export default function PublicReport(
   */
   const getResponsiveColumnCount = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
 
-  const [value, setValue] = useState<Date | null>(null);
-
   const dateOfnewestPost = staticReportFromProps.posts.reduce(
     (maxDate, post) => {
       const postDate = new Date(post.date);
@@ -184,6 +185,8 @@ export default function PublicReport(
       void router.push(
         `/grow/${staticReportFromProps.id as string}/update/${matchingPost.id}`
       );
+    } else {
+      notifications.show(noPostAtThisDay);
     }
   };
 
@@ -199,7 +202,7 @@ export default function PublicReport(
         />
       </Head>
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-1">
+      <Container size="lg" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -211,8 +214,8 @@ export default function PublicReport(
         <Container
           size="lg"
           px={0}
-          className="flex w-full flex-col space-y-4"
           mx="auto"
+          className="flex w-full flex-col space-y-4"
         >
           <ImagePreview
             authorName={staticReportFromProps.author?.name as string}
@@ -246,8 +249,7 @@ export default function PublicReport(
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
 
-          {/* <PostImagesCarousel /> */}
-          {/* <PostCard /> */}
+          <PostCard postId={postId} report={staticReportFromProps} />
         </Container>
 
         {/* <ReportDetailsHead report={staticReportFromProps} /> */}

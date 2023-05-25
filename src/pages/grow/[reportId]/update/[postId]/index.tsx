@@ -24,11 +24,12 @@ import ReportDetailsHead from "~/components/Report/DetailsHead";
 import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 import { prisma } from "~/server/db";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { IconCalendarOff, IconCross } from "@tabler/icons-react";
+
 /**
  * getStaticProps
  * @param context : GetStaticPropsContext<{ reportId: string }>
@@ -153,8 +154,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export default function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
+  const { report: staticReportFromProps, postId: postIdfromProps } = props;
+  const pageTitle = `${staticReportFromProps.title as string}`;
+
   const router = useRouter();
   const theme = useMantineTheme();
+
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
@@ -163,8 +168,6 @@ export default function PublicReportPost(
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
   */
   const getResponsiveColumnCount = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
-
-  const { report: staticReportFromProps, postId: postIdfromProps } = props;
 
   const dateOfnewestPost = staticReportFromProps.posts.reduce(
     (maxDate, post) => {
@@ -179,6 +182,7 @@ export default function PublicReportPost(
   const post = staticReportFromProps.posts.find(
     (post) => post.id === postIdfromProps
   );
+
   const postDate = new Date(post?.date as string);
   const postDays = staticReportFromProps.posts.map((post) =>
     new Date(post.date).getTime()
@@ -204,18 +208,11 @@ export default function PublicReportPost(
         matchingPost.id
       }`;
       window.history.pushState({}, "", newUrl);
-      /* 
-      void router.push(
-        `/grow-report/${staticReportFromProps.id as string}/update/${
-          matchingPost.id
-        }`
-      ); */
     } else {
       notifications.show(noPostAtThisDay);
     }
   };
 
-  const pageTitle = `${staticReportFromProps.title as string}`;
   return (
     <>
       <Head>
@@ -228,7 +225,7 @@ export default function PublicReportPost(
         />
       </Head>
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-1">
+      <Container size="lg" className="mb-8 flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -274,8 +271,6 @@ export default function PublicReportPost(
             dateOfGermination={dateOfGermination}
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
-
-          <Divider mt="xl" />
 
           <PostCard postId={postId} report={staticReportFromProps} />
         </Container>

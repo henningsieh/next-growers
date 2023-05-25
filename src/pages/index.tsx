@@ -6,6 +6,11 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
+/**
+ * // PUBLIC PAGE with translations
+ *
+ * getServerSideProps
+ */
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
@@ -13,7 +18,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     },
   };
 };
-
 const LandingPage: NextPage = () => {
   const router = useRouter();
   const {
@@ -38,5 +42,4 @@ const LandingPage: NextPage = () => {
     </>
   );
 };
-
 export default LandingPage;

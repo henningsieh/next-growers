@@ -1,9 +1,14 @@
 import {
   ActionIcon,
+  Box,
+  Center,
+  Group,
+  SegmentedControl,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { GetServerSideProps, NextPage } from "next";
+import { IconMoon, IconSun } from "@tabler/icons-react";
 
 import Image from "next/image";
 import React from "react";
@@ -15,19 +20,54 @@ import { useTranslation } from "next-i18next";
 
 const LanguageSwitcher: NextPage = () => {
   const router = useRouter();
+  const { colorScheme } = useMantineColorScheme();
 
   const { locales, locale: activeLocale, defaultLocale } = router;
   console.log(locales, activeLocale, defaultLocale);
 
-  const { t, i18n } = useTranslation(activeLocale);
-
-  const { colorScheme } = useMantineColorScheme();
-  const theme = useMantineTheme();
-  const dark = colorScheme === "dark";
+  const { i18n } = useTranslation(activeLocale);
 
   return (
     <>
+      <Group position="center">
+        <SegmentedControl
+          bottom={0}
+          variant="filled"
+          value={router.locale}
+          onChange={() =>
+            void router.push(router.pathname, router.asPath, {
+              locale: i18n.language === "de" ? "en" : "de",
+            })
+          }
+          data={[
+            {
+              value: "de",
+              label: (
+                <Image
+                  height={12}
+                  width={28}
+                  alt="German language icon"
+                  src={deFlag as string}
+                />
+              ),
+            },
+            {
+              value: "en",
+              label: (
+                <Image
+                  height={12}
+                  width={28}
+                  alt="German language icon"
+                  src={usFlag as string}
+                />
+              ),
+            },
+          ]}
+        />
+      </Group>
+      {/* 
       <ActionIcon
+        title="Toggle Language (en/de)"
         className="cursor-default"
         size={32}
         variant="transparent"
@@ -44,7 +84,7 @@ const LanguageSwitcher: NextPage = () => {
           alt="German language icon"
           src={(i18n.language === "de" ? usFlag : deFlag) as string}
         />
-      </ActionIcon>
+      </ActionIcon> */}
     </>
   );
 };

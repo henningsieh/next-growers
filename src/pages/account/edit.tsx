@@ -12,12 +12,12 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import { IconAt, IconMail, IconReload } from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AppNotification from "~/components/Atom/Notification";
-import type { GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { IconAlertCircle } from "@tabler/icons-react";
 import Image from "next/image";
@@ -25,11 +25,36 @@ import { api } from "~/utils/api";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth/next";
 import { getUsername } from "~/helpers";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { z } from "zod";
 
-export default function EditReport() {
+/**
+ * PROTECTED PAGE with translations
+ * async getServerSideProps()
+ *
+ * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
+ * @returns : Promise<{props: { session: Session | null } | undefined;};}>
+ */
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{
+    translations: string | string[] | undefined;
+  }>
+) {
+  // Fetch translations using next-i18next
+  const translations = await serverSideTranslations(context.locale as string, [
+    "common",
+  ]);
+  return {
+    props: {
+      ...translations,
+      session: await getServerSession(context.req, context.res, authOptions),
+    },
+  };
+}
+
+const ProtectedEditReport: NextPage = () => {
   const pageTitle = "Edit Profile";
   const { data: session, status, update } = useSession();
   const [appNotificationOpened, setOpened] = useState(false);
@@ -91,7 +116,7 @@ export default function EditReport() {
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-1">
+      <Container size="lg" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -200,19 +225,6 @@ export default function EditReport() {
       />
     </>
   );
-}
+};
 
-/**
- * PROTECTED PAGE
- */
-
-export async function getServerSideProps(ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) {
-  return {
-    props: {
-      session: await getServerSession(ctx.req, ctx.res, authOptions),
-    },
-  };
-}
+export default ProtectedEditReport;

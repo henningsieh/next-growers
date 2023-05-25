@@ -7,8 +7,10 @@ export function useRouteLoader() {
 
   useEffect(() => {
     const handleRouteChangeStart = (url: string) => {
-      setIsLoading(true);
       console.log("isLoading", url);
+      if (!url.includes("/update/")) {
+        setIsLoading(true);
+      }
     };
     const handleRouteChangeComplete = () => setIsLoading(false);
     const handleRouteChangeError = () => setIsLoading(false);

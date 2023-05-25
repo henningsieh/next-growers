@@ -10,10 +10,13 @@ import {
   createStyles,
   getStylesRef,
   rem,
+  Alert,
 } from "@mantine/core";
 import {
   IconCalendar,
   IconClock,
+  IconEye,
+  IconEyeglass,
   IconGasStation,
   IconGauge,
   IconHome,
@@ -62,7 +65,9 @@ const useStyles = createStyles((theme) => ({
   },
 
   section: {
-    padding: theme.spacing.md,
+    margin: 0,
+    paddingTop: theme.spacing.xs,
+    paddingBottom: theme.spacing.xs,
     borderTop: `${rem(1)} solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
     }`,
@@ -84,7 +89,7 @@ const useStyles = createStyles((theme) => ({
         ? theme.colors.dark[2]
         : theme.colors.gray[5],
   },
-
+  /* 
   footer: {
     display: "flex",
     justifyContent: "space-between",
@@ -92,7 +97,7 @@ const useStyles = createStyles((theme) => ({
     borderTop: `${rem(1)} solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
     }`,
-  },
+  }, */
 }));
 
 interface PostCardProps {
@@ -101,10 +106,18 @@ interface PostCardProps {
 }
 
 export function PostCard(props: PostCardProps) {
+  const router = useRouter();
   const [postHTMLContent, setPostHTMLContent] = useState("");
+  const { report, postId } = props;
+
+  useEffect(() => {
+    const post = report.posts.find((post) => post.id === postId);
+    if (post) {
+      setPostHTMLContent(post.content);
+    }
+  }, [report, postId]);
 
   const { classes } = useStyles();
-
   const theme = useMantineTheme();
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -123,38 +136,7 @@ export function PostCard(props: PostCardProps) {
     ? 1180
     : 1390;
 
-  const { report, postId } = props;
-
-  const router = useRouter();
-
-  const post = report.posts.find((post) => post.id === postId);
-  const postImages = post?.images;
-
-  const postBasicData = {
-    image:
-      "https://images.unsplash.com/photo-1581889470536-467bdbe30cd0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-    title: "Running challenge",
-    content: postHTMLContent,
-    details: [
-      {
-        title: "Date",
-        value: sanatizeDateString(
-          post?.date as string,
-          router.locale === "de" ? Locale.DE : Locale.EN
-        ),
-      },
-      {
-        title: "Grow Stage",
-        value: post?.growStage,
-      },
-      {
-        title: "Light (h) / Day",
-        value: post?.lightHoursPerDay,
-      },
-    ],
-  };
-
-  const growBasicData = [
+  const reportBasicData = [
     {
       label: sanatizeDateString(
         report?.createdAt,
@@ -171,127 +153,169 @@ export function PostCard(props: PostCardProps) {
       icon: IconClock,
     },
   ];
-
-  const postData = postBasicData.details.map((basicData) => (
-    <div key={basicData.title}>
-      <Text size="xs" color="dimmed">
-        {basicData.title}
-      </Text>
-      <Text weight={500} size="sm">
-        {basicData.value}
-      </Text>
-    </div>
-  ));
-
-  useEffect(() => {
-    const post = report.posts.find((post) => post.id === postId);
-    if (post) {
-      setPostHTMLContent(post.content);
-    }
-  }, [report, postId]);
-
-  const growBasics = growBasicData.map((growBasic) => (
+  const reportBasics = reportBasicData.map((growBasic) => (
     <Center key={growBasic.label}>
       <growBasic.icon size="1.05rem" className={classes.icon} stroke={1.5} />
       <Text size="xs">{growBasic.label}</Text>
     </Center>
   ));
 
-  const postImagesSlides = postImages?.map((image) => (
-    <Carousel.Slide key={image.id}>
-      <Center>
-        <Image
-          alt=""
-          src={image.cloudUrl}
-          height={getResponsiveImageHeight / 1.6}
-        />
-      </Center>
-    </Carousel.Slide>
-  ));
-
-  return (
-    <Card radius="md" withBorder padding="xl">
-      {/* 
-      <Card.Section>
-        <PostImagesCarousel />
-      </Card.Section> */}
-
-      <Group position="apart">
-        <Text fw={700} fz="lg">
-          {post?.title}
+  if (!postId) {
+    return (
+      <Card p="sm" radius="sm" withBorder>
+        <Alert withCloseButton bg="yellow">
+          Select a date with update from calendar
+        </Alert>
+        <Text fz="sm" c="dimmed" className={classes.section}>
+          Grow Informations
         </Text>
+        <Group position="apart" spacing="xs">
+          {reportBasics}
+        </Group>
+      </Card>
+    );
+  } else {
+    const post = report.posts.find((post) => post.id === postId);
 
-        <Group spacing={5}>
-          <IconStar size="1rem" />
-          <Text fz="xs" fw={500}>
-            4.78
+    const reportCreatedAt = new Date(report.createdAt);
+    const postDate = new Date(post?.date as string);
+
+    // Calculate the difference in milliseconds between the two dates
+    const timeDifference = postDate.getTime() - reportCreatedAt.getTime();
+
+    // Convert the difference to days
+    const postDayOfGrow = Math.floor(
+      timeDifference / (1000 * 60 * 60 * 24) + 1
+    );
+
+    console.log(postDayOfGrow); // The difference in days
+
+    const postImages = post?.images;
+    const postBasicData = {
+      image:
+        "https://images.unsplash.com/photo-1581889470536-467bdbe30cd0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
+      title: "Running challenge",
+      content: postHTMLContent,
+      details: [
+        {
+          title: "Update from",
+          value: sanatizeDateString(
+            post?.date as string,
+            router.locale === "de" ? Locale.DE : Locale.EN
+          ),
+        },
+        {
+          title: "Grow Day",
+          value: postDayOfGrow,
+        },
+        {
+          title: "Grow Stage",
+          value: post?.growStage,
+        },
+        {
+          title: "Light (h) / Day",
+          value: post?.lightHoursPerDay,
+        },
+      ],
+    };
+    const postData = postBasicData.details.map((basicData) => (
+      <div key={basicData.title}>
+        <Text size="xs" color="dimmed" align="center">
+          {basicData.title}
+        </Text>
+        <Text weight={500} size="sm" align="center">
+          {basicData.value}
+        </Text>
+      </div>
+    ));
+    const postImagesSlides = postImages?.map((image) => (
+      <Carousel.Slide key={image.id}>
+        <Center>
+          <Image
+            alt=""
+            src={image.cloudUrl}
+            height={getResponsiveImageHeight / 1.6}
+          />
+        </Center>
+      </Carousel.Slide>
+    ));
+
+    return (
+      <Card p="sm" radius="sm" withBorder>
+        <Group position="apart">
+          <Text fw={700} fz="xl">
+            {post?.title}
           </Text>
-        </Group>
-      </Group>
 
-      <Card.Section className={classes.section}>
-        <Group position="apart" spacing={8} mb={-8}>
-          {postData}
+          <Group spacing={4}>
+            <IconEye size="1rem" />
+            <Text fz="xs" fw={500}>
+              1468
+            </Text>
+          </Group>
         </Group>
-      </Card.Section>
-      {/* 
-      <Card.Section className={classes.section} mt="md">
-        <Text fz="sm" c="dimmed" className={classes.label}>
+
+        <Card.Section className={classes.section}>
+          <Group position="apart">{postData}</Group>
+        </Card.Section>
+        {/* 
+        <Card.Section className={classes.section} mt="md">
+          <Text fz="sm" c="dimmed" className={classes.label}>
+            Grow Informations
+          </Text>
+  
+          <Group spacing={8} mb={-8}>
+            {growBasics}
+          </Group>
+        </Card.Section>
+   */}
+        <Text fz="sm" c="dimmed" mt="sm">
+          <Paper
+            withBorder
+            p={theme.spacing.xs}
+            mb={theme.spacing.sm}
+            dangerouslySetInnerHTML={{ __html: postHTMLContent as TrustedHTML }}
+          />
+        </Text>
+        {/*       
+        <Card.Section className={classes.section} mt="md">
+          <Group position="apart" mt="md">
+            <div>
+              <Text fz="xl" span fw={500} className={classes.price}>
+                397$
+              </Text>
+              <Text span fz="sm" c="dimmed">
+                {" "}
+                / night
+              </Text>
+            </div>
+            <Button radius="md">Book now</Button>
+          </Group>
+        </Card.Section>
+        */}
+        {/* //BOTTOM CAROUSEL */}
+        <Card.Section>
+          <Carousel
+            withIndicators
+            loop
+            classNames={{
+              root: classes.carousel,
+              controls: classes.carouselControls,
+              indicator: classes.carouselIndicator,
+            }}
+          >
+            {postImagesSlides}
+          </Carousel>
+        </Card.Section>
+
+        <Text fz="sm" c="dimmed" className={classes.section}>
           Grow Informations
         </Text>
 
-        <Group spacing={8} mb={-8}>
-          {growBasics}
+        <Group position="apart" spacing="xs">
+          {reportBasics}
         </Group>
-      </Card.Section>
- */}
-      <Text fz="sm" c="dimmed" mt="sm">
-        <Paper
-          m="-md"
-          px="xs"
-          py="sm"
-          dangerouslySetInnerHTML={{ __html: postHTMLContent as TrustedHTML }}
-        />
-      </Text>
-
-      <Group position="apart" mt="md">
-        <div>
-          <Text fz="xl" span fw={500} className={classes.price}>
-            397$
-          </Text>
-          <Text span fz="sm" c="dimmed">
-            {" "}
-            / night
-          </Text>
-        </div>
-
-        <Button radius="md">Book now</Button>
-      </Group>
-
-      {/* //BOTTOM CAROUSEL */}
-      <Card.Section>
-        <Carousel
-          withIndicators
-          loop
-          classNames={{
-            root: classes.carousel,
-            controls: classes.carouselControls,
-            indicator: classes.carouselIndicator,
-          }}
-        >
-          {postImagesSlides}
-        </Carousel>
-      </Card.Section>
-
-      <Card.Section className={classes.section} mt="md">
-        <Text fz="sm" c="dimmed" className={classes.label}>
-          Grow Informations
-        </Text>
-
-        <Group spacing={8} mb={-8}>
-          {growBasics}
-        </Group>
-      </Card.Section>
-    </Card>
-  );
+      </Card>
+    );
+  }
 }

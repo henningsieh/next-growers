@@ -37,6 +37,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+/**
+ * // PUBLIC PAGE with translations
+ *
+ * getServerSideProps
+ */
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   return {
     props: {
@@ -45,8 +50,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   };
 };
 
-const AllReportsPage: NextPage = () => {
-  const pageTitle = "All Grows";
+const PublicAllGrows: NextPage = () => {
+  const { t, i18n } = useTranslation();
+  const pageTitle = t("common:reports-headline");
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
@@ -93,12 +99,12 @@ const AllReportsPage: NextPage = () => {
     setSearchString(event.target.value);
   };
 
-  const { t, i18n } = useTranslation();
   if (isError) return <LoadingError />;
+
   return (
     <>
       <Head>
-        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <title>{`${pageTitle} | GrowAGram`}</title>
         <meta
           name="description"
           content="GrowAGram is a community for sharing and discovering tips, techniques, and insights on growing plants. Join our community and upload your own reports to share your successes and learn from others."
@@ -107,7 +113,7 @@ const AllReportsPage: NextPage = () => {
       {/* <Loading isLoading={isLoading} /> */}
 
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-2">
+      <Container size="lg" className="flex w-full flex-col space-y-2">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -151,7 +157,7 @@ const AllReportsPage: NextPage = () => {
                       sm={6}
                       md={4}
                       lg={3}
-                      xl={2}
+                      xl={3}
                     >
                       <ReportCard
                         procedure="all"
@@ -185,5 +191,4 @@ const AllReportsPage: NextPage = () => {
     </>
   );
 };
-
-export default AllReportsPage;
+export default PublicAllGrows;

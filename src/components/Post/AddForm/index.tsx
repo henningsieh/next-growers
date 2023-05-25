@@ -61,6 +61,7 @@ const AddPost = (props: AddPostProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageIds]);
 
+  // Prepare WISIWIG Editior
   const editor = useEditor({
     extensions: [
       StarterKit,

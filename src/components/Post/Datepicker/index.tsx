@@ -1,4 +1,4 @@
-import { Group, Indicator, useMantineTheme } from "@mantine/core";
+import { Group, Indicator, Paper, useMantineTheme } from "@mantine/core";
 
 import { DatePicker } from "@mantine/dates";
 import React from "react";
@@ -23,35 +23,37 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   const theme = useMantineTheme();
 
   return (
-    <Group position="center">
-      <DatePicker
-        locale="de"
-        size="sm"
-        renderDay={(date) => {
-          const day = date.getDate();
-          const calDay = date.getTime();
-          const isDisabled = !postDays.includes(calDay);
+    <Paper withBorder>
+      <Group position="center">
+        <DatePicker
+          locale="de"
+          size="md"
+          renderDay={(date) => {
+            const day = date.getDate();
+            const calDay = date.getTime();
+            const isDisabled = !postDays.includes(calDay);
 
-          return (
-            <Indicator
-              disabled={isDisabled}
-              size={10}
-              color={theme.colors.green[8]}
-              offset={-2}
-            >
-              <div>{day}</div>
-            </Indicator>
-          );
-        }}
-        defaultDate={selectedDate as Date}
-        value={selectedDate}
-        onChange={handleSelectDate}
-        maxDate={dateOfnewestPost}
-        minDate={dateOfGermination}
-        numberOfColumns={getResponsiveColumnCount}
-        maxLevel="month"
-      />
-    </Group>
+            return (
+              <Indicator
+                disabled={isDisabled}
+                size={10}
+                color={theme.colors.green[8]}
+                offset={-2}
+              >
+                <div>{day}</div>
+              </Indicator>
+            );
+          }}
+          defaultDate={selectedDate as Date}
+          value={selectedDate}
+          onChange={handleSelectDate}
+          maxDate={dateOfnewestPost}
+          minDate={dateOfGermination}
+          numberOfColumns={getResponsiveColumnCount}
+          maxLevel="month"
+        />
+      </Group>
+    </Paper>
   );
 };
 

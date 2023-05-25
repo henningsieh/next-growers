@@ -6,9 +6,34 @@ import AddForm from "~/components/Report/AddForm";
 import Head from "next/head";
 import { authOptions } from "~/server/auth";
 import { getServerSession } from "next-auth";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useSession } from "next-auth/react";
 
-const CreateReport: NextPage = () => {
+/**
+ * PROTECTED PAGE with translations
+ * async getServerSideProps()
+ *
+ * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
+ * @returns : Promise<{props: { session: Session | null } | undefined;};}>
+ */
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{
+    translations: string | string[] | undefined;
+  }>
+) {
+  // Fetch translations using next-i18next
+  const translations = await serverSideTranslations(context.locale as string, [
+    "common",
+  ]);
+  return {
+    props: {
+      ...translations,
+      session: await getServerSession(context.req, context.res, authOptions),
+    },
+  };
+}
+
+const ProtectedCreateReport: NextPage = () => {
   const pageTitle = "Create a Report";
 
   const { data: session } = useSession();
@@ -43,18 +68,4 @@ const CreateReport: NextPage = () => {
   );
 };
 
-export default CreateReport;
-
-/**
- * PROTECTED PAGE
- */
-export async function getServerSideProps(ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) {
-  return {
-    props: {
-      session: await getServerSession(ctx.req, ctx.res, authOptions),
-    },
-  };
-}
+export default ProtectedCreateReport;

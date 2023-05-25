@@ -6,6 +6,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import type { ChangeEvent } from "react";
@@ -16,8 +17,12 @@ import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
 import type { SortingPanelProps } from "~/types";
 import { api } from "~/utils/api";
+import { authOptions } from "~/server/auth";
+import { getServerSession } from "next-auth";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { useTranslation } from "next-i18next";
 
 const useStyles = createStyles((theme) => ({
   hiddenMobile: {
@@ -32,8 +37,34 @@ const useStyles = createStyles((theme) => ({
     },
   },
 }));
-export default function ProtectedOwnReports() {
-  const pageTitle = "My Grows";
+
+/**
+ * PROTECTED PAGE with translations
+ * async getServerSideProps()
+ *
+ * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
+ * @returns : Promise<{props: { session: Session | null } | undefined;};}>
+ */
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{
+    translations: string | string[] | undefined;
+  }>
+) {
+  // Fetch translations using next-i18next
+  const translations = await serverSideTranslations(context.locale as string, [
+    "common",
+  ]);
+  return {
+    props: {
+      ...translations,
+      session: await getServerSession(context.req, context.res, authOptions),
+    },
+  };
+}
+
+export default function ProtectedMyGrows() {
+  const { t, i18n } = useTranslation();
+  const pageTitle = t("common:myreports-headline");
 
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
@@ -81,6 +112,7 @@ export default function ProtectedOwnReports() {
       },
     ],
   };
+
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);
   };
@@ -92,13 +124,13 @@ export default function ProtectedOwnReports() {
   return (
     <>
       <Head>
-        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <title>{`${pageTitle} | GrowAGram`}</title>
         <meta name="description" content="My grow reports on growagram.com" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-2">
+      <Container size="lg" className="flex w-full flex-col space-y-2">
         {/* // Header with Title and Sorting */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -141,7 +173,7 @@ export default function ProtectedOwnReports() {
                       sm={6}
                       md={4}
                       lg={3}
-                      xl={2}
+                      xl={3}
                     >
                       <ReportCard
                         {...cardProps}
