@@ -7,7 +7,7 @@ import type {
   ZodType,
 } from "zod";
 
-import { GrowStage } from "~/types";
+import { Environment, GrowStage } from "~/types";
 import { z } from "zod";
 
 export const InputCreateReport = z.object({
@@ -35,6 +35,7 @@ export const InputEditReport = z.object({
   strains: z
     .array(z.string())
     .min(1, { message: "Report should have at least 1 strain" }),
+  environment: z.enum(Object.keys(Environment) as [keyof typeof Environment]),
   createdAt: z.date(),
 });
 

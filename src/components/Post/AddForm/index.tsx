@@ -126,7 +126,7 @@ const AddPost = (props: AddPostProps) => {
       day: timeDifferenceDays,
       title: "",
       content: "",
-      growStage: GrowStage.VEGETATIVE_STAGE,
+      growStage: undefined,
       lightHoursPerDay: 12,
       images: imageIds,
     },

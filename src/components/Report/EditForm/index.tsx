@@ -7,6 +7,8 @@ import {
   Group,
   LoadingOverlay,
   MultiSelect,
+  NativeSelect,
+  Select,
   Text,
   TextInput,
   Textarea,
@@ -14,11 +16,12 @@ import {
   rem,
 } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
-import type { EditFormProps } from "~/types";
+import { EditFormProps, Environment } from "~/types";
 import {
   IconCalendar,
   IconCloudUpload,
   IconDownload,
+  IconHome,
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
@@ -29,7 +32,7 @@ import { DateInput } from "@mantine/dates";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { InputEditReport } from "~/helpers/inputValidation";
 import { api } from "~/utils/api";
-import { handleDrop } from "~/helpers";
+import { formatLabel, getKeyByValue, handleDrop } from "~/helpers";
 import { toast } from "react-hot-toast";
 
 const useStyles = createStyles((theme) => ({
@@ -66,6 +69,7 @@ const useStyles = createStyles((theme) => ({
 export function EditForm(props: EditFormProps) {
   const { report: reportfromProps, strains: allStrains, user: user } = props;
 
+  const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
@@ -118,8 +122,9 @@ export function EditForm(props: EditFormProps) {
       id: report?.id as string,
       title: report?.title as string,
       description: report?.description as string,
-      strains: report.strains.map((strain) => strain.id),
       createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
+      strains: report.strains.map((strain) => strain.id),
+      environment: report.environment as keyof typeof Environment,
     },
   });
 
@@ -128,6 +133,7 @@ export function EditForm(props: EditFormProps) {
     title: string;
     description: string;
     strains: string[];
+    environment: keyof typeof Environment;
     createdAt: Date;
   }) => {
     tRPCsaveReport(values);
@@ -142,6 +148,9 @@ export function EditForm(props: EditFormProps) {
     }
     if (errors.imageId) {
       toast.error(errors.imageId as string);
+    }
+    if (errors.environment) {
+      toast.error(errors.environment as string);
     }
   };
   const handleDropWrapper = (files: File[]): void => {
@@ -158,7 +167,6 @@ export function EditForm(props: EditFormProps) {
       console.debug(error);
     });
   };
-  const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   return (
     <>
       {reportfromProps && (
@@ -266,7 +274,7 @@ export function EditForm(props: EditFormProps) {
               </Dropzone>
             </div>
           )}
-
+          {Environment[report.environment as keyof typeof Environment]}
           <form
             onSubmit={form.onSubmit((values) => {
               submitEditReportForm(values);
@@ -288,7 +296,18 @@ export function EditForm(props: EditFormProps) {
               withAsterisk
               {...form.getInputProps("title")}
             />
-
+            <Select
+              label="Environment"
+              description="Environment of your Grow"
+              data={Object.keys(Environment).map((key) => ({
+                value: key,
+                label: Environment[key as keyof typeof Environment],
+              }))}
+              withAsterisk
+              {...form.getInputProps("environment")}
+              className="w-full"
+              icon={<IconHome size="1.2rem" />}
+            />
             <Grid gutter="sm">
               <Grid.Col xs={12} sm={4} md={3} lg={3} xl={3}>
                 <DateInput

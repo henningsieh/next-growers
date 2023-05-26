@@ -12,6 +12,15 @@ import type {
 
 import axios from "axios";
 
+export function getKeyByValue<T extends string>(
+  object: Record<string, T>,
+  value: T
+): keyof typeof object | undefined {
+  return Object.keys(object).find(
+    (key) => object[key] === value
+  ) as keyof typeof object;
+}
+
 export function hasUnreadNotifications(notifications: Notification[]): boolean {
   return (
     notifications &&
