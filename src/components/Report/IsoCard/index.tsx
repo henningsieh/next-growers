@@ -13,6 +13,7 @@ import {
   Transition,
   createStyles,
   rem,
+  useMantineTheme,
 } from "@mantine/core";
 import {
   IconAlertTriangleFilled,
@@ -20,27 +21,22 @@ import {
   IconCannabis,
   IconClock,
   IconEdit,
-  IconError404,
-  IconHeart,
-  IconHeartFilled,
+  IconLogin,
 } from "@tabler/icons-react";
 
 import { IconCheck } from "@tabler/icons-react";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import Link from "next/link";
 import { Locale } from "~/types";
-import type {
-  ReportCardProps,
-  IsoReportCardProps,
-} from "~/types";
+import type { IsoReportCardProps } from "~/types";
 import { api } from "~/utils/api";
 import { notifications } from "@mantine/notifications";
 import { sanatizeDateString } from "~/helpers";
-import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useTranslation } from "next-i18next";
+import LikeHeart from "~/components/Atom/LikeHeart";
 
 const useStyles = createStyles(theme => ({
   card: {
@@ -49,8 +45,6 @@ const useStyles = createStyles(theme => ({
     "&:hover": {
       // transform: "scale(1.004)",
       // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-
-      // Add the desired box-shadow color here
 
       // Add the desired box-shadow color and theme's md shadow here
       boxShadow:
@@ -85,6 +79,10 @@ const useStyles = createStyles(theme => ({
     fontSize: theme.fontSizes.xs,
     fontWeight: 700,
   },
+
+  badgecontainer: {
+    marginBottom: "-0.5rem",
+  },
 }));
 
 export const likeSuccessfulMsg = {
@@ -101,12 +99,12 @@ export const dislikeSuccessfulMsg = {
   icon: <IconCheck />,
   loading: false,
 };
-export const createLikeErrorMsg = (msg: string) => ({
+export const likeErrorMsg = (msg: string) => ({
   loading: false,
   title: "Error",
   message: msg,
   color: "red",
-  icon: <IconError404 />,
+  icon: <IconLogin />,
 });
 
 export default function IsoReportCard({
@@ -120,6 +118,7 @@ export default function IsoReportCard({
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
+  const theme = useMantineTheme();
   const { classes } = useStyles();
   const { data: session, status } = useSession();
   const [showLikes, setShowLikes] = useState(false);
@@ -127,12 +126,10 @@ export default function IsoReportCard({
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
       onError: error => {
-        toast.error(error.message);
-        console.error(error.message);
+        notifications.show(likeErrorMsg(error.message));
       },
       onSuccess: likedReport => {
         notifications.show(likeSuccessfulMsg);
-        console.debug("likedReport", likedReport);
       },
       // Always refetch after error or success:
       onSettled: async () => {
@@ -201,7 +198,6 @@ export default function IsoReportCard({
       },
       // If the mutation fails, use the context returned from onMutate to roll back
       onError: (_err, _variables, context) => {
-        // toast.error(`An error occured when deleting todo`)
         if (!!context) {
           if (procedure == "own") {
             trpc.reports.getOwnReports.setData(
@@ -224,23 +220,11 @@ export default function IsoReportCard({
     });
 
   const handleLikeReport = () => {
-    // Ensure that the user is authenticated
-    if (!session) {
-      // Redirect to login or show a login prompt
-      return;
-    }
-
     // Call the likeReport mutation
     likeReportMutation({ reportId: isoReport.id as string });
   };
 
   const handleDisLikeReport = () => {
-    // Ensure that the user is authenticated
-    if (status !== "authenticated") {
-      // Redirect to login or show a login prompt
-      return;
-    }
-
     // Call the likeReport mutation
     deleteLikeMutation({ reportId: isoReport.id as string });
   };
@@ -248,7 +232,7 @@ export default function IsoReportCard({
   const reportStrains = isoReport.strains.map(badge => (
     <Box key={badge.id}>
       <Badge
-        className="cursor-pointer"
+        className="badgecontainer cursor-pointer"
         onClick={() => {
           setSearchString(`strain:"${badge.name}"`);
         }}
@@ -256,11 +240,12 @@ export default function IsoReportCard({
         gradient={{ from: "orange", to: "grape" }}
         fz="0.6rem"
         fw="bolder"
-        px={4}
-        mt={0}
-        mb={0}
-        // color={theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"}
-
+        px={2}
+        color={
+          theme.colorScheme === "dark"
+            ? theme.colors.lime[9]
+            : "green"
+        }
         leftSection={<IconCannabis size={rem(14)} />}
         // leftSection={badge.emoji}
       >
@@ -289,91 +274,20 @@ export default function IsoReportCard({
         />
       </Card.Section>
 
-      <Card.Section className={classes.section} mt={4}>
-        <Flex justify="space-between">
+      <Card.Section className={classes.section} mt={6}>
+        <Flex
+          className="space-y-0"
+          align="flex-start"
+          justify="space-between"
+        >
           <Group
             position="left"
-            className="inline-flex space-y-0"
+            className=" bottom-0 inline-flex space-y-0"
           >
             {/* Strains */}
             {reportStrains}
           </Group>
-          <Flex align="flex-start">
-            {/*// ❤️ */}
-            <Box fz="sm" p={1} m={1}>
-              {isoReport.likes?.length}
-            </Box>
-            <Box className="relative">
-              <ActionIcon
-                title="give props to grower"
-                variant="default"
-                className="cursor-default"
-                onMouseEnter={() => void setShowLikes(true)}
-                onMouseLeave={() => void setShowLikes(false)}
-                onBlur={() => setShowLikes(false)}
-                radius="sm"
-                p={0}
-                mr={-4}
-                size={25}
-              >
-                {isoReport.likes?.find(
-                  like => like.userId === session?.user.id
-                ) ? (
-                  <IconHeartFilled
-                    onClick={handleDisLikeReport}
-                    size="1.2rem"
-                    className={`${classes.like} icon-transition`}
-                    stroke={1.5}
-                  />
-                ) : (
-                  <IconHeart
-                    onClick={handleLikeReport}
-                    size="1.2rem"
-                    className={`${classes.like} icon-transition`}
-                    stroke={1.5}
-                  />
-                )}
-              </ActionIcon>
-              {/*// Likes Tooltip */}
-              {!!isoReport.likes?.length && (
-                <Transition
-                  mounted={showLikes}
-                  transition="pop-bottom-right"
-                  duration={100}
-                  timingFunction="ease-in-out"
-                >
-                  {transitionStyles => (
-                    <Paper
-                      withBorder
-                      className={`absolute bottom-full right-0 z-40 m-0 -mr-1 mb-2 w-max rounded p-0 text-right`}
-                      style={transitionStyles}
-                    >
-                      {isoReport.likes?.map(like => (
-                        <Box key={like.id} mx={10} fz={"xs"}>
-                          {like.name}
-                        </Box>
-                      ))}
-                      <Text
-                        fz="xs"
-                        td="overline"
-                        pr={4}
-                        fs="italic"
-                      >
-                        {isoReport.likes &&
-                          isoReport.likes.length}{" "}
-                        Like
-                        {isoReport.likes &&
-                        isoReport.likes.length > 1
-                          ? "s"
-                          : ""}{" "}
-                        👍
-                      </Text>
-                    </Paper>
-                  )}
-                </Transition>
-              )}
-            </Box>
-          </Flex>
+          <LikeHeart itemToLike={isoReport} />
         </Flex>
       </Card.Section>
 

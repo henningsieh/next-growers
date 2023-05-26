@@ -7,14 +7,14 @@ import {
   LoadingOverlay,
   Title,
   createStyles,
+  useMantineTheme,
 } from "@mantine/core";
 import { type GetServerSideProps, type NextPage } from "next";
 
 import type { ChangeEvent } from "react";
 import Head from "next/head";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { IconDatabaseSearch } from "@tabler/icons-react";
 import LoadingError from "~/components/Atom/LoadingError";
-import ReportCard from "~/components/Report/Card";
 import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
 import type { SortingPanelProps } from "~/types";
@@ -62,16 +62,6 @@ const PublicAllGrows: NextPage = () => {
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
   const { classes } = useStyles();
-  // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
-  const {
-    data: reports,
-    isLoading,
-    isError,
-  } = api.reports.getAllReports.useQuery({
-    search: searchString,
-    orderBy: sortBy, // Set the desired orderBy field
-    desc: desc, // Set the desired order (true for descending, false for ascending)
-  });
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -117,7 +107,7 @@ const PublicAllGrows: NextPage = () => {
     setSearchString(event.target.value);
   };
 
-  if (isError) return <LoadingError />;
+  if (isoIsError) return <LoadingError />;
 
   return (
     <>
@@ -162,11 +152,11 @@ const PublicAllGrows: NextPage = () => {
         {/* // Iso Reports Grid */}
         <Box pos="relative">
           <LoadingOverlay
-            visible={isLoading}
+            visible={isoIsLoading}
             transitionDuration={600}
             overlayBlur={2}
           />
-          {isoReports && !isLoading && (
+          {isoReports && !isoIsLoading && (
             <Grid gutter="sm">
               {/* LOOP OVER REPORTS */}
               {isoReports.length ? (
@@ -195,7 +185,9 @@ const PublicAllGrows: NextPage = () => {
                     <Alert
                       p="xl"
                       m="xl"
-                      icon={<IconAlertCircle size="1rem" />}
+                      icon={
+                        <IconDatabaseSearch size="1.4rem" />
+                      }
                       title="Empty search result"
                       color="red"
                       variant="outline"

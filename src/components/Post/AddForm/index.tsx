@@ -45,13 +45,13 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 interface AddPostProps {
-  report: IsoReportWithPostsFromDb;
+  isoReport: IsoReportWithPostsFromDb;
 }
 const content =
   '<h1 style="text-align: center">Update your Grow with a nice rich text</h1><p><code>RichTextEditor</code> <mark>component focuses on usability </mark>and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports  <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/extensions"> extensions.</a></p></li></ul>';
 
 const AddPost = (props: AddPostProps) => {
-  const { report } = props;
+  const { isoReport: report } = props;
   const [imageIds, setImageIds] = useState<string[]>([]);
 
   const router = useRouter();

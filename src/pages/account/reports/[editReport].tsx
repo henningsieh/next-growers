@@ -89,7 +89,7 @@ const EditReportDetails: NextPage = () => {
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="xl" className="flex flex-col space-y-2">
+      <Container size="lg" className="flex flex-col space-y-2">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -117,7 +117,7 @@ const EditReportDetails: NextPage = () => {
 
               {/* // Add Component */}
               <AddPost
-                report={report as IsoReportWithPostsFromDb}
+                isoReport={report as IsoReportWithPostsFromDb}
               />
 
               {/* ================================= */}
