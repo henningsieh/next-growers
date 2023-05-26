@@ -47,12 +47,12 @@ const useStyles = createStyles((theme) => ({
     transition: "transform 150ms ease, box-shadow 150ms ease",
 
     "&:hover": {
-      // transform: "scale(1.004)",
-      // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+     // transform: "scale(1.004)",
+     // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
 
-      // Add the desired box-shadow color here
+     // Add the desired box-shadow color here
 
-      // Add the desired box-shadow color and theme's md shadow here
+     // Add the desired box-shadow color and theme's md shadow here
       boxShadow:
         theme.colorScheme === "dark"
           ? `0 0 4px ${theme.colors.pink[6]}`
@@ -86,14 +86,14 @@ export const likeSuccessfulMsg = {
   title: "Success",
   message: "Woohoo... you ❤️ this Grow!",
   color: "green",
-  icon: <IconCheck />,
+  icon: <IconCheck/>,
   loading: false,
 };
 export const dislikeSuccessfulMsg = {
   title: "Success",
   message: "Oh no... you removed your Like! 😢",
   color: "green",
-  icon: <IconCheck />,
+  icon: <IconCheck/>,
   loading: false,
 };
 export const createLikeErrorMsg = (msg: string) => ({
@@ -101,7 +101,7 @@ export const createLikeErrorMsg = (msg: string) => ({
   title: "Error",
   message: msg,
   color: "red",
-  icon: <IconError404 />,
+  icon: <IconError404/>,
 });
 
 export default function ReportCard({
@@ -130,7 +130,7 @@ export default function ReportCard({
       notifications.show(likeSuccessfulMsg);
       console.debug("likedReport", likedReport);
     },
-    // Always refetch after error or success:
+   // Always refetch after error or success:
     onSettled: async () => {
       await trpc.notifications.invalidate();
       await trpc.reports.invalidate();
@@ -140,13 +140,13 @@ export default function ReportCard({
   const { mutate: deleteLikeMutation } = api.like.deleteLike.useMutation({
     onError: (error) => {
       console.error(error);
-      // Handle error, e.g., show an error message
+     // Handle error, e.g., show an error message
     },
     onSuccess: (res) => {
       notifications.show(dislikeSuccessfulMsg);
     },
     onSettled: async () => {
-      // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+     // Trigger any necessary refetch or invalidation, e.g., refetch the report data
       await trpc.notifications.getNotificationsByUserId.invalidate();
       await trpc.reports.invalidate();
     },
@@ -155,11 +155,11 @@ export default function ReportCard({
   const { mutate: deleteMutation } = api.reports.deleteOwnReport.useMutation({
     onMutate: async (deletedReportId: string) => {
       if (procedure == "own") {
-        // Cancel any outgoing refetches so they don't overwrite optimistic update
+       // Cancel any outgoing refetches so they don't overwrite optimistic update
         await trpc.reports.getOwnReports.cancel();
-        // Snapshot the previous value
+       // Snapshot the previous value
         const previousReports = trpc.reports.getOwnReports.getData();
-        // Optimistically update to the new value
+       // Optimistically update to the new value
         trpc.reports.getOwnReports.setData(
           { search: "", orderBy: "createdAt", desc: true },
           (prev) => {
@@ -168,14 +168,14 @@ export default function ReportCard({
             return prev.filter((report) => report.id !== deletedReportId);
           }
         );
-        // Return a context object with the snapshotted value
+       // Return a context object with the snapshotted value
         return { previousReports };
       } else {
-        // Cancel any outgoing refetches so they don't overwrite optimistic update
+       // Cancel any outgoing refetches so they don't overwrite optimistic update
         await trpc.reports.getAllReports.cancel();
-        // Snapshot the previous value
+       // Snapshot the previous value
         const previousReports = trpc.reports.getAllReports.getData();
-        // Optimistically update to the new value
+       // Optimistically update to the new value
         trpc.reports.getAllReports.setData(
           { search: "", orderBy: "createdAt", desc: true },
           (prev) => {
@@ -183,13 +183,13 @@ export default function ReportCard({
             return prev.filter((report) => report.id !== deletedReportId);
           }
         );
-        // Return a context object with the snapshotted value
+       // Return a context object with the snapshotted value
         return { previousReports };
       }
     },
-    // If the mutation fails, use the context returned from onMutate to roll back
+   // If the mutation fails, use the context returned from onMutate to roll back
     onError: (_err, _variables, context) => {
-      // toast.error(`An error occured when deleting todo`)
+     // toast.error(`An error occured when deleting todo`)
       if (!!context) {
         if (procedure == "own") {
           trpc.reports.getOwnReports.setData(
@@ -204,7 +204,7 @@ export default function ReportCard({
         }
       }
     },
-    // Always refetch after error or success:
+   // Always refetch after error or success:
     onSettled: async () => {
       await trpc.reports.getOwnReports.invalidate();
       await trpc.reports.getAllReports.invalidate();
@@ -212,31 +212,31 @@ export default function ReportCard({
   });
 
   const handleLikeReport = () => {
-    // Ensure that the user is authenticated
+   // Ensure that the user is authenticated
     if (!session) {
-      // Redirect to login or show a login prompt
+     // Redirect to login or show a login prompt
       return;
     }
 
-    // Call the likeReport mutation
+   // Call the likeReport mutation
     likeReportMutation({ reportId: report.id });
   };
 
   const handleDisLikeReport = () => {
-    // Ensure that the user is authenticated
+   // Ensure that the user is authenticated
     if (status !== "authenticated") {
-      // Redirect to login or show a login prompt
+     // Redirect to login or show a login prompt
       return;
     }
 
-    // Call the likeReport mutation
+   // Call the likeReport mutation
     deleteLikeMutation({ reportId: report.id });
   };
 
   const cannabisIcon = (
-    // <ActionIcon size="xs" color="blue" radius="xl" variant="transparent">
-    <IconCannabis size= { rem(14) } />
-    // </ActionIcon>
+   // <ActionIcon size="xs" color="blue" radius="xl" variant="transparent">
+    <IconCannabis size= { rem(14) }/>
+   // </ActionIcon>
   );
 
   const reportStrains = report.strains.map((badge) => (
@@ -256,12 +256,12 @@ mt = { 0}
 mb = { 0}
 // color={theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"}
 
-leftSection = {< IconCannabis size = { rem(14) } />}
-        // leftSection={badge.emoji}
+leftSection = {< IconCannabis size = { rem(14) }/>}
+       // leftSection={badge.emoji}
       >
   { badge.name }
-  < /Badge>
-  < /Box>
+  </Badge>
+  </Box>
   ));
 
 return (
@@ -276,7 +276,7 @@ authorName = { report.authorName as string }
 authorImageUrl = { report.authorImage as string }
 comments = { 42}
 views = { 183}
-  />
+ />
   </Card.Section>
 
   < Card.Section className = { classes.section } mt = { 4} >
@@ -286,10 +286,10 @@ views = { 183}
 { reportStrains }
 </Group>
   < Flex align = "flex-start" >
-    {/* // ❤️ */ }
+    {/*// ❤️ */ }
     < Box fz = "sm" p = { 1} m = { 1} >
       { report.likes.length }
-      < /Box>
+      </Box>
       < Box className = "relative" >
         <ActionIcon
                 title="give props to grower"
@@ -313,17 +313,17 @@ size = { 25}
                     className={`${classes.like} icon-transition`
 }
 stroke = { 1.5}
-  />
+ />
                 ) : (
   <IconHeart
                     onClick= { handleLikeReport }
 size = "1.2rem"
 className = {`${classes.like} icon-transition`}
 stroke = { 1.5}
-  />
+ />
                 )}
 </ActionIcon>
-{/* // Likes Tooltip */ }
+{/*// Likes Tooltip */ }
 {
   !!report.likes.length && (
     <Transition
@@ -343,25 +343,25 @@ style = { transitionStyles }
   report.likes.map((like) => (
     <Box key= { like.id } mx = { 10} fz = { "xs"} >
     { like.name }
-    < /Box>
+    </Box>
   ))
 }
   < Text fz = "xs" td = "overline" pr = { 4} fs = "italic" >
     { report.likes.length } Like
 { report.likes.length > 1 ? "s" : "" } 👍
 </Text>
-  < /Paper>
+  </Paper>
                   )}
 </Transition>
               )}
 </Box>
-  < /Flex>
-  < /Flex>
-  < /Card.Section>
+  </Flex>
+  </Flex>
+  </Card.Section>
 
   < Card.Section className = { classes.section } mt = { 4} >
     <Group position="apart" >
-      {/* // Stage / Date */ }
+      {/*// Stage/ Date */ }
       < Group position = "left" >
         <Tooltip
               transitionProps={ { transition: "pop-bottom-left", duration: 100 } }
@@ -372,7 +372,7 @@ arrowPosition = "side"
   >
   <Center>
   <Box pr={ 4 }>
-    <IconCalendar size="1.2rem" />
+    <IconCalendar size="1.2rem"/>
       </Box>
       < Text className = {`${classes.label} cursor-default`} c = "dimmed" >
       {
@@ -381,11 +381,11 @@ arrowPosition = "side"
         router.locale === Locale.DE ? Locale.DE : Locale.EN
                   )
       }
-        < /Text>
-        < /Center>
-        < /Tooltip>
-        < /Group>
-{/* // Stage / Date */ }
+        </Text>
+        </Center>
+        </Tooltip>
+        </Group>
+{/*// Stage/ Date */ }
 <Group position="left" >
   <Tooltip
               transitionProps={
@@ -407,17 +407,17 @@ arrowPosition = "side"
     router.locale === Locale.DE ? Locale.DE : Locale.EN
                   )
   }
-    < /Text>
+    </Text>
     < Box pl = { 4} >
-      <IconClock size="1.2rem" />
+      <IconClock size="1.2rem"/>
         </Box>
-        < /Center>
-        < /Tooltip>
-        < /Group>
-        < /Group>
-        < /Card.Section>
+        </Center>
+        </Tooltip>
+        </Group>
+        </Group>
+        </Card.Section>
 
-{/* // Strains */ }
+{/*// Strains */ }
 {/*
       <Card.Section className={classes.section} mt={0}>
         <Text mt="xs" className={classes.label} c="dimmed">
@@ -428,7 +428,7 @@ arrowPosition = "side"
         </Group>
       </Card.Section> */}
 
-{/* // Session buttons */ }
+{/*// Session buttons */ }
 {
   session && session.user.id == report.authorId && (
     <Group mt="xs" position = "apart" >
@@ -449,21 +449,21 @@ onClick = {() => {
 className = "ml-2"
 height = { 18}
 stroke = { 1.5}
-  />
+ />
   </Button>
   < Link href = {`/account/reports/${report.id}`}>
     <Button
-              size="sm" /*
+              size="sm"/*
               className="border-orange-600" */
 variant = "outline"
 radius = "sm"
 style = {{ flex: 1 }}
             >
   { t("common:report-edit") }
-  < IconEdit className = "ml-2" height = { 22} stroke = { 1.5} />
+  < IconEdit className = "ml-2" height = { 22} stroke = { 1.5}/>
     </Button>
-    < /Link>
-    < /Group>
+    </Link>
+    </Group>
       )}
 </Card>
   );

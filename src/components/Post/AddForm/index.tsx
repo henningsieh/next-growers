@@ -56,13 +56,13 @@ const AddPost = (props: AddPostProps) => {
   const { locales, locale: activeLocale, defaultLocale } = router;
   const { t, i18n } = useTranslation(activeLocale);
 
-  // Update "images" form field value, if "imageIds" state changes
+ // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
     form.setFieldValue("images", imageIds);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageIds]);
 
-  // Prepare WISIWIG Editior
+ // Prepare WISIWIG Editior
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -86,8 +86,8 @@ const AddPost = (props: AddPostProps) => {
       console.log("START posts.createPost.useMutation");
       console.log("addPostToReport", addPostToReport);
     },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
+   // If the mutation fails,
+   // use the context returned from onMutate to roll back
     onError: (err, newReport, context) => {
       notifications.show(onlyOnePostPerDayAllowed);
       if (!context) return;
@@ -95,31 +95,31 @@ const AddPost = (props: AddPostProps) => {
     },
     onSuccess: (newReportDB) => {
       toast.success("The update was saved to your report");
-      // Navigate to the new report page
-      // void router.push(`/account/reports/${newReportDB.id}`);
+     // Navigate to the new report page
+     // void router.push(`/account/reports/${newReportDB.id}`);
     },
-    // Always refetch after error or success:
+   // Always refetch after error or success:
     onSettled: () => {
       console.log("END posts.createPost.useMutation");
     },
   });
 
   const reportStartDate = new Date(report.createdAt);
-  reportStartDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
+  reportStartDate.setHours(0, 0, 0, 0);// Set time to midnight for calculation
   const currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
+  currentDate.setHours(0, 0, 0, 0);// Set time to midnight for calculation
   currentDate.setDate(currentDate.getDate());
-  // Calculate the difference in milliseconds
+ // Calculate the difference in milliseconds
   const timeDifferenceMs = currentDate.getTime() - reportStartDate.getTime();
-  // Convert milliseconds to days
+ // Convert milliseconds to days
   const timeDifferenceDays = Math.floor(
-    timeDifferenceMs / (1000 * 60 * 60 * 24)
+    timeDifferenceMs/ (1000 * 60 * 60 * 24)
   );
-  // Get today's date
+ // Get today's date
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
+  today.setHours(0, 0, 0, 0);// Set today's time to 00:00:00
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+ // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
     validate: zodResolver(InputCreatePost(reportStartDate)),
     initialValues: {
@@ -143,7 +143,7 @@ const AddPost = (props: AddPostProps) => {
     images: string[];
   }) {
     console.debug(values);
-    const { day, ...restValues } = values; // Omitting the 'day' field
+    const { day, ...restValues } = values;// Omitting the 'day' field
     const editorHtml = editor?.getHTML() as string;
     restValues.content = editorHtml;
 
@@ -174,7 +174,7 @@ const AddPost = (props: AddPostProps) => {
   return (
     <Container p= { 0} mt = "lg" size = "md" >
       {/* <Paper withBorder> */ }
-      < Title order = { 2} > { t("common:addpost-headline") } < /Title>
+      < Title order = { 2} > { t("common:addpost-headline") } </Title>
 
         < Box mt = "sm" >
           <form
@@ -194,7 +194,7 @@ const AddPost = (props: AddPostProps) => {
               type = "hidden"
               name = {`images[${index}]`}
   value = { imageId }
-    />
+   />
           ))}
 
 <Box>
@@ -206,14 +206,14 @@ const AddPost = (props: AddPostProps) => {
 description = { t("common:addpost-growdaydescription") }
 w = { 142}
 placeholder = "1"
-icon = {< IconNumber size = "1.2rem" />}
+icon = {< IconNumber size = "1.2rem"/>}
 withAsterisk
 min = { 0}
 {...form.getInputProps("day") }
 onChange = {(value: number) => {
   const growDayOffSet = parseInt(value.toString(), 10);
-  if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
-  const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+  if (!growDayOffSet && growDayOffSet != 0) return;// prevent error if changed to empty string
+  const newPostDate = new Date(reportStartDate);// Create a new Date object using the reportStartDate
   newPostDate.setUTCDate(
     newPostDate.getUTCDate() + growDayOffSet
   );
@@ -227,12 +227,12 @@ description = { t("common:addpost-updatedatedescription") }
 valueFormat = "MMM DD, YYYY HH:mm"
 // valueFormat="DD/MM/YYYY HH:mm:ss"
 className = "w-full"
-icon = {< IconCalendarEvent size = "1.2rem" />}
+icon = {< IconCalendarEvent size = "1.2rem"/>}
 withAsterisk
 {...form.getInputProps("date") }
 onChange = {(selectedDate: Date) => {
   const newDate = new Date(selectedDate);
-  /* 
+ /* 
   newDate.setHours(reportStartDate.getHours());
   newDate.setMinutes(reportStartDate.getMinutes());
   newDate.setSeconds(reportStartDate.getSeconds());
@@ -241,30 +241,30 @@ onChange = {(selectedDate: Date) => {
 
   form.setFieldValue("date", newDate);
 
-  /* const timeDifferenceMs =
+ /* const timeDifferenceMs =
     selectedDate.getTime() - reportStartDate.getTime(); */
 
   const timeDifferenceDays = Math.floor(
-    (selectedDate.getTime() - reportStartDate.getTime()) /
+    (selectedDate.getTime() - reportStartDate.getTime())/
     (1000 * 60 * 60 * 24)
   );
 
   form.setFieldValue("day", timeDifferenceDays);
 }}
 />
-  < /Flex>
-  < /Grid.Col>
+  </Flex>
+  </Grid.Col>
   < Grid.Col xs = { 12} sm = { 6} md = { 6} lg = { 6} xl = { 6} >
     <Flex className="justify-start space-x-2" align = "baseline" >
       <NumberInput
                     label="Light hours"
-description = "Light / day (h)"
+description = "Light/ day (h)"
 withAsterisk
 w = { 142}
 min = { 0}
 max = { 24}
 {...form.getInputProps("lightHoursPerDay") }
-icon = {< IconBulb size = "1.2rem" />}
+icon = {< IconBulb size = "1.2rem"/>}
 />
   < Select
 label = "Grow stage"
@@ -278,78 +278,78 @@ data = {
 withAsterisk
 {...form.getInputProps("growStage") }
 className = "w-full"
-icon = {< IconPlant size = "1.2rem" />}
+icon = {< IconPlant size = "1.2rem"/>}
 />
-  < /Flex>
-  < /Grid.Col>
-  < /Grid>
-  < /Box>
+  </Flex>
+  </Grid.Col>
+  </Grid>
+  </Box>
   < TextInput
 withAsterisk
 label = "Titel for this update"
 placeholder = "Titel of this Update"
 {...form.getInputProps("title") }
 />
-  < TextInput hidden {...form.getInputProps("content") } />
+  < TextInput hidden {...form.getInputProps("content") }/>
 
     < RichTextEditor editor = { editor } >
       <RichTextEditor.Toolbar sticky stickyOffset = { 60} >
         <RichTextEditor.ControlsGroup>
-        <RichTextEditor.Bold />
-        < RichTextEditor.Italic />
-        <RichTextEditor.Underline />
-        < RichTextEditor.Strikethrough />
-        <RichTextEditor.ClearFormatting />
-        < RichTextEditor.Highlight />
-        <RichTextEditor.Code />
-        < /RichTextEditor.ControlsGroup>
-
-        < RichTextEditor.ControlsGroup >
-        <RichTextEditor.H1 />
-        < RichTextEditor.H2 />
-        <RichTextEditor.H3 />
-        < RichTextEditor.H4 />
+        <RichTextEditor.Bold/>
+        < RichTextEditor.Italic/>
+        <RichTextEditor.Underline/>
+        < RichTextEditor.Strikethrough/>
+        <RichTextEditor.ClearFormatting/>
+        < RichTextEditor.Highlight/>
+        <RichTextEditor.Code/>
         </RichTextEditor.ControlsGroup>
 
         < RichTextEditor.ControlsGroup >
-        <RichTextEditor.Blockquote />
-        < RichTextEditor.Hr />
-        <RichTextEditor.BulletList />
-        < RichTextEditor.OrderedList />
-        <RichTextEditor.Subscript />
-        < RichTextEditor.Superscript />
+        <RichTextEditor.H1/>
+        < RichTextEditor.H2/>
+        <RichTextEditor.H3/>
+        < RichTextEditor.H4/>
         </RichTextEditor.ControlsGroup>
 
         < RichTextEditor.ControlsGroup >
-        <RichTextEditor.Link />
-        < RichTextEditor.Unlink />
+        <RichTextEditor.Blockquote/>
+        < RichTextEditor.Hr/>
+        <RichTextEditor.BulletList/>
+        < RichTextEditor.OrderedList/>
+        <RichTextEditor.Subscript/>
+        < RichTextEditor.Superscript/>
         </RichTextEditor.ControlsGroup>
 
         < RichTextEditor.ControlsGroup >
-        <RichTextEditor.AlignLeft />
-        < RichTextEditor.AlignCenter />
+        <RichTextEditor.Link/>
+        < RichTextEditor.Unlink/>
+        </RichTextEditor.ControlsGroup>
+
+        < RichTextEditor.ControlsGroup >
+        <RichTextEditor.AlignLeft/>
+        < RichTextEditor.AlignCenter/>
       {/* 
-                <RichTextEditor.AlignJustify />
-                <RichTextEditor.AlignRight /> */}
-        < /RichTextEditor.ControlsGroup>
-        < /RichTextEditor.Toolbar>
+                <RichTextEditor.AlignJustify/>
+                <RichTextEditor.AlignRight/> */}
+        </RichTextEditor.ControlsGroup>
+        </RichTextEditor.Toolbar>
 
-        < RichTextEditor.Content />
+        < RichTextEditor.Content/>
         </RichTextEditor>
 
         < ImageUploader
 report = { report }
 imageIds = { imageIds }
 setImageIds = { setImageIds }
-  />
+ />
 
   <Group position="right" mt = "xl" >
     <Button w={ 180 } variant = "outline" type = "submit" >
       Update Grow 🪴
 </Button>
-  < /Group>
-  < /form>
-  < /Box>
+  </Group>
+  </form>
+  </Box>
 {/* </Paper> */ }
 </Container>
   );
@@ -361,6 +361,6 @@ export const onlyOnePostPerDayAllowed = {
   title: "Failure",
   message: "You can only post one update per Day! 💁",
   color: "red",
-  icon: <IconCalendarOff />,
+  icon: <IconCalendarOff/>,
   loading: false,
 };

@@ -86,44 +86,41 @@ export default function LandingCard() {
   const { t, i18n } = useTranslation(activeLocale);
 
   return (
-    <>
-
-    <div className= { classes.hero } >
-    <Overlay
-        opacity={ 1 }
-  zIndex = { 0}
-  gradient = "linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-    />
-    <Container size="md" className = { classes.container } >
-      <Title className={ classes.title }> GrowAGram.com < /Title>
-        < Title pb = { 20} order = { 2} >
+    <div className={classes.hero}>
+      <Overlay
+        opacity={1}
+        zIndex={0}
+        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
+      />
+      <Container size="md" className={classes.container}>
+        <Title className={classes.title}>GrowAGram.com</Title>
+        <Title pb={20} order={2}>
           🪴 Show Your Grow! 🚀
-  </Title>
-    < Text className = { classes.description } size = "xl" mt = "xl" >
-      { t("common:landing-text1") }
-      < /Text>
-      < Text className = { classes.description } size = "xl" mt = "xl" >
-        { t("common:landing-text2") }
-        < /Text>
-        < button
-  className = "my-8 h-12 w-96 rounded-md bg-gradient-to-r
-  from - pink - 600 via - red - 600 to - orange - 500 text - white"
-    >
-    COMING SOON... 🤞
-  </button>
-    < Text className = { classes.description } size = "md" >
-      { t("common:landing-text3") }
-      < /Text>
-      < /Container>
-      Foto von{ " " }
-  <a href="https://unsplash.com/@diyahna22?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" >
-    Diyahna Lewis
-      < /a>{" "}
-      auf{ " " }
-  <a href="https://unsplash.com/de/fotos/--JxxyIUHnU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText" >
-    Unsplash
-    < /a>
-    < /div>
-    < />
+        </Title>
+        <Text className={classes.description} size="xl" mt="xl">
+          {t("common:landing-text1")}
+        </Text>
+        <Text className={classes.description} size="xl" mt="xl">
+          {t("common:landing-text2")}
+        </Text>
+        <button
+          className="my-8 h-12 w-96 rounded-md bg-gradient-to-r
+from-pink-600 via-red-600 to-orange-500 text-white"
+        >
+          COMING SOON... 🤞
+        </button>
+        <Text className={classes.description} size="md">
+          {t("common:landing-text3")}
+        </Text>
+      </Container>
+      Foto von{" "}
+      <a href="https://unsplash.com/@diyahna22?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
+        Diyahna Lewis
+      </a>{" "}
+      auf{" "}
+      <a href="https://unsplash.com/de/fotos/--JxxyIUHnU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
+        Unsplash
+      </a>
+    </div>
   );
 }

@@ -42,17 +42,17 @@ import { z } from "zod";
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
-    alignItems: "center", // add this line
-    height: "100%", // add this line
+    alignItems: "center",// add this line
+    height: "100%",// add this line
   },
 
   dropzone: {
     borderWidth: rem(1),
     padding: rem(5),
-    height: "100%", // add this line
-    display: "flex", // add this line
-    alignItems: "center", // add this line
-    justifyContent: "center", // add this line
+    height: "100%",// add this line
+    display: "flex",// add this line
+    alignItems: "center",// add this line
+    justifyContent: "center",// add this line
   },
 
   icon: {
@@ -76,19 +76,19 @@ export function EditForm(props: EditFormProps) {
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploading, setIsUploading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [report, setReport] = useState(reportfromProps);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reportTitle, setReportTitle] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reportDescription, setReportDescription] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imageId, setImageId] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imagePublicId, setImagePublicId] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cloudUrl, setCloudUrl] = useState("");
 
   const trpc = api.useContext();
@@ -97,8 +97,8 @@ export function EditForm(props: EditFormProps) {
       console.log("START api.reports.saveReport.useMutation");
       console.log("newReportDB", savedReport);
     },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
+   // If the mutation fails,
+   // use the context returned from onMutate to roll back
     onError: (err, newReport, context) => {
       toast.error("An error occured when saving your report");
       if (!context) return;
@@ -107,13 +107,13 @@ export function EditForm(props: EditFormProps) {
     onSuccess: async (savedReport) => {
       toast.success("Your report was successfully saved");
       console.debug(savedReport);
-      // Navigate to the new report page
-      // void router.push(`/grow-report/${savedReport.id}`);
+     // Navigate to the new report page
+     // void router.push(`/grow-report/${savedReport.id}`);
       await trpc.reports.getIsoReportWithPostsFromDb.invalidate();
       await trpc.reports.getAllReports.invalidate();
       trpc.reports.getAllReports.getData();
     },
-    // Always refetch after error or success:
+   // Always refetch after error or success:
     onSettled: () => {
       console.log("END api.reports.saveReport.useMutation");
     },
@@ -126,7 +126,7 @@ export function EditForm(props: EditFormProps) {
       title: report?.title as string,
       description: report?.description as string,
       strains: report.strains.map((strain) => strain.id),
-      createdAt: new Date(report?.createdAt), // new Date(), // Add the createdAt field with the current date
+      createdAt: new Date(report?.createdAt),// new Date(),// Add the createdAt field with the current date
     },
   });
 
@@ -152,7 +152,7 @@ export function EditForm(props: EditFormProps) {
     }
   };
   const handleDropWrapper = (files: File[]): void => {
-    // handleDrop calls the /api/upload endpoint
+   // handleDrop calls the/api/upload endpoint
     setIsUploading(true);
     handleDrop(
       files,
@@ -161,7 +161,7 @@ export function EditForm(props: EditFormProps) {
       setCloudUrl,
       setIsUploading
     ).catch((error) => {
-      // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
+     // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
       console.debug(error);
     });
   };
@@ -170,11 +170,11 @@ export function EditForm(props: EditFormProps) {
     <>
     { reportfromProps && (
       <Container p= { 0} mt = { 4} className = "flex w-full flex-col space-y-4" >
-        {/* // Upload Panel */ }
+        {/*// Upload Panel */ }
   {
     reportfromProps.image?.cloudUrl ? (
       <>
-      {/* // Image Preview */ }
+      {/*// Image Preview */ }
       < Box className = "relative" px = { 0} >
         <Box className="absolute right-2 top-2 z-50 flex justify-end" >
           <ActionIcon
@@ -187,9 +187,9 @@ export function EditForm(props: EditFormProps) {
   color = "red"
   variant = "filled"
     >
-    <IconTrashXFilled size="lg" />
+    <IconTrashXFilled size="lg"/>
       </ActionIcon>
-      < /Box>
+      </Box>
       < ImagePreview
   imageUrl = { reportfromProps.image?.cloudUrl }
   title = { form.values.title }
@@ -200,20 +200,20 @@ authorName = { user.name as string }
 authorImageUrl = { user.image as string }
 comments = { 89}
 views = { 183}
-  />
+ />
   </Box>
-  < />
+  </>
           ) : (
-  /* // Dropzone */
+ /*// Dropzone */
   <div className= { classes.wrapper } >
   <LoadingOverlay
                 visible={ isUploading }
 transitionDuration = { 600}
 overlayBlur = { 2}
-  />
+ />
   <Dropzone
                 h={ rem(280) }
-multiple = { false} // only one header image!
+multiple = { false}// only one header image!
 openRef = { openReference }
 onDrop = { handleDropWrapper }
 onChange = {(e) => {
@@ -236,14 +236,14 @@ color = {
     : theme.white
 }
 stroke = { 1.5}
-  />
+ />
   </Dropzone.Accept>
   < Dropzone.Reject >
   <IconX
                         size={ rem(50) }
 color = { theme.colors.red[6] }
 stroke = { 1.5}
-  />
+ />
   </Dropzone.Reject>
   < Dropzone.Idle >
   <IconCloudUpload
@@ -254,27 +254,27 @@ color = {
     : theme.black
 }
 stroke = { 1.5}
-  />
+ />
   </Dropzone.Idle>
 {/* </Center> */ }
 </Group>
 
   < Text ta = "center" fw = { 700} fz = "lg" mt = "xl" >
-    <Dropzone.Accept>Drop files here < /Dropzone.Accept>
+    <Dropzone.Accept>Drop files here </Dropzone.Accept>
       <Dropzone.Reject>
                       Only one Images, less than 10mb
-  < /Dropzone.Reject>
-  < Dropzone.Idle > Upload Header Image < /Dropzone.Idle>
-    < /Text>
+  </Dropzone.Reject>
+  < Dropzone.Idle > Upload Header Image </Dropzone.Idle>
+    </Text>
     < Text ta = "center" fz = "sm" my = "xs" c = "dimmed" >
       Drag & apos; n & apos;drop your image here to upload!
-        < br />
-        We only can accept one <i>.jpg /.png /.gif < /i> file that is
+        < br/>
+        We only can accept one <i>.jpg/.png/.gif </i> file that is
                     less than 4.5 MB in size.
-                  < /Text>
-  < /div>
-  < /Dropzone>
-  < /div>
+                  </Text>
+  </div>
+  </Dropzone>
+  </div>
           )}
 
 <form
@@ -310,14 +310,14 @@ valueFormat = "MMM DD, YYYY HH:mm"
 maxDate = { new Date() }
 // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
 // className="w-full"
-icon = {< IconCalendar size = "1.2rem" />}
+icon = {< IconCalendar size = "1.2rem"/>}
 withAsterisk
 {...form.getInputProps("createdAt") }
 onChange = {(selectedDate: Date) => {
   form.setFieldValue("createdAt", selectedDate);
 }}
 />
-  < /Grid.Col>
+  </Grid.Col>
   < Grid.Col xs = { 12} sm = { 8} md = { 9} lg = { 9} xl = { 9} >
     <MultiSelect
                   label="Strain(s):"
@@ -334,20 +334,20 @@ searchable
 searchValue = { strainsSarchValue }
 onSearchChange = { onSttrinsSearchChange }
 nothingFound = "Nothing found"
-  />
+ />
   </Grid.Col>
-  < /Grid>
+  </Grid>
 
   < Group position = "right" mt = "xl" >
     <Button w={ 180 } variant = "outline" type = "submit" >
       Save Grow
         < Box ml = { 12} mt = { 2} >
-          <IconCloudUpload size={ 20 } />
-            < /Box>
-            < /Button>
-            < /Group>
-            < /form>
-            < /Container>
+          <IconCloudUpload size={ 20 }/>
+            </Box>
+            </Button>
+            </Group>
+            </form>
+            </Container>
       )}
 </>
   );

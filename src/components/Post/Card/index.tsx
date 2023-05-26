@@ -96,7 +96,7 @@ const useStyles = createStyles((theme) => ({
     listStyleType: "initial",
   },
 
-  /* 
+ /* 
   footer: {
     display: "flex",
     justifyContent: "space-between",
@@ -133,7 +133,7 @@ export function PostCard(props: PostCardProps) {
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
   const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
-  /* 
+ /* 
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
   */
   const getResponsiveImageHeight = xs
@@ -168,9 +168,9 @@ export function PostCard(props: PostCardProps) {
   ];
   const reportBasics = reportBasicData.map((growBasic) => (
     <Center key= { growBasic.label } >
-    <growBasic.icon size="1.05rem" className = { classes.icon } stroke = { 1.5} />
-    <Text size="xs" > { growBasic.label } < /Text>
-  < /Center>
+    <growBasic.icon size="1.05rem" className = { classes.icon } stroke = { 1.5}/>
+    <Text size="xs" > { growBasic.label } </Text>
+  </Center>
   ));
 
   if (!postId) {
@@ -178,14 +178,14 @@ export function PostCard(props: PostCardProps) {
       <Card p= "sm" radius = "sm" withBorder >
         <Alert withCloseButton bg = "yellow" >
           Select a date with update from calendar
-            < /Alert>
+            </Alert>
             < Text fz = "sm" c = "dimmed" className = { classes.section } >
               Grow Informations
-                < /Text>
+                </Text>
                 < Group position = "apart" spacing = "xs" >
                   { reportBasics }
-                  < /Group>
-                  < /Card>
+                  </Group>
+                  </Card>
     );
   } else {
     const post = report.posts.find((post) => post.id === postId);
@@ -193,15 +193,15 @@ export function PostCard(props: PostCardProps) {
     const reportCreatedAt = new Date(report.createdAt);
     const postDate = new Date(post?.date as string);
 
-    // Calculate the difference in milliseconds between the two dates
+   // Calculate the difference in milliseconds between the two dates
     const timeDifference = postDate.getTime() - reportCreatedAt.getTime();
 
-    // Convert the difference to days
+   // Convert the difference to days
     const postDayOfGrow = Math.floor(
-      timeDifference / (1000 * 60 * 60 * 24) + 1
+      timeDifference/ (1000 * 60 * 60 * 24) + 1
     );
 
-    console.log(postDayOfGrow); // The difference in days
+    console.log(postDayOfGrow);// The difference in days
 
     const postImages = post?.images;
     const postBasicData = {
@@ -235,11 +235,11 @@ export function PostCard(props: PostCardProps) {
       <div key= { basicData.title } >
       <Text size="xs" color = "dimmed" align = "center" >
       { basicData.title }
-      < /Text>
+      </Text>
       < Text weight = { 500} size = "sm" align = "center" >
       { basicData.value }
-      < /Text>
-      < /div>
+      </Text>
+      </div>
     ));
     const postImagesSlides = postImages?.map((image) => (
       <Carousel.Slide key= { image.id } >
@@ -247,10 +247,10 @@ export function PostCard(props: PostCardProps) {
       <Image
             alt=""
             src = { image.cloudUrl }
-            height = { getResponsiveImageHeight / 1.6}
-  />
-    < /Center>
-    < /Carousel.Slide>
+            height = { getResponsiveImageHeight/ 1.6}
+ />
+    </Center>
+    </Carousel.Slide>
     ));
 
   return (
@@ -258,20 +258,20 @@ export function PostCard(props: PostCardProps) {
       <Group position="apart" >
         <Text fw={ 700 } fz = "xl" >
           { post?.title }
-          < /Text>
+          </Text>
 
           < Group spacing = { 4} >
-            <IconEye size="1rem" />
+            <IconEye size="1rem"/>
               <Text fz="xs" fw = { 500} >
                 1468
-                < /Text>
-                < /Group>
-  {/* <LikeHeart itemToLike={post as Post} /> */ }
+                </Text>
+                </Group>
+  {/* <LikeHeart itemToLike={post as Post}/> */ }
   </Group>
 
     < Card.Section className = { classes.section } >
-      <Group position="apart" > { postData } < /Group>
-        < /Card.Section>
+      <Group position="apart" > { postData } </Group>
+        </Card.Section>
   {/* 
         <Card.Section className={classes.section} mt="md">
           <Text fz="sm" c="dimmed" className={classes.label}>
@@ -292,10 +292,10 @@ export function PostCard(props: PostCardProps) {
   dangerouslySetInnerHTML = {{ __html: postHTMLContent as TrustedHTML }
 }
 />
-  < /Text>
+  </Text>
 {/* 
         <div className="importedhtmlcontent">
-          <div dangerouslySetInnerHTML={{ __html: postHTMLContent }} />
+          <div dangerouslySetInnerHTML={{ __html: postHTMLContent }}/>
         </div> */}
 {/*       
         <Card.Section className={classes.section} mt="md">
@@ -306,14 +306,14 @@ export function PostCard(props: PostCardProps) {
               </Text>
               <Text span fz="sm" c="dimmed">
                 {" "}
-                / night
+               / night
               </Text>
             </div>
             <Button radius="md">Book now</Button>
           </Group>
         </Card.Section>
         */}
-{/* //BOTTOM CAROUSEL */ }
+{/*//BOTTOM CAROUSEL */ }
 <Card.Section>
   <Carousel
             withIndicators
@@ -325,8 +325,8 @@ classNames = {{
             }}
           >
   { postImagesSlides }
-  < /Carousel>
-  < /Card.Section>
+  </Carousel>
+  </Card.Section>
 
   < Text fz = "sm" c = "dimmed" className = { classes.section } >
     Grow data:
@@ -334,8 +334,8 @@ classNames = {{
 
   < Group position = "apart" spacing = "xs" >
     { reportBasics }
-    < /Group>
-    < /Card>
+    </Group>
+    </Card>
     );
   }
 }
