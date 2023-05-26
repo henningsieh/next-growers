@@ -30,7 +30,8 @@
     "**/*.mjs",
     "next-i18next.config.js",
     "next.config.js",
-    "prisma/seed.js"
+    "prisma/seed.js",
+    ".lintstagedrc.js"
   ],
   "exclude": ["node_modules"]
 }
