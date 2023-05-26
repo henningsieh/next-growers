@@ -1,4 +1,4 @@
-import { LoadingOverlay, createStyles } from "@mantine/core";
+import { LoadingOverlay } from "@mantine/core";
 
 interface LoadingProps {
   isLoading: boolean;

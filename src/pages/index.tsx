@@ -3,8 +3,6 @@ import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import LandingCard from "~/components/LandingCard";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 
 /**
  * // PUBLIC PAGE with translations
@@ -19,13 +17,6 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
   };
 };
 const LandingPage: NextPage = () => {
-  const router = useRouter();
-  const {
-    locale: activeLocale,
-    locales: availableLocales,
-    defaultLocale,
-  } = router;
-
   return (
     <>
       <Head>

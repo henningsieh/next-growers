@@ -28,8 +28,8 @@ export default function LoginModal() {
 
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { locales, locale: activeLocale, defaultLocale } = router;
-  const { t, i18n } = useTranslation(activeLocale);
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   useEffect(() => {
     async function redirectToEditAccount() {

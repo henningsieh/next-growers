@@ -10,18 +10,13 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import {
-  IconBell,
-  IconCheck,
-  IconHeartFilled,
-  IconX,
-} from "@tabler/icons-react";
+import { IconBell, IconCheck, IconHeartFilled } from "@tabler/icons-react";
 import React, { useState } from "react";
 
 import { IconEyeCheck } from "@tabler/icons-react";
 import Link from "next/link";
 import { Notifications } from "~/types";
-import type { Notification, NotificationEventMap } from "~/types";
+import type { NotificationEventMap } from "~/types";
 import { Paper } from "@mantine/core";
 import { Transition } from "@mantine/core";
 import { api } from "~/utils/api";
@@ -45,7 +40,7 @@ const Notifications = () => {
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
   const clickOutsidePaper = useClickOutside(() => setOpen(false));
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -62,7 +57,8 @@ const Notifications = () => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
-      onSuccess: (res) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onSuccess: (_res) => {
         appNotification.show(markAllReadMessage);
       },
       onSettled: async () => {
@@ -90,12 +86,13 @@ const Notifications = () => {
   const handleMarkAllNotificationsAsRead = () => {
     // Ensure that the user is authenticated
     // Call the likeReport mutation
-    if (status === "authenticated") markAllNotificationsAsReadMutation();
+    if (!!session && status === "authenticated")
+      markAllNotificationsAsReadMutation();
   };
   const handleMarkNotificationAsRead = (notidicationId: string) => {
     // Ensure that the user is authenticated
     // Call the likeReport mutationnotification.id
-    if (status === "authenticated")
+    if (!!session && status === "authenticated")
       markNotificationAsReadMutation(notidicationId);
   };
 

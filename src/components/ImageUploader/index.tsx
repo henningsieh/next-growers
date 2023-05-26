@@ -6,7 +6,6 @@ import {
   Paper,
   Space,
   Title,
-  rem,
   useMantineTheme,
 } from "@mantine/core";
 import type { Dispatch, SetStateAction } from "react";
@@ -15,10 +14,9 @@ import {
   IconArrowBigLeft,
   IconArrowBigRight,
   IconCamera,
-  IconPhotoAi,
 } from "@tabler/icons-react";
 import { Image, Text } from "@mantine/core";
-import type { IsoReportWithPostsFromDb, Report } from "~/types";
+import type { IsoReportWithPostsFromDb } from "~/types";
 
 import { Carousel } from "@mantine/carousel";
 import type { FileWithPath } from "@mantine/dropzone";
@@ -32,14 +30,15 @@ interface ImageUploaderProps {
 }
 
 const ImageUploader = (props: ImageUploaderProps) => {
-  const { report, imageIds, setImageIds } = props;
-  const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
+  const { report, setImageIds } = props;
   const [cloudUrls, setCloudUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
 
   const theme = useMantineTheme();
-
-  const [files, setFiles] = useState<FileWithPath[]>([]);
 
   const previews = cloudUrls.map((cloudUrl, index) => {
     // const imageUrl = URL.createObjectURL(file);

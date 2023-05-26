@@ -1,11 +1,4 @@
-import {
-  Container,
-  Divider,
-  Indicator,
-  useMantineTheme,
-  Title,
-  Box,
-} from "@mantine/core";
+import { Container, useMantineTheme, Title, Box } from "@mantine/core";
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -13,22 +6,18 @@ import type {
 } from "next";
 
 import { notifications } from "@mantine/notifications";
-import { useRouter } from "next/router";
-import { DatePicker } from "@mantine/dates";
 import { Environment } from "~/types";
-import { Group } from "@mantine/core";
 import Head from "next/head";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { type IsoReportWithPostsFromDb } from "~/types";
-import ReportDetailsHead from "~/components/Report/DetailsHead";
 import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 import { prisma } from "~/server/db";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
-import { IconCalendarOff, IconCross } from "@tabler/icons-react";
+import { IconCalendarOff } from "@tabler/icons-react";
 
 /**
  * getStaticProps
@@ -157,7 +146,6 @@ export default function PublicReportPost(
   const { report: staticReportFromProps, postId: postIdfromProps } = props;
   const pageTitle = `${staticReportFromProps.title as string}`;
 
-  const router = useRouter();
   const theme = useMantineTheme();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
@@ -207,7 +195,7 @@ export default function PublicReportPost(
       const newUrl = `/grow/${staticReportFromProps.id as string}/update/${
         matchingPost.id
       }`;
-      window.history.pushState({}, "", newUrl);
+      window.history.replaceState({}, "", newUrl);
     } else {
       notifications.show(noPostAtThisDay);
     }

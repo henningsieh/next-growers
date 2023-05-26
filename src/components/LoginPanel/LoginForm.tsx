@@ -4,10 +4,9 @@
 
 import * as z from "zod";
 
-import { GoogleButton, GoogleButtonWithText } from "../Atom/GoogleButton";
+import { GoogleButtonWithText } from "../Atom/GoogleButton";
 
 import EmailForm from "./EmailForm";
-import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 

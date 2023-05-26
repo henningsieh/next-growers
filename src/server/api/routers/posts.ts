@@ -119,6 +119,7 @@ export const postRouter = createTRPCRouter({
       });
 
       const formattedPosts = posts.map((tempPost) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { date, createdAt, updatedAt, likes, ...temppost } = tempPost;
 
         const formattedPost = {

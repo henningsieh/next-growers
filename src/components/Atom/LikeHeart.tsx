@@ -1,8 +1,8 @@
+import type { NotificationProps } from "@mantine/core";
 import {
   ActionIcon,
   Box,
   Flex,
-  NotificationProps,
   Paper,
   Text,
   Transition,

@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const isoString = "2023-05-19T18:36:19.568Z";
 
 // Format: May 19, 2023 (en-US)
@@ -45,18 +50,16 @@ export const formattedDateTimeDeDE = dateTimeFormatterDeDE.format(
 );
 //console.log(formattedDateTimeDeDE); // Output: "18. Mai 2023, 18:36"
 
+
 export function convertDatesToISO(obj: any): any {
   if (obj instanceof Date) {
     return obj.toISOString();
   } else if (Array.isArray(obj)) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return obj.map((item) => convertDatesToISO(item));
   } else if (typeof obj === "object" && obj !== null) {
     const newObj: any = {};
     for (const key in obj) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       if (obj.hasOwnProperty(key)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         newObj[key] = convertDatesToISO(obj[key]);
       }
     }

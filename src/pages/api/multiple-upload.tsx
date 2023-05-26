@@ -20,8 +20,6 @@ const handler: NextApiHandler = async (req, res) => {
   if (!session) {
     res.status(401).json({ error: "unauthorized" });
   } else {
-    const userId = session.user.id;
-
     const data = await readUploadedFile(req, false);
     const ownerId = data.fields["ownerId"] as string;
 

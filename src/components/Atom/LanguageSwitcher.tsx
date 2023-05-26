@@ -1,28 +1,20 @@
 import {
-  ActionIcon,
-  Box,
-  Center,
   Group,
   SegmentedControl,
-  useMantineColorScheme,
-  useMantineTheme,
 } from "@mantine/core";
-import { GetServerSideProps, NextPage } from "next";
-import { IconMoon, IconSun } from "@tabler/icons-react";
+import type { NextPage } from "next";
 
 import Image from "next/image";
 import React from "react";
 import deFlag from "../../../public/DE.svg";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import usFlag from "../../../public/US.svg";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 const LanguageSwitcher: NextPage = () => {
-  const { colorScheme } = useMantineColorScheme();
 
   const router = useRouter();
-  const { locales, locale: activeLocale, defaultLocale } = router;
+  const { locale: activeLocale } = router;
   const { t, i18n } = useTranslation(activeLocale);
   const switchLabel = t("common:app-switchlanguage");
   return (

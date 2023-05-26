@@ -6,7 +6,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import type { ChangeEvent } from "react";
@@ -63,15 +63,15 @@ export async function getServerSideProps(
 }
 
 export default function ProtectedMyGrows() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const pageTitle = t("common:myreports-headline");
 
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
 
-  const { classes, theme } = useStyles();
-  const { data: session, status } = useSession();
+  const { classes } = useStyles();
+  const { status } = useSession();
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {

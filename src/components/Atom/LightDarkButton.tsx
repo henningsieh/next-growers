@@ -15,8 +15,8 @@ export default function LightDarkButton() {
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
   const router = useRouter();
-  const { locales, locale: activeLocale, defaultLocale } = router;
-  const { t, i18n } = useTranslation(activeLocale);
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   return (
     <Group position="center" my={0}>

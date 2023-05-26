@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { Box, Button, NativeSelect } from "@mantine/core";
 import {
   IconCalendarDown,
@@ -9,9 +7,8 @@ import {
   IconSortAscending2,
   IconSortDescending2,
 } from "@tabler/icons-react";
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 
-import { IconChevronUp } from "@tabler/icons-react";
 import type { SortingPanelProps } from "~/types";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
@@ -24,8 +21,8 @@ export default function SortingPanel({
 }: SortingPanelProps) {
   const router = useRouter();
 
-  const { locales, locale: activeLocale, defaultLocale } = router;
-  const { t, i18n } = useTranslation(activeLocale);
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   const createdAtLabel = t("common:reports-createdAt");
   const updatedAtLabel = t("common:reports-updatedAt");

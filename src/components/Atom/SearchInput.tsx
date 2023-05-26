@@ -1,6 +1,6 @@
 import { ActionIcon, TextInput } from "@mantine/core";
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { IconCrossFilled, IconX } from "@tabler/icons-react";
+import { IconX } from "@tabler/icons-react";
 
 type SearchInputProps = {
   value: string;

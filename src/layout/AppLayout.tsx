@@ -2,7 +2,6 @@
 
 import { type ReactNode } from "react";
 import {
-  ActionIcon,
   Anchor,
   Box,
   Burger,
@@ -14,7 +13,6 @@ import {
   Group,
   Header,
   HoverCard,
-  Paper,
   ScrollArea,
   SimpleGrid,
   Text,
@@ -40,11 +38,7 @@ import Link from "next/link";
 import LightDarkButton from "../components/Atom/LightDarkButton";
 import Notifications from "~/components/Notifications";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
-import { GetServerSideProps } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -190,7 +184,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     toggleLinks();
   };
 
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   return (
     <>
       <Header
@@ -300,7 +294,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           >
             <LanguageSwitcher />
             <LightDarkButton />
-            {status === "authenticated" && <Notifications />}
+            {!!session && status === "authenticated" && <Notifications />}
             <LoginPanel />
           </Group>
           {/* <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} /> */}
@@ -328,7 +322,7 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           />
 
           <Link href="/" className={classes.link}>
-            Landing Page
+            Welcome
           </Link>
           <Link href="/reports" className={classes.link}>
             Explore all Grows

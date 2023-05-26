@@ -18,8 +18,7 @@ export const handleMultipleDrop = async (
   if (files && files.length > 0) {
     // console.debug("files", files);
 
-    files.forEach((file, index) => {
-      // console.debug("file", file);
+    files.forEach((file, /* index */) => {
       formData.append("images", file, `${file.name}`);
     });
 

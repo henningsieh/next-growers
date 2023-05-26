@@ -1,4 +1,4 @@
-import { Alert, Box, Container, Paper } from "@mantine/core";
+import { Alert, Box, Container } from "@mantine/core";
 
 import { IconAlertCircle } from "@tabler/icons-react";
 

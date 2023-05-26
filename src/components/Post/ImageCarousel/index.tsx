@@ -120,16 +120,18 @@ export function PostImagesCarousel() {
   ));
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const md = useMediaQuery(
+    `(max-width: ${theme.breakpoints.md})`);
   const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
-  const breakpointNumber = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
+  const breakpointNumber = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : xl?4: 4;
 
   return (
     <Carousel
       slideSize="25%"
       breakpoints={[
+        { maxWidth: "xl", slideSize: "25%" },
         { maxWidth: "lg", slideSize: "33.333%" },
         { maxWidth: "md", slideSize: "50%" },
         { maxWidth: "sm", slideSize: "100%" },

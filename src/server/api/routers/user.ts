@@ -1,7 +1,6 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 import { InputSetUserName } from "~/helpers/inputValidation";
-import { z } from "zod";
 
 export const userRouter = createTRPCRouter({
   saveOwnUsername: protectedProcedure

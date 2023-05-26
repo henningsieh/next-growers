@@ -51,12 +51,12 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 };
 
 const PublicAllGrows: NextPage = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const pageTitle = t("common:reports-headline");
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
     data: reports,

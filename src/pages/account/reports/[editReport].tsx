@@ -1,13 +1,9 @@
 import { Box, Container, LoadingOverlay, Space, Title } from "@mantine/core";
 import type {
   GetServerSidePropsContext,
-  GetStaticPaths,
-  GetStaticPropsContext,
-  InferGetStaticPropsType,
   NextPage,
 } from "next";
-import { IsoReportWithPostsFromDb, Strains } from "~/types";
-import { Link, RichTextEditor } from "@mantine/tiptap";
+import type { IsoReportWithPostsFromDb, Strains } from "~/types";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AddPost from "~/components/Post/AddForm";

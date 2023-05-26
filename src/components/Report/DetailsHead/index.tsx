@@ -1,4 +1,4 @@
-import type { IsoReportWithPostsFromDb, Report } from "~/types";
+import type { IsoReportWithPostsFromDb } from "~/types";
 
 import React from "react";
 

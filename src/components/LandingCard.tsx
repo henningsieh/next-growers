@@ -78,12 +78,8 @@ export default function LandingCard() {
   const { classes } = useStyles();
 
   const router = useRouter();
-  const {
-    locale: activeLocale,
-    locales: availableLocales,
-    defaultLocale,
-  } = router;
-  const { t, i18n } = useTranslation(activeLocale);
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   return (
     <div className={classes.hero}>

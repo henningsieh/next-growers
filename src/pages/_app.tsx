@@ -1,20 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "~/styles/globals.css";
 
-import {
-  Box,
-  ColorSchemeProvider,
-  MantineProvider,
-  Notification,
-} from "@mantine/core";
-import { useEffect, useState } from "react";
+import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 
 import AppLayout from "~/layout/AppLayout";
 import type { AppType } from "next/app";
 import type { ColorScheme } from "@mantine/core";
 import Loading from "~/components/Atom/Loading";
 import { Notifications } from "@mantine/notifications";
-import Router from "next/router";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
@@ -148,11 +141,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
           // },
         }}
       >
+        <Loading isLoading={isLoading} />
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
           <Notifications limit={5} position="bottom-right" />
           <Toaster />
-          <Loading isLoading={isLoading} />
           <AppLayout>
             <Component {...pageProps} />
           </AppLayout>

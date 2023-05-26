@@ -56,7 +56,7 @@ export async function getServerSideProps(
 
 const ProtectedEditReport: NextPage = () => {
   const pageTitle = "Edit Profile";
-  const { data: session, status, update } = useSession();
+  const { data: session, update } = useSession();
   const [appNotificationOpened, setOpened] = useState(false);
   const theme = useMantineTheme();
   /**

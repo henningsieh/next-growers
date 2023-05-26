@@ -5,19 +5,15 @@ import type {
   InferGetStaticPropsType,
 } from "next";
 
-import { DatePicker } from "@mantine/dates";
 import { Environment } from "~/types";
-import { Group } from "@mantine/core";
 import Head from "next/head";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { type IsoReportWithPostsFromDb } from "~/types";
-import ReportDetailsHead from "~/components/Report/DetailsHead";
 import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 import { prisma } from "~/server/db";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import { useMediaQuery } from "@mantine/hooks";
-import { PostImagesCarousel } from "~/components/Post/ImageCarousel";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { useRouter } from "next/router";
 import { PostCard } from "~/components/Post/Card";
@@ -177,12 +173,10 @@ export default function PublicReport(
     if (matchingPost) {
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
-
-      const newUrl = `/grow/${staticReportFromProps.id as string}/update/${
-        matchingPost.id
-      }`;
-      // window.history.pushState({}, "", newUrl);
-      void router.push(
+      window.history.pushState(
+        {},
+        "",
+        // void router.replace(
         `/grow/${staticReportFromProps.id as string}/update/${matchingPost.id}`
       );
     } else {
