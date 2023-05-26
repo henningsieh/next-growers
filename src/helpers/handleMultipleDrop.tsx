@@ -14,26 +14,21 @@ export const handleMultipleDrop = async (
   setCloudUrls: Dispatch<SetStateAction<string[]>>,
   setIsUploading: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
-  const formData = new FormData();
+  try {
+    setIsUploading(true);
 
-  // console.debug("handleMultipleDrop", files);
-
-  if (files && files.length > 0) {
-    // console.debug("files", files);
-
-    files.forEach((file /* index */) => {
+    for (const file of files) {
+      const formData = new FormData();
       formData.append("images", file, `${file.name}`);
-    });
+      formData.append("ownerId", report.authorId as string);
 
-    formData.append("ownerId", report.authorId as string);
+      console.debug("formData", formData);
 
-    console.debug("formData", formData);
-    try {
       const { data }: { data: MultiUploadResponse } =
         await axios.post("/api/multiple-upload", formData);
 
       if (data.success) {
-        // add the image informations to the component state
+        // Add the image information to the component state
         setImageIds(prevImageIds => [
           ...prevImageIds,
           ...data.imageIds,
@@ -46,14 +41,14 @@ export const handleMultipleDrop = async (
           ...prevCloudUrls,
           ...data.cloudUrls,
         ]);
-
-        setIsUploading(false);
       } else {
         throw new Error("File uploaded NOT successfully");
       }
-    } catch (error) {
-      console.debug(error);
-      throw new Error("Error uploading file");
     }
+
+    setIsUploading(false);
+  } catch (error) {
+    console.debug(error);
+    throw new Error("Error uploading file");
   }
 };
