@@ -24,7 +24,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useTranslation } from "next-i18next";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   hiddenMobile: {
     [theme.fn.smallerThan("md")]: {
       display: "none",
@@ -51,13 +51,18 @@ export async function getServerSideProps(
   }>
 ) {
   // Fetch translations using next-i18next
-  const translations = await serverSideTranslations(context.locale as string, [
-    "common",
-  ]);
+  const translations = await serverSideTranslations(
+    context.locale as string,
+    ["common"]
+  );
   return {
     props: {
       ...translations,
-      session: await getServerSession(context.req, context.res, authOptions),
+      session: await getServerSession(
+        context.req,
+        context.res,
+        authOptions
+      ),
     },
   };
 }
@@ -89,7 +94,8 @@ export default function ProtectedMyGrows() {
     sortBy,
     setSortBy,
     desc,
-    handleToggleDesc: () => setDesc((previousSorting) => !previousSorting),
+    handleToggleDesc: () =>
+      setDesc(previousSorting => !previousSorting),
   };
 
   // Fake Data for Fake Card
@@ -113,7 +119,9 @@ export default function ProtectedMyGrows() {
     ],
   };
 
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchString(event.target.value);
   };
 
@@ -125,12 +133,18 @@ export default function ProtectedMyGrows() {
     <>
       <Head>
         <title>{`${pageTitle} | GrowAGram`}</title>
-        <meta name="description" content="My grow reports on growagram.com" />
+        <meta
+          name="description"
+          content="My grow reports on growagram.com"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="lg" className="flex w-full flex-col space-y-2">
+      <Container
+        size="lg"
+        className="flex w-full flex-col space-y-2"
+      >
         {/* // Header with Title and Sorting */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -165,7 +179,7 @@ export default function ProtectedMyGrows() {
           <Grid gutter="sm">
             {/* LOOP OVER REPORTS */}
             {reports && reports.length
-              ? reports.map((report) => {
+              ? reports.map(report => {
                   return (
                     <Grid.Col
                       key={report.id}
@@ -194,7 +208,8 @@ export default function ProtectedMyGrows() {
                           No Reports found! 😢
                         </h1>
                         <p className="error py-6 text-lg font-bold">
-                          You haven&apos;t created any reports yet.
+                          You haven&apos;t created any reports
+                          yet.
                         </p>
                       </div>
                     </div>

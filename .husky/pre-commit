@@ -5,6 +5,6 @@
 echo '🏗️👷 Styling your project before committing 🏗️👷'
 echo 'please be patient, this may take a while...'
 
-npx lint-staged
+# npx lint-staged
 
-# npx tsc --noEmit && npx eslint --fix . && npx prettier --write .
+npx tsc --noEmit && npx eslint --fix . && npx prettier --write .

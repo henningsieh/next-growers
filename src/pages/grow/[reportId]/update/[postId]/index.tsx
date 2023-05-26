@@ -1,4 +1,9 @@
-import { Container, useMantineTheme, Title, Box } from "@mantine/core";
+import {
+  Container,
+  useMantineTheme,
+  Title,
+  Box,
+} from "@mantine/core";
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
@@ -25,7 +30,10 @@ import { IconCalendarOff } from "@tabler/icons-react";
  * @returns : Promise<{props{ report: Report }}>
  */
 export async function getStaticProps(
-  context: GetStaticPropsContext<{ reportId: string; postId: string }>
+  context: GetStaticPropsContext<{
+    reportId: string;
+    postId: string;
+  }>
 ) {
   const reportId = context.params?.reportId as string;
   const postId = context.params?.postId as string;
@@ -34,7 +42,9 @@ export async function getStaticProps(
   const reportFromDb = await prisma.report.findUnique({
     include: {
       author: { select: { id: true, name: true, image: true } },
-      image: { select: { id: true, publicId: true, cloudUrl: true } },
+      image: {
+        select: { id: true, publicId: true, cloudUrl: true },
+      },
       strains: {
         select: {
           id: true,
@@ -46,8 +56,16 @@ export async function getStaticProps(
       },
       posts: {
         include: {
-          author: { select: { id: true, name: true, image: true } },
-          images: { select: { id: true, publicId: true, cloudUrl: true } },
+          author: {
+            select: { id: true, name: true, image: true },
+          },
+          images: {
+            select: {
+              id: true,
+              publicId: true,
+              cloudUrl: true,
+            },
+          },
           likes: true,
           comments: true,
         },
@@ -75,9 +93,10 @@ export async function getStaticProps(
   // console.dir(isoReportFromDb, { depth: null });
 
   // Fetch translations using next-i18next
-  const translations = await serverSideTranslations(context.locale as string, [
-    "common",
-  ]);
+  const translations = await serverSideTranslations(
+    context.locale as string,
+    ["common"]
+  );
 
   return {
     props: {
@@ -102,7 +121,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     },
   });
 
-  const paths = reports.flatMap((staticReport) => {
+  const paths = reports.flatMap(staticReport => {
     const localizedPaths = [
       {
         params: {
@@ -118,8 +137,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
       },
     ];
 
-    return staticReport.posts.flatMap((post) =>
-      localizedPaths.map((path) => ({
+    return staticReport.posts.flatMap(post =>
+      localizedPaths.map(path => ({
         ...path,
         params: {
           ...path.params,
@@ -143,19 +162,38 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export default function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
-  const { report: staticReportFromProps, postId: postIdfromProps } = props;
+  const {
+    report: staticReportFromProps,
+    postId: postIdfromProps,
+  } = props;
   const pageTitle = `${staticReportFromProps.title as string}`;
 
   const theme = useMantineTheme();
 
-  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
-  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  const xs = useMediaQuery(
+    `(max-width: ${theme.breakpoints.xs})`
+  );
+  const sm = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
+  const md = useMediaQuery(
+    `(max-width: ${theme.breakpoints.md})`
+  );
+  const lg = useMediaQuery(
+    `(max-width: ${theme.breakpoints.lg})`
+  );
   /* 
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
   */
-  const getResponsiveColumnCount = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
+  const getResponsiveColumnCount = xs
+    ? 1
+    : sm
+    ? 1
+    : md
+    ? 2
+    : lg
+    ? 3
+    : 4;
 
   const dateOfnewestPost = staticReportFromProps.posts.reduce(
     (maxDate, post) => {
@@ -168,33 +206,41 @@ export default function PublicReportPost(
   const [postId, setPostId] = useState<string>(postIdfromProps);
 
   const post = staticReportFromProps.posts.find(
-    (post) => post.id === postIdfromProps
+    post => post.id === postIdfromProps
   );
 
   const postDate = new Date(post?.date as string);
-  const postDays = staticReportFromProps.posts.map((post) =>
+  const postDays = staticReportFromProps.posts.map(post =>
     new Date(post.date).getTime()
   );
-  const dateOfGermination = new Date(staticReportFromProps.createdAt);
-  const [selectedDate, selectDate] = useState<Date | null>(postDate);
+  const dateOfGermination = new Date(
+    staticReportFromProps.createdAt
+  );
+  const [selectedDate, selectDate] = useState<Date | null>(
+    postDate
+  );
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
       return;
     }
 
-    const matchingPost = staticReportFromProps.posts.find((post) => {
-      const postDate = new Date(post.date);
-      return selectedDate.toISOString() === postDate.toISOString();
-    });
+    const matchingPost = staticReportFromProps.posts.find(
+      post => {
+        const postDate = new Date(post.date);
+        return (
+          selectedDate.toISOString() === postDate.toISOString()
+        );
+      }
+    );
 
     if (matchingPost) {
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
 
-      const newUrl = `/grow/${staticReportFromProps.id as string}/update/${
-        matchingPost.id
-      }`;
+      const newUrl = `/grow/${
+        staticReportFromProps.id as string
+      }/update/${matchingPost.id}`;
       window.history.replaceState({}, "", newUrl);
     } else {
       notifications.show(noPostAtThisDay);
@@ -213,7 +259,10 @@ export default function PublicReportPost(
         />
       </Head>
       {/* // Main Content Container */}
-      <Container size="lg" className="mb-8 flex w-full flex-col space-y-1">
+      <Container
+        size="lg"
+        className="mb-8 flex w-full flex-col space-y-1"
+      >
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -229,13 +278,23 @@ export default function PublicReportPost(
           className="flex w-full flex-col space-y-4"
         >
           <ImagePreview
-            authorName={staticReportFromProps.author?.name as string}
-            publicLink={`/grow/${staticReportFromProps.id as string}`}
-            imageUrl={staticReportFromProps.image?.cloudUrl as string}
+            authorName={
+              staticReportFromProps.author?.name as string
+            }
+            publicLink={`/grow/${
+              staticReportFromProps.id as string
+            }`}
+            imageUrl={
+              staticReportFromProps.image?.cloudUrl as string
+            }
             title={""}
             // title={staticReportFromProps.title as string}
-            description={staticReportFromProps.description as string}
-            authorImageUrl={staticReportFromProps.author?.image as string}
+            description={
+              staticReportFromProps.description as string
+            }
+            authorImageUrl={
+              staticReportFromProps.author?.image as string
+            }
             views={0}
             comments={0}
           />
@@ -260,7 +319,10 @@ export default function PublicReportPost(
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
 
-          <PostCard postId={postId} report={staticReportFromProps} />
+          <PostCard
+            postId={postId}
+            report={staticReportFromProps}
+          />
         </Container>
 
         {/* <ReportDetailsHead report={staticReportFromProps} /> */}

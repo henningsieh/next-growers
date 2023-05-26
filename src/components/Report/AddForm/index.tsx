@@ -36,7 +36,7 @@ interface AddFormProps {
   user: User;
 }
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   wrapper: {
     position: "relative",
     alignItems: "center", // add this line
@@ -79,7 +79,8 @@ function Form({ user }: AddFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reportTitle, setReportTitle] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reportDescription, setReportDescription] = useState("");
+  const [reportDescription, setReportDescription] =
+    useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imageId, setImageId] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -103,32 +104,33 @@ function Form({ user }: AddFormProps) {
       setImagePublicId,
       setCloudUrl,
       setIsUploading
-    ).catch((error) => {
+    ).catch(error => {
       console.debug(error);
     });
   };
 
-  const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
-    onMutate: (newReportDB) => {
-      console.log("START api.reports.create.useMutation");
-      console.log("newReportDB", newReportDB);
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, newReport, context) => {
-      toast.error("An error occured when saving your report");
-      if (!context) return;
-      console.log(context);
-    },
-    onSuccess: (newReportDB) => {
-      // Navigate to the new report page
-      void router.push(`/account/reports/${newReportDB.id}`);
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      console.log("END api.reports.create.useMutation");
-    },
-  });
+  const { mutate: tRPCcreateReport } =
+    api.reports.create.useMutation({
+      onMutate: newReportDB => {
+        console.log("START api.reports.create.useMutation");
+        console.log("newReportDB", newReportDB);
+      },
+      // If the mutation fails,
+      // use the context returned from onMutate to roll back
+      onError: (err, newReport, context) => {
+        toast.error("An error occured when saving your report");
+        if (!context) return;
+        console.log(context);
+      },
+      onSuccess: newReportDB => {
+        // Navigate to the new report page
+        void router.push(`/account/reports/${newReportDB.id}`);
+      },
+      // Always refetch after error or success:
+      onSettled: () => {
+        console.log("END api.reports.create.useMutation");
+      },
+    });
 
   const handleErrors = (errors: typeof form.errors) => {
     console.log(errors);
@@ -216,12 +218,16 @@ function Form({ user }: AddFormProps) {
               multiple={false} // only one image for now!
               openRef={openReference}
               onDrop={handleDropWrapper}
-              onChange={(e) => {
+              onChange={e => {
                 console.debug(e.currentTarget);
               }}
               className={classes.dropzone}
               // radius="md"
-              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+              accept={[
+                MIME_TYPES.jpeg,
+                MIME_TYPES.png,
+                MIME_TYPES.gif,
+              ]}
               maxSize={4.4 * 1024 ** 2} // trying to match the Vercel production environment post size limit which is about 4.5mb
             >
               <div style={{ pointerEvents: "none" }}>
@@ -260,17 +266,24 @@ function Form({ user }: AddFormProps) {
                 </Group>
 
                 <Text ta="center" fw={700} fz="lg" mt="xl">
-                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                  <Dropzone.Accept>
+                    Drop files here
+                  </Dropzone.Accept>
                   <Dropzone.Reject>
                     Only one Images, less than 10mb
                   </Dropzone.Reject>
-                  <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
+                  <Dropzone.Idle>
+                    Upload Header Image
+                  </Dropzone.Idle>
                 </Text>
                 <Text ta="center" fz="sm" my="xs" c="dimmed">
-                  Drag&apos;n&apos;drop your image here to upload!
+                  Drag&apos;n&apos;drop your image here to
+                  upload!
                   <br />
-                  We can accept only one <i>.jpg/.png/.gif</i> file that is less
-                  than 10mb in size.
+                  We can accept only one <i>
+                    .jpg/.png/.gif
+                  </i>{" "}
+                  file that is less than 10mb in size.
                 </Text>
               </div>
             </Dropzone>
@@ -279,7 +292,7 @@ function Form({ user }: AddFormProps) {
 
         {/* // Report form */}
         <form
-          onSubmit={form.onSubmit((values) => {
+          onSubmit={form.onSubmit(values => {
             console.log(form.values);
             // send imageId as formField so that the report can be related
             form.setValues({ imageId: imageId });

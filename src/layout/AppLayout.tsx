@@ -40,7 +40,7 @@ import Notifications from "~/components/Notifications";
 import { useSession } from "next-auth/react";
 import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   link: {
     display: "flex",
     alignItems: "center",
@@ -48,7 +48,8 @@ const useStyles = createStyles((theme) => ({
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
     textDecoration: "none",
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    color:
+      theme.colorScheme === "dark" ? theme.white : theme.black,
     fontWeight: 500,
     fontSize: theme.fontSizes.lg,
 
@@ -92,7 +93,9 @@ const useStyles = createStyles((theme) => ({
     padding: `${theme.spacing.md} calc(${theme.spacing.md} * 2)`,
     paddingBottom: theme.spacing.xl,
     borderTop: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[5]
+        : theme.colors.gray[1]
     }`,
   },
 
@@ -119,7 +122,8 @@ const mockdata = [
   {
     icon: IconMapPin,
     title: "Cannabis Social Clubs",
-    description: "Find a Social Club nearby you! (...coming soon 👀)",
+    description:
+      "Find a Social Club nearby you! (...coming soon 👀)",
   },
   {
     icon: IconUsers,
@@ -130,12 +134,14 @@ const mockdata = [
   {
     icon: IconSocial,
     title: "Social Media Groups",
-    description: "Join groups on social media dedicated to growing.",
+    description:
+      "Join groups on social media dedicated to growing.",
   },
   {
     icon: IconTools,
     title: "Support Groups",
-    description: "Join support groups for growers facing common challenges.",
+    description:
+      "Join support groups for growers facing common challenges.",
   },
   {
     icon: IconStar,
@@ -149,13 +155,20 @@ function openUrlInNewTab(url: string) {
   window.open(url, "_blank");
 }
 
-export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
+export default function HeaderMegaMenu({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [
+    drawerOpened,
+    { toggle: toggleDrawer, close: closeDrawer },
+  ] = useDisclosure(false);
+  const [linksOpened, { toggle: toggleLinks }] =
     useDisclosure(false);
-  const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { classes, theme } = useStyles();
 
-  const links = mockdata.map((item) => (
+  const links = mockdata.map(item => (
     <UnstyledButton
       onClick={() => openUrlInNewTab(item.url as string)}
       className={classes.subLink}
@@ -163,7 +176,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
     >
       <Group noWrap align="flex-start">
         <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
+          <item.icon
+            size={rem(22)}
+            color={theme.fn.primaryColor()}
+          />
         </ThemeIcon>
         <div>
           <Text size="sm" fw={500}>
@@ -262,7 +278,11 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
                 <Divider
                   my="sm"
                   mx="-md"
-                  color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
+                  color={
+                    theme.colorScheme === "dark"
+                      ? "dark.5"
+                      : "gray.1"
+                  }
                 />
 
                 <SimpleGrid cols={2} spacing={0}>
@@ -276,10 +296,13 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
                         Get started
                       </Text>
                       <Text size="xs" color="dimmed">
-                        Their food sources have decreased, and their numbers
+                        Their food sources have decreased, and
+                        their numbers
                       </Text>
                     </div>
-                    <Button variant="default">Get started</Button>
+                    <Button variant="default">
+                      Get started
+                    </Button>
                   </Group>
                 </div>
               </HoverCard.Dropdown>
@@ -294,7 +317,9 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
           >
             <LanguageSwitcher />
             <LightDarkButton />
-            {!!session && status === "authenticated" && <Notifications />}
+            {!!session && status === "authenticated" && (
+              <Notifications />
+            )}
             <LoginPanel />
           </Group>
           {/* <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} /> */}
@@ -318,7 +343,9 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
         >
           <Divider
             my="sm"
-            color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
+            color={
+              theme.colorScheme === "dark" ? "dark.5" : "gray.1"
+            }
           />
 
           <Link href="/" className={classes.link}>
@@ -335,7 +362,10 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
               <Box component="span" mr={5}>
                 Community
               </Box>
-              <IconChevronDown size={16} color={theme.fn.primaryColor()} />
+              <IconChevronDown
+                size={16}
+                color={theme.fn.primaryColor()}
+              />
             </Center>
           </UnstyledButton>
           <Collapse in={linksOpened}>{links}</Collapse>
@@ -346,7 +376,9 @@ export default function HeaderMegaMenu({ children }: { children: ReactNode }) {
 
           <Divider
             my="sm"
-            color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
+            color={
+              theme.colorScheme === "dark" ? "dark.5" : "gray.1"
+            }
           />
         </ScrollArea>
       </Drawer>

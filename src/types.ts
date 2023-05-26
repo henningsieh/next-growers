@@ -6,7 +6,8 @@ import type { inferRouterOutputs } from "@trpc/server";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
-type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
+type getAllReportsOutput =
+  RouterOutput["reports"]["getAllReports"];
 export type Reports = getAllReportsOutput;
 export type Report = getAllReportsOutput[number];
 
@@ -17,7 +18,8 @@ export type IsoReportWithPostsFromDb =
 // export type OwnReports = getOwnReportsOutput;
 // bexport type OwnReport = getOwnReportsOutput[number];
 
-type getPostsByReportIdOutput = RouterOutput["posts"]["getPostsByReportId"];
+type getPostsByReportIdOutput =
+  RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
 // export type PostDbInput = RouterOutput["posts"]["getPostDbInput"];
@@ -38,7 +40,8 @@ type getAllNotificationsOutput =
 export type Notifications = getAllNotificationsOutput;
 export type Notification = getAllNotificationsOutput[number];
 
-type getAllStrainsOutput = RouterOutput["strains"]["getAllStrains"];
+type getAllStrainsOutput =
+  RouterOutput["strains"]["getAllStrains"];
 export type Strains = getAllStrainsOutput;
 export type Strain = getAllStrainsOutput[number];
 

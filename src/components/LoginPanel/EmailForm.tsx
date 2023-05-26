@@ -14,8 +14,10 @@ export default function EmailForm() {
 
     // functions will be used to validate value to a valid email address
     validate: {
-      email: (value) =>
-        /^\S+@\S+\.\S{2,}$/.test(value) ? null : "Invalid email",
+      email: value =>
+        /^\S+@\S+\.\S{2,}$/.test(value)
+          ? null
+          : "Invalid email",
     },
   });
 
@@ -25,7 +27,7 @@ export default function EmailForm() {
     setIsLoading(true);
     console.log(values.email);
     signIn("email", { email: values.email })
-      .catch((error) => {
+      .catch(error => {
         console.log(error);
       })
       .finally(() => {

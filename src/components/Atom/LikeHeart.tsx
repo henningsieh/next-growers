@@ -10,7 +10,10 @@ import {
   rem,
 } from "@mantine/core";
 import { IconCheck, IconError404 } from "@tabler/icons-react";
-import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
+import {
+  IconHeart,
+  IconHeartFilled,
+} from "@tabler/icons-react";
 import type { IsoReportWithPostsFromDb, Post } from "~/types";
 import React, { useState } from "react";
 
@@ -20,7 +23,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   card: {
     transition: "transform 150ms ease, box-shadow 150ms ease",
 
@@ -37,12 +40,16 @@ const useStyles = createStyles((theme) => ({
           : `0 0 8px ${theme.colors.orange[8]}`,
     },
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[7]
+        : theme.white,
   },
 
   section: {
     borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[5]
+        : theme.colors.gray[2]
     }`,
     paddingLeft: theme.spacing.sm,
     paddingRight: theme.spacing.sm,
@@ -68,7 +75,9 @@ export const createLikeErrorMsg = (msg: string) => ({
   color: "red",
   icon: <IconError404 />,
 });
-export const likeSuccessfulMsg: NotificationProps & { message: string } = {
+export const likeSuccessfulMsg: NotificationProps & {
+  message: string;
+} = {
   loading: false,
   title: "Success",
   message: "Woohoo... you ❤️ this Grow!",
@@ -95,34 +104,36 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const trpc = api.useContext();
 
-  const { mutate: likeReportMutation } = api.like.likeReport.useMutation({
-    onError: (error) => {
-      notifications.show(createLikeErrorMsg(error.message));
-    },
-    onSuccess: (likedReport) => {
-      notifications.show(likeSuccessfulMsg);
-      console.debug("likedReport", likedReport);
-    },
-    // Always refetch after error or success:
-    onSettled: async () => {
-      await trpc.notifications.invalidate();
-      await trpc.reports.invalidate();
-    },
-  });
-  const { mutate: deleteLikeMutation } = api.like.deleteLike.useMutation({
-    onError: (error) => {
-      console.error(error);
-      // Handle error, e.g., show an error message
-    },
-    onSuccess: (res) => {
-      notifications.show(dislikeSuccessfulMsg);
-    },
-    onSettled: async () => {
-      // Trigger any necessary refetch or invalidation, e.g., refetch the report data
-      await trpc.notifications.getNotificationsByUserId.invalidate();
-      await trpc.reports.invalidate();
-    },
-  });
+  const { mutate: likeReportMutation } =
+    api.like.likeReport.useMutation({
+      onError: error => {
+        notifications.show(createLikeErrorMsg(error.message));
+      },
+      onSuccess: likedReport => {
+        notifications.show(likeSuccessfulMsg);
+        console.debug("likedReport", likedReport);
+      },
+      // Always refetch after error or success:
+      onSettled: async () => {
+        await trpc.notifications.invalidate();
+        await trpc.reports.invalidate();
+      },
+    });
+  const { mutate: deleteLikeMutation } =
+    api.like.deleteLike.useMutation({
+      onError: error => {
+        console.error(error);
+        // Handle error, e.g., show an error message
+      },
+      onSuccess: res => {
+        notifications.show(dislikeSuccessfulMsg);
+      },
+      onSettled: async () => {
+        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        await trpc.notifications.getNotificationsByUserId.invalidate();
+        await trpc.reports.invalidate();
+      },
+    });
 
   const handleLikeReport = () => {
     // Ensure that the user is authenticated
@@ -165,7 +176,9 @@ const LikeHeart = (props: LikeHeartProps) => {
           mr={-4}
           size={25}
         >
-          {item.likes?.find((like) => like.userId === session?.user.id) ? (
+          {item.likes?.find(
+            like => like.userId === session?.user.id
+          ) ? (
             <IconHeartFilled
               onClick={handleDisLikeReport}
               size="1.2rem"
@@ -189,21 +202,24 @@ const LikeHeart = (props: LikeHeartProps) => {
             duration={100}
             timingFunction="ease-in-out"
           >
-            {(transitionStyles) => (
+            {transitionStyles => (
               <Paper
                 withBorder
                 className={`absolute bottom-full right-0 z-40 m-0 -mr-1 mb-2 w-max rounded p-0 text-right`}
                 style={transitionStyles}
               >
                 {item.likes &&
-                  item.likes.map((like) => (
+                  item.likes.map(like => (
                     <Box key={like.id} mx={10} fz={"xs"}>
                       {like.name}
                     </Box>
                   ))}
                 <Text fz="xs" td="overline" pr={4} fs="italic">
                   {item.likes && item.likes.length} Like
-                  {item.likes && item.likes.length > 1 ? "s" : ""} 👍
+                  {item.likes && item.likes.length > 1
+                    ? "s"
+                    : ""}{" "}
+                  👍
                 </Text>
               </Paper>
             )}

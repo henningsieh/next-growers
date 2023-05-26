@@ -1,5 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { IsoReportWithPostsFromDb, MultiUploadResponse } from "~/types";
+import type {
+  IsoReportWithPostsFromDb,
+  MultiUploadResponse,
+} from "~/types";
 
 import axios from "axios";
 
@@ -18,7 +21,7 @@ export const handleMultipleDrop = async (
   if (files && files.length > 0) {
     // console.debug("files", files);
 
-    files.forEach((file, /* index */) => {
+    files.forEach((file /* index */) => {
       formData.append("images", file, `${file.name}`);
     });
 
@@ -26,19 +29,23 @@ export const handleMultipleDrop = async (
 
     console.debug("formData", formData);
     try {
-      const { data }: { data: MultiUploadResponse } = await axios.post(
-        "/api/multiple-upload",
-        formData
-      );
+      const { data }: { data: MultiUploadResponse } =
+        await axios.post("/api/multiple-upload", formData);
 
       if (data.success) {
         // add the image informations to the component state
-        setImageIds((prevImageIds) => [...prevImageIds, ...data.imageIds]);
-        setImagePublicIds((prevImagePublicIds) => [
+        setImageIds(prevImageIds => [
+          ...prevImageIds,
+          ...data.imageIds,
+        ]);
+        setImagePublicIds(prevImagePublicIds => [
           ...prevImagePublicIds,
           ...data.imagePublicIds,
         ]);
-        setCloudUrls((prevCloudUrls) => [...prevCloudUrls, ...data.cloudUrls]);
+        setCloudUrls(prevCloudUrls => [
+          ...prevCloudUrls,
+          ...data.cloudUrls,
+        ]);
 
         setIsUploading(false);
       } else {

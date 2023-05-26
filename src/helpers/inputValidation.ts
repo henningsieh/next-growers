@@ -17,9 +17,13 @@ export const InputCreateReport = z.object({
     .max(32, { message: "Title should have max 32 letters" }),
   description: z
     .string()
-    .min(12, { message: "Content should have at least 12 letters" })
+    .min(12, {
+      message: "Content should have at least 12 letters",
+    })
     .max(64, { message: "Content should have max 64 letters" }),
-  imageId: z.string().min(1, { message: "Header image is missing" }),
+  imageId: z
+    .string()
+    .min(1, { message: "Header image is missing" }),
 });
 
 export const InputEditReport = z.object({
@@ -30,12 +34,18 @@ export const InputEditReport = z.object({
     .max(32, { message: "Title should have max 32 letters" }),
   description: z
     .string()
-    .min(12, { message: "Content should have at least 12 letters" })
+    .min(12, {
+      message: "Content should have at least 12 letters",
+    })
     .max(64, { message: "Content should have max 64 letters" }),
   strains: z
     .array(z.string())
-    .min(1, { message: "Report should have at least 1 strain" }),
-  environment: z.enum(Object.keys(Environment) as [keyof typeof Environment]),
+    .min(1, {
+      message: "Report should have at least 1 strain",
+    }),
+  environment: z.enum(
+    Object.keys(Environment) as [keyof typeof Environment]
+  ),
   createdAt: z.date(),
 });
 
@@ -57,25 +67,33 @@ export const InputDeletelike = z.object({
   reportId: z.string(),
 });
 
-export const InputCreatePost: (reportStartDate: Date) => ZodType = (
+export const InputCreatePost: (
   reportStartDate: Date
-) => {
+) => ZodType = (reportStartDate: Date) => {
   return z.object({
-    date: z.date().refine((value) => value >= reportStartDate, {
+    date: z.date().refine(value => value >= reportStartDate, {
       message:
         "Date should be greater than or equal to report's germination date",
     }),
-    day: z.number().min(0, { message: "Day must be greater than 0" }),
+    day: z
+      .number()
+      .min(0, { message: "Day must be greater than 0" }),
     title: z
       .string()
-      .min(8, { message: "Title should have at least 8 letters" })
+      .min(8, {
+        message: "Title should have at least 8 letters",
+      })
       .max(32, { message: "Title should have max 32 letters" }),
     lightHoursPerDay: z
-      .number({ invalid_type_error: "(h) must be set, may be 0" })
+      .number({
+        invalid_type_error: "(h) must be set, may be 0",
+      })
       .nullable(),
     growStage: z
       .string()
-      .min(1, { message: "Grow stage must be set with every update" }),
+      .min(1, {
+        message: "Grow stage must be set with every update",
+      }),
     content: z.string(),
     images: z.array(z.string()),
   });

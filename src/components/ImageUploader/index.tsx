@@ -36,7 +36,9 @@ const ImageUploader = (props: ImageUploaderProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [files, setFiles] = useState<FileWithPath[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
+  const [imagePublicIds, setImagePublicIds] = useState<
+    string[]
+  >([]);
 
   const theme = useMantineTheme();
 
@@ -46,7 +48,9 @@ const ImageUploader = (props: ImageUploaderProps) => {
       <Carousel.Slide key={index}>
         <Image
           src={cloudUrl}
-          imageProps={{ onLoad: () => URL.revokeObjectURL(cloudUrl) }}
+          imageProps={{
+            onLoad: () => URL.revokeObjectURL(cloudUrl),
+          }}
           alt={`upload preview id ${index} `}
         />
       </Carousel.Slide>
@@ -68,7 +72,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
       setImagePublicIds,
       setCloudUrls,
       setIsUploading
-    ).catch((error) => {
+    ).catch(error => {
       console.debug(error);
     });
   };
@@ -79,7 +83,9 @@ const ImageUploader = (props: ImageUploaderProps) => {
         <Box className="space-y-2">
           <Group position="left">
             <IconCamera color={theme.colors.orange[7]} />
-            <Title order={4}>Append some images to this update!</Title>
+            <Title order={4}>
+              Append some images to this update!
+            </Title>
           </Group>
           <div>
             <Box className="relative">
@@ -89,7 +95,9 @@ const ImageUploader = (props: ImageUploaderProps) => {
                   accept={IMAGE_MIME_TYPE}
                   onDrop={handleMultipleDropWrapper}
                 >
-                  <Text align="center">Drop images for this update here</Text>
+                  <Text align="center">
+                    Drop images for this update here
+                  </Text>
                 </Dropzone>
                 <Space h="sm" />
                 <Paper withBorder>

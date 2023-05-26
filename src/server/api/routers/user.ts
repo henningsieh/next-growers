@@ -18,7 +18,9 @@ export const userRouter = createTRPCRouter({
 
       // Then, check if the user is authorized to edit their own username
       if (existingUser.id !== ctx.session.user.id) {
-        throw new Error("You are not authorized to edit this user");
+        throw new Error(
+          "You are not authorized to edit this user"
+        );
       }
 
       // Update the user's name

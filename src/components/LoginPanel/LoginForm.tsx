@@ -19,19 +19,27 @@ interface Errors {
 }
 
 const useLoginForm = () => {
-  const [formContent, setFormContent] = useState<LoginFormContent>({
-    email: "",
-  });
+  const [formContent, setFormContent] =
+    useState<LoginFormContent>({
+      email: "",
+    });
   const [errors, setErrors] = useState<Errors>({});
 
   const emailSchema = z.string().email("Invalid email address");
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = e.target;
     console.log(value);
-    setFormContent((prevState) => ({ ...prevState, [name]: value }));
+    setFormContent(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
-  const handleGoogleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleGoogleSignIn = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     const newErrors: Errors = {};
     try {
@@ -43,7 +51,9 @@ const useLoginForm = () => {
     setErrors(newErrors);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     // Validate email field
     const newErrors: Errors = {};
@@ -82,7 +92,7 @@ export default function LoginForm() {
       {/* Google In */}
       <form
         className="p-2 md:p-3 lg:p-4"
-        onSubmit={(e) => {
+        onSubmit={e => {
           e.preventDefault();
           void handleGoogleSignIn(e);
         }}

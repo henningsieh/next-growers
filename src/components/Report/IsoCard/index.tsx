@@ -28,8 +28,11 @@ import {
 import { IconCheck } from "@tabler/icons-react";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import Link from "next/link";
-import { IsoReportCardProps, Locale } from "~/types";
-import type { ReportCardProps } from "~/types";
+import { Locale } from "~/types";
+import type {
+  ReportCardProps,
+  IsoReportCardProps,
+} from "~/types";
 import { api } from "~/utils/api";
 import { notifications } from "@mantine/notifications";
 import { sanatizeDateString } from "~/helpers";
@@ -39,7 +42,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useTranslation } from "next-i18next";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   card: {
     transition: "transform 150ms ease, box-shadow 150ms ease",
 
@@ -56,12 +59,16 @@ const useStyles = createStyles((theme) => ({
           : `0 0 8px ${theme.colors.orange[8]}`,
     },
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[7]
+        : theme.white,
   },
 
   section: {
     borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[5]
+        : theme.colors.gray[2]
     }`,
     paddingLeft: theme.spacing.sm,
     paddingRight: theme.spacing.sm,
@@ -117,95 +124,104 @@ export default function IsoReportCard({
   const { data: session, status } = useSession();
   const [showLikes, setShowLikes] = useState(false);
 
-  const { mutate: likeReportMutation } = api.like.likeReport.useMutation({
-    onError: (error) => {
-      toast.error(error.message);
-      console.error(error.message);
-    },
-    onSuccess: (likedReport) => {
-      notifications.show(likeSuccessfulMsg);
-      console.debug("likedReport", likedReport);
-    },
-    // Always refetch after error or success:
-    onSettled: async () => {
-      await trpc.notifications.invalidate();
-      await trpc.reports.invalidate();
-    },
-  });
+  const { mutate: likeReportMutation } =
+    api.like.likeReport.useMutation({
+      onError: error => {
+        toast.error(error.message);
+        console.error(error.message);
+      },
+      onSuccess: likedReport => {
+        notifications.show(likeSuccessfulMsg);
+        console.debug("likedReport", likedReport);
+      },
+      // Always refetch after error or success:
+      onSettled: async () => {
+        await trpc.notifications.invalidate();
+        await trpc.reports.invalidate();
+      },
+    });
 
-  const { mutate: deleteLikeMutation } = api.like.deleteLike.useMutation({
-    onError: (error) => {
-      console.error(error);
-      // Handle error, e.g., show an error message
-    },
-    onSuccess: () => {
-      notifications.show(dislikeSuccessfulMsg);
-    },
-    onSettled: async () => {
-      // Trigger any necessary refetch or invalidation, e.g., refetch the report data
-      await trpc.notifications.getNotificationsByUserId.invalidate();
-      await trpc.reports.invalidate();
-    },
-  });
+  const { mutate: deleteLikeMutation } =
+    api.like.deleteLike.useMutation({
+      onError: error => {
+        console.error(error);
+        // Handle error, e.g., show an error message
+      },
+      onSuccess: () => {
+        notifications.show(dislikeSuccessfulMsg);
+      },
+      onSettled: async () => {
+        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        await trpc.notifications.getNotificationsByUserId.invalidate();
+        await trpc.reports.invalidate();
+      },
+    });
 
-  const { mutate: deleteMutation } = api.reports.deleteOwnReport.useMutation({
-    onMutate: async (deletedReportId: string) => {
-      if (procedure == "own") {
-        // Cancel any outgoing refetches so they don't overwrite optimistic update
-        await trpc.reports.getOwnReports.cancel();
-        // Snapshot the previous value
-        const previousReports = trpc.reports.getOwnReports.getData();
-        // Optimistically update to the new value
-        trpc.reports.getOwnReports.setData(
-          { search: "", orderBy: "createdAt", desc: true },
-          (prev) => {
-            console.log("PREV", prev);
-            if (!prev) return previousReports;
-            return prev.filter((report) => report.id !== deletedReportId);
-          }
-        );
-        // Return a context object with the snapshotted value
-        return { previousReports };
-      } else {
-        // Cancel any outgoing refetches so they don't overwrite optimistic update
-        await trpc.reports.getAllReports.cancel();
-        // Snapshot the previous value
-        const previousReports = trpc.reports.getAllReports.getData();
-        // Optimistically update to the new value
-        trpc.reports.getAllReports.setData(
-          { search: "", orderBy: "createdAt", desc: true },
-          (prev) => {
-            if (!prev) return previousReports;
-            return prev.filter((report) => report.id !== deletedReportId);
-          }
-        );
-        // Return a context object with the snapshotted value
-        return { previousReports };
-      }
-    },
-    // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (_err, _variables, context) => {
-      // toast.error(`An error occured when deleting todo`)
-      if (!!context) {
+  const { mutate: deleteMutation } =
+    api.reports.deleteOwnReport.useMutation({
+      onMutate: async (deletedReportId: string) => {
         if (procedure == "own") {
+          // Cancel any outgoing refetches so they don't overwrite optimistic update
+          await trpc.reports.getOwnReports.cancel();
+          // Snapshot the previous value
+          const previousReports =
+            trpc.reports.getOwnReports.getData();
+          // Optimistically update to the new value
           trpc.reports.getOwnReports.setData(
             { search: "", orderBy: "createdAt", desc: true },
-            () => context.previousReports
+            prev => {
+              console.log("PREV", prev);
+              if (!prev) return previousReports;
+              return prev.filter(
+                report => report.id !== deletedReportId
+              );
+            }
           );
+          // Return a context object with the snapshotted value
+          return { previousReports };
         } else {
+          // Cancel any outgoing refetches so they don't overwrite optimistic update
+          await trpc.reports.getAllReports.cancel();
+          // Snapshot the previous value
+          const previousReports =
+            trpc.reports.getAllReports.getData();
+          // Optimistically update to the new value
           trpc.reports.getAllReports.setData(
             { search: "", orderBy: "createdAt", desc: true },
-            () => context.previousReports
+            prev => {
+              if (!prev) return previousReports;
+              return prev.filter(
+                report => report.id !== deletedReportId
+              );
+            }
           );
+          // Return a context object with the snapshotted value
+          return { previousReports };
         }
-      }
-    },
-    // Always refetch after error or success:
-    onSettled: async () => {
-      await trpc.reports.getOwnReports.invalidate();
-      await trpc.reports.getAllReports.invalidate();
-    },
-  });
+      },
+      // If the mutation fails, use the context returned from onMutate to roll back
+      onError: (_err, _variables, context) => {
+        // toast.error(`An error occured when deleting todo`)
+        if (!!context) {
+          if (procedure == "own") {
+            trpc.reports.getOwnReports.setData(
+              { search: "", orderBy: "createdAt", desc: true },
+              () => context.previousReports
+            );
+          } else {
+            trpc.reports.getAllReports.setData(
+              { search: "", orderBy: "createdAt", desc: true },
+              () => context.previousReports
+            );
+          }
+        }
+      },
+      // Always refetch after error or success:
+      onSettled: async () => {
+        await trpc.reports.getOwnReports.invalidate();
+        await trpc.reports.getAllReports.invalidate();
+      },
+    });
 
   const handleLikeReport = () => {
     // Ensure that the user is authenticated
@@ -229,7 +245,7 @@ export default function IsoReportCard({
     deleteLikeMutation({ reportId: isoReport.id as string });
   };
 
-  const reportStrains = isoReport.strains.map((badge) => (
+  const reportStrains = isoReport.strains.map(badge => (
     <Box key={badge.id}>
       <Badge
         className="cursor-pointer"
@@ -254,7 +270,12 @@ export default function IsoReportCard({
   ));
 
   return (
-    <Card withBorder radius="sm" p="sm" className={classes.card}>
+    <Card
+      withBorder
+      radius="sm"
+      p="sm"
+      className={classes.card}
+    >
       <Card.Section>
         <ImagePreview
           imageUrl={isoReport.image?.cloudUrl as string}
@@ -270,7 +291,10 @@ export default function IsoReportCard({
 
       <Card.Section className={classes.section} mt={4}>
         <Flex justify="space-between">
-          <Group position="left" className="inline-flex space-y-0">
+          <Group
+            position="left"
+            className="inline-flex space-y-0"
+          >
             {/* Strains */}
             {reportStrains}
           </Group>
@@ -293,7 +317,7 @@ export default function IsoReportCard({
                 size={25}
               >
                 {isoReport.likes?.find(
-                  (like) => like.userId === session?.user.id
+                  like => like.userId === session?.user.id
                 ) ? (
                   <IconHeartFilled
                     onClick={handleDisLikeReport}
@@ -318,20 +342,28 @@ export default function IsoReportCard({
                   duration={100}
                   timingFunction="ease-in-out"
                 >
-                  {(transitionStyles) => (
+                  {transitionStyles => (
                     <Paper
                       withBorder
                       className={`absolute bottom-full right-0 z-40 m-0 -mr-1 mb-2 w-max rounded p-0 text-right`}
                       style={transitionStyles}
                     >
-                      {isoReport.likes?.map((like) => (
+                      {isoReport.likes?.map(like => (
                         <Box key={like.id} mx={10} fz={"xs"}>
                           {like.name}
                         </Box>
                       ))}
-                      <Text fz="xs" td="overline" pr={4} fs="italic">
-                        {isoReport.likes && isoReport.likes.length} Like
-                        {isoReport.likes && isoReport.likes.length > 1
+                      <Text
+                        fz="xs"
+                        td="overline"
+                        pr={4}
+                        fs="italic"
+                      >
+                        {isoReport.likes &&
+                          isoReport.likes.length}{" "}
+                        Like
+                        {isoReport.likes &&
+                        isoReport.likes.length > 1
                           ? "s"
                           : ""}{" "}
                         👍
@@ -350,7 +382,10 @@ export default function IsoReportCard({
           {/*// Stage/ Date */}
           <Group position="left">
             <Tooltip
-              transitionProps={{ transition: "pop-bottom-left", duration: 100 }}
+              transitionProps={{
+                transition: "pop-bottom-left",
+                duration: 100,
+              }}
               label={t("common:reports-createdAt")}
               color="green"
               withArrow
@@ -360,10 +395,15 @@ export default function IsoReportCard({
                 <Box pr={4}>
                   <IconCalendar size="1.2rem" />
                 </Box>
-                <Text className={`${classes.label} cursor-default`} c="dimmed">
+                <Text
+                  className={`${classes.label} cursor-default`}
+                  c="dimmed"
+                >
                   {sanatizeDateString(
                     isoReport.createdAt,
-                    router.locale === Locale.DE ? Locale.DE : Locale.EN
+                    router.locale === Locale.DE
+                      ? Locale.DE
+                      : Locale.EN
                   )}
                 </Text>
               </Center>
@@ -382,10 +422,15 @@ export default function IsoReportCard({
               arrowPosition="side"
             >
               <Center>
-                <Text className={`${classes.label} cursor-default`} c="dimmed">
+                <Text
+                  className={`${classes.label} cursor-default`}
+                  c="dimmed"
+                >
                   {sanatizeDateString(
                     isoReport.updatedAt,
-                    router.locale === Locale.DE ? Locale.DE : Locale.EN
+                    router.locale === Locale.DE
+                      ? Locale.DE
+                      : Locale.EN
                   )}
                 </Text>
                 <Box pl={4}>
@@ -429,7 +474,9 @@ export default function IsoReportCard({
               stroke={1.5}
             />
           </Button>
-          <Link href={`/account/reports/${isoReport.id as string}`}>
+          <Link
+            href={`/account/reports/${isoReport.id as string}`}
+          >
             <Button
               size="sm" /*
               className="border-orange-600" */
@@ -438,7 +485,11 @@ export default function IsoReportCard({
               style={{ flex: 1 }}
             >
               {t("common:report-edit")}
-              <IconEdit className="ml-2" height={22} stroke={1.5} />
+              <IconEdit
+                className="ml-2"
+                height={22}
+                stroke={1.5}
+              />
             </Button>
           </Link>
         </Group>

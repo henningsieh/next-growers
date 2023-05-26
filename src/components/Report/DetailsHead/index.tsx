@@ -6,7 +6,9 @@ interface ReportDetailsProps {
   report: IsoReportWithPostsFromDb; // Replace 'Report' with the actual type of your report
 }
 
-const ReportDetailsHead: React.FC<ReportDetailsProps> = ({ report }) => {
+const ReportDetailsHead: React.FC<ReportDetailsProps> = ({
+  report,
+}) => {
   return (
     <>
       <h1>from DB</h1>

@@ -10,10 +10,11 @@ import {
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   hero: {
     position: "relative",
-    backgroundImage: "url(diyahna-lewis---JxxyIUHnU-unsplash.jpg)",
+    backgroundImage:
+      "url(diyahna-lewis---JxxyIUHnU-unsplash.jpg)",
     backgroundSize: "cover",
     backgroundPosition: "center",
   },

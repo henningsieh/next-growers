@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "~/styles/globals.css";
 
-import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
+import {
+  ColorSchemeProvider,
+  MantineProvider,
+} from "@mantine/core";
 
 import AppLayout from "~/layout/AppLayout";
 import type { AppType } from "next/app";
@@ -22,14 +25,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   const isLoading = useRouteLoader();
 
-  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
-    key: "color-scheme",
-    defaultValue: "dark",
-    getInitialValueInEffect: true,
-  });
+  const [colorScheme, setColorScheme] =
+    useLocalStorage<ColorScheme>({
+      key: "color-scheme",
+      defaultValue: "dark",
+      getInitialValueInEffect: true,
+    });
 
   const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+    setColorScheme(
+      value || (colorScheme === "dark" ? "light" : "dark")
+    );
 
   return (
     <ColorSchemeProvider
@@ -82,7 +88,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               defaultProps: {
                 variant: "filled",
               },
-              styles: (theme) => ({
+              styles: theme => ({
                 root: {
                   // overriding the tailwind overrides... 👀
                   button: {},
@@ -102,7 +108,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               }),
             },
           },
-          globalStyles: (theme) => ({
+          globalStyles: theme => ({
             body: {
               ...theme.fn.fontStyles(),
               backgroundColor:

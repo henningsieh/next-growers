@@ -10,7 +10,11 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { IconBell, IconCheck, IconHeartFilled } from "@tabler/icons-react";
+import {
+  IconBell,
+  IconCheck,
+  IconHeartFilled,
+} from "@tabler/icons-react";
 import React, { useState } from "react";
 
 import { IconEyeCheck } from "@tabler/icons-react";
@@ -26,7 +30,7 @@ import { useSession } from "next-auth/react";
 import { hasUnreadNotifications } from "~/helpers";
 import { notifications as appNotification } from "@mantine/notifications";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   like: {
     color: theme.colors.red[8],
     marginTop: "2px",
@@ -39,7 +43,9 @@ const Notifications = () => {
   const { classes } = useStyles();
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
-  const clickOutsidePaper = useClickOutside(() => setOpen(false));
+  const clickOutsidePaper = useClickOutside(() =>
+    setOpen(false)
+  );
   const { data: session, status } = useSession();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
@@ -53,12 +59,12 @@ const Notifications = () => {
 
   const { mutate: markAllNotificationsAsReadMutation } =
     api.notifications.markAllNotificationsAsRead.useMutation({
-      onError: (error) => {
+      onError: error => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onSuccess: (_res) => {
+      onSuccess: _res => {
         appNotification.show(markAllReadMessage);
       },
       onSettled: async () => {
@@ -69,11 +75,11 @@ const Notifications = () => {
 
   const { mutate: markNotificationAsReadMutation } =
     api.notifications.markNotificationAsRead.useMutation({
-      onError: (error) => {
+      onError: error => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
-      onSuccess: (res) => {
+      onSuccess: res => {
         toast.success("markNotificationAsRead!");
         console.debug("success.res", res);
       },
@@ -89,7 +95,9 @@ const Notifications = () => {
     if (!!session && status === "authenticated")
       markAllNotificationsAsReadMutation();
   };
-  const handleMarkNotificationAsRead = (notidicationId: string) => {
+  const handleMarkNotificationAsRead = (
+    notidicationId: string
+  ) => {
     // Ensure that the user is authenticated
     // Call the likeReport mutationnotification.id
     if (!!session && status === "authenticated")
@@ -104,7 +112,10 @@ const Notifications = () => {
     loading: false,
   };
 
-  const notificationEvents: Record<NotificationEventMap, string> = {
+  const notificationEvents: Record<
+    NotificationEventMap,
+    string
+  > = {
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "Comment Created",
     POST_CREATED: "Post Created",
@@ -123,7 +134,9 @@ const Notifications = () => {
         variant="outline"
         color={dark ? theme.primaryColor : "grape"}
       >
-        {hasUnreadNotifications(notifications as Notifications) ? (
+        {hasUnreadNotifications(
+          notifications as Notifications
+        ) ? (
           <Indicator
             color={theme.colors.pink[7]}
             position="bottom-end"
@@ -145,7 +158,7 @@ const Notifications = () => {
         mounted={open}
         onExit={() => setOpen(false)}
       >
-        {(transitionStyles) => (
+        {transitionStyles => (
           <Paper
             ref={clickOutsidePaper}
             withBorder
@@ -161,16 +174,20 @@ const Notifications = () => {
           >
             <Container miw={300} p={4}>
               <Box className="space-y-1">
-                {!isLoading && !isError && notifications?.length ? (
-                  notifications.map((notification) => (
+                {!isLoading &&
+                !isError &&
+                notifications?.length ? (
+                  notifications.map(notification => (
                     <Box
                       onClick={() => {
-                        handleMarkNotificationAsRead(notification.id);
+                        handleMarkNotificationAsRead(
+                          notification.id
+                        );
                       }}
                       p={2}
                       // my={4}
                       key={notification.id}
-                      sx={(theme) => ({
+                      sx={theme => ({
                         backgroundColor:
                           theme.colorScheme === "dark"
                             ? theme.colors.dark[6]
@@ -189,7 +206,9 @@ const Notifications = () => {
                       })}
                     >
                       <Link
-                        href={`/grow/${notification.like?.reportId as string}`}
+                        href={`/grow/${
+                          notification.like?.reportId as string
+                        }`}
                       >
                         <div style={{ display: "flex" }}>
                           <Center>
@@ -198,9 +217,17 @@ const Notifications = () => {
                               className={`${classes.like} icon-transition`}
                             />
                           </Center>
-                          <Box p={4} fz="0.8rem" className="grow text-left">
+                          <Box
+                            p={4}
+                            fz="0.8rem"
+                            className="grow text-left"
+                          >
                             {notification.like?.user.name}{" "}
-                            {notificationEvents[notification.event]}
+                            {
+                              notificationEvents[
+                                notification.event
+                              ]
+                            }
                             {" your "}
                             Report
                           </Box>
@@ -226,28 +253,30 @@ const Notifications = () => {
                   <p>No notifications</p>
                 )}
                 {/* <Divider /> */}
-                {!isLoading && !isError && notifications?.length > 0 && (
-                  <Button
-                    onClick={() => {
-                      handleMarkAllNotificationsAsRead();
-                    }}
-                    // fullWidth
-                    px="sm"
-                    my={4}
-                    mr={0}
-                    size="xs"
-                    variant="outline"
-                    radius="xs"
-                    style={{ flex: 1 }}
-                  >
-                    <IconEyeCheck
-                      className="ml-0 mr-0"
-                      height={18}
-                      stroke={1.5}
-                    />
-                    mark all as read
-                  </Button>
-                )}
+                {!isLoading &&
+                  !isError &&
+                  notifications?.length > 0 && (
+                    <Button
+                      onClick={() => {
+                        handleMarkAllNotificationsAsRead();
+                      }}
+                      // fullWidth
+                      px="sm"
+                      my={4}
+                      mr={0}
+                      size="xs"
+                      variant="outline"
+                      radius="xs"
+                      style={{ flex: 1 }}
+                    >
+                      <IconEyeCheck
+                        className="ml-0 mr-0"
+                        height={18}
+                        stroke={1.5}
+                      />
+                      mark all as read
+                    </Button>
+                  )}
                 {/* 
                 <NavLink
                   label="Active filled"

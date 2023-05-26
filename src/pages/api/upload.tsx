@@ -20,7 +20,10 @@ const handler: NextApiHandler = async (req, res) => {
     res.status(401).json({ error: "unauthorized" });
   } else {
     const data = await readUploadedFile(req, false);
-    if (!!data.files.image && !Array.isArray(data.files.image)) {
+    if (
+      !!data.files.image &&
+      !Array.isArray(data.files.image)
+    ) {
       // now handle the case where image is NOT an array
       const now = new Date();
       const year = now.getFullYear();
@@ -32,28 +35,39 @@ const handler: NextApiHandler = async (req, res) => {
 
       const formattedTimestamp = `${year}${month
         .toString()
-        .padStart(2, "0")}${day.toString().padStart(2, "0")}${hours
+        .padStart(2, "0")}${day
         .toString()
-        .padStart(2, "0")}${minutes.toString().padStart(2, "0")}${seconds
+        .padStart(2, "0")}${hours
+        .toString()
+        .padStart(2, "0")}${minutes
+        .toString()
+        .padStart(2, "0")}${seconds
         .toString()
         .padStart(2, "0")}`;
 
       const publicIdWithTimestamp = `${formattedTimestamp}_${
-        data.files.image.originalFilename?.split(".")[0] as string
+        data.files.image.originalFilename?.split(
+          "."
+        )[0] as string
       }`;
 
       const localPathToImage = data.files.image.filepath;
 
-      const result = await cloudinary.uploader.upload(localPathToImage, {
-        public_id: publicIdWithTimestamp,
-        quality: "auto", // ⚠️ auto transformation destroys exif data ✅
-        fetch_format: "auto",
-        flags: "lossy", // let's save some data, quality seems fine
-        invalidate: true, // invalidate cache in case, image gets updated
-      });
+      const result = await cloudinary.uploader.upload(
+        localPathToImage,
+        {
+          public_id: publicIdWithTimestamp,
+          quality: "auto", // ⚠️ auto transformation destroys exif data ✅
+          fetch_format: "auto",
+          flags: "lossy", // let's save some data, quality seems fine
+          invalidate: true, // invalidate cache in case, image gets updated
+        }
+      );
 
       // console.log("cloudinaryResult", result);
-      console.log(`✅ Successfully uploaded ${localPathToImage}`);
+      console.log(
+        `✅ Successfully uploaded ${localPathToImage}`
+      );
       console.log(`Public ID: ${result.public_id}`);
       console.log(`URL: ${result.secure_url}`);
 
@@ -82,11 +96,17 @@ const handler: NextApiHandler = async (req, res) => {
 const readUploadedFile = (
   req: NextApiRequest,
   saveLocally?: boolean
-): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
+): Promise<{
+  fields: formidable.Fields;
+  files: formidable.Files;
+}> => {
   const options: formidable.Options = {};
 
   if (saveLocally) {
-    options.uploadDir = path.join(process.cwd(), "/public/images");
+    options.uploadDir = path.join(
+      process.cwd(),
+      "/public/images"
+    );
     options.keepExtensions = true; // Keep the file extensions for multiple files
   }
 

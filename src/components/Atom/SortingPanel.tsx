@@ -32,7 +32,7 @@ export default function SortingPanel({
       <NativeSelect
         variant="default"
         value={sortBy}
-        onChange={(event) => setSortBy(event.currentTarget.value)}
+        onChange={event => setSortBy(event.currentTarget.value)}
         size="xs"
         placeholder="Sort by..."
         fz="xs"

@@ -93,7 +93,9 @@ export default function LoginModal() {
                   height={32}
                   width={32}
                   src={session.user.image as string}
-                  alt={`${session.user.name as string}'s Profile Image`}
+                  alt={`${
+                    session.user.name as string
+                  }'s Profile Image`}
                 />
               </ActionIcon>
               {/* </ActionIcon> */}
@@ -115,7 +117,10 @@ export default function LoginModal() {
                 </Menu.Item>
               </Link>
               <Link href="/account/reports/create">
-                <Menu.Item bg="green" icon={<IconSquarePlus size={14} />}>
+                <Menu.Item
+                  bg="green"
+                  icon={<IconSquarePlus size={14} />}
+                >
                   {t("common:usermenu-addnewgrow")}
                 </Menu.Item>
               </Link>

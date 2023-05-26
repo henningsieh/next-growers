@@ -23,7 +23,8 @@ const handler: NextApiHandler = async (req, res) => {
     const data = await readUploadedFile(req, false);
     const ownerId = data.fields["ownerId"] as string;
 
-    if (!!!ownerId) res.status(400).json({ error: "ownerId is missing" });
+    if (!!!ownerId)
+      res.status(400).json({ error: "ownerId is missing" });
 
     const imageIds: string[] = [];
     const imagePublicIds: string[] = [];
@@ -45,8 +46,11 @@ const handler: NextApiHandler = async (req, res) => {
         // await Promise.all(files.map(handleFileUpload));
         // We have to collect all results
         await Promise.all(
-          files.map(async (file) => {
-            const result = await handleFileUpload(file, ownerId);
+          files.map(async file => {
+            const result = await handleFileUpload(
+              file,
+              ownerId
+            );
             imageIds.push(result.id);
             imagePublicIds.push(result.publicId);
             cloudUrls.push(result.cloudUrl);
@@ -77,9 +81,11 @@ const handleFileUpload = async (
   const minutes = now.getMinutes();
   const seconds = now.getSeconds();
 
-  const formattedTimestamp = `${year}${month.toString().padStart(2, "0")}${day
+  const formattedTimestamp = `${year}${month
     .toString()
-    .padStart(2, "0")}${hours.toString().padStart(2, "0")}${minutes
+    .padStart(2, "0")}${day.toString().padStart(2, "0")}${hours
+    .toString()
+    .padStart(2, "0")}${minutes
     .toString()
     .padStart(2, "0")}${seconds.toString().padStart(2, "0")}`;
 
@@ -87,13 +93,16 @@ const handleFileUpload = async (
     file.originalFilename?.split(".")[0] as string
   }`;
 
-  const result = await cloudinary.uploader.upload(file.filepath, {
-    public_id: publicIdWithTimestamp,
-    quality: "auto",
-    fetch_format: "auto",
-    flags: "lossy",
-    invalidate: true,
-  });
+  const result = await cloudinary.uploader.upload(
+    file.filepath,
+    {
+      public_id: publicIdWithTimestamp,
+      quality: "auto",
+      fetch_format: "auto",
+      flags: "lossy",
+      invalidate: true,
+    }
+  );
 
   const image = await prisma.image.create({
     data: {
@@ -115,13 +124,19 @@ const handleFileUpload = async (
 const readUploadedFile = (
   req: NextApiRequest,
   saveLocally?: boolean
-): Promise<{ fields: formidable.Fields; files: formidable.Files }> => {
+): Promise<{
+  fields: formidable.Fields;
+  files: formidable.Files;
+}> => {
   const options: formidable.Options = {
     multiples: true, // Enable parsing of multiple files with the same field name
   };
 
   if (saveLocally) {
-    options.uploadDir = path.join(process.cwd(), "/public/images");
+    options.uploadDir = path.join(
+      process.cwd(),
+      "/public/images"
+    );
     options.keepExtensions = true; // Keep the file extensions for multiple files
   }
 

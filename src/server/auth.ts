@@ -41,7 +41,9 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
         image: user.image
           ? user.image
-          : `https://ui-avatars.com/api/?name=${user.name as string}`,
+          : `https://ui-avatars.com/api/?name=${
+              user.name as string
+            }`,
         role: user.role,
       },
     }),

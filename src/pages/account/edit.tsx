@@ -13,7 +13,11 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import type { GetServerSidePropsContext, NextPage } from "next";
-import { IconAt, IconMail, IconReload } from "@tabler/icons-react";
+import {
+  IconAt,
+  IconMail,
+  IconReload,
+} from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
@@ -43,13 +47,18 @@ export async function getServerSideProps(
   }>
 ) {
   // Fetch translations using next-i18next
-  const translations = await serverSideTranslations(context.locale as string, [
-    "common",
-  ]);
+  const translations = await serverSideTranslations(
+    context.locale as string,
+    ["common"]
+  );
   return {
     props: {
       ...translations,
-      session: await getServerSession(context.req, context.res, authOptions),
+      session: await getServerSession(
+        context.req,
+        context.res,
+        authOptions
+      ),
     },
   };
 }
@@ -73,12 +82,16 @@ const ProtectedEditReport: NextPage = () => {
   const validateFormSchema = z.object({
     name: z
       .string()
-      .min(6, { message: "Username must have at least 6 letters" }),
+      .min(6, {
+        message: "Username must have at least 6 letters",
+      }),
     /*       .refine((value) => !/\s/.test(value), {
         message: "Userame must not contain whitespace characters",
       }),
       */
-    email: z.string().email({ message: "Invalid email address" }),
+    email: z
+      .string()
+      .email({ message: "Invalid email address" }),
   });
 
   const form = useForm({
@@ -116,7 +129,10 @@ const ProtectedEditReport: NextPage = () => {
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="lg" className="flex w-full flex-col space-y-1">
+      <Container
+        size="lg"
+        className="flex w-full flex-col space-y-1"
+      >
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -139,7 +155,9 @@ const ProtectedEditReport: NextPage = () => {
                 height={142}
                 width={142}
                 src={session.user.image as string}
-                alt={`${session.user.name as string}'s Profile Image`}
+                alt={`${
+                  session.user.name as string
+                }'s Profile Image`}
               />
             </Box>
           </Group>
@@ -153,7 +171,8 @@ const ProtectedEditReport: NextPage = () => {
               variant="outline"
             >
               <Box className="">
-                You must first set a username before you can explore all grows.
+                You must first set a username before you can
+                explore all grows.
               </Box>
             </Alert>
           )}
@@ -170,8 +189,11 @@ const ProtectedEditReport: NextPage = () => {
           </Box>
           <Space />
           <form
-            onSubmit={form.onSubmit((values) =>
-              tRPCsetUsername({ id: session.user.id, name: values.name })
+            onSubmit={form.onSubmit(values =>
+              tRPCsetUsername({
+                id: session.user.id,
+                name: values.name,
+              })
             )}
           >
             <TextInput
@@ -211,8 +233,16 @@ const ProtectedEditReport: NextPage = () => {
             />
             <Space />
             <Group position="right" mt="xl">
-              <Button variant="outline" type="submit" disabled={isLoading}>
-                {isLoading ? <Loader size={24} /> : "Save Profile"}
+              <Button
+                variant="outline"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader size={24} />
+                ) : (
+                  "Save Profile"
+                )}
               </Button>
             </Group>
           </form>

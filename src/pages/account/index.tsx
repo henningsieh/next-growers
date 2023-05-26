@@ -21,13 +21,18 @@ export async function getServerSideProps(
   }>
 ) {
   // Fetch translations using next-i18next
-  const translations = await serverSideTranslations(context.locale as string, [
-    "common",
-  ]);
+  const translations = await serverSideTranslations(
+    context.locale as string,
+    ["common"]
+  );
   return {
     props: {
       ...translations,
-      session: await getServerSession(context.req, context.res, authOptions),
+      session: await getServerSession(
+        context.req,
+        context.res,
+        authOptions
+      ),
     },
   };
 }
@@ -50,7 +55,10 @@ export default function Page() {
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-1">
+      <Container
+        size="xl"
+        className="flex w-full flex-col space-y-1"
+      >
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}

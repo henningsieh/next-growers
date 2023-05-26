@@ -1,7 +1,4 @@
-import {
-  Group,
-  SegmentedControl,
-} from "@mantine/core";
+import { Group, SegmentedControl } from "@mantine/core";
 import type { NextPage } from "next";
 
 import Image from "next/image";
@@ -12,7 +9,6 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 const LanguageSwitcher: NextPage = () => {
-
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t, i18n } = useTranslation(activeLocale);

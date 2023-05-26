@@ -9,10 +9,14 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
  *
  * getServerSideProps
  */
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+}) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, ["common"])),
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+      ])),
     },
   };
 };

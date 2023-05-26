@@ -1,9 +1,15 @@
-import { Box, Container, LoadingOverlay, Space, Title } from "@mantine/core";
+import {
+  Box,
+  Container,
+  LoadingOverlay,
+  Space,
+  Title,
+} from "@mantine/core";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import type {
-  GetServerSidePropsContext,
-  NextPage,
-} from "next";
-import type { IsoReportWithPostsFromDb, Strains } from "~/types";
+  IsoReportWithPostsFromDb,
+  Strains,
+} from "~/types";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AddPost from "~/components/Post/AddForm";
@@ -29,13 +35,18 @@ export async function getServerSideProps(
   }>
 ) {
   // Fetch translations using next-i18next
-  const translations = await serverSideTranslations(context.locale as string, [
-    "common",
-  ]);
+  const translations = await serverSideTranslations(
+    context.locale as string,
+    ["common"]
+  );
   return {
     props: {
       ...translations,
-      session: await getServerSession(context.req, context.res, authOptions),
+      session: await getServerSession(
+        context.req,
+        context.res,
+        authOptions
+      ),
     },
   };
 }
@@ -105,7 +116,9 @@ const EditReportDetails: NextPage = () => {
               <Space h="xl" />
 
               {/* // Add Component */}
-              <AddPost report={report as IsoReportWithPostsFromDb} />
+              <AddPost
+                report={report as IsoReportWithPostsFromDb}
+              />
 
               {/* ================================= */}
               {/* // Props report output */}

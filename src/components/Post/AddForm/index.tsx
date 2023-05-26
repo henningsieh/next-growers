@@ -17,7 +17,10 @@ import {
   IconNumber,
   IconPlant,
 } from "@tabler/icons-react";
-import type { IsoReportWithPostsFromDb, PostDbInput } from "~/types";
+import type {
+  IsoReportWithPostsFromDb,
+  PostDbInput,
+} from "~/types";
 import React, { useEffect, useState } from "react";
 import { useForm, zodResolver } from "@mantine/form";
 
@@ -80,28 +83,29 @@ const AddPost = (props: AddPostProps) => {
 
   if (report == null) return null;
 
-  const { mutate: tRPCaddPostToReport } = api.posts.createPost.useMutation({
-    onMutate: (addPostToReport) => {
-      console.log("START posts.createPost.useMutation");
-      console.log("addPostToReport", addPostToReport);
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, newReport, context) => {
-      notifications.show(onlyOnePostPerDayAllowed);
-      if (!context) return;
-      console.log(context);
-    },
-    onSuccess: () => {
-      toast.success("The update was saved to your report");
-      // Navigate to the new report page
-      // void router.push(`/account/reports/${newReportDB.id}`);
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      console.log("END posts.createPost.useMutation");
-    },
-  });
+  const { mutate: tRPCaddPostToReport } =
+    api.posts.createPost.useMutation({
+      onMutate: addPostToReport => {
+        console.log("START posts.createPost.useMutation");
+        console.log("addPostToReport", addPostToReport);
+      },
+      // If the mutation fails,
+      // use the context returned from onMutate to roll back
+      onError: (err, newReport, context) => {
+        notifications.show(onlyOnePostPerDayAllowed);
+        if (!context) return;
+        console.log(context);
+      },
+      onSuccess: () => {
+        toast.success("The update was saved to your report");
+        // Navigate to the new report page
+        // void router.push(`/account/reports/${newReportDB.id}`);
+      },
+      // Always refetch after error or success:
+      onSettled: () => {
+        console.log("END posts.createPost.useMutation");
+      },
+    });
 
   const reportStartDate = new Date(report.createdAt);
   reportStartDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
@@ -109,7 +113,8 @@ const AddPost = (props: AddPostProps) => {
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setDate(currentDate.getDate());
   // Calculate the difference in milliseconds
-  const timeDifferenceMs = currentDate.getTime() - reportStartDate.getTime();
+  const timeDifferenceMs =
+    currentDate.getTime() - reportStartDate.getTime();
   // Convert milliseconds to days
   const timeDifferenceDays = Math.floor(
     timeDifferenceMs / (1000 * 60 * 60 * 24)
@@ -179,7 +184,7 @@ const AddPost = (props: AddPostProps) => {
       <Box mt="sm">
         <form
           className="space-y-4"
-          onSubmit={form.onSubmit((values) => {
+          onSubmit={form.onSubmit(values => {
             console.log("Form submitted");
             console.debug(values);
             handleSubmit(values);
@@ -197,10 +202,15 @@ const AddPost = (props: AddPostProps) => {
           <Box>
             <Grid gutter="sm">
               <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
-                <Flex className="justify-start space-x-2" align="baseline">
+                <Flex
+                  className="justify-start space-x-2"
+                  align="baseline"
+                >
                   <NumberInput
                     label={t("common:post-growday")}
-                    description={t("common:addpost-growdaydescription")}
+                    description={t(
+                      "common:addpost-growdaydescription"
+                    )}
                     w={142}
                     placeholder="1"
                     icon={<IconNumber size="1.2rem" />}
@@ -208,9 +218,15 @@ const AddPost = (props: AddPostProps) => {
                     min={0}
                     {...form.getInputProps("day")}
                     onChange={(value: number) => {
-                      const growDayOffSet = parseInt(value.toString(), 10);
-                      if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
-                      const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+                      const growDayOffSet = parseInt(
+                        value.toString(),
+                        10
+                      );
+                      if (!growDayOffSet && growDayOffSet != 0)
+                        return; // prevent error if changed to empty string
+                      const newPostDate = new Date(
+                        reportStartDate
+                      ); // Create a new Date object using the reportStartDate
                       newPostDate.setUTCDate(
                         newPostDate.getUTCDate() + growDayOffSet
                       );
@@ -220,7 +236,9 @@ const AddPost = (props: AddPostProps) => {
                   />
                   <DateInput
                     label={t("common:post-updatedate")}
-                    description={t("common:addpost-updatedatedescription")}
+                    description={t(
+                      "common:addpost-updatedatedescription"
+                    )}
                     valueFormat="MMM DD, YYYY HH:mm"
                     // valueFormat="DD/MM/YYYY HH:mm:ss"
                     className="w-full"
@@ -242,17 +260,24 @@ const AddPost = (props: AddPostProps) => {
     selectedDate.getTime() - reportStartDate.getTime(); */
 
                       const timeDifferenceDays = Math.floor(
-                        (selectedDate.getTime() - reportStartDate.getTime()) /
+                        (selectedDate.getTime() -
+                          reportStartDate.getTime()) /
                           (1000 * 60 * 60 * 24)
                       );
 
-                      form.setFieldValue("day", timeDifferenceDays);
+                      form.setFieldValue(
+                        "day",
+                        timeDifferenceDays
+                      );
                     }}
                   />
                 </Flex>
               </Grid.Col>
               <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
-                <Flex className="justify-start space-x-2" align="baseline">
+                <Flex
+                  className="justify-start space-x-2"
+                  align="baseline"
+                >
                   <NumberInput
                     label="Light hours"
                     description="Light/ day (h)"
@@ -266,7 +291,7 @@ const AddPost = (props: AddPostProps) => {
                   <Select
                     label="Grow stage"
                     description="Actual grow stage"
-                    data={Object.keys(GrowStage).map((key) => ({
+                    data={Object.keys(GrowStage).map(key => ({
                       value: key,
                       label: formatLabel(key),
                     }))}
@@ -285,7 +310,10 @@ const AddPost = (props: AddPostProps) => {
             placeholder="Titel of this Update"
             {...form.getInputProps("title")}
           />
-          <TextInput hidden {...form.getInputProps("content")} />
+          <TextInput
+            hidden
+            {...form.getInputProps("content")}
+          />
 
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>

@@ -22,7 +22,10 @@ import {
 } from "@tabler/icons-react";
 
 import { Carousel } from "@mantine/carousel";
-import { Environment, type IsoReportWithPostsFromDb } from "~/types";
+import {
+  Environment,
+  type IsoReportWithPostsFromDb,
+} from "~/types";
 import { useEffect, useState } from "react";
 import { formatLabel, sanatizeDateString } from "~/helpers";
 import { Locale } from "~/types";
@@ -31,9 +34,10 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useMediaQuery } from "@mantine/hooks";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   price: {
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    color:
+      theme.colorScheme === "dark" ? theme.white : theme.black,
   },
 
   carousel: {
@@ -65,7 +69,9 @@ const useStyles = createStyles((theme) => ({
     paddingTop: theme.spacing.xs,
     paddingBottom: theme.spacing.xs,
     borderTop: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[4]
+        : theme.colors.gray[3]
     }`,
   },
 
@@ -117,7 +123,7 @@ export function PostCard(props: PostCardProps) {
   const { report, postId } = props;
 
   useEffect(() => {
-    const post = report.posts.find((post) => post.id === postId);
+    const post = report.posts.find(post => post.id === postId);
     if (post) {
       setPostHTMLContent(post.content);
     }
@@ -125,10 +131,18 @@ export function PostCard(props: PostCardProps) {
 
   const { classes } = useStyles();
   const theme = useMantineTheme();
-  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
-  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  const xs = useMediaQuery(
+    `(max-width: ${theme.breakpoints.xs})`
+  );
+  const sm = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
+  const md = useMediaQuery(
+    `(max-width: ${theme.breakpoints.md})`
+  );
+  const lg = useMediaQuery(
+    `(max-width: ${theme.breakpoints.lg})`
+  );
   /* 
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
   */
@@ -151,7 +165,10 @@ export function PostCard(props: PostCardProps) {
       icon: IconCalendar,
     },
     {
-      label: Environment[report.environment as keyof typeof Environment],
+      label:
+        Environment[
+          report.environment as keyof typeof Environment
+        ],
       icon: IconHome,
     },
     {
@@ -162,9 +179,13 @@ export function PostCard(props: PostCardProps) {
       icon: IconClock,
     },
   ];
-  const reportBasics = reportBasicData.map((growBasic) => (
+  const reportBasics = reportBasicData.map(growBasic => (
     <Center key={growBasic.label}>
-      <growBasic.icon size="1.05rem" className={classes.icon} stroke={1.5} />
+      <growBasic.icon
+        size="1.05rem"
+        className={classes.icon}
+        stroke={1.5}
+      />
       <Text size="xs"> {growBasic.label} </Text>
     </Center>
   ));
@@ -188,13 +209,14 @@ export function PostCard(props: PostCardProps) {
       </>
     );
   } else {
-    const post = report.posts.find((post) => post.id === postId);
+    const post = report.posts.find(post => post.id === postId);
 
     const reportCreatedAt = new Date(report.createdAt);
     const postDate = new Date(post?.date as string);
 
     // Calculate the difference in milliseconds between the two dates
-    const timeDifference = postDate.getTime() - reportCreatedAt.getTime();
+    const timeDifference =
+      postDate.getTime() - reportCreatedAt.getTime();
 
     // Convert the difference to days
     const postDayOfGrow = Math.floor(
@@ -231,7 +253,7 @@ export function PostCard(props: PostCardProps) {
         },
       ],
     };
-    const postData = postBasicData.details.map((basicData) => (
+    const postData = postBasicData.details.map(basicData => (
       <div key={basicData.title}>
         <Text size="xs" color="dimmed" align="center">
           {basicData.title}
@@ -241,7 +263,7 @@ export function PostCard(props: PostCardProps) {
         </Text>
       </div>
     ));
-    const postImagesSlides = postImages?.map((image) => (
+    const postImagesSlides = postImages?.map(image => (
       <Carousel.Slide key={image.id}>
         <Center>
           <Image
@@ -289,7 +311,9 @@ export function PostCard(props: PostCardProps) {
             withBorder
             p={theme.spacing.xs}
             mb={theme.spacing.sm}
-            dangerouslySetInnerHTML={{ __html: postHTMLContent as TrustedHTML }}
+            dangerouslySetInnerHTML={{
+              __html: postHTMLContent as TrustedHTML,
+            }}
           />
         </Text>
         {/* 

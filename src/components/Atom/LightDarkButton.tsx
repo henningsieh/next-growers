@@ -11,7 +11,8 @@ import { useTranslation } from "next-i18next";
 
 export default function LightDarkButton() {
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { colorScheme, toggleColorScheme } =
+    useMantineColorScheme();
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
   const router = useRouter();
@@ -28,7 +29,11 @@ export default function LightDarkButton() {
         onClick={() => toggleColorScheme()}
         title={t("common:app-themetoggle")}
       >
-        {dark ? <IconSun size="1.4rem" /> : <IconMoonStars size="1.4rem" />}
+        {dark ? (
+          <IconSun size="1.4rem" />
+        ) : (
+          <IconMoonStars size="1.4rem" />
+        )}
       </ActionIcon>
     </Group>
   );

@@ -24,7 +24,7 @@ import { useState } from "react";
 import { useTranslation } from "next-i18next";
 import IsoReportCard from "~/components/Report/IsoCard";
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   hiddenMobile: {
     [theme.fn.smallerThan("md")]: {
       display: "none",
@@ -43,10 +43,14 @@ const useStyles = createStyles((theme) => ({
  *
  * getServerSideProps
  */
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+}) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, ["common"])),
+      ...(await serverSideTranslations(locale as string, [
+        "common",
+      ])),
     },
   };
 };
@@ -85,7 +89,7 @@ const PublicAllGrows: NextPage = () => {
     sortBy,
     setSortBy,
     desc,
-    handleToggleDesc: () => setDesc((prev) => !prev),
+    handleToggleDesc: () => setDesc(prev => !prev),
   };
 
   // Fake Data for Fake Card
@@ -107,7 +111,9 @@ const PublicAllGrows: NextPage = () => {
     ],
   };
 
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     setSearchString(event.target.value);
   };
 
@@ -125,7 +131,10 @@ const PublicAllGrows: NextPage = () => {
       {/* <Loading isLoading={isLoading} /> */}
 
       {/* // Main Content Container */}
-      <Container size="lg" className="flex w-full flex-col space-y-2">
+      <Container
+        size="lg"
+        className="flex w-full flex-col space-y-2"
+      >
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -161,7 +170,7 @@ const PublicAllGrows: NextPage = () => {
             <Grid gutter="sm">
               {/* LOOP OVER REPORTS */}
               {isoReports.length ? (
-                isoReports.map((isoReport) => {
+                isoReports.map(isoReport => {
                   return (
                     <Grid.Col
                       key={isoReport.id}
