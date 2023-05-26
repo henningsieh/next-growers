@@ -38,11 +38,9 @@ export const InputEditReport = z.object({
       message: "Content should have at least 12 letters",
     })
     .max(64, { message: "Content should have max 64 letters" }),
-  strains: z
-    .array(z.string())
-    .min(1, {
-      message: "Report should have at least 1 strain",
-    }),
+  strains: z.array(z.string()).min(1, {
+    message: "Report should have at least 1 strain",
+  }),
   environment: z.enum(
     Object.keys(Environment) as [keyof typeof Environment]
   ),
@@ -89,11 +87,9 @@ export const InputCreatePost: (
         invalid_type_error: "(h) must be set, may be 0",
       })
       .nullable(),
-    growStage: z
-      .string()
-      .min(1, {
-        message: "Grow stage must be set with every update",
-      }),
+    growStage: z.string().min(1, {
+      message: "Grow stage must be set with every update",
+    }),
     content: z.string(),
     images: z.array(z.string()),
   });

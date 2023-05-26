@@ -80,11 +80,9 @@ const ProtectedEditReport: NextPage = () => {
    * Zod Validation Schema
    */
   const validateFormSchema = z.object({
-    name: z
-      .string()
-      .min(6, {
-        message: "Username must have at least 6 letters",
-      }),
+    name: z.string().min(6, {
+      message: "Username must have at least 6 letters",
+    }),
     /*       .refine((value) => !/\s/.test(value), {
         message: "Userame must not contain whitespace characters",
       }),
