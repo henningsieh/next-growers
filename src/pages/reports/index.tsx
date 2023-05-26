@@ -22,6 +22,7 @@ import { api } from "~/utils/api";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useState } from "react";
 import { useTranslation } from "next-i18next";
+import IsoReportCard from "~/components/Report/IsoCard";
 
 const useStyles = createStyles((theme) => ({
   hiddenMobile: {
@@ -63,6 +64,17 @@ const PublicAllGrows: NextPage = () => {
     isLoading,
     isError,
   } = api.reports.getAllReports.useQuery({
+    search: searchString,
+    orderBy: sortBy, // Set the desired orderBy field
+    desc: desc, // Set the desired order (true for descending, false for ascending)
+  });
+
+  // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+  const {
+    data: isoReports,
+    isLoading: isoIsLoading,
+    isError: isoIsError,
+  } = api.reports.getIsoReportsWithPostsFromDb.useQuery({
     search: searchString,
     orderBy: sortBy, // Set the desired orderBy field
     desc: desc, // Set the desired order (true for descending, false for ascending)
@@ -138,31 +150,31 @@ const PublicAllGrows: NextPage = () => {
         </Box>
         {/* // Header End */}
 
-        {/* // Report Grid */}
+        {/* // Iso Reports Grid */}
         <Box pos="relative">
           <LoadingOverlay
             visible={isLoading}
             transitionDuration={600}
             overlayBlur={2}
           />
-          {!isLoading && (
+          {isoReports && !isLoading && (
             <Grid gutter="sm">
               {/* LOOP OVER REPORTS */}
-              {reports.length ? (
-                reports.map((report) => {
+              {isoReports.length ? (
+                isoReports.map((isoReport) => {
                   return (
                     <Grid.Col
-                      key={report.id}
+                      key={isoReport.id}
                       xs={12}
                       sm={6}
                       md={4}
                       lg={3}
                       xl={3}
                     >
-                      <ReportCard
+                      <IsoReportCard
                         procedure="all"
                         {...cardProps}
-                        report={report}
+                        report={isoReport}
                         setSearchString={setSearchString}
                       />
                     </Grid.Col>

@@ -213,95 +213,136 @@ export const reportRouter = createTRPCRouter({
    * Get IsoReportwithPosts by Id
    * @Input: userId: String
    */
-  getIsoReportsWithPostsFromDb: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.report
-      .findMany({
-        include: {
-          author: { select: { id: true, name: true, image: true } },
-          image: { select: { id: true, publicId: true, cloudUrl: true } },
-          strains: {
-            select: {
-              id: true,
-              name: true,
-              description: true,
-              effects: true,
-              flavors: true,
-            },
-          },
-          likes: {
-            // Include the Like relation and select the users who liked the report
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
+  getIsoReportsWithPostsFromDb: publicProcedure
+    .input(InputGetReports)
+    .query(({ ctx, input }) => {
+      const { orderBy, desc, search } = input;
+      const { searchstring, strain } = splitSearchString(search);
+      return ctx.prisma.report
+        .findMany({
+          where: {
+            OR: [
+              {
+                title: {
+                  contains: searchstring,
+                  mode: "insensitive",
                 },
               },
-            },
-          },
-          posts: {
-            include: {
-              author: { select: { id: true, name: true, image: true } },
-              images: { select: { id: true, publicId: true, cloudUrl: true } },
-
-              likes: {
-                // Include the Like relation and select the users who liked the report
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      image: true,
-                    },
+              {
+                description: {
+                  contains: searchstring,
+                  mode: "insensitive",
+                },
+              },
+              {
+                author: {
+                  name: {
+                    contains: searchstring,
+                    mode: "insensitive",
                   },
                 },
               },
-              comments: true,
+            ],
+            strains: {
+              some: {
+                name: {
+                  contains: strain,
+                  mode: "insensitive",
+                },
+              },
             },
           },
-        },
-      })
-      .then((reportsFromDb) => {
-        // Convert all Dates to IsoStrings
-        const isoReportsFromDb = reportsFromDb.map((reportFromDb) => ({
-          ...reportFromDb,
-          createdAt: reportFromDb?.createdAt.toISOString(),
-          updatedAt: reportFromDb?.updatedAt.toISOString(),
+          orderBy: {
+            [orderBy]: desc ? "desc" : "asc",
+          },
+          include: {
+            author: { select: { id: true, name: true, image: true } },
+            image: { select: { id: true, publicId: true, cloudUrl: true } },
+            strains: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                effects: true,
+                flavors: true,
+              },
+            },
+            likes: {
+              // Include the Like relation and select the users who liked the report
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+            posts: {
+              include: {
+                author: { select: { id: true, name: true, image: true } },
+                images: {
+                  select: { id: true, publicId: true, cloudUrl: true },
+                },
 
-          likes: reportFromDb.likes.map(
-            ({ id, createdAt, updatedAt, user }) => ({
-              id,
-              userId: user.id,
-              name: user.name,
-              createdAt: createdAt.toISOString(),
-              updatedAt: updatedAt.toISOString(),
-            })
-          ),
+                likes: {
+                  // Include the Like relation and select the users who liked the report
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                      },
+                    },
+                  },
+                },
+                comments: true,
+              },
+            },
+          },
+        })
+        .then((reportsFromDb) => {
+          // Convert all Dates to IsoStrings
+          const isoReportsFromDb = reportsFromDb.map((reportFromDb) => ({
+            ...reportFromDb,
+            createdAt: reportFromDb?.createdAt.toISOString(),
+            updatedAt: reportFromDb?.updatedAt.toISOString(),
 
-          posts: reportFromDb?.posts.map((post) => ({
-            ...post,
-            date: post.date.toISOString(),
+            likes: reportFromDb.likes.map(
+              ({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+              })
+            ),
 
-            likes: post.likes.map(({ id, createdAt, updatedAt, user }) => ({
-              id,
-              userId: user.id,
-              name: user.name,
-              createdAt: createdAt.toISOString(),
-              updatedAt: updatedAt.toISOString(),
+            posts: reportFromDb?.posts.map((post) => ({
+              ...post,
+              date: post.date.toISOString(),
+
+              likes: post.likes.map(({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+              })),
+
+              comments: post.comments.map((comment) => ({
+                ...comment,
+                createdAt: comment.createdAt.toISOString(),
+                updatedAt: comment.updatedAt.toISOString(),
+              })),
             })),
+          }));
 
-            comments: post.comments.map((comment) => ({
-              ...comment,
-              createdAt: comment.createdAt.toISOString(),
-              updatedAt: comment.updatedAt.toISOString(),
-            })),
-          })),
-        }));
-
-        return isoReportsFromDb;
-      });
-  }),
+          return isoReportsFromDb;
+        });
+    }),
 
   /**
    * Get Report by Id

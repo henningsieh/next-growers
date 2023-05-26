@@ -86,6 +86,13 @@ export interface ReportCardProps extends FakeCardBadgeProps {
   setSearchString: Dispatch<SetStateAction<string>>;
 }
 
+export interface IsoReportCardProps extends FakeCardBadgeProps {
+  report: IsoReportWithPostsFromDb;
+  procedure: "all" | "own";
+
+  setSearchString: Dispatch<SetStateAction<string>>;
+}
+
 export interface SplitObject {
   strain: string;
   searchstring: string;
