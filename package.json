@@ -55,6 +55,7 @@
     "embla-carousel-react": "^7.1.0",
     "formidable": "^2.1.1",
     "framer-motion": "=7.8.0",
+    "husky": "^8.0.3",
     "i18next": "^22.5.0",
     "next": "^13.2.4",
     "next-auth": "^4.21.0",
