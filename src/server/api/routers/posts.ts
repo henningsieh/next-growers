@@ -103,13 +103,33 @@ export const postRouter = createTRPCRouter({
         where: {
           reportId: input,
         },
+        include: {
+          likes: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       const formattedPosts = posts.map((tempPost) => {
-        const { date, createdAt, updatedAt, ...temppost } = tempPost;
+        const { date, createdAt, updatedAt, likes, ...temppost } = tempPost;
 
         const formattedPost = {
           date: date.toISOString(),
+          likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
+            id,
+            userId: user.id,
+            name: user.name,
+            createdAt: createdAt.toISOString(),
+            updatedAt: updatedAt.toISOString(),
+          })),
           ...temppost,
         };
         return formattedPost;

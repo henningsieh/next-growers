@@ -13,7 +13,7 @@ export type Report = getAllReportsOutput[number];
 export type IsoReportWithPostsFromDb =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 
-type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
+// type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
 // export type OwnReports = getOwnReportsOutput;
 // bexport type OwnReport = getOwnReportsOutput[number];
 

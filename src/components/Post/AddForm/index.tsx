@@ -172,181 +172,186 @@ const AddPost = (props: AddPostProps) => {
   };
 
   return (
-    <Container p={0} mt="lg" size="md">
-      {/* <Paper withBorder> */}
-      <Title order={2}>{t("common:addpost-headline")}</Title>
+    <Container p= { 0} mt = "lg" size = "md" >
+      {/* <Paper withBorder> */ }
+      < Title order = { 2} > { t("common:addpost-headline") } < /Title>
 
-      <Box mt="sm">
-        <form
+        < Box mt = "sm" >
+          <form
           className="space-y-4"
-          onSubmit={form.onSubmit((values) => {
-            console.log("Form submitted");
-            console.debug(values);
-            handleSubmit(values);
-          }, handleErrors)}
-        >
-          {imageIds.map((imageId, index) => (
-            <input
-              key={index}
-              type="hidden"
-              name={`images[${index}]`}
-              value={imageId}
-            />
+  onSubmit = {
+    form.onSubmit((values) => {
+      console.log("Form submitted");
+      console.debug(values);
+      handleSubmit(values);
+    }, handleErrors)
+  }
+    >
+  {
+    imageIds.map((imageId, index) => (
+      <input
+              key= { index }
+              type = "hidden"
+              name = {`images[${index}]`}
+  value = { imageId }
+    />
           ))}
 
-          <Box>
-            <Grid gutter="sm">
-              <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
-                <Flex className="justify-start space-x-2" align="baseline">
-                  <NumberInput
-                    label={t("common:post-growday")}
-                    description={t("common:addpost-growdaydescription")}
-                    w={142}
-                    placeholder="1"
-                    icon={<IconNumber size="1.2rem" />}
-                    withAsterisk
-                    min={0}
-                    {...form.getInputProps("day")}
-                    onChange={(value: number) => {
-                      const growDayOffSet = parseInt(value.toString(), 10);
-                      if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
-                      const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
-                      newPostDate.setUTCDate(
-                        newPostDate.getUTCDate() + growDayOffSet
-                      );
-                      form.setFieldValue("date", newPostDate);
-                      form.setFieldValue("day", growDayOffSet);
-                    }}
-                  />
-                  <DateInput
-                    label={t("common:post-updatedate")}
-                    description={t("common:addpost-updatedatedescription")}
-                    valueFormat="MMM DD, YYYY HH:mm"
-                    // valueFormat="DD/MM/YYYY HH:mm:ss"
-                    className="w-full"
-                    icon={<IconCalendarEvent size="1.2rem" />}
-                    withAsterisk
-                    {...form.getInputProps("date")}
-                    onChange={(selectedDate: Date) => {
-                      const newDate = new Date(selectedDate);
-                      /* 
-                      newDate.setHours(reportStartDate.getHours());
-                      newDate.setMinutes(reportStartDate.getMinutes());
-                      newDate.setSeconds(reportStartDate.getSeconds());
-                      newDate.setMilliseconds(reportStartDate.getMilliseconds()); 
-                      */
+<Box>
+  <Grid gutter="sm" >
+    <Grid.Col xs={ 12 } sm = { 6} md = { 6} lg = { 6} xl = { 6} >
+      <Flex className="justify-start space-x-2" align = "baseline" >
+        <NumberInput
+                    label={ t("common:post-growday") }
+description = { t("common:addpost-growdaydescription") }
+w = { 142}
+placeholder = "1"
+icon = {< IconNumber size = "1.2rem" />}
+withAsterisk
+min = { 0}
+{...form.getInputProps("day") }
+onChange = {(value: number) => {
+  const growDayOffSet = parseInt(value.toString(), 10);
+  if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
+  const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+  newPostDate.setUTCDate(
+    newPostDate.getUTCDate() + growDayOffSet
+  );
+  form.setFieldValue("date", newPostDate);
+  form.setFieldValue("day", growDayOffSet);
+}}
+/>
+  < DateInput
+label = { t("common:post-updatedate") }
+description = { t("common:addpost-updatedatedescription") }
+valueFormat = "MMM DD, YYYY HH:mm"
+// valueFormat="DD/MM/YYYY HH:mm:ss"
+className = "w-full"
+icon = {< IconCalendarEvent size = "1.2rem" />}
+withAsterisk
+{...form.getInputProps("date") }
+onChange = {(selectedDate: Date) => {
+  const newDate = new Date(selectedDate);
+  /* 
+  newDate.setHours(reportStartDate.getHours());
+  newDate.setMinutes(reportStartDate.getMinutes());
+  newDate.setSeconds(reportStartDate.getSeconds());
+  newDate.setMilliseconds(reportStartDate.getMilliseconds()); 
+  */
 
-                      form.setFieldValue("date", newDate);
+  form.setFieldValue("date", newDate);
 
-                      /* const timeDifferenceMs =
-                        selectedDate.getTime() - reportStartDate.getTime(); */
+  /* const timeDifferenceMs =
+    selectedDate.getTime() - reportStartDate.getTime(); */
 
-                      const timeDifferenceDays = Math.floor(
-                        (selectedDate.getTime() - reportStartDate.getTime()) /
-                          (1000 * 60 * 60 * 24)
-                      );
+  const timeDifferenceDays = Math.floor(
+    (selectedDate.getTime() - reportStartDate.getTime()) /
+    (1000 * 60 * 60 * 24)
+  );
 
-                      form.setFieldValue("day", timeDifferenceDays);
-                    }}
-                  />
-                </Flex>
-              </Grid.Col>
-              <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
-                <Flex className="justify-start space-x-2" align="baseline">
-                  <NumberInput
+  form.setFieldValue("day", timeDifferenceDays);
+}}
+/>
+  < /Flex>
+  < /Grid.Col>
+  < Grid.Col xs = { 12} sm = { 6} md = { 6} lg = { 6} xl = { 6} >
+    <Flex className="justify-start space-x-2" align = "baseline" >
+      <NumberInput
                     label="Light hours"
-                    description="Light / day (h)"
-                    withAsterisk
-                    w={142}
-                    min={0}
-                    max={24}
-                    {...form.getInputProps("lightHoursPerDay")}
-                    icon={<IconBulb size="1.2rem" />}
-                  />
-                  <Select
-                    label="Grow stage"
-                    description="Actual grow stage"
-                    data={Object.keys(GrowStage).map((key) => ({
-                      value: key,
-                      label: formatLabel(key),
-                    }))}
-                    withAsterisk
-                    {...form.getInputProps("growStage")}
-                    className="w-full"
-                    icon={<IconPlant size="1.2rem" />}
-                  />
-                </Flex>
-              </Grid.Col>
-            </Grid>
-          </Box>
-          <TextInput
-            withAsterisk
-            label="Titel for this update"
-            placeholder="Titel of this Update"
-            {...form.getInputProps("title")}
-          />
-          <TextInput hidden {...form.getInputProps("content")} />
+description = "Light / day (h)"
+withAsterisk
+w = { 142}
+min = { 0}
+max = { 24}
+{...form.getInputProps("lightHoursPerDay") }
+icon = {< IconBulb size = "1.2rem" />}
+/>
+  < Select
+label = "Grow stage"
+description = "Actual grow stage"
+data = {
+  Object.keys(GrowStage).map((key) => ({
+    value: key,
+    label: formatLabel(key),
+  }))
+}
+withAsterisk
+{...form.getInputProps("growStage") }
+className = "w-full"
+icon = {< IconPlant size = "1.2rem" />}
+/>
+  < /Flex>
+  < /Grid.Col>
+  < /Grid>
+  < /Box>
+  < TextInput
+withAsterisk
+label = "Titel for this update"
+placeholder = "Titel of this Update"
+{...form.getInputProps("title") }
+/>
+  < TextInput hidden {...form.getInputProps("content") } />
 
-          <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar sticky stickyOffset={60}>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-                <RichTextEditor.Highlight />
-                <RichTextEditor.Code />
-              </RichTextEditor.ControlsGroup>
+    < RichTextEditor editor = { editor } >
+      <RichTextEditor.Toolbar sticky stickyOffset = { 60} >
+        <RichTextEditor.ControlsGroup>
+        <RichTextEditor.Bold />
+        < RichTextEditor.Italic />
+        <RichTextEditor.Underline />
+        < RichTextEditor.Strikethrough />
+        <RichTextEditor.ClearFormatting />
+        < RichTextEditor.Highlight />
+        <RichTextEditor.Code />
+        < /RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
+        < RichTextEditor.ControlsGroup >
+        <RichTextEditor.H1 />
+        < RichTextEditor.H2 />
+        <RichTextEditor.H3 />
+        < RichTextEditor.H4 />
+        </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-                <RichTextEditor.Subscript />
-                <RichTextEditor.Superscript />
-              </RichTextEditor.ControlsGroup>
+        < RichTextEditor.ControlsGroup >
+        <RichTextEditor.Blockquote />
+        < RichTextEditor.Hr />
+        <RichTextEditor.BulletList />
+        < RichTextEditor.OrderedList />
+        <RichTextEditor.Subscript />
+        < RichTextEditor.Superscript />
+        </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
+        < RichTextEditor.ControlsGroup >
+        <RichTextEditor.Link />
+        < RichTextEditor.Unlink />
+        </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.AlignLeft />
-                <RichTextEditor.AlignCenter />
-                {/* 
+        < RichTextEditor.ControlsGroup >
+        <RichTextEditor.AlignLeft />
+        < RichTextEditor.AlignCenter />
+      {/* 
                 <RichTextEditor.AlignJustify />
                 <RichTextEditor.AlignRight /> */}
-              </RichTextEditor.ControlsGroup>
-            </RichTextEditor.Toolbar>
+        < /RichTextEditor.ControlsGroup>
+        < /RichTextEditor.Toolbar>
 
-            <RichTextEditor.Content />
-          </RichTextEditor>
+        < RichTextEditor.Content />
+        </RichTextEditor>
 
-          <ImageUploader
-            report={report}
-            imageIds={imageIds}
-            setImageIds={setImageIds}
-          />
+        < ImageUploader
+report = { report }
+imageIds = { imageIds }
+setImageIds = { setImageIds }
+  />
 
-          <Group position="right" mt="xl">
-            <Button w={180} variant="outline" type="submit">
-              Update Grow 🪴
-            </Button>
-          </Group>
-        </form>
-      </Box>
-      {/* </Paper> */}
-    </Container>
+  <Group position="right" mt = "xl" >
+    <Button w={ 180 } variant = "outline" type = "submit" >
+      Update Grow 🪴
+</Button>
+  < /Group>
+  < /form>
+  < /Box>
+{/* </Paper> */ }
+</Container>
   );
 };
 
@@ -354,7 +359,7 @@ export default AddPost;
 
 export const onlyOnePostPerDayAllowed = {
   title: "Failure",
-  message: "You can only post one update per Day! 😢",
+  message: "You can only post one update per Day! 💁",
   color: "red",
   icon: <IconCalendarOff />,
   loading: false,

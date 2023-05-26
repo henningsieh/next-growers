@@ -16,7 +16,7 @@
   "report-delete": "Löschen",
   "addpost-headline": "Erstelle ein neues Grow-Update",
   "addpost-growdaydescription": "Start ist Tag 0",
-  "addpost-updatedatedescription": "Setzt auch 'aktualisiert am' des Grows",
+  "addpost-updatedatedescription": "Datum des Updates",
   "post-growday": "Grow Tag",
   "post-updatedate": "Update Datum",
   "post-lighthperday": "Licht (Std.) / Tag"
