@@ -1,15 +1,10 @@
-import {
-  Container,
-  useMantineTheme,
-  Title,
-  Box,
-} from "@mantine/core";
+import { Container, useMantineTheme, Title, Box } from "@mantine/core";
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
-
+import dayjs from "dayjs";
 import { notifications } from "@mantine/notifications";
 import { Environment } from "~/types";
 import Head from "next/head";
@@ -132,15 +127,13 @@ export async function getStaticProps(
     posts: (reportFromDb?.posts || []).map(
       ({ date, likes, createdAt, updatedAt, ...post }) => ({
         date: date.toISOString(),
-        likes: likes.map(
-          ({ id, createdAt, updatedAt, user }) => ({
-            id,
-            userId: user.id,
-            name: user.name,
-            createdAt: createdAt.toISOString(),
-            updatedAt: updatedAt.toISOString(),
-          })
-        ),
+        likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
+          id,
+          userId: user.id,
+          name: user.name,
+          createdAt: createdAt.toISOString(),
+          updatedAt: updatedAt.toISOString(),
+        })),
         ...post,
 
         comments: post.comments.map(comment => ({
@@ -228,29 +221,17 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export default function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
-  const {
-    report: staticReportFromProps,
-    postId: postIdfromProps,
-  } = props;
+  const { report: staticReportFromProps, postId: postIdfromProps } =
+    props;
   const pageTitle = `${staticReportFromProps.title}`;
 
   const theme = useMantineTheme();
 
-  const xs = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xs})`
-  );
-  const sm = useMediaQuery(
-    `(max-width: ${theme.breakpoints.sm})`
-  );
-  const md = useMediaQuery(
-    `(max-width: ${theme.breakpoints.md})`
-  );
-  const lg = useMediaQuery(
-    `(max-width: ${theme.breakpoints.lg})`
-  );
-  const xl = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xl})`
-  );
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
   const getResponsiveColumnCount = xs
     ? 1
@@ -281,26 +262,28 @@ export default function PublicReportPost(
   const postDays = staticReportFromProps.posts.map(post =>
     new Date(post.date).getTime()
   );
-  const dateOfGermination = new Date(
-    staticReportFromProps.createdAt
-  );
-  const [selectedDate, selectDate] = useState<Date | null>(
-    postDate
-  );
+  const dateOfGermination = new Date(staticReportFromProps.createdAt);
+  const [selectedDate, selectDate] = useState<Date | null>(postDate);
+
+  const defaultRelDate =
+    dayjs(selectedDate)
+      .subtract(getResponsiveColumnCount - 1, "month")
+      .toDate() || dateOfGermination;
+
+  const columnStartMonth: Date =
+    defaultRelDate < dateOfGermination
+      ? dateOfGermination
+      : defaultRelDate;
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
       return;
     }
 
-    const matchingPost = staticReportFromProps.posts.find(
-      post => {
-        const postDate = new Date(post.date);
-        return (
-          selectedDate.toISOString() === postDate.toISOString()
-        );
-      }
-    );
+    const matchingPost = staticReportFromProps.posts.find(post => {
+      const postDate = new Date(post.date);
+      return selectedDate.toISOString() === postDate.toISOString();
+    });
 
     if (matchingPost) {
       selectDate(new Date(matchingPost.date));
@@ -344,12 +327,9 @@ export default function PublicReportPost(
           className="flex w-full flex-col space-y-4"
         >
           <ReportHeader
-            image={
-              staticReportFromProps.image?.cloudUrl as string
-            }
-            avatar={
-              staticReportFromProps.author.image as string
-            }
+            report={staticReportFromProps}
+            image={staticReportFromProps.image?.cloudUrl as string}
+            avatar={staticReportFromProps.author.image as string}
             name={staticReportFromProps.author.name as string}
             job={staticReportFromProps.description}
             stats={[
@@ -399,6 +379,9 @@ export default function PublicReportPost(
 
           {/* // Posts Date Picker */}
           <PostsDatePicker
+            defaultDate={
+              selectedDate ? columnStartMonth : dateOfGermination
+            }
             postDays={postDays}
             selectedDate={selectedDate}
             handleSelectDate={handleSelectDate}
@@ -407,10 +390,7 @@ export default function PublicReportPost(
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
 
-          <PostCard
-            postId={postId}
-            report={staticReportFromProps}
-          />
+          <PostCard postId={postId} report={staticReportFromProps} />
         </Container>
 
         {/* <ReportDetailsHead report={staticReportFromProps} /> */}

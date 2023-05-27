@@ -1,15 +1,10 @@
-import {
-  Container,
-  useMantineTheme,
-  Title,
-  Box,
-} from "@mantine/core";
+import { Container, useMantineTheme, Title, Box } from "@mantine/core";
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
-
+import dayjs from "dayjs";
 import { Environment } from "~/types";
 import Head from "next/head";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
@@ -123,15 +118,13 @@ export async function getStaticProps(
     posts: (reportFromDb?.posts || []).map(
       ({ date, likes, createdAt, updatedAt, ...post }) => ({
         date: date.toISOString(),
-        likes: likes.map(
-          ({ id, createdAt, updatedAt, user }) => ({
-            id,
-            userId: user.id,
-            name: user.name,
-            createdAt: createdAt.toISOString(),
-            updatedAt: updatedAt.toISOString(),
-          })
-        ),
+        likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
+          id,
+          userId: user.id,
+          name: user.name,
+          createdAt: createdAt.toISOString(),
+          updatedAt: updatedAt.toISOString(),
+        })),
         ...post,
 
         comments: post.comments.map(comment => ({
@@ -211,22 +204,12 @@ export default function PublicReport(
   const router = useRouter();
   const theme = useMantineTheme();
 
-  const xs = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xs})`
-  );
-  const sm = useMediaQuery(
-    `(max-width: ${theme.breakpoints.sm})`
-  );
-  const md = useMediaQuery(
-    `(max-width: ${theme.breakpoints.md})`
-  );
-  const lg = useMediaQuery(
-    `(max-width: ${theme.breakpoints.lg})`
-  );
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
 
-  const xl = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xl})`
-  );
+  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
   const getResponsiveColumnCount = xs
     ? 1
@@ -249,30 +232,32 @@ export default function PublicReport(
   );
 
   const [postId, setPostId] = useState<string>("");
+  const [selectedDate, selectDate] = useState<Date | null>(null);
 
   const postDays = staticReportFromProps.posts.map(post =>
     new Date(post.date).getTime()
   );
-  const dateOfGermination = new Date(
-    staticReportFromProps.createdAt
-  );
-  const [selectedDate, selectDate] = useState<Date | null>(
-    null
-  );
+  const dateOfGermination = new Date(staticReportFromProps.createdAt);
+
+  const defaultRelDate =
+    dayjs(selectedDate)
+      .subtract(getResponsiveColumnCount - 1, "month")
+      .toDate() || dateOfGermination;
+
+  const columnStartMonth: Date =
+    defaultRelDate < dateOfGermination
+      ? dateOfGermination
+      : defaultRelDate;
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
       return;
     }
 
-    const matchingPost = staticReportFromProps.posts.find(
-      post => {
-        const postDate = new Date(post.date);
-        return (
-          selectedDate.toISOString() === postDate.toISOString()
-        );
-      }
-    );
+    const matchingPost = staticReportFromProps.posts.find(post => {
+      const postDate = new Date(post.date);
+      return selectedDate.toISOString() === postDate.toISOString();
+    });
 
     if (matchingPost) {
       selectDate(new Date(matchingPost.date));
@@ -300,10 +285,7 @@ export default function PublicReport(
         />
       </Head>
       {/* // Main Content Container */}
-      <Container
-        size="lg"
-        className="flex w-full flex-col space-y-1"
-      >
+      <Container size="lg" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -320,12 +302,9 @@ export default function PublicReport(
           className="flex w-full flex-col space-y-4"
         >
           <ReportHeader
-            image={
-              staticReportFromProps.image?.cloudUrl as string
-            }
-            avatar={
-              staticReportFromProps.author.image as string
-            }
+            report={staticReportFromProps}
+            image={staticReportFromProps.image?.cloudUrl as string}
+            avatar={staticReportFromProps.author.image as string}
             name={staticReportFromProps.author.name as string}
             job={staticReportFromProps.description}
             stats={[
@@ -374,6 +353,9 @@ export default function PublicReport(
 
           {/* // Posts Date Picker */}
           <PostsDatePicker
+            defaultDate={
+              selectedDate ? columnStartMonth : dateOfGermination
+            }
             postDays={postDays}
             selectedDate={selectedDate}
             handleSelectDate={handleSelectDate}
@@ -382,10 +364,7 @@ export default function PublicReport(
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
 
-          <PostCard
-            postId={postId}
-            report={staticReportFromProps}
-          />
+          <PostCard postId={postId} report={staticReportFromProps} />
         </Container>
 
         {/* <ReportDetailsHead report={staticReportFromProps} /> */}

@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "~/styles/globals.css";
 
-import {
-  ColorSchemeProvider,
-  MantineProvider,
-} from "@mantine/core";
+import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 
 import AppLayout from "~/layout/AppLayout";
 import type { AppType } from "next/app";
@@ -25,12 +22,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   const isLoading = useRouteLoader();
 
-  const [colorScheme, setColorScheme] =
-    useLocalStorage<ColorScheme>({
-      key: "color-scheme",
-      defaultValue: "dark",
-      getInitialValueInEffect: true,
-    });
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    key: "color-scheme",
+    defaultValue: "dark",
+    getInitialValueInEffect: true,
+  });
 
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(
@@ -62,11 +58,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
           breakpoints: {
             xs: "30em",
             // 1 Spalte
-            sm: "36em",
+            sm: "38em",
             // 2 Spalten
-            md: "54em",
+            md: "56em",
             // 4 Spalten
-            lg: "74em",
+            lg: "72em",
             // 4 Spalten
             xl: "88em",
             // 6 Spalten

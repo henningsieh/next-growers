@@ -13,6 +13,7 @@ import { Locale } from "~/types";
 import { useRouter } from "next/router";
 
 interface PostsDatePickerProps {
+  defaultDate: Date;
   postDays: number[];
   selectedDate: Date | null;
   handleSelectDate: (date: Date | null) => void;
@@ -22,6 +23,7 @@ interface PostsDatePickerProps {
 }
 
 const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
+  defaultDate,
   postDays,
   selectedDate,
   handleSelectDate,
@@ -32,14 +34,10 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   const theme = useMantineTheme();
   const router = useRouter();
 
-  /* 
-  const leftDate = dayjs(selectedDate)
-    .subtract(getResponsiveColumnCount - 1, "month")
-    .toDate();
- */
+  console.debug("defaultDate", defaultDate);
 
   return (
-    <Paper withBorder key={getResponsiveColumnCount}>
+    <Paper py="xs" withBorder key={getResponsiveColumnCount}>
       <Group position="center">
         <DatePicker
           locale={router.locale === Locale.DE ? Locale.DE : Locale.EN}
@@ -64,7 +62,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
           defaultDate={
             leftDate < dateOfGermination ? dateOfGermination : leftDate
           } */
-          defaultDate={dateOfGermination}
+          defaultDate={defaultDate}
           value={selectedDate}
           onChange={handleSelectDate}
           maxDate={dateOfnewestPost}
