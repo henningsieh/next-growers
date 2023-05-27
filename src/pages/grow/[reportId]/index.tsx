@@ -24,6 +24,8 @@ import { useRouter } from "next/router";
 import { PostCard } from "~/components/Post/Card";
 import { notifications } from "@mantine/notifications";
 import { noPostAtThisDay } from "./update/[postId]";
+import { ReportHeader } from "~/components/Report/Header";
+import { report } from "process";
 
 /**
  * getStaticProps
@@ -51,6 +53,18 @@ export async function getStaticProps(
           flavors: true,
         },
       },
+      likes: {
+        // Include the Like relation and select the users who liked the report
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+      },
       posts: {
         include: {
           author: {
@@ -63,11 +77,21 @@ export async function getStaticProps(
               cloudUrl: true,
             },
           },
-          likes: true,
+          likes: {
+            // Include the Like relation and select the users who liked the report
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                },
+              },
+            },
+          },
           comments: true,
         },
       },
-      likes: true,
     },
     where: {
       id: reportId,
@@ -80,14 +104,50 @@ export async function getStaticProps(
       notFound: true,
     };
   }
-  const isoReportFromDb = convertDatesToISO(
-    reportFromDb
-  ) as IsoReportWithPostsFromDb;
+
+  // Convert all Dates to IsoStrings
+  const isoReportFromDb = {
+    ...reportFromDb,
+    createdAt: reportFromDb?.createdAt.toISOString(),
+    updatedAt: reportFromDb?.updatedAt.toISOString(),
+    likes: reportFromDb?.likes.map(
+      ({ id, createdAt, updatedAt, user }) => ({
+        id,
+        userId: user.id,
+        name: user.name,
+        createdAt: createdAt.toISOString(),
+        updatedAt: updatedAt.toISOString(),
+      })
+    ),
+
+    posts: (reportFromDb?.posts || []).map(
+      ({ date, likes, createdAt, updatedAt, ...post }) => ({
+        date: date.toISOString(),
+        likes: likes.map(
+          ({ id, createdAt, updatedAt, user }) => ({
+            id,
+            userId: user.id,
+            name: user.name,
+            createdAt: createdAt.toISOString(),
+            updatedAt: updatedAt.toISOString(),
+          })
+        ),
+        ...post,
+
+        comments: post.comments.map(comment => ({
+          ...comment,
+          createdAt: comment.createdAt.toISOString(),
+          updatedAt: comment.updatedAt.toISOString(),
+        })),
+      })
+    ),
+    strains: reportFromDb?.strains || [],
+  };
+
   console.debug(
-    "getStaticProps 🤖",
-    "...prefetching the report's dataset from db"
+    "/pages/grow/[reportId]",
+    `🧑‍🏭  ...prefetching report ${reportFromDb.id} from db`
   );
-  // console.dir(isoReportFromDb, { depth: null });
 
   // Fetch translations using next-i18next
   const translations = await serverSideTranslations(
@@ -146,7 +206,7 @@ export default function PublicReport(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
   const { report: staticReportFromProps } = props;
-  const pageTitle = `${staticReportFromProps.title as string}`;
+  const pageTitle = `${staticReportFromProps.title}`;
 
   const router = useRouter();
   const theme = useMantineTheme();
@@ -163,9 +223,11 @@ export default function PublicReport(
   const lg = useMediaQuery(
     `(max-width: ${theme.breakpoints.lg})`
   );
-  /* 
-  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
-  */
+
+  const xl = useMediaQuery(
+    `(max-width: ${theme.breakpoints.xl})`
+  );
+
   const getResponsiveColumnCount = xs
     ? 1
     : sm
@@ -174,7 +236,9 @@ export default function PublicReport(
     ? 2
     : lg
     ? 3
-    : 4;
+    : xl
+    ? 4
+    : 5;
 
   const dateOfnewestPost = staticReportFromProps.posts.reduce(
     (maxDate, post) => {
@@ -217,9 +281,7 @@ export default function PublicReport(
         {},
         "",
         // void router.replace(
-        `/grow/${staticReportFromProps.id as string}/update/${
-          matchingPost.id
-        }`
+        `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`
       );
     } else {
       notifications.show(noPostAtThisDay);
@@ -254,29 +316,51 @@ export default function PublicReport(
           size="lg"
           px={0}
           mx="auto"
+          pt="xs"
           className="flex w-full flex-col space-y-4"
         >
+          <ReportHeader
+            image={
+              staticReportFromProps.image?.cloudUrl as string
+            }
+            avatar={
+              staticReportFromProps.author.image as string
+            }
+            name={staticReportFromProps.author.name as string}
+            job={staticReportFromProps.description}
+            stats={[
+              {
+                value: "34K",
+                label: "Followers",
+              },
+              {
+                value: "187",
+                label: "Follows",
+              },
+              {
+                value: "1.6K",
+                label: "Posts",
+              },
+            ]}
+          />
+          {/* 
           <ImagePreview
             authorName={
               staticReportFromProps.author?.name as string
             }
-            publicLink={`/grow/${
-              staticReportFromProps.id as string
-            }`}
+            publicLink={`/grow/${staticReportFromProps.id}`}
             imageUrl={
               staticReportFromProps.image?.cloudUrl as string
             }
             title={""}
             // title={staticReportFromProps.title as string}
-            description={
-              staticReportFromProps.description as string
-            }
+            description={staticReportFromProps.description}
             authorImageUrl={
               staticReportFromProps.author?.image as string
             }
             views={0}
             comments={0}
-          />
+          /> */}
           {/* // Grow Parameter: Environment, ... */}
           <Box className="flex items-center justify-between pt-2">
             <Title order={5} className="inline">

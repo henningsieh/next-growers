@@ -24,6 +24,7 @@ import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { IconCalendarOff } from "@tabler/icons-react";
 import ReportDetailsHead from "~/components/Report/DetailsHead";
+import { ReportHeader } from "~/components/Report/Header";
 
 /**
  * getStaticProps
@@ -153,10 +154,9 @@ export async function getStaticProps(
   };
 
   console.debug(
-    "🧑‍🏭 ",
-    `...prefetching report ${reportFromDb.id} from db`
+    "/pages/grow/[reportId]/update/[postId]",
+    `🧑‍🏭  ...prefetching report ${reportFromDb.id} from db`
   );
-  console.dir(isoReportFromDb, { depth: null });
 
   // Fetch translations using next-i18next
   const translations = await serverSideTranslations(
@@ -248,9 +248,10 @@ export default function PublicReportPost(
   const lg = useMediaQuery(
     `(max-width: ${theme.breakpoints.lg})`
   );
-  /* 
-  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
-  */
+  const xl = useMediaQuery(
+    `(max-width: ${theme.breakpoints.xl})`
+  );
+
   const getResponsiveColumnCount = xs
     ? 1
     : sm
@@ -259,8 +260,9 @@ export default function PublicReportPost(
     ? 2
     : lg
     ? 3
-    : 4;
-
+    : xl
+    ? 4
+    : 5;
   const dateOfnewestPost = staticReportFromProps.posts.reduce(
     (maxDate, post) => {
       const postDate = new Date(post.date);
@@ -341,6 +343,32 @@ export default function PublicReportPost(
           mx="auto"
           className="flex w-full flex-col space-y-4"
         >
+          <ReportHeader
+            image={
+              staticReportFromProps.image?.cloudUrl as string
+            }
+            avatar={
+              staticReportFromProps.author.image as string
+            }
+            name={staticReportFromProps.author.name as string}
+            job={staticReportFromProps.description}
+            stats={[
+              {
+                value: "34K",
+                label: "Followers",
+              },
+              {
+                value: "187",
+                label: "Follows",
+              },
+              {
+                value: "1.6K",
+                label: "Posts",
+              },
+            ]}
+          />
+
+          {/* 
           <ImagePreview
             authorName={
               staticReportFromProps.author?.name as string
@@ -357,7 +385,7 @@ export default function PublicReportPost(
             }
             views={0}
             comments={0}
-          />
+          /> */}
           {/* // Grow Parameter: Environment, ... */}
           <Box className="flex items-center justify-between pt-2">
             <Title order={5} className="inline">
@@ -385,7 +413,7 @@ export default function PublicReportPost(
           />
         </Container>
 
-        <ReportDetailsHead report={staticReportFromProps} />
+        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
       </Container>
     </>
   );
