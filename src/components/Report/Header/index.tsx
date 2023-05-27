@@ -68,15 +68,15 @@ export function ReportHeader({
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
   const getResponsiveHeaderImageHeight = xs
-    ? 200
+    ? 240
     : sm
-    ? 200
+    ? 240
     : md
-    ? 200
-    : lg
     ? 320
+    : lg
+    ? 400
     : xl
-    ? 420
+    ? 440
     : 480;
 
   return (
@@ -119,7 +119,7 @@ export function ReportHeader({
         {items}
       </Group>*/}
 
-      <Box className=" absolute bottom-32 right-6">
+      <Box className=" absolute bottom-3 right-3">
         <Group position="right">
           <Button
             py={0}

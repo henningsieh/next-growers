@@ -262,25 +262,26 @@ export function PostCard(props: PostCardProps) {
     ));
 
     return (
-      <Card p="sm" radius="sm" withBorder>
-        <Group position="apart">
-          <Text fw={700} fz="xl">
-            {post?.title}
-          </Text>
-
-          <Group spacing={4}>
-            <IconEye size="1rem" />
-            <Text fz="xs" fw={500}>
-              1468
+      <>
+        <Card h={850} p="sm" radius="sm" withBorder>
+          <Group position="apart">
+            <Text fw={700} fz="xl">
+              {post?.title}
             </Text>
-          </Group>
-          <LikeHeart itemToLike={post as Post} />
-        </Group>
 
-        <Card.Section className={classes.section}>
-          <Group position="apart"> {postData} </Group>
-        </Card.Section>
-        {/* 
+            <Group spacing={4}>
+              <IconEye size="1rem" />
+              <Text fz="xs" fw={500}>
+                1468
+              </Text>
+            </Group>
+            <LikeHeart itemToLike={post as Post} />
+          </Group>
+
+          <Card.Section className={classes.section}>
+            <Group position="apart"> {postData} </Group>
+          </Card.Section>
+          {/* 
         <Card.Section className={classes.section} mt="md">
           <Text fz="sm" c="dimmed" className={classes.label}>
             Grow Informations
@@ -291,22 +292,22 @@ export function PostCard(props: PostCardProps) {
           </Group>
         </Card.Section>
    */}
-        <Text fz="sm" c="dimmed" mt="sm">
-          <Paper
-            fz={18}
-            withBorder
-            p={theme.spacing.xs}
-            mb={theme.spacing.sm}
-            dangerouslySetInnerHTML={{
-              __html: postHTMLContent as TrustedHTML,
-            }}
-          />
-        </Text>
-        {/* 
+          <Text fz="sm" c="dimmed" mt="sm">
+            <Paper
+              fz={18}
+              withBorder
+              p={theme.spacing.xs}
+              mb={theme.spacing.sm}
+              dangerouslySetInnerHTML={{
+                __html: postHTMLContent as TrustedHTML,
+              }}
+            />
+          </Text>
+          {/* 
         <div className="importedhtmlcontent">
           <div dangerouslySetInnerHTML={{ __html: postHTMLContent }}/>
         </div> */}
-        {/*       
+          {/*       
         <Card.Section className={classes.section} mt="md">
           <Group position="apart" mt="md">
             <div>
@@ -322,32 +323,35 @@ export function PostCard(props: PostCardProps) {
           </Group>
         </Card.Section>
         */}
-        {/*//BOTTOM CAROUSEL */}
-        <Card.Section>
-          <Carousel
-            withIndicators
-            loop
-            classNames={{
-              root: classes.carousel,
-              controls: classes.carouselControls,
-              indicator: classes.carouselIndicator,
-            }}
-          >
-            {postImagesSlides}
-          </Carousel>
-        </Card.Section>
+          {/*//BOTTOM CAROUSEL */}
+          <Card.Section>
+            <Carousel
+              withIndicators
+              loop
+              classNames={{
+                root: classes.carousel,
+                controls: classes.carouselControls,
+                indicator: classes.carouselIndicator,
+              }}
+            >
+              {postImagesSlides}
+            </Carousel>
+          </Card.Section>
+        </Card>
         <Space h="sm" />
+
         <Group position="apart" className={classes.section}>
           <Text fz="sm" c="dimmed">
             Grow data:
           </Text>
+          <Text fz="sm">Grow data: {report.title}</Text>
           <LikeHeart itemToLike={report} />
         </Group>
 
         <Group position="apart" spacing="xs">
           {reportBasics}
         </Group>
-      </Card>
+      </>
     );
   }
 }
