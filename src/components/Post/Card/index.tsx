@@ -24,6 +24,7 @@ import {
 import { Carousel } from "@mantine/carousel";
 import {
   Environment,
+  Post,
   type IsoReportWithPostsFromDb,
 } from "~/types";
 import { useEffect, useState } from "react";
@@ -33,6 +34,7 @@ import { Locale } from "~/types";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { useMediaQuery } from "@mantine/hooks";
+import LikeHeart from "~/components/Atom/LikeHeart";
 
 const useStyles = createStyles(theme => ({
   price: {
@@ -288,7 +290,7 @@ export function PostCard(props: PostCardProps) {
               1468
             </Text>
           </Group>
-          {/* <LikeHeart itemToLike={post as Post}/> */}
+          <LikeHeart itemToLike={post as Post} />
         </Group>
 
         <Card.Section className={classes.section}>
@@ -350,10 +352,12 @@ export function PostCard(props: PostCardProps) {
             {postImagesSlides}
           </Carousel>
         </Card.Section>
-
-        <Text fz="sm" c="dimmed" className={classes.section}>
-          Grow data:
-        </Text>
+        <Group position="apart">
+          <Text fz="sm" c="dimmed" className={classes.section}>
+            Grow data:
+          </Text>
+          <LikeHeart itemToLike={report} />
+        </Group>
 
         <Group position="apart" spacing="xs">
           {reportBasics}

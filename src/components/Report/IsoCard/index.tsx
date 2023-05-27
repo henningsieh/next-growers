@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Badge,
   Box,
   Button,
@@ -7,10 +6,8 @@ import {
   Center,
   Flex,
   Group,
-  Paper,
   Text,
   Tooltip,
-  Transition,
   createStyles,
   rem,
   useMantineTheme,
@@ -30,11 +27,9 @@ import Link from "next/link";
 import { Locale } from "~/types";
 import type { IsoReportCardProps } from "~/types";
 import { api } from "~/utils/api";
-import { notifications } from "@mantine/notifications";
 import { sanatizeDateString } from "~/helpers";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 import { useTranslation } from "next-i18next";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
@@ -121,38 +116,6 @@ export default function IsoReportCard({
   const theme = useMantineTheme();
   const { classes } = useStyles();
   const { data: session, status } = useSession();
-  const [showLikes, setShowLikes] = useState(false);
-
-  const { mutate: likeReportMutation } =
-    api.like.likeReport.useMutation({
-      onError: error => {
-        notifications.show(likeErrorMsg(error.message));
-      },
-      onSuccess: likedReport => {
-        notifications.show(likeSuccessfulMsg);
-      },
-      // Always refetch after error or success:
-      onSettled: async () => {
-        await trpc.notifications.invalidate();
-        await trpc.reports.invalidate();
-      },
-    });
-
-  const { mutate: deleteLikeMutation } =
-    api.like.deleteLike.useMutation({
-      onError: error => {
-        console.error(error);
-        // Handle error, e.g., show an error message
-      },
-      onSuccess: () => {
-        notifications.show(dislikeSuccessfulMsg);
-      },
-      onSettled: async () => {
-        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
-        await trpc.notifications.getNotificationsByUserId.invalidate();
-        await trpc.reports.invalidate();
-      },
-    });
 
   const { mutate: deleteMutation } =
     api.reports.deleteOwnReport.useMutation({
@@ -218,16 +181,6 @@ export default function IsoReportCard({
         await trpc.reports.getAllReports.invalidate();
       },
     });
-
-  const handleLikeReport = () => {
-    // Call the likeReport mutation
-    likeReportMutation({ reportId: isoReport.id as string });
-  };
-
-  const handleDisLikeReport = () => {
-    // Call the likeReport mutation
-    deleteLikeMutation({ reportId: isoReport.id as string });
-  };
 
   const reportStrains = isoReport.strains.map(badge => (
     <Box key={badge.id}>
@@ -368,46 +321,49 @@ export default function IsoReportCard({
       </Card.Section> */}
 
       {/*// Session buttons */}
-      {session && session.user.id == isoReport.authorId && (
-        <Group mt="xs" position="apart">
-          <Button
-            size="sm"
-            variant="filled"
-            color="red"
-            radius="sm"
-            style={{ flex: 0 }}
-            className="border-1 cursor-default border-red-600"
-            onClick={() => {
-              deleteMutation(isoReport.id as string);
-            }}
-          >
-            {t("common:report-delete")}
-            <IconAlertTriangleFilled
-              className="ml-2"
-              height={18}
-              stroke={1.5}
-            />
-          </Button>
-          <Link
-            href={`/account/reports/${isoReport.id as string}`}
-          >
+      {status == "authenticated" &&
+        session.user.id == isoReport.authorId && (
+          <Group mt="xs" position="apart">
             <Button
-              size="sm" /*
-              className="border-orange-600" */
-              variant="outline"
+              size="sm"
+              variant="filled"
+              color="red"
               radius="sm"
-              style={{ flex: 1 }}
+              style={{ flex: 0 }}
+              className="border-1 cursor-default border-red-600"
+              onClick={() => {
+                deleteMutation(isoReport.id as string);
+              }}
             >
-              {t("common:report-edit")}
-              <IconEdit
+              {t("common:report-delete")}
+              <IconAlertTriangleFilled
                 className="ml-2"
-                height={22}
+                height={18}
                 stroke={1.5}
               />
             </Button>
-          </Link>
-        </Group>
-      )}
+            <Link
+              href={`/account/reports/${
+                isoReport.id as string
+              }`}
+            >
+              <Button
+                size="sm" /*
+              className="border-orange-600" */
+                variant="outline"
+                radius="sm"
+                style={{ flex: 1 }}
+              >
+                {t("common:report-edit")}
+                <IconEdit
+                  className="ml-2"
+                  height={22}
+                  stroke={1.5}
+                />
+              </Button>
+            </Link>
+          </Group>
+        )}
     </Card>
   );
 }

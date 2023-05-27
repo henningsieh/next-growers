@@ -7,7 +7,6 @@ import {
   Group,
   LoadingOverlay,
   MultiSelect,
-  NativeSelect,
   Select,
   Text,
   TextInput,
@@ -33,11 +32,7 @@ import { DateInput } from "@mantine/dates";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { InputEditReport } from "~/helpers/inputValidation";
 import { api } from "~/utils/api";
-import {
-  formatLabel,
-  getKeyByValue,
-  handleDrop,
-} from "~/helpers";
+import { handleDrop } from "~/helpers";
 import { toast } from "react-hot-toast";
 
 const useStyles = createStyles(theme => ({
