@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import "dayjs/locale/de";
 import "dayjs/locale/en";
 
@@ -33,9 +32,11 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   const theme = useMantineTheme();
   const router = useRouter();
 
+  /* 
   const leftDate = dayjs(selectedDate)
     .subtract(getResponsiveColumnCount - 1, "month")
     .toDate();
+ */
 
   return (
     <Paper withBorder key={getResponsiveColumnCount}>
@@ -59,10 +60,11 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
                 <div>{day}</div>
               </Indicator>
             );
-          }}
+          }} /* 
           defaultDate={
             leftDate < dateOfGermination ? dateOfGermination : leftDate
-          }
+          } */
+          defaultDate={dateOfGermination}
           value={selectedDate}
           onChange={handleSelectDate}
           maxDate={dateOfnewestPost}
