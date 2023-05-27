@@ -62,13 +62,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
           breakpoints: {
             xs: "30em",
             // 1 Spalte
-            sm: "40em",
+            sm: "36em",
             // 2 Spalten
-            md: "60em",
+            md: "54em",
             // 4 Spalten
-            lg: "76em",
+            lg: "74em",
             // 4 Spalten
-            xl: "112em",
+            xl: "88em",
             // 6 Spalten
           },
           components: {
@@ -78,7 +78,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                   xs: 515, //  32em x 16px
                   sm: 720, //  45em x 16px
                   md: 960, //  60em x 16px
-                  lg: 1320, //  90em x 16px
+                  lg: 1440, //  90em x 16px
                   xl: 1856, // 116em x 16px
                 },
               },

@@ -39,7 +39,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
           locale={
             router.locale === Locale.DE ? Locale.DE : Locale.EN
           }
-          size="md"
+          size="sm"
           renderDay={date => {
             const day = date.getDate();
             const calDay = date.getTime();

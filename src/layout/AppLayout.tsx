@@ -208,7 +208,7 @@ export default function HeaderMegaMenu({
         style={{
           position: "fixed",
           zIndex: 100,
-          maxWidth: 1320, //same as <Container size="lg" />
+          maxWidth: 1440, //same as <Container size="lg" />
           width: "100%",
           margin: "0px auto",
           padding: "0 1rem",
@@ -312,13 +312,17 @@ export default function HeaderMegaMenu({
               T3 Stack
             </Link> */}
           </Group>
-          <Group
-          // className={classes.hiddenMobile}
-          >
-            <LanguageSwitcher />
-            <LightDarkButton />
+          <Group>
+            <Box className={classes.hiddenMobile}>
+              <LanguageSwitcher />
+            </Box>
+            <Box>
+              <LightDarkButton />
+            </Box>
             {!!session && status === "authenticated" && (
-              <Notifications />
+              <Box>
+                <Notifications />
+              </Box>
             )}
             <LoginPanel />
           </Group>

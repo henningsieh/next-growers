@@ -195,11 +195,15 @@ export function PostCard(props: PostCardProps) {
   if (!postId) {
     return (
       <>
-        <Container size="md">
-          <Alert variant="outline">
-            Select a date with update from calendar
-          </Alert>
-        </Container>
+        <Alert
+          p={16}
+          bg={theme.colors.green[9]}
+          variant="filled"
+        >
+          <Text mx="auto">
+            Select an Update (Grow Day) from calendar!☝️
+          </Text>
+        </Alert>
         <Card p="sm" radius="sm" withBorder>
           <Text fz="sm" c="dimmed" className={classes.section}>
             Grow Informations

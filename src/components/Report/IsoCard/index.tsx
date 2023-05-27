@@ -365,7 +365,7 @@ export default function IsoReportCard({
             </Link>
           </Group>
         )}
-      <ReportDetailsHead report={isoReport} />
+      {/* <ReportDetailsHead report={isoReport} /> */}
     </Card>
   );
 }

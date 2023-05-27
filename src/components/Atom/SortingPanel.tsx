@@ -29,6 +29,20 @@ export default function SortingPanel({
 
   return (
     <Box pt={3} m={0} className="inline-flex space-x-1">
+      <Button
+        className="cursor-default"
+        c="dimmed"
+        variant="default"
+        px={4}
+        size="xs"
+        onClick={handleToggleDesc}
+      >
+        {desc ? (
+          <IconSortDescending2 size="1.2rem" />
+        ) : (
+          <IconSortAscending2 size="1.2rem" />
+        )}
+      </Button>
       <NativeSelect
         variant="default"
         value={sortBy}
@@ -54,20 +68,6 @@ export default function SortingPanel({
           )
         }
       />
-      <Button
-        className="cursor-default"
-        c="dimmed"
-        variant="default"
-        px={4}
-        size="xs"
-        onClick={handleToggleDesc}
-      >
-        {desc ? (
-          <IconSortDescending2 size="1.2rem" />
-        ) : (
-          <IconSortAscending2 size="1.2rem" />
-        )}
-      </Button>
     </Box>
   );
 }
