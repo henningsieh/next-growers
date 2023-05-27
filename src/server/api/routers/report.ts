@@ -354,26 +354,33 @@ export const reportRouter = createTRPCRouter({
                 })
               ),
 
-              posts: reportFromDb?.posts.map(post => ({
-                ...post,
-                date: post.date.toISOString(),
+              posts: (reportFromDb?.posts || []).map(
+                ({
+                  date,
+                  likes,
+                  createdAt,
+                  updatedAt,
+                  ...post
+                }) => ({
+                  date: date.toISOString(),
+                  likes: likes.map(
+                    ({ id, createdAt, updatedAt, user }) => ({
+                      id,
+                      userId: user.id,
+                      name: user.name,
+                      createdAt: createdAt.toISOString(),
+                      updatedAt: updatedAt.toISOString(),
+                    })
+                  ),
+                  ...post,
 
-                likes: post.likes.map(
-                  ({ id, createdAt, updatedAt, user }) => ({
-                    id,
-                    userId: user.id,
-                    name: user.name,
-                    createdAt: createdAt.toISOString(),
-                    updatedAt: updatedAt.toISOString(),
-                  })
-                ),
-
-                comments: post.comments.map(comment => ({
-                  ...comment,
-                  createdAt: comment.createdAt.toISOString(),
-                  updatedAt: comment.updatedAt.toISOString(),
-                })),
-              })),
+                  comments: post.comments.map(comment => ({
+                    ...comment,
+                    createdAt: comment.createdAt.toISOString(),
+                    updatedAt: comment.updatedAt.toISOString(),
+                  })),
+                })
+              ),
             })
           );
 
@@ -470,25 +477,27 @@ export const reportRouter = createTRPCRouter({
           })
         ),
 
-        posts: (reportFromDb?.posts || []).map(post => ({
-          ...post,
-          date: post.date.toISOString(),
-          likes: post.likes.map(
-            ({ id, createdAt, updatedAt, user }) => ({
-              id,
-              userId: user.id,
-              name: user.name,
-              createdAt: createdAt.toISOString(),
-              updatedAt: updatedAt.toISOString(),
-            })
-          ),
+        posts: (reportFromDb?.posts || []).map(
+          ({ date, likes, createdAt, updatedAt, ...post }) => ({
+            date: date.toISOString(),
+            likes: likes.map(
+              ({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+              })
+            ),
+            ...post,
 
-          comments: post.comments.map(comment => ({
-            ...comment,
-            createdAt: comment.createdAt.toISOString(),
-            updatedAt: comment.updatedAt.toISOString(),
-          })),
-        })),
+            comments: post.comments.map(comment => ({
+              ...comment,
+              createdAt: comment.createdAt.toISOString(),
+              updatedAt: comment.updatedAt.toISOString(),
+            })),
+          })
+        ),
         strains: reportFromDb?.strains || [],
       };
       return isoReportFromDb;

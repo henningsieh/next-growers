@@ -23,6 +23,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { IconCalendarOff } from "@tabler/icons-react";
+import ReportDetailsHead from "~/components/Report/DetailsHead";
 
 /**
  * getStaticProps
@@ -41,9 +42,15 @@ export async function getStaticProps(
   // Prefetching the report from prisma
   const reportFromDb = await prisma.report.findUnique({
     include: {
-      author: { select: { id: true, name: true, image: true } },
+      author: {
+        select: { id: true, name: true, image: true },
+      },
       image: {
-        select: { id: true, publicId: true, cloudUrl: true },
+        select: {
+          id: true,
+          publicId: true,
+          cloudUrl: true,
+        },
       },
       strains: {
         select: {
@@ -52,6 +59,18 @@ export async function getStaticProps(
           description: true,
           effects: true,
           flavors: true,
+        },
+      },
+      likes: {
+        // Include the Like relation and select the users who liked the report
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
         },
       },
       posts: {
@@ -66,11 +85,21 @@ export async function getStaticProps(
               cloudUrl: true,
             },
           },
-          likes: true,
           comments: true,
+          likes: {
+            // Include the Like relation and select the users who liked the report
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                },
+              },
+            },
+          },
         },
       },
-      likes: true,
     },
     where: {
       id: reportId,
@@ -83,14 +112,51 @@ export async function getStaticProps(
       notFound: true,
     };
   }
-  const isoReportFromDb = convertDatesToISO(
-    reportFromDb
-  ) as IsoReportWithPostsFromDb;
+
+  // Convert all Dates to IsoStrings
+  const isoReportFromDb = {
+    ...reportFromDb,
+    createdAt: reportFromDb?.createdAt.toISOString(),
+    updatedAt: reportFromDb?.updatedAt.toISOString(),
+    likes: reportFromDb?.likes.map(
+      ({ id, createdAt, updatedAt, user }) => ({
+        id,
+        userId: user.id,
+        name: user.name,
+        createdAt: createdAt.toISOString(),
+        updatedAt: updatedAt.toISOString(),
+      })
+    ),
+
+    posts: (reportFromDb?.posts || []).map(
+      ({ date, likes, createdAt, updatedAt, ...post }) => ({
+        date: date.toISOString(),
+        likes: likes.map(
+          ({ id, createdAt, updatedAt, user }) => ({
+            id,
+            userId: user.id,
+            name: user.name,
+            createdAt: createdAt.toISOString(),
+            updatedAt: updatedAt.toISOString(),
+          })
+        ),
+        ...post,
+
+        comments: post.comments.map(comment => ({
+          ...comment,
+          createdAt: comment.createdAt.toISOString(),
+          updatedAt: comment.updatedAt.toISOString(),
+        })),
+      })
+    ),
+    strains: reportFromDb?.strains || [],
+  };
+
   console.debug(
-    "getStaticProps 🤖",
-    "...prefetching the report's dataset from db"
+    "🧑‍🏭 ",
+    `...prefetching report ${reportFromDb.id} from db`
   );
-  // console.dir(isoReportFromDb, { depth: null });
+  console.dir(isoReportFromDb, { depth: null });
 
   // Fetch translations using next-i18next
   const translations = await serverSideTranslations(
@@ -166,7 +232,7 @@ export default function PublicReportPost(
     report: staticReportFromProps,
     postId: postIdfromProps,
   } = props;
-  const pageTitle = `${staticReportFromProps.title as string}`;
+  const pageTitle = `${staticReportFromProps.title}`;
 
   const theme = useMantineTheme();
 
@@ -238,9 +304,7 @@ export default function PublicReportPost(
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
 
-      const newUrl = `/grow/${
-        staticReportFromProps.id as string
-      }/update/${matchingPost.id}`;
+      const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
       window.history.replaceState({}, "", newUrl);
     } else {
       notifications.show(noPostAtThisDay);
@@ -281,17 +345,13 @@ export default function PublicReportPost(
             authorName={
               staticReportFromProps.author?.name as string
             }
-            publicLink={`/grow/${
-              staticReportFromProps.id as string
-            }`}
+            publicLink={`/grow/${staticReportFromProps.id}`}
             imageUrl={
               staticReportFromProps.image?.cloudUrl as string
             }
             title={""}
             // title={staticReportFromProps.title as string}
-            description={
-              staticReportFromProps.description as string
-            }
+            description={staticReportFromProps.description}
             authorImageUrl={
               staticReportFromProps.author?.image as string
             }
@@ -325,7 +385,7 @@ export default function PublicReportPost(
           />
         </Container>
 
-        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
+        <ReportDetailsHead report={staticReportFromProps} />
       </Container>
     </>
   );
