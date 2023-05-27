@@ -12,6 +12,7 @@ export const postRouter = createTRPCRouter({
     .input(InputCreatePostServer)
     .mutation(async ({ ctx, input }) => {
       const {
+        id,
         date,
         title,
         content,
@@ -48,8 +49,29 @@ export const postRouter = createTRPCRouter({
 
       // const formattedDate = new Date(date);
 
-      const post = await ctx.prisma.post.create({
-        data: {
+      const post = await ctx.prisma.post.upsert({
+        where: { id }, // Optional: Set the condition for upserting based on the id
+        update: {
+          date,
+          title,
+          content,
+          growStage,
+          lightHoursPerDay,
+          report: {
+            connect: {
+              id: reportId,
+            },
+          },
+          author: {
+            connect: {
+              id: authorId,
+            },
+          },
+          images: {
+            connect: images.map(imageId => ({ id: imageId })),
+          },
+        },
+        create: {
           date,
           title,
           content,
@@ -70,6 +92,7 @@ export const postRouter = createTRPCRouter({
           },
         },
       });
+
       // console.debug("date", date);
       // Update the `updated_at` field of the connected report
       await ctx.prisma.report.update({
@@ -99,9 +122,7 @@ export const postRouter = createTRPCRouter({
       });
 
       if (!reports) {
-        throw new Error(
-          `Report with id ${reportId} does not exist`
-        );
+        throw new Error(`Report with id ${reportId} does not exist`);
       }
 
       const posts = await ctx.prisma.post.findMany({
@@ -128,25 +149,18 @@ export const postRouter = createTRPCRouter({
 
       const formattedPosts = posts.map(tempPost => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const {
-          date,
-          createdAt,
-          updatedAt,
-          likes,
-          ...temppost
-        } = tempPost;
+        const { date, createdAt, updatedAt, likes, ...temppost } =
+          tempPost;
 
         const formattedPost = {
           date: date.toISOString(),
-          likes: likes.map(
-            ({ id, createdAt, updatedAt, user }) => ({
-              id,
-              userId: user.id,
-              name: user.name,
-              createdAt: createdAt.toISOString(),
-              updatedAt: updatedAt.toISOString(),
-            })
-          ),
+          likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
+            id,
+            userId: user.id,
+            name: user.name,
+            createdAt: createdAt.toISOString(),
+            updatedAt: updatedAt.toISOString(),
+          })),
           ...temppost,
         };
         return formattedPost;
@@ -178,9 +192,7 @@ export const postRouter = createTRPCRouter({
       });
 
       if (!post) {
-        throw new Error(
-          `Post with id ${postId} does not exist`
-        );
+        throw new Error(`Post with id ${postId} does not exist`);
       }
 
       const imageIds = post.images.map(image => image.id);

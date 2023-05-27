@@ -22,8 +22,7 @@ export const reportRouter = createTRPCRouter({
     .input(InputGetReports)
     .query(async ({ ctx, input }) => {
       const { orderBy, desc, search } = input;
-      const { searchstring, strain } =
-        splitSearchString(search);
+      const { searchstring, strain } = splitSearchString(search);
 
       const reports = await ctx.prisma.report.findMany({
         where: {
@@ -129,8 +128,7 @@ export const reportRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { orderBy, desc, search } = input;
 
-      const { searchstring, strain } =
-        splitSearchString(search);
+      const { searchstring, strain } = splitSearchString(search);
 
       const reports = await ctx.prisma.report.findMany({
         where: {
@@ -235,8 +233,7 @@ export const reportRouter = createTRPCRouter({
     .input(InputGetReports)
     .query(({ ctx, input }) => {
       const { orderBy, desc, search } = input;
-      const { searchstring, strain } =
-        splitSearchString(search);
+      const { searchstring, strain } = splitSearchString(search);
       return ctx.prisma.report
         .findMany({
           where: {
@@ -307,6 +304,9 @@ export const reportRouter = createTRPCRouter({
               },
             },
             posts: {
+              orderBy: {
+                date: "asc",
+              },
               include: {
                 author: {
                   select: { id: true, name: true, image: true },
@@ -338,51 +338,43 @@ export const reportRouter = createTRPCRouter({
         })
         .then(reportsFromDb => {
           // Convert all Dates to IsoStrings
-          const isoReportsFromDb = reportsFromDb.map(
-            reportFromDb => ({
-              ...reportFromDb,
-              createdAt: reportFromDb?.createdAt.toISOString(),
-              updatedAt: reportFromDb?.updatedAt.toISOString(),
+          const isoReportsFromDb = reportsFromDb.map(reportFromDb => ({
+            ...reportFromDb,
+            createdAt: reportFromDb?.createdAt.toISOString(),
+            updatedAt: reportFromDb?.updatedAt.toISOString(),
 
-              likes: reportFromDb.likes.map(
-                ({ id, createdAt, updatedAt, user }) => ({
-                  id,
-                  userId: user.id,
-                  name: user.name,
-                  createdAt: createdAt.toISOString(),
-                  updatedAt: updatedAt.toISOString(),
-                })
-              ),
+            likes: reportFromDb.likes.map(
+              ({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+              })
+            ),
 
-              posts: (reportFromDb?.posts || []).map(
-                ({
-                  date,
-                  likes,
-                  createdAt,
-                  updatedAt,
-                  ...post
-                }) => ({
-                  date: date.toISOString(),
-                  likes: likes.map(
-                    ({ id, createdAt, updatedAt, user }) => ({
-                      id,
-                      userId: user.id,
-                      name: user.name,
-                      createdAt: createdAt.toISOString(),
-                      updatedAt: updatedAt.toISOString(),
-                    })
-                  ),
-                  ...post,
+            posts: (reportFromDb?.posts || []).map(
+              ({ date, likes, createdAt, updatedAt, ...post }) => ({
+                date: date.toISOString(),
+                likes: likes.map(
+                  ({ id, createdAt, updatedAt, user }) => ({
+                    id,
+                    userId: user.id,
+                    name: user.name,
+                    createdAt: createdAt.toISOString(),
+                    updatedAt: updatedAt.toISOString(),
+                  })
+                ),
+                ...post,
 
-                  comments: post.comments.map(comment => ({
-                    ...comment,
-                    createdAt: comment.createdAt.toISOString(),
-                    updatedAt: comment.updatedAt.toISOString(),
-                  })),
-                })
-              ),
-            })
-          );
+                comments: post.comments.map(comment => ({
+                  ...comment,
+                  createdAt: comment.createdAt.toISOString(),
+                  updatedAt: comment.updatedAt.toISOString(),
+                })),
+              })
+            ),
+          }));
 
           return isoReportsFromDb;
         });
@@ -429,6 +421,9 @@ export const reportRouter = createTRPCRouter({
             },
           },
           posts: {
+            orderBy: {
+              date: "asc",
+            },
             include: {
               author: {
                 select: { id: true, name: true, image: true },
@@ -463,10 +458,8 @@ export const reportRouter = createTRPCRouter({
       // Convert all Dates to IsoStrings
       const isoReportFromDb = {
         ...reportFromDb,
-        createdAt:
-          reportFromDb?.createdAt.toISOString() as string,
-        updatedAt:
-          reportFromDb?.updatedAt.toISOString() as string,
+        createdAt: reportFromDb?.createdAt.toISOString() as string,
+        updatedAt: reportFromDb?.updatedAt.toISOString() as string,
         likes: reportFromDb?.likes.map(
           ({ id, createdAt, updatedAt, user }) => ({
             id,
@@ -480,15 +473,13 @@ export const reportRouter = createTRPCRouter({
         posts: (reportFromDb?.posts || []).map(
           ({ date, likes, createdAt, updatedAt, ...post }) => ({
             date: date.toISOString(),
-            likes: likes.map(
-              ({ id, createdAt, updatedAt, user }) => ({
-                id,
-                userId: user.id,
-                name: user.name,
-                createdAt: createdAt.toISOString(),
-                updatedAt: updatedAt.toISOString(),
-              })
-            ),
+            likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
+              id,
+              userId: user.id,
+              name: user.name,
+              createdAt: createdAt.toISOString(),
+              updatedAt: updatedAt.toISOString(),
+            })),
             ...post,
 
             comments: post.comments.map(comment => ({
@@ -550,22 +541,18 @@ export const reportRouter = createTRPCRouter({
     .input(z.string())
     .mutation(async ({ ctx, input }) => {
       // First, check if the report exists
-      const existingReport = await ctx.prisma.report.findUnique(
-        {
-          where: {
-            id: input,
-          },
-        }
-      );
+      const existingReport = await ctx.prisma.report.findUnique({
+        where: {
+          id: input,
+        },
+      });
       if (!existingReport) {
         throw new Error("Report not found");
       }
 
       // Then, check if the user is the author of the report
       if (existingReport.authorId !== ctx.session.user.id) {
-        throw new Error(
-          "You are not authorized to delete this report"
-        );
+        throw new Error("You are not authorized to delete this report");
       }
 
       // Finally, delete the report
@@ -603,22 +590,18 @@ export const reportRouter = createTRPCRouter({
     .input(InputEditReport)
     .mutation(async ({ ctx, input }) => {
       // First, check if the report exists
-      const existingReport = await ctx.prisma.report.findUnique(
-        {
-          where: {
-            id: input.id,
-          },
-        }
-      );
+      const existingReport = await ctx.prisma.report.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
 
       // Then, check if the user is the author of the report
       if (
         existingReport &&
         existingReport.authorId !== ctx.session.user.id
       ) {
-        throw new Error(
-          "You are not authorized to edit this report"
-        );
+        throw new Error("You are not authorized to edit this report");
       }
 
       // Update the report

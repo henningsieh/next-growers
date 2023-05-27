@@ -21,9 +21,7 @@ export const InputCreateReport = z.object({
       message: "Content should have at least 12 letters",
     })
     .max(64, { message: "Content should have max 64 letters" }),
-  imageId: z
-    .string()
-    .min(1, { message: "Header image is missing" }),
+  imageId: z.string().min(1, { message: "Header image is missing" }),
 });
 
 export const InputEditReport = z.object({
@@ -65,17 +63,16 @@ export const InputDeletelike = z.object({
   reportId: z.string(),
 });
 
-export const InputCreatePost: (
+export const InputCreatePost: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
-) => ZodType = (reportStartDate: Date) => {
+) => {
   return z.object({
     date: z.date().refine(value => value >= reportStartDate, {
       message:
         "Date should be greater than or equal to report's germination date",
     }),
-    day: z
-      .number()
-      .min(0, { message: "Day must be greater than 0" }),
+    id: z.string().optional(),
+    day: z.number().min(0, { message: "Day must be greater than 0" }),
     title: z
       .string()
       .min(8, {
@@ -96,6 +93,7 @@ export const InputCreatePost: (
 };
 
 export const InputCreatePostServer = z.object({
+  id: z.string().optional(),
   date: z.date(),
   title: z.string().min(1),
   lightHoursPerDay: z.number().nullable(),
@@ -105,7 +103,7 @@ export const InputCreatePostServer = z.object({
   authorId: z.string().min(1),
   images: z.array(z.string()),
 });
-
+/* 
 type InputCreatePostFormSchema = {
   date: ZodEffects<ZodDate, Date, Date>;
   day: ZodNumber;
@@ -120,3 +118,4 @@ export type InputCreatePostFormWithoutDay = Omit<
   InputCreatePostFormSchema,
   "day"
 >;
+ */

@@ -15,17 +15,20 @@ import { useMediaQuery } from "@mantine/hooks";
 const useStyles = createStyles(theme => ({
   card: {
     backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[7]
-        : theme.white,
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
   avatar: {
     border: `${rem(2)} solid ${
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[7]
-        : theme.white
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white
     }`,
+  },
+
+  cite: {
+    fontFamily: `'Roboto Slab', sans-serif`,
+    fontSize: "1.2rem",
+    color: theme.colors.gray[4],
+    width: "100%",
   },
 }));
 
@@ -57,22 +60,12 @@ export function ReportHeader({
     </div>
   ));
 
-  const xs = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xs})`
-  );
-  const sm = useMediaQuery(
-    `(max-width: ${theme.breakpoints.sm})`
-  );
-  const md = useMediaQuery(
-    `(max-width: ${theme.breakpoints.md})`
-  );
-  const lg = useMediaQuery(
-    `(max-width: ${theme.breakpoints.lg})`
-  );
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
 
-  const xl = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xl})`
-  );
+  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
   const getResponsiveHeaderImageHeight = xs
     ? 200
@@ -87,12 +80,7 @@ export function ReportHeader({
     : 480;
 
   return (
-    <Card
-      withBorder
-      padding="sm"
-      radius="sm"
-      className={classes.card}
-    >
+    <Card withBorder padding="sm" radius="sm" className={classes.card}>
       <Card.Section
         sx={{
           backgroundSize: "cover",
@@ -118,7 +106,9 @@ export function ReportHeader({
       {/* <Center> */}
       <Box p="sm" className="-m-5">
         {/* Blockquote */}
-        <Blockquote cite={name}>{job}</Blockquote>
+        <Blockquote className={classes.cite} cite={name}>
+          {job}
+        </Blockquote>
       </Box>
       {/* </Center> */}
       {/* 
@@ -138,9 +128,7 @@ export function ReportHeader({
             radius="sm"
             size="xs"
             fz={12}
-            color={
-              theme.colorScheme === "dark" ? undefined : "dark"
-            }
+            color={theme.colorScheme === "dark" ? undefined : "dark"}
           >
             Follow
           </Button>

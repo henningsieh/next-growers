@@ -10,23 +10,18 @@ import {
   getStylesRef,
   rem,
   Alert,
-  Box,
-  Container,
+  Space,
 } from "@mantine/core";
 import {
   IconCalendar,
   IconClock,
   IconEye,
   IconHome,
-  IconPointer,
 } from "@tabler/icons-react";
 
 import { Carousel } from "@mantine/carousel";
-import {
-  Environment,
-  Post,
-  type IsoReportWithPostsFromDb,
-} from "~/types";
+import type { Post } from "~/types";
+import { Environment, type IsoReportWithPostsFromDb } from "~/types";
 import { useEffect, useState } from "react";
 import { formatLabel, sanatizeDateString } from "~/helpers";
 import { Locale } from "~/types";
@@ -38,8 +33,7 @@ import LikeHeart from "~/components/Atom/LikeHeart";
 
 const useStyles = createStyles(theme => ({
   price: {
-    color:
-      theme.colorScheme === "dark" ? theme.white : theme.black,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
   },
 
   carousel: {
@@ -133,18 +127,10 @@ export function PostCard(props: PostCardProps) {
 
   const { classes } = useStyles();
   const theme = useMantineTheme();
-  const xs = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xs})`
-  );
-  const sm = useMediaQuery(
-    `(max-width: ${theme.breakpoints.sm})`
-  );
-  const md = useMediaQuery(
-    `(max-width: ${theme.breakpoints.md})`
-  );
-  const lg = useMediaQuery(
-    `(max-width: ${theme.breakpoints.lg})`
-  );
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
   /* 
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
   */
@@ -168,9 +154,7 @@ export function PostCard(props: PostCardProps) {
     },
     {
       label:
-        Environment[
-          report.environment as keyof typeof Environment
-        ],
+        Environment[report.environment as keyof typeof Environment],
       icon: IconHome,
     },
     {
@@ -195,11 +179,7 @@ export function PostCard(props: PostCardProps) {
   if (!postId) {
     return (
       <>
-        <Alert
-          p={16}
-          bg={theme.colors.green[9]}
-          variant="filled"
-        >
+        <Alert p={16} bg={theme.colors.green[9]} variant="filled">
           <Text mx="auto">
             Select an Update (Grow Day) from calendar!☝️
           </Text>
@@ -356,8 +336,9 @@ export function PostCard(props: PostCardProps) {
             {postImagesSlides}
           </Carousel>
         </Card.Section>
-        <Group position="apart">
-          <Text fz="sm" c="dimmed" className={classes.section}>
+        <Space h="sm" />
+        <Group position="apart" className={classes.section}>
+          <Text fz="sm" c="dimmed">
             Grow data:
           </Text>
           <LikeHeart itemToLike={report} />

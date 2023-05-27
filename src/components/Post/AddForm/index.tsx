@@ -19,6 +19,7 @@ import {
 } from "@tabler/icons-react";
 import type {
   IsoReportWithPostsFromDb,
+  Post,
   PostDbInput,
 } from "~/types";
 import React, { useEffect, useState } from "react";
@@ -46,12 +47,15 @@ import { useTranslation } from "next-i18next";
 
 interface AddPostProps {
   isoReport: IsoReportWithPostsFromDb;
+  post: Post | null;
 }
-const content =
+
+const prefillHTMLContent =
   '<h1 style="text-align: center">Update your Grow with a nice rich text</h1><p><code>RichTextEditor</code> <mark>component focuses on usability </mark>and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports  <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/extensions"> extensions.</a></p></li></ul>';
 
 const AddPost = (props: AddPostProps) => {
-  const { isoReport: report } = props;
+  const { isoReport: report, post } = props;
+
   const [imageIds, setImageIds] = useState<string[]>([]);
 
   const router = useRouter();
@@ -78,10 +82,12 @@ const AddPost = (props: AddPostProps) => {
         alignments: ["left", "center", "justify"],
       }),
     ],
-    content,
+    content: post ? post.content : prefillHTMLContent,
   });
 
   if (report == null) return null;
+
+  const trpc = api.useContext();
 
   const { mutate: tRPCaddPostToReport } =
     api.posts.createPost.useMutation({
@@ -96,8 +102,9 @@ const AddPost = (props: AddPostProps) => {
         if (!context) return;
         console.log(context);
       },
-      onSuccess: () => {
+      onSuccess: async () => {
         toast.success("The update was saved to your report");
+        await trpc.reports.getIsoReportWithPostsFromDb.refetch();
         // Navigate to the new report page
         // void router.push(`/account/reports/${newReportDB.id}`);
       },
@@ -112,12 +119,11 @@ const AddPost = (props: AddPostProps) => {
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setDate(currentDate.getDate());
-  // Calculate the difference in milliseconds
-  const timeDifferenceMs =
-    currentDate.getTime() - reportStartDate.getTime();
-  // Convert milliseconds to days
-  const timeDifferenceDays = Math.floor(
-    timeDifferenceMs / (1000 * 60 * 60 * 24)
+
+  // Calculate the difference cals(now - reportStartDate)
+  const currentTimeDifferenceDays = Math.floor(
+    (currentDate.getTime() - reportStartDate.getTime()) /
+      (1000 * 60 * 60 * 24)
   );
   // Get today's date
   const today = new Date();
@@ -127,12 +133,13 @@ const AddPost = (props: AddPostProps) => {
   const form = useForm({
     validate: zodResolver(InputCreatePost(reportStartDate)),
     initialValues: {
-      date: today,
-      day: timeDifferenceDays,
-      title: "",
-      content: "",
+      id: post ? post.id : "",
+      date: post ? new Date(post.date) : today,
+      day: currentTimeDifferenceDays, //FIXME: calculate GrowDay if prop post,
+      title: post ? post.title : "",
+      content: post ? post.content : prefillHTMLContent,
       growStage: undefined,
-      lightHoursPerDay: 12,
+      lightHoursPerDay: post ? (post.lightHoursPerDay as number) : 0,
       images: imageIds,
     },
   });
@@ -179,8 +186,6 @@ const AddPost = (props: AddPostProps) => {
   return (
     <Container p={0} mt="lg" size="md">
       {/* <Paper withBorder> */}
-      <Title order={2}> {t("common:addpost-headline")} </Title>
-
       <Box mt="sm">
         <form
           className="space-y-4"
@@ -190,6 +195,7 @@ const AddPost = (props: AddPostProps) => {
             handleSubmit(values);
           }, handleErrors)}
         >
+          <TextInput {...form.getInputProps("id")} hidden />
           {imageIds.map((imageId, index) => (
             <input
               key={index}
@@ -208,9 +214,7 @@ const AddPost = (props: AddPostProps) => {
                 >
                   <NumberInput
                     label={t("common:post-growday")}
-                    description={t(
-                      "common:addpost-growdaydescription"
-                    )}
+                    description={t("common:addpost-growdaydescription")}
                     w={142}
                     placeholder="1"
                     icon={<IconNumber size="1.2rem" />}
@@ -222,11 +226,8 @@ const AddPost = (props: AddPostProps) => {
                         value.toString(),
                         10
                       );
-                      if (!growDayOffSet && growDayOffSet != 0)
-                        return; // prevent error if changed to empty string
-                      const newPostDate = new Date(
-                        reportStartDate
-                      ); // Create a new Date object using the reportStartDate
+                      if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
+                      const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
                       newPostDate.setUTCDate(
                         newPostDate.getUTCDate() + growDayOffSet
                       );
@@ -265,10 +266,7 @@ const AddPost = (props: AddPostProps) => {
                           (1000 * 60 * 60 * 24)
                       );
 
-                      form.setFieldValue(
-                        "day",
-                        timeDifferenceDays
-                      );
+                      form.setFieldValue("day", timeDifferenceDays);
                     }}
                   />
                 </Flex>
@@ -310,10 +308,7 @@ const AddPost = (props: AddPostProps) => {
             placeholder="Titel of this Update"
             {...form.getInputProps("title")}
           />
-          <TextInput
-            hidden
-            {...form.getInputProps("content")}
-          />
+          <TextInput hidden {...form.getInputProps("content")} />
 
           <RichTextEditor editor={editor}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>

@@ -17,6 +17,7 @@
   "addpost-headline": "Erstelle ein neues Grow-Update",
   "addpost-growdaydescription": "Start ist Tag 0",
   "addpost-updatedatedescription": "Datum des Updates",
+  "editallpost-headline": "Alle Updates dieses Grows",
   "post-growday": "Grow Tag",
   "post-updatedate": "Update Datum",
   "post-lighthperday": "Licht (Std.) / Tag"
