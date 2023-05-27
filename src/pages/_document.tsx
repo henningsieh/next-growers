@@ -15,6 +15,10 @@ export default class _Document extends Document {
     return (
       <Html>
         <Head>
+          <meta
+            name="google-site-verification"
+            content="bH2eAtmFdOW_32cssgRst8T_QiJxJa825XfCpiFZYsc"
+          />
           <link
             rel="preconnect"
             href="https://fonts.googleapis.com"
