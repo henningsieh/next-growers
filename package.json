@@ -7,7 +7,8 @@
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "prepare": "husky install"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -94,7 +95,8 @@
     "tailwindcss": "^3.3.2",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "husky": "^8.0.0"
   },
   "ct3aMetadata": {
     "initVersion": "7.12.1"

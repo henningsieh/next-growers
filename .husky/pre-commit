@@ -6,5 +6,6 @@ echo '🏗️👷 Styling your project before committing 🏗️👷'
 echo 'please be patient, this may take a while...'
 
 npx lint-staged
+npm run build
 
 # npx tsc --noEmit && npx eslint --fix . && npx prettier --write .
