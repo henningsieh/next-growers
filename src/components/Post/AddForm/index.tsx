@@ -39,6 +39,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import ImageUploader from "~/components/ImageUploader";
+import ReportDebugFooter from "~/components/Report/DebugFooter";
 
 import type {
   IsoReportWithPostsFromDb,
@@ -157,7 +158,6 @@ const AddPost = (props: AddPostProps) => {
     lightHoursPerDay: number;
     images: string[];
   }) {
-    console.debug(values);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { day, ...restValues } = values; // Omitting the 'day' field
     const editorHtml = editor?.getHTML() as string;
@@ -171,11 +171,9 @@ const AddPost = (props: AddPostProps) => {
       authorId: report.authorId as string,
     };
 
-    console.debug(savePost);
     tRPCaddPostToReport(savePost);
   }
   const handleErrors = (errors: typeof form.errors) => {
-    console.debug(errors);
     if (errors.id) {
       toast.error(errors.id as string);
     }
@@ -194,8 +192,6 @@ const AddPost = (props: AddPostProps) => {
         <form
           className="space-y-4"
           onSubmit={form.onSubmit((values) => {
-            console.log("Form submitted");
-            console.debug(values);
             handleSubmit(values);
           }, handleErrors)}
         >
@@ -358,10 +354,9 @@ const AddPost = (props: AddPostProps) => {
 
             <RichTextEditor.Content />
           </RichTextEditor>
-
           <ImageUploader
             report={report}
-            imageIds={imageIds}
+            cloudUrls={post?.images.map((image) => image.cloudUrl)}
             setImageIds={setImageIds}
           />
 
@@ -373,6 +368,8 @@ const AddPost = (props: AddPostProps) => {
         </form>
       </Box>
       {/* </Paper> */}
+
+      <ReportDebugFooter report={report} />
     </Container>
   );
 };

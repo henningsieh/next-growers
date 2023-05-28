@@ -1,4 +1,4 @@
-import ReportDetailsHead from "../DetailsHead";
+import ReportDebugFooter from "../DebugFooter";
 import {
   Badge,
   Box,

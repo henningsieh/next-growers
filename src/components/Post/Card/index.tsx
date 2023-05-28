@@ -211,7 +211,7 @@ export function PostCard(props: PostCardProps) {
       timeDifference / (1000 * 60 * 60 * 24) + 1
     );
 
-    console.log(postDayOfGrow); // The difference in days
+    // console.log(postDayOfGrow); // The difference in days
 
     const postImages = post?.images;
     const postBasicData = {

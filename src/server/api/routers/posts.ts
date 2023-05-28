@@ -132,6 +132,13 @@ export const postRouter = createTRPCRouter({
           reportId: input,
         },
         include: {
+          images: {
+            select: {
+              id: true,
+              publicId: true,
+              cloudUrl: true,
+            },
+          },
           likes: {
             include: {
               user: {

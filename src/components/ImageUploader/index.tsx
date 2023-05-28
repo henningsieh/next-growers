@@ -26,13 +26,15 @@ import type { IsoReportWithPostsFromDb } from "~/types";
 
 interface ImageUploaderProps {
   report: IsoReportWithPostsFromDb;
-  imageIds: string[];
+  cloudUrls: string[] | undefined;
   setImageIds: Dispatch<SetStateAction<string[]>>;
 }
 
 const ImageUploader = (props: ImageUploaderProps) => {
-  const { report, setImageIds } = props;
-  const [cloudUrls, setCloudUrls] = useState<string[]>([]);
+  const { report, cloudUrls: cloudUrlsFromProps, setImageIds } = props;
+  const [cloudUrls, setCloudUrls] = useState<string[]>(
+    cloudUrlsFromProps ? cloudUrlsFromProps : []
+  );
   const [isUploading, setIsUploading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -40,7 +42,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
   const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
 
   const theme = useMantineTheme();
-
+  console.log("cloudUrls", cloudUrls);
   const previews = cloudUrls.map((cloudUrl, index) => {
     // const imageUrl = URL.createObjectURL(file);
     return (

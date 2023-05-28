@@ -6,7 +6,7 @@ interface ReportDetailsProps {
   report: IsoReportWithPostsFromDb; // Replace 'Report' with the actual type of your report
 }
 
-const ReportDetailsHead: React.FC<ReportDetailsProps> = ({
+const ReportDebugFooter: React.FC<ReportDetailsProps> = ({
   report,
 }) => {
   return (
@@ -21,4 +21,4 @@ const ReportDetailsHead: React.FC<ReportDetailsProps> = ({
   );
 };
 
-export default ReportDetailsHead;
+export default ReportDebugFooter;

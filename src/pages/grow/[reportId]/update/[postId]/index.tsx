@@ -18,7 +18,7 @@ import Head from "next/head";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
-import ReportDetailsHead from "~/components/Report/DetailsHead";
+import ReportDebugFooter from "~/components/Report/DebugFooter";
 import { ReportHeader } from "~/components/Report/Header";
 
 import { prisma } from "~/server/db";

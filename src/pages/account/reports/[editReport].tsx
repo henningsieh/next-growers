@@ -140,19 +140,6 @@ const EditReportDetails: NextPage = () => {
                 isoReport={report as IsoReportWithPostsFromDb}
                 post={null}
               />
-
-              {/* ================================= */}
-              {/* // Props report output */}
-              <Container
-                size="md"
-                pt="xl"
-                className="flex w-full flex-col space-y-1"
-              >
-                <Title order={2}>raw dataset from db*</Title>
-                <Title order={3}>*still in beta 🤓</Title>
-
-                <div>{JSON.stringify(report, null, 4)}</div>
-              </Container>
             </>
           )}
         </Box>
