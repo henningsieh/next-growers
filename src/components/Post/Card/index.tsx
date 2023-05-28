@@ -277,7 +277,7 @@ export function PostCard(props: PostCardProps) {
                 1468
               </Text>
             </Group>
-            <LikeHeart itemToLike={post as Post} />
+            <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
 
           <Card.Section className={classes.section}>
@@ -347,7 +347,7 @@ export function PostCard(props: PostCardProps) {
             Grow data:
           </Text>
           <Text fz="sm">Grow data: {report.title}</Text>
-          <LikeHeart itemToLike={report} />
+          <LikeHeart itemToLike={report} itemType={"Report"} />
         </Group>
 
         <Group position="apart" spacing="xs">

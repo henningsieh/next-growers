@@ -234,7 +234,7 @@ export default function IsoReportCard({
             {/* Strains */}
             {reportStrains}
           </Group>
-          <LikeHeart itemToLike={isoReport} />
+          <LikeHeart itemToLike={isoReport} itemType={"Report"} />
         </Flex>
       </Card.Section>
 

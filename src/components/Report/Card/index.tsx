@@ -141,7 +141,7 @@ export default function ReportCard({
     });
 
   const { mutate: deleteLikeMutation } =
-    api.like.deleteLike.useMutation({
+    api.like.dislikeReport.useMutation({
       onError: (error) => {
         console.error(error);
         // Handle error, e.g., show an error message
@@ -228,7 +228,7 @@ export default function ReportCard({
     }
 
     // Call the likeReport mutation
-    likeReportMutation({ reportId: report.id });
+    likeReportMutation({ id: report.id });
   };
 
   const handleDisLikeReport = () => {

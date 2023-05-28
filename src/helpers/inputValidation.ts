@@ -63,7 +63,7 @@ export const InputSetUserName = z.object({
 });
 
 export const InputLike = z.object({
-  reportId: z.string(),
+  id: z.string(),
 });
 export const InputDeletelike = z.object({
   reportId: z.string(),

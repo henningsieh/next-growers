@@ -11,13 +11,49 @@ import { z } from "zod";
 import { InputDeletelike, InputLike } from "~/helpers/inputValidation";
 
 export const likeRouter = createTRPCRouter({
+  getLikesByItemId: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const likes = await ctx.prisma.like.findMany({
+        where: {
+          OR: [{ reportId: input }, { postId: input }],
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+      });
+
+      const formattedLikes = likes.map(
+        ({ id, createdAt, updatedAt, user }) => ({
+          id,
+          userId: user.id,
+          name: user.name,
+          image: user.image,
+          createdAt: createdAt.toISOString(),
+          updatedAt: updatedAt.toISOString(),
+        })
+      );
+
+      return formattedLikes;
+    }),
+
+  // like / dislike Report
   likeReport: protectedProcedure
     .input(InputLike)
     .mutation(async ({ ctx, input }) => {
       // Check if the report exists
       const existingReport = await ctx.prisma.report.findUnique({
         where: {
-          id: input.reportId,
+          id: input.id,
         },
       });
       if (!existingReport) {
@@ -39,7 +75,7 @@ export const likeRouter = createTRPCRouter({
         where: {
           userId_reportId: {
             userId: ctx.session.user.id,
-            reportId: input.reportId,
+            reportId: input.id,
           },
         },
       });
@@ -57,7 +93,7 @@ export const likeRouter = createTRPCRouter({
           },
           report: {
             connect: {
-              id: input.reportId,
+              id: input.id,
             },
           },
         },
@@ -80,8 +116,7 @@ export const likeRouter = createTRPCRouter({
       });
       return like;
     }),
-
-  deleteLike: protectedProcedure
+  dislikeReport: protectedProcedure
     .input(InputDeletelike)
     .mutation(async ({ ctx, input }) => {
       // Check if the like exists
@@ -119,38 +154,74 @@ export const likeRouter = createTRPCRouter({
       return true;
     }),
 
-  getLikesByItemId: publicProcedure
-    .input(z.string())
-    .query(async ({ ctx, input }) => {
-      const likes = await ctx.prisma.like.findMany({
+  // like / dislike Post
+  likePost: protectedProcedure
+    .input(InputLike)
+    .mutation(async ({ ctx, input }) => {
+      // Check if the report exists
+      const existingPost = await ctx.prisma.post.findUnique({
         where: {
-          OR: [{ reportId: input }, { postId: input }],
+          id: input.id,
         },
-        orderBy: {
-          createdAt: "desc",
+      });
+      if (!existingPost) {
+        throw new Error("Report does not exist");
+      }
+
+      // Check if the user exists
+      const existingUser = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
         },
-        include: {
+      });
+      if (!existingUser) {
+        throw new Error("User does not exist");
+      }
+
+      // Check if the user has already liked the report
+      const existingLike = await ctx.prisma.like.findUnique({
+        where: {
+          userId_postId: {
+            userId: ctx.session.user.id,
+            postId: input.id,
+          },
+        },
+      });
+      if (existingLike) {
+        throw new Error("You have already liked this report");
+      }
+
+      // Create a new like
+      const like = await ctx.prisma.like.create({
+        data: {
           user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+          post: {
+            connect: {
+              id: input.id,
             },
           },
         },
       });
-
-      const formattedLikes = likes.map(
-        ({ id, createdAt, updatedAt, user }) => ({
-          id,
-          userId: user.id,
-          name: user.name,
-          image: user.image,
-          createdAt: createdAt.toISOString(),
-          updatedAt: updatedAt.toISOString(),
-        })
-      );
-
-      return formattedLikes;
+      // Create a notification for the report author
+      await ctx.prisma.notification.create({
+        data: {
+          recipient: {
+            connect: {
+              id: existingPost.authorId,
+            },
+          },
+          event: NotificationEvent.LIKE_CREATED,
+          like: {
+            connect: {
+              id: like.id,
+            },
+          },
+        },
+      });
+      return like;
     }),
 });

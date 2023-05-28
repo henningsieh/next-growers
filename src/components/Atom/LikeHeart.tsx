@@ -10,7 +10,11 @@ import {
   rem,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconError404 } from "@tabler/icons-react";
+import {
+  IconCannabis,
+  IconCheck,
+  IconError404,
+} from "@tabler/icons-react";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 
 import React, { useState } from "react";
@@ -78,25 +82,26 @@ export const likeSuccessfulMsg: NotificationProps & {
 } = {
   loading: false,
   title: "Success",
-  message: "Woohoo... you ❤️ this Grow!",
+  message: "🚀 Woohoo... you ❤️ this!",
   color: "green",
-  icon: <IconCheck />,
+  icon: <IconCannabis />,
 };
 export const dislikeSuccessfulMsg = {
   loading: false,
   title: "Success",
   message: "Oh no... you removed your Like! 😢",
   color: "green",
-  icon: <IconCheck />,
+  icon: <IconCannabis />,
 };
 
 interface LikeHeartProps {
   itemToLike: Post | IsoReportWithPostsFromDb;
+  itemType: "Report" | "Post";
 }
 
 const LikeHeart = (props: LikeHeartProps) => {
   const { data: session, status, update } = useSession();
-  const { itemToLike: item } = props;
+  const { itemToLike: item, itemType } = props;
   const { classes } = useStyles();
 
   const [showLikes, setShowLikes] = useState(false);
@@ -109,8 +114,20 @@ const LikeHeart = (props: LikeHeartProps) => {
     isError,
   } = api.like.getLikesByItemId.useQuery(item.id as string);
 
-  console.debug(itemLikes);
-
+  const { mutate: likePostMutation } = api.like.likePost.useMutation({
+    onError: (error) => {
+      notifications.show(createLikeErrorMsg(error.message));
+    },
+    onSuccess: (likedPost) => {
+      notifications.show(likeSuccessfulMsg);
+      console.debug("likedReport", likedPost);
+    },
+    // Always refetch after error or success:
+    onSettled: async () => {
+      await trpc.like.getLikesByItemId.invalidate();
+      await trpc.notifications.invalidate();
+    },
+  });
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
       onError: (error) => {
@@ -127,7 +144,7 @@ const LikeHeart = (props: LikeHeartProps) => {
       },
     });
   const { mutate: deleteLikeMutation } =
-    api.like.deleteLike.useMutation({
+    api.like.dislikeReport.useMutation({
       onError: (error) => {
         console.error(error);
         // Handle error, e.g., show an error message
@@ -149,8 +166,12 @@ const LikeHeart = (props: LikeHeartProps) => {
       return;
     }
 
-    // Call the likeReport mutation
-    likeReportMutation({ reportId: item.id as string });
+    // Call the correct mutation// Call the correct mutation
+    if (itemType === "Report") {
+      likeReportMutation({ id: item.id as string });
+    } else if (itemType === "Post") {
+      likePostMutation({ id: item.id as string });
+    }
   };
 
   const handleDisLikeReport = () => {
