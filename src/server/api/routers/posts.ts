@@ -114,13 +114,13 @@ export const postRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const reportId = input;
 
-      const reports = await ctx.prisma.report.findUnique({
+      const report = await ctx.prisma.report.findUnique({
         where: {
           id: reportId,
         },
       });
 
-      if (!reports) {
+      if (!report) {
         throw new Error(`Report with id ${reportId} does not exist`);
       }
 
@@ -132,6 +132,9 @@ export const postRouter = createTRPCRouter({
           reportId: input,
         },
         include: {
+          author: {
+            select: { id: true, name: true, image: true },
+          },
           images: {
             select: {
               id: true,
@@ -150,27 +153,58 @@ export const postRouter = createTRPCRouter({
               },
             },
           },
+          comments: true,
         },
       });
 
-      const formattedPosts = posts.map((tempPost) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { date, createdAt, updatedAt, likes, ...temppost } =
-          tempPost;
+      const formattedPosts = await Promise.all(
+        posts.map(async (post) => {
+          const date = new Date(post.date);
+          const growDay =
+            Math.floor(
+              (new Date(post.date).getTime() -
+                report.createdAt.getTime()) /
+                (1000 * 60 * 60 * 24)
+            ) + 1; // Adding 1 to get 1-based indexing
 
-        const formattedPost = {
-          date: date.toISOString(),
-          likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
-            id,
-            userId: user.id,
-            name: user.name,
-            createdAt: createdAt.toISOString(),
-            updatedAt: updatedAt.toISOString(),
-          })),
-          ...temppost,
-        };
-        return formattedPost;
-      });
+          const comments = await ctx.prisma.comment.findMany({
+            where: {
+              postId: post.id,
+            },
+            orderBy: {
+              createdAt: "asc",
+            },
+          });
+
+          const isoLikes = post.likes.map(
+            ({ id, createdAt, updatedAt, user }) => ({
+              id,
+              userId: user.id,
+              name: user.name,
+              createdAt: createdAt.toISOString(),
+              updatedAt: updatedAt.toISOString(),
+            })
+          );
+
+          const isoComments = comments.map((comment) => ({
+            ...comment,
+            createdAt: comment.createdAt.toISOString(),
+            updatedAt: comment.updatedAt.toISOString(),
+          }));
+
+          // Omitting createdAt and updatedAt properties from post
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { createdAt, updatedAt, likes, ...strippedPost } = post;
+
+          return {
+            ...strippedPost,
+            likes: isoLikes,
+            date: date.toISOString(),
+            growDay,
+            comments: isoComments,
+          };
+        })
+      );
 
       return formattedPosts;
     }),

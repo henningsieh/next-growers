@@ -3,8 +3,6 @@ import { Box, Container, Title, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
-import { report } from "process";
-import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 
 import { useState } from "react";
 
@@ -15,9 +13,7 @@ import type {
 } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useRouter } from "next/router";
 
-import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
@@ -25,7 +21,6 @@ import { ReportHeader } from "~/components/Report/Header";
 import { prisma } from "~/server/db";
 
 import { Environment } from "~/types";
-import { type IsoReportWithPostsFromDb } from "~/types";
 
 /**
  * getStaticProps
@@ -66,6 +61,9 @@ export async function getStaticProps(
         },
       },
       posts: {
+        orderBy: {
+          date: "asc",
+        },
         include: {
           author: {
             select: { id: true, name: true, image: true },
@@ -121,23 +119,40 @@ export async function getStaticProps(
     ),
 
     posts: (reportFromDb?.posts || []).map(
-      ({ date, likes, createdAt, updatedAt, ...post }) => ({
-        date: date.toISOString(),
-        likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
-          id,
-          userId: user.id,
-          name: user.name,
-          createdAt: createdAt.toISOString(),
-          updatedAt: updatedAt.toISOString(),
-        })),
-        ...post,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ({ date, likes, createdAt, updatedAt, ...post }) => {
+        const postDate = new Date(date);
+        const reportCreatedAt = new Date(reportFromDb?.createdAt);
+        const timeDifference =
+          postDate.getTime() - reportCreatedAt.getTime();
+        const growDay = Math.floor(
+          timeDifference / (1000 * 60 * 60 * 24) + 1
+        );
 
-        comments: post.comments.map((comment) => ({
+        const isoLikes = likes.map(
+          ({ id, createdAt, updatedAt, user }) => ({
+            id,
+            userId: user.id,
+            name: user.name,
+            createdAt: createdAt.toISOString(),
+            updatedAt: updatedAt.toISOString(),
+          })
+        );
+
+        const isoComments = post.comments.map((comment) => ({
           ...comment,
           createdAt: comment.createdAt.toISOString(),
           updatedAt: comment.updatedAt.toISOString(),
-        })),
-      })
+        }));
+
+        return {
+          date: postDate.toISOString(),
+          likes: isoLikes,
+          ...post,
+          comments: isoComments,
+          growDay,
+        };
+      }
     ),
     strains: reportFromDb?.strains || [],
   };
@@ -206,7 +221,6 @@ export default function PublicReport(
   const { report: staticReportFromProps } = props;
   const pageTitle = `${staticReportFromProps.title}`;
 
-  const router = useRouter();
   const theme = useMantineTheme();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
@@ -327,24 +341,7 @@ export default function PublicReport(
               },
             ]}
           />
-          {/* 
-          <ImagePreview
-            authorName={
-              staticReportFromProps.author?.name as string
-            }
-            publicLink={`/grow/${staticReportFromProps.id}`}
-            imageUrl={
-              staticReportFromProps.image?.cloudUrl as string
-            }
-            title={""}
-            // title={staticReportFromProps.title as string}
-            description={staticReportFromProps.description}
-            authorImageUrl={
-              staticReportFromProps.author?.image as string
-            }
-            views={0}
-            comments={0}
-          /> */}
+
           {/* // Grow Parameter: Environment, ... */}
           <Box className="flex items-center justify-between pt-2">
             <Title order={5} className="inline">
@@ -368,7 +365,6 @@ export default function PublicReport(
             dateOfGermination={dateOfGermination}
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
-
           <PostCard postId={postId} report={staticReportFromProps} />
         </Container>
 

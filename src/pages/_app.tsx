@@ -106,7 +106,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             },
           },
           globalStyles: (theme) => ({
-            /* 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             body: {
               ...theme.fn.fontStyles(),
               backgroundColor:
@@ -123,14 +123,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
             "*, *::before, *::after": {
               boxSizing: "border-box",
             },
- */
-            /* ".your-class": {
+
+            ".your-class": {
               backgroundColor: "red",
             },
 
             "#your-id > [data-active]": {
               backgroundColor: "pink",
-            }, */
+            },
           }),
 
           // colors: {

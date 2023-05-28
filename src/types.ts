@@ -11,18 +11,13 @@ type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
 export type Reports = getAllReportsOutput;
 export type Report = getAllReportsOutput[number];
 
-export type IsoReportWithPostsFromDb =
-  RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
-
-// type getOwnReportsOutput = RouterOutput["reports"]["getOwnReports"];
-// export type OwnReports = getOwnReportsOutput;
-// bexport type OwnReport = getOwnReportsOutput[number];
-
 type getPostsByReportIdOutput =
   RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
-// export type PostDbInput = RouterOutput["posts"]["getPostDbInput"];
+
+export type IsoReportWithPostsFromDb =
+  RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 
 export type PostDbInput = {
   date: Date;

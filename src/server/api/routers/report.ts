@@ -337,13 +337,17 @@ export const reportRouter = createTRPCRouter({
         })
         .then((reportsFromDb) => {
           // Convert all Dates to IsoStrings
-          const isoReportsFromDb = reportsFromDb.map(
-            (reportFromDb) => ({
-              ...reportFromDb,
-              createdAt: reportFromDb?.createdAt.toISOString(),
-              updatedAt: reportFromDb?.updatedAt.toISOString(),
+          const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
+            const isoPosts = (reportFromDb?.posts || []).map((post) => {
+              const postDate = new Date(post.date);
+              const reportCreatedAt = new Date(reportFromDb.createdAt);
+              const timeDifference =
+                postDate.getTime() - reportCreatedAt.getTime();
+              const growDay = Math.floor(
+                timeDifference / (1000 * 60 * 60 * 24)
+              );
 
-              likes: reportFromDb.likes.map(
+              const isoLikes = post.likes.map(
                 ({ id, createdAt, updatedAt, user }) => ({
                   id,
                   userId: user.id,
@@ -351,31 +355,41 @@ export const reportRouter = createTRPCRouter({
                   createdAt: createdAt.toISOString(),
                   updatedAt: updatedAt.toISOString(),
                 })
-              ),
+              );
 
-              posts: (reportFromDb?.posts || []).map(
-                ({ date, likes, createdAt, updatedAt, ...post }) => ({
-                  date: date.toISOString(),
-                  likes: likes.map(
-                    ({ id, createdAt, updatedAt, user }) => ({
-                      id,
-                      userId: user.id,
-                      name: user.name,
-                      createdAt: createdAt.toISOString(),
-                      updatedAt: updatedAt.toISOString(),
-                    })
-                  ),
-                  ...post,
+              const isoComments = post.comments.map((comment) => ({
+                ...comment,
+                createdAt: comment.createdAt.toISOString(),
+                updatedAt: comment.updatedAt.toISOString(),
+              }));
 
-                  comments: post.comments.map((comment) => ({
-                    ...comment,
-                    createdAt: comment.createdAt.toISOString(),
-                    updatedAt: comment.updatedAt.toISOString(),
-                  })),
-                })
-              ),
-            })
-          );
+              return {
+                ...post,
+                date: postDate.toISOString(),
+                likes: isoLikes,
+                comments: isoComments,
+                growDay,
+              };
+            });
+
+            const isoLikes = reportFromDb.likes.map(
+              ({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+              })
+            );
+
+            return {
+              ...reportFromDb,
+              createdAt: reportFromDb?.createdAt.toISOString(),
+              updatedAt: reportFromDb?.updatedAt.toISOString(),
+              likes: isoLikes,
+              posts: isoPosts,
+            };
+          });
 
           return isoReportsFromDb;
         });
@@ -436,9 +450,7 @@ export const reportRouter = createTRPCRouter({
                   cloudUrl: true,
                 },
               },
-              comments: true,
               likes: {
-                // Include the Like relation and select the users who liked the report
                 include: {
                   user: {
                     select: {
@@ -449,6 +461,7 @@ export const reportRouter = createTRPCRouter({
                   },
                 },
               },
+              comments: true,
             },
           },
         },
@@ -472,26 +485,46 @@ export const reportRouter = createTRPCRouter({
         ),
 
         posts: (reportFromDb?.posts || []).map(
-          ({ date, likes, createdAt, updatedAt, ...post }) => ({
-            date: date.toISOString(),
-            likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
-              id,
-              userId: user.id,
-              name: user.name,
-              createdAt: createdAt.toISOString(),
-              updatedAt: updatedAt.toISOString(),
-            })),
-            ...post,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ({ date, likes, createdAt, updatedAt, ...post }) => {
+            const postDate = new Date(date);
+            const reportCreatedAt = new Date(
+              reportFromDb?.createdAt as Date
+            );
+            const timeDifference =
+              postDate.getTime() - reportCreatedAt.getTime();
+            const growDay = Math.floor(
+              timeDifference / (1000 * 60 * 60 * 24) + 1
+            );
 
-            comments: post.comments.map((comment) => ({
+            const isoLikes = likes.map(
+              ({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+              })
+            );
+
+            const isoComments = post.comments.map((comment) => ({
               ...comment,
               createdAt: comment.createdAt.toISOString(),
               updatedAt: comment.updatedAt.toISOString(),
-            })),
-          })
+            }));
+
+            return {
+              date: postDate.toISOString(),
+              likes: isoLikes,
+              ...post,
+              comments: isoComments,
+              growDay,
+            };
+          }
         ),
         strains: reportFromDb?.strains || [],
       };
+
       return isoReportFromDb;
     }),
 

@@ -42,7 +42,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
   const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
 
   const theme = useMantineTheme();
-  console.log("cloudUrls", cloudUrls);
+
   const previews = cloudUrls.map((cloudUrl, index) => {
     // const imageUrl = URL.createObjectURL(file);
     return (

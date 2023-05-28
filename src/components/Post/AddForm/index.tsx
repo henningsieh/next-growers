@@ -60,7 +60,7 @@ const prefillHTMLContent =
 
 const AddPost = (props: AddPostProps) => {
   const { isoReport: report, post } = props;
-
+  console.debug("addPost.post", post);
   const [imageIds, setImageIds] = useState<string[]>([]);
 
   const router = useRouter();
@@ -124,15 +124,20 @@ const AddPost = (props: AddPostProps) => {
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setDate(currentDate.getDate());
-
-  // Calculate the difference cals(now - reportStartDate)
-  const currentTimeDifferenceDays = Math.floor(
-    (currentDate.getTime() - reportStartDate.getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
-  // Get today's date
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
+
+  const growDay = post
+    ? // Calculate Grow day from props calc(post.date - reportStartDate)
+      Math.floor(
+        (new Date(post.date).getTime() - reportStartDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+    : // Calculate the difference calc(now - reportStartDate)
+      Math.floor(
+        (currentDate.getTime() - reportStartDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const form = useForm({
@@ -140,7 +145,7 @@ const AddPost = (props: AddPostProps) => {
     initialValues: {
       id: post ? post.id : "",
       date: post ? new Date(post.date) : today,
-      day: currentTimeDifferenceDays, //FIXME: calculate GrowDay if prop post,
+      day: growDay, //FIXME: calculate GrowDay if prop post,
       title: post ? post.title : "",
       content: post ? post.content : prefillHTMLContent,
       growStage: undefined,

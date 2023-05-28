@@ -130,23 +130,39 @@ export async function getStaticProps(
     ),
 
     posts: (reportFromDb?.posts || []).map(
-      ({ date, likes, createdAt, updatedAt, ...post }) => ({
-        date: date.toISOString(),
-        likes: likes.map(({ id, createdAt, updatedAt, user }) => ({
-          id,
-          userId: user.id,
-          name: user.name,
-          createdAt: createdAt.toISOString(),
-          updatedAt: updatedAt.toISOString(),
-        })),
-        ...post,
+      ({ date, likes, createdAt, updatedAt, ...post }) => {
+        const postDate = new Date(date);
+        const reportCreatedAt = new Date(reportFromDb?.createdAt);
+        const timeDifference =
+          postDate.getTime() - reportCreatedAt.getTime();
+        const growDay = Math.floor(
+          timeDifference / (1000 * 60 * 60 * 24) + 1
+        );
 
-        comments: post.comments.map((comment) => ({
+        const isoLikes = likes.map(
+          ({ id, createdAt, updatedAt, user }) => ({
+            id,
+            userId: user.id,
+            name: user.name,
+            createdAt: createdAt.toISOString(),
+            updatedAt: updatedAt.toISOString(),
+          })
+        );
+
+        const isoComments = post.comments.map((comment) => ({
           ...comment,
           createdAt: comment.createdAt.toISOString(),
           updatedAt: comment.updatedAt.toISOString(),
-        })),
-      })
+        }));
+
+        return {
+          date: postDate.toISOString(),
+          likes: isoLikes,
+          ...post,
+          comments: isoComments,
+          growDay,
+        };
+      }
     ),
     strains: reportFromDb?.strains || [],
   };

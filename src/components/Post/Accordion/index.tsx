@@ -1,5 +1,13 @@
 import AddPost from "../AddForm/index";
-import { Accordion, Container, Paper, Title } from "@mantine/core";
+import {
+  Accordion,
+  Box,
+  Container,
+  Group,
+  Paper,
+  Title,
+} from "@mantine/core";
+import { sanatizeDateString } from "~/helpers";
 
 import { useState } from "react";
 
@@ -7,7 +15,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
-import { Posts } from "~/types";
+import { Locale, Posts } from "~/types";
 
 interface PostsAccordionProps {
   report: IsoReportWithPostsFromDb | undefined;
@@ -29,9 +37,30 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
             {!!isoReport &&
               isoReport.posts.map((post) => (
                 <Accordion.Item key={post.id} value={post.id}>
-                  <Accordion.Control>{post.date}</Accordion.Control>
+                  <Accordion.Control px={"sm"}>
+                    <Group position="apart">
+                      <Box w={80}>
+                        <Box fz={"md"} ml={"sm"}>
+                          {"Day "}
+                          {post.growDay}
+                          {": "}
+                        </Box>
+                      </Box>
+                      <Box>
+                        <Title order={5}>{post.title}</Title>
+                      </Box>
+                      <Box fz={"xs"} mt={"sm"}>
+                        {sanatizeDateString(
+                          post.date,
+                          router.locale === Locale.DE
+                            ? Locale.DE
+                            : Locale.EN
+                        )}
+                      </Box>
+                    </Group>
+                  </Accordion.Control>
                   <Accordion.Panel>
-                    <Title order={3}>{post.title}</Title>
+                    <Title order={4}>Edit Update</Title>
 
                     <AddPost isoReport={isoReport} post={post} />
                   </Accordion.Panel>
