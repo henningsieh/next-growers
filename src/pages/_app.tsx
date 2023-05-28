@@ -1,14 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import type { ColorScheme } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
-import { useRouteLoader } from "~/helpers/routeLoader";
 import AppLayout from "~/layout/AppLayout";
 import "~/styles/globals.css";
-import { api } from "~/utils/api";
-
-import Loading from "~/components/Atom/Loading";
 
 import { Toaster } from "react-hot-toast";
 
@@ -16,6 +11,11 @@ import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import type { AppType } from "next/app";
+
+import Loading from "~/components/Atom/Loading";
+
+import { api } from "~/utils/api";
+import { useRouteLoader } from "~/utils/routeLoader";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -61,11 +61,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
             // 1 Spalte
             sm: "38em",
             // 2 Spalten
-            md: "56em",
+            md: "58em",
             // 4 Spalten
-            lg: "72em",
+            lg: "78em",
             // 4 Spalten
-            xl: "88em",
+            xl: "90em",
             // 6 Spalten
           },
           components: {
@@ -75,8 +75,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
                   xs: 515, //  32em x 16px
                   sm: 720, //  45em x 16px
                   md: 960, //  60em x 16px
-                  lg: 1440, //  90em x 16px
-                  xl: 1856, // 116em x 16px
+                  lg: 1024, //  90em x 16px
+                  xl: 1440, // 116em x 16px
                 },
               },
             },
@@ -106,6 +106,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             },
           },
           globalStyles: (theme) => ({
+            /* 
             body: {
               ...theme.fn.fontStyles(),
               backgroundColor:
@@ -122,7 +123,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
             "*, *::before, *::after": {
               boxSizing: "border-box",
             },
-
+ */
             /* ".your-class": {
               backgroundColor: "red",
             },
@@ -131,6 +132,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               backgroundColor: "pink",
             }, */
           }),
+
           // colors: {
           //   white: ["#C1CCF6"],
           //   // Add your color

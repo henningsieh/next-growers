@@ -37,12 +37,16 @@ export type PostDbInput = {
 
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
-export type UserNotifications = getAllNotificationsOutput;
+export type Notifications = getAllNotificationsOutput;
 export type Notification = getAllNotificationsOutput[number];
 
 type getAllStrainsOutput = RouterOutput["strains"]["getAllStrains"];
 export type Strains = getAllStrainsOutput;
 export type Strain = getAllStrainsOutput[number];
+
+type getLikesByItemIdOutput = RouterOutput["like"]["getLikesByItemId"];
+export type Likes = getLikesByItemIdOutput;
+export type Like = getLikesByItemIdOutput[number];
 
 export interface EditFormProps {
   report: IsoReportWithPostsFromDb;

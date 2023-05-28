@@ -32,14 +32,14 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 
-import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
-import Notifications from "~/components/UserNotifications";
-
 import { type ReactNode } from "react";
 
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+
+import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
+import Notifications from "~/components/Notifications";
 
 const useStyles = createStyles((theme) => ({
   link: {
@@ -97,6 +97,12 @@ const useStyles = createStyles((theme) => ({
         ? theme.colors.dark[5]
         : theme.colors.gray[1]
     }`,
+  },
+
+  hiddenXs: {
+    [theme.fn.smallerThan("xs")]: {
+      display: "none",
+    },
   },
 
   hiddenMobile: {
@@ -200,7 +206,7 @@ export default function HeaderMegaMenu({
         style={{
           position: "fixed",
           zIndex: 100,
-          maxWidth: 1440, //same as <Container size="lg" />
+          maxWidth: 1440, //same as <Container size="xl" />
           width: "100%",
           margin: "0px auto",
           padding: "0 1rem",
@@ -301,7 +307,7 @@ export default function HeaderMegaMenu({
             </Link> */}
           </Group>
           <Group>
-            <Box className={classes.hiddenMobile}>
+            <Box className={classes.hiddenXs}>
               <LanguageSwitcher />
             </Box>
             <Box>

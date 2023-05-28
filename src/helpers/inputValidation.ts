@@ -1,14 +1,20 @@
-import type {
-  ZodDate,
-  ZodEffects,
-  ZodNullable,
-  ZodNumber,
-  ZodString,
-  ZodType,
-} from "zod";
+import type { ZodType } from "zod";
 import { z } from "zod";
 
 import { Environment, GrowStage } from "~/types";
+
+export const InputLogin = z.string().email("Invalid email address");
+
+export const InputEditProfile = z.object({
+  name: z.string().min(6, {
+    message: "Username must have at least 6 letters",
+  }),
+  /*       .refine((value) => !/\s/.test(value), {
+      message: "Userame must not contain whitespace characters",
+    }),
+    */
+  email: z.string().email({ message: "Invalid email address" }),
+});
 
 export const InputCreateReport = z.object({
   title: z

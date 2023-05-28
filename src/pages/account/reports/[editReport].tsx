@@ -5,7 +5,14 @@ import {
   Space,
   Title,
 } from "@mantine/core";
-import { api } from "~/utils/api";
+
+import type { GetServerSidePropsContext, NextPage } from "next";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostsAccordion from "~/components/Post/Accordion";
@@ -16,13 +23,7 @@ import { authOptions } from "~/server/auth";
 
 import type { IsoReportWithPostsFromDb, Posts, Strains } from "~/types";
 
-import type { GetServerSidePropsContext, NextPage } from "next";
-import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Head from "next/head";
-import { useRouter } from "next/router";
+import { api } from "~/utils/api";
 
 /**
  * PROTECTED PAGE with translations
@@ -93,7 +94,7 @@ const EditReportDetails: NextPage = () => {
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="lg" className="flex flex-col space-y-2">
+      <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}

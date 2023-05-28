@@ -7,6 +7,7 @@ import {
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NotificationEvent, Prisma } from "@prisma/client";
+import { z } from "zod";
 import { InputDeletelike, InputLike } from "~/helpers/inputValidation";
 
 export const likeRouter = createTRPCRouter({
@@ -116,5 +117,40 @@ export const likeRouter = createTRPCRouter({
       }
 
       return true;
+    }),
+
+  getLikesByItemId: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const likes = await ctx.prisma.like.findMany({
+        where: {
+          OR: [{ reportId: input }, { postId: input }],
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+      });
+
+      const formattedLikes = likes.map(
+        ({ id, createdAt, updatedAt, user }) => ({
+          id,
+          userId: user.id,
+          name: user.name,
+          image: user.image,
+          createdAt: createdAt.toISOString(),
+          updatedAt: updatedAt.toISOString(),
+        })
+      );
+
+      return formattedLikes;
     }),
 });

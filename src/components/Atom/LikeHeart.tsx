@@ -12,15 +12,16 @@ import {
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconError404 } from "@tabler/icons-react";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
-import { api } from "~/utils/api";
-
-import type { IsoReportWithPostsFromDb, Post } from "~/types";
 
 import React, { useState } from "react";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+
+import type { IsoReportWithPostsFromDb, Post } from "~/types";
+
+import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -94,12 +95,21 @@ interface LikeHeartProps {
 }
 
 const LikeHeart = (props: LikeHeartProps) => {
-  const [showLikes, setShowLikes] = useState(false);
-  const { itemToLike: item } = props;
   const { data: session, status, update } = useSession();
+  const { itemToLike: item } = props;
   const { classes } = useStyles();
 
+  const [showLikes, setShowLikes] = useState(false);
+
+  // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const trpc = api.useContext();
+  const {
+    data: itemLikes,
+    isLoading,
+    isError,
+  } = api.like.getLikesByItemId.useQuery(item.id as string);
+
+  console.debug(itemLikes);
 
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
@@ -112,8 +122,8 @@ const LikeHeart = (props: LikeHeartProps) => {
       },
       // Always refetch after error or success:
       onSettled: async () => {
+        await trpc.like.getLikesByItemId.invalidate();
         await trpc.notifications.invalidate();
-        await trpc.reports.invalidate();
       },
     });
   const { mutate: deleteLikeMutation } =
@@ -127,8 +137,8 @@ const LikeHeart = (props: LikeHeartProps) => {
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        await trpc.like.getLikesByItemId.invalidate();
         await trpc.notifications.getNotificationsByUserId.invalidate();
-        await trpc.reports.invalidate();
       },
     });
 
@@ -158,11 +168,11 @@ const LikeHeart = (props: LikeHeartProps) => {
     <Flex align="flex-start">
       {/* // ❤️ */}
       <Box fz="sm" p={1} m={1}>
-        {item.likes?.length}
+        {itemLikes?.length}
       </Box>
       <Box className="relative">
         <ActionIcon
-          title="give props to grower"
+          title="Give props to the Grower"
           variant="default"
           className="cursor-default"
           onMouseEnter={() => void setShowLikes(true)}
@@ -173,7 +183,7 @@ const LikeHeart = (props: LikeHeartProps) => {
           mr={-4}
           size={25}
         >
-          {item.likes?.find(
+          {itemLikes?.find(
             (like) => like.userId === session?.user.id
           ) ? (
             <IconHeartFilled
@@ -192,7 +202,7 @@ const LikeHeart = (props: LikeHeartProps) => {
           )}
         </ActionIcon>
         {/* // Likes Tooltip */}
-        {!!item.likes && !!item.likes?.length && (
+        {!!itemLikes && !!itemLikes?.length && (
           <Transition
             mounted={showLikes}
             transition="pop-bottom-right"
@@ -205,15 +215,15 @@ const LikeHeart = (props: LikeHeartProps) => {
                 className={`absolute bottom-full right-0 z-40 m-0 -mr-1 mb-2 w-max rounded p-0 text-right`}
                 style={transitionStyles}
               >
-                {item.likes &&
-                  item.likes.map((like) => (
+                {itemLikes &&
+                  itemLikes.map((like) => (
                     <Box key={like.id} mx={10} fz={"xs"}>
                       {like.name}
                     </Box>
                   ))}
                 <Text fz="xs" td="overline" pr={4} fs="italic">
-                  {item.likes && item.likes.length} Like
-                  {item.likes && item.likes.length > 1 ? "s" : ""} 👍
+                  {itemLikes && itemLikes.length} Like
+                  {itemLikes && itemLikes.length > 1 ? "s" : ""} 👍
                 </Text>
               </Paper>
             )}

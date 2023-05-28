@@ -12,9 +12,9 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
-
 import Link from "next/link";
+
+import type { IsoReportWithPostsFromDb } from "~/types";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -74,16 +74,16 @@ export function ReportHeader({
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
   const getResponsiveHeaderImageHeight = xs
-    ? 240
+    ? 140
     : sm
-    ? 240
+    ? 140
     : md
-    ? 320
+    ? 220
     : lg
-    ? 400
+    ? 220
     : xl
-    ? 440
-    : 480;
+    ? 220
+    : 220;
 
   return (
     <Card withBorder padding="sm" radius="sm" className={classes.card}>

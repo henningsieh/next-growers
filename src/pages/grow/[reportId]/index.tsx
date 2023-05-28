@@ -6,16 +6,6 @@ import dayjs from "dayjs";
 import { report } from "process";
 import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 
-import { ImagePreview } from "~/components/Atom/ImagePreview";
-import { PostCard } from "~/components/Post/Card";
-import PostsDatePicker from "~/components/Post/Datepicker";
-import { ReportHeader } from "~/components/Report/Header";
-
-import { prisma } from "~/server/db";
-
-import { Environment } from "~/types";
-import { type IsoReportWithPostsFromDb } from "~/types";
-
 import { useState } from "react";
 
 import type {
@@ -26,6 +16,16 @@ import type {
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
+
+import { ImagePreview } from "~/components/Atom/ImagePreview";
+import { PostCard } from "~/components/Post/Card";
+import PostsDatePicker from "~/components/Post/Datepicker";
+import { ReportHeader } from "~/components/Report/Header";
+
+import { prisma } from "~/server/db";
+
+import { Environment } from "~/types";
+import { type IsoReportWithPostsFromDb } from "~/types";
 
 /**
  * getStaticProps
@@ -290,7 +290,7 @@ export default function PublicReport(
         />
       </Head>
       {/* // Main Content Container */}
-      <Container size="lg" className="flex w-full flex-col space-y-1">
+      <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -300,7 +300,7 @@ export default function PublicReport(
         </div>
         {/* // Header End */}
         <Container
-          size="lg"
+          size="xl"
           px={0}
           mx="auto"
           pt="xs"

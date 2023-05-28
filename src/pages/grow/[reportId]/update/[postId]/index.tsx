@@ -5,6 +5,16 @@ import { IconCalendarOff } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 
+import { useState } from "react";
+
+import type {
+  GetStaticPaths,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+} from "next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
@@ -15,16 +25,6 @@ import { prisma } from "~/server/db";
 
 import { Environment } from "~/types";
 import { type IsoReportWithPostsFromDb } from "~/types";
-
-import { useState } from "react";
-
-import type {
-  GetStaticPaths,
-  GetStaticPropsContext,
-  InferGetStaticPropsType,
-} from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Head from "next/head";
 
 /**
  * getStaticProps
@@ -314,7 +314,7 @@ export default function PublicReportPost(
       </Head>
       {/* // Main Content Container */}
       <Container
-        size="lg"
+        size="xl"
         className="mb-8 flex w-full flex-col space-y-1"
       >
         {/* // Header with Title */}
@@ -326,9 +326,10 @@ export default function PublicReportPost(
         </div>
         {/* // Header End */}
         <Container
-          size="lg"
+          size="xl"
           px={0}
           mx="auto"
+          pt="xs"
           className="flex w-full flex-col space-y-4"
         >
           <ReportHeader

@@ -1,11 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { GoogleButtonWithText } from "../Atom/GoogleButton";
 import EmailForm from "./EmailForm";
-import * as z from "zod";
+import { InputLogin } from "~/helpers/inputValidation";
 
 import { useState } from "react";
 
@@ -25,7 +20,6 @@ const useLoginForm = () => {
   });
   const [errors, setErrors] = useState<Errors>({});
 
-  const emailSchema = z.string().email("Invalid email address");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     console.log(value);
@@ -54,7 +48,7 @@ const useLoginForm = () => {
     // Validate email field
     const newErrors: Errors = {};
     try {
-      emailSchema.parse(formContent.email);
+      InputLogin.parse(formContent.email);
       await signIn("email", { email: formContent.email });
     } catch (err) {
       newErrors.email = (err as Error).message;

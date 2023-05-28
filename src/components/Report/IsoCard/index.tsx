@@ -14,6 +14,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import {
+  IconAlertTriangle,
   IconAlertTriangleFilled,
   IconCalendar,
   IconCannabis,
@@ -23,7 +24,11 @@ import {
 } from "@tabler/icons-react";
 import { IconCheck } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
-import { api } from "~/utils/api";
+
+import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
@@ -31,10 +36,7 @@ import LikeHeart from "~/components/Atom/LikeHeart";
 import { Locale } from "~/types";
 import type { IsoReportCardProps } from "~/types";
 
-import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -313,7 +315,7 @@ export default function IsoReportCard({
         session.user.id == isoReport.authorId && (
           <Group mt="xs" position="apart">
             <Button
-              size="sm"
+              size="xs"
               variant="filled"
               color="red"
               radius="sm"
@@ -324,22 +326,22 @@ export default function IsoReportCard({
               }}
             >
               {t("common:report-delete")}
-              <IconAlertTriangleFilled
+              <IconAlertTriangle
                 className="ml-2"
-                height={18}
-                stroke={1.5}
+                height={20}
+                stroke={1.6}
               />
             </Button>
             <Link href={`/account/reports/${isoReport.id as string}`}>
               <Button
-                size="sm" /*
+                size="xs" /*
               className="border-orange-600" */
                 variant="outline"
                 radius="sm"
                 style={{ flex: 1 }}
               >
                 {t("common:report-edit")}
-                <IconEdit className="ml-2" height={22} stroke={1.5} />
+                <IconEdit className="ml-2" height={22} stroke={1.4} />
               </Button>
             </Link>
           </Group>

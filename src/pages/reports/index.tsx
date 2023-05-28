@@ -10,14 +10,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconDatabaseSearch } from "@tabler/icons-react";
-import { api } from "~/utils/api";
-
-import LoadingError from "~/components/Atom/LoadingError";
-import SearchInput from "~/components/Atom/SearchInput";
-import SortingPanel from "~/components/Atom/SortingPanel";
-import IsoReportCard from "~/components/Report/IsoCard";
-
-import type { SortingPanelProps } from "~/types";
 
 import type { ChangeEvent } from "react";
 import { useState } from "react";
@@ -26,6 +18,15 @@ import { type GetServerSideProps, type NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+
+import LoadingError from "~/components/Atom/LoadingError";
+import SearchInput from "~/components/Atom/SearchInput";
+import SortingPanel from "~/components/Atom/SortingPanel";
+import IsoReportCard from "~/components/Report/IsoCard";
+
+import type { SortingPanelProps } from "~/types";
+
+import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   hiddenMobile: {
@@ -120,7 +121,7 @@ const PublicAllGrows: NextPage = () => {
       {/* <Loading isLoading={isLoading} /> */}
 
       {/* // Main Content Container */}
-      <Container size="lg" className="flex w-full flex-col space-y-2">
+      <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}

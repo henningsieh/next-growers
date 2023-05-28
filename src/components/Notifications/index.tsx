@@ -13,7 +13,7 @@ import {
 import { Paper } from "@mantine/core";
 import { Transition } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
-import { notifications as userNotifications } from "@mantine/notifications";
+import { notifications } from "@mantine/notifications";
 import {
   IconBell,
   IconCheck,
@@ -21,16 +21,17 @@ import {
 } from "@tabler/icons-react";
 import { IconEyeCheck } from "@tabler/icons-react";
 import { hasUnreadNotifications } from "~/helpers";
-import { api } from "~/utils/api";
-
-import type { UserNotifications } from "~/types";
-import type { NotificationEventMap } from "~/types";
 
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+
+import type { NotificationEventMap } from "~/types";
+import type { Notifications } from "~/types";
+
+import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   like: {
@@ -39,7 +40,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const ProtectedUserNotifications = () => {
+const ProtectedNotifications = () => {
   const [open, setOpen] = useState(false);
   const { colorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
@@ -50,7 +51,7 @@ const ProtectedUserNotifications = () => {
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
-    data: notifications,
+    data: notificationsFromDb,
     isLoading,
     isError,
   } = api.notifications.getNotificationsByUserId.useQuery();
@@ -65,7 +66,7 @@ const ProtectedUserNotifications = () => {
       },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onSuccess: (_res) => {
-        userNotifications.show(markAllReadMessage);
+        notifications.show(markAllReadMessage);
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
@@ -129,7 +130,9 @@ const ProtectedUserNotifications = () => {
         variant="outline"
         color={dark ? theme.primaryColor : "grape"}
       >
-        {hasUnreadNotifications(notifications as UserNotifications) ? (
+        {hasUnreadNotifications(
+          notificationsFromDb as Notifications
+        ) ? (
           <Indicator
             color={theme.colors.pink[7]}
             position="bottom-end"
@@ -167,8 +170,10 @@ const ProtectedUserNotifications = () => {
           >
             <Container miw={300} p={4}>
               <Box className="space-y-1">
-                {!isLoading && !isError && notifications?.length ? (
-                  notifications.map((notification) => (
+                {!isLoading &&
+                !isError &&
+                notificationsFromDb?.length ? (
+                  notificationsFromDb.map((notification) => (
                     <Box
                       onClick={() => {
                         handleMarkNotificationAsRead(notification.id);
@@ -240,7 +245,7 @@ const ProtectedUserNotifications = () => {
                 {/* <Divider /> */}
                 {!isLoading &&
                   !isError &&
-                  notifications?.length > 0 && (
+                  notificationsFromDb?.length > 0 && (
                     <Button
                       onClick={() => {
                         handleMarkAllNotificationsAsRead();
@@ -279,4 +284,4 @@ const ProtectedUserNotifications = () => {
   );
 };
 
-export default ProtectedUserNotifications;
+export default ProtectedNotifications;

@@ -15,14 +15,8 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { IconAt, IconMail, IconReload } from "@tabler/icons-react";
 import { IconAlertCircle } from "@tabler/icons-react";
-import { z } from "zod";
 import { getUsername } from "~/helpers";
-import { api } from "~/utils/api";
-
-import AccessDenied from "~/components/Atom/AccessDenied";
-import AppNotification from "~/components/Atom/Notification";
-
-import { authOptions } from "~/server/auth";
+import { InputEditProfile } from "~/helpers/inputValidation";
 
 import { useState } from "react";
 
@@ -32,6 +26,13 @@ import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
+
+import AccessDenied from "~/components/Atom/AccessDenied";
+import AppNotification from "~/components/Atom/Notification";
+
+import { authOptions } from "~/server/auth";
+
+import { api } from "~/utils/api";
 
 /**
  * PROTECTED PAGE with translations
@@ -75,22 +76,8 @@ const ProtectedEditReport: NextPage = () => {
     return form.values.name;
   };
 
-  /**
-   * Zod Validation Schema
-   */
-  const validateFormSchema = z.object({
-    name: z.string().min(6, {
-      message: "Username must have at least 6 letters",
-    }),
-    /*       .refine((value) => !/\s/.test(value), {
-        message: "Userame must not contain whitespace characters",
-      }),
-      */
-    email: z.string().email({ message: "Invalid email address" }),
-  });
-
   const form = useForm({
-    validate: zodResolver(validateFormSchema),
+    validate: zodResolver(InputEditProfile),
     initialValues: {
       email: session?.user.email,
       name: !!session?.user.name ? session.user.name : "",
@@ -124,7 +111,7 @@ const ProtectedEditReport: NextPage = () => {
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="lg" className="flex w-full flex-col space-y-1">
+      <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}

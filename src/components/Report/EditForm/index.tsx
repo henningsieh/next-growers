@@ -27,15 +27,16 @@ import {
 } from "@tabler/icons-react";
 import { handleDrop } from "~/helpers";
 import { InputEditReport } from "~/helpers/inputValidation";
-import { api } from "~/utils/api";
+
+import { useRef, useState } from "react";
+import { toast } from "react-hot-toast";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import type { EditFormProps } from "~/types";
 import { Environment } from "~/types";
 
-import { useRef, useState } from "react";
-import { toast } from "react-hot-toast";
+import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {

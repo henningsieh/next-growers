@@ -6,7 +6,16 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import { api } from "~/utils/api";
+
+import type { ChangeEvent } from "react";
+import { useState } from "react";
+
+import type { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import LoadingError from "~/components/Atom/LoadingError";
@@ -18,15 +27,7 @@ import { authOptions } from "~/server/auth";
 
 import type { SortingPanelProps } from "~/types";
 
-import type { ChangeEvent } from "react";
-import { useState } from "react";
-
-import type { GetServerSidePropsContext } from "next";
-import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Head from "next/head";
+import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   hiddenMobile: {
@@ -143,7 +144,7 @@ export default function ProtectedMyGrows() {
       </Head>
 
       {/* // Main Content Container */}
-      <Container size="lg" className="flex w-full flex-col space-y-2">
+      <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title and Sorting */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
