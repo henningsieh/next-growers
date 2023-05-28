@@ -411,7 +411,6 @@ export default function PublicReportPost(
             dateOfGermination={dateOfGermination}
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
-
           <PostCard postId={postId} report={staticReportFromProps} />
         </Container>
 

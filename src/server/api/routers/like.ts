@@ -8,7 +8,7 @@ import {
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NotificationEvent, Prisma } from "@prisma/client";
 import { z } from "zod";
-import { InputDeletelike, InputLike } from "~/helpers/inputValidation";
+import { InputLike } from "~/helpers/inputValidation";
 
 export const likeRouter = createTRPCRouter({
   getLikesByItemId: publicProcedure
@@ -117,12 +117,12 @@ export const likeRouter = createTRPCRouter({
       return like;
     }),
   dislikeReport: protectedProcedure
-    .input(InputDeletelike)
+    .input(InputLike)
     .mutation(async ({ ctx, input }) => {
       // Check if the like exists
       const existingLike = await ctx.prisma.like.findFirst({
         where: {
-          reportId: input.reportId,
+          reportId: input.id,
           userId: ctx.session.user.id,
         },
       });
@@ -223,5 +223,42 @@ export const likeRouter = createTRPCRouter({
         },
       });
       return like;
+    }),
+  dislikePost: protectedProcedure
+    .input(InputLike)
+    .mutation(async ({ ctx, input }) => {
+      // Check if the like exists
+      const existingLike = await ctx.prisma.like.findFirst({
+        where: {
+          postId: input.id,
+          userId: ctx.session.user.id,
+        },
+      });
+      if (!existingLike) {
+        throw new Error("Like does not exist");
+      }
+
+      // Check if the user is the owner of the like
+      if (existingLike.userId !== ctx.session.user.id) {
+        throw new Error("You are not the owner of this like");
+      }
+
+      // Delete the like
+      try {
+        await ctx.prisma.like.delete({
+          where: {
+            id: existingLike.id,
+          },
+        });
+      } catch (error: unknown) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          console.debug(error.message);
+          throw new Error(`Failed to delete like: ${error.message}`);
+        } else {
+          throw new Error("Failed to delete like");
+        }
+      }
+
+      return true;
     }),
 });

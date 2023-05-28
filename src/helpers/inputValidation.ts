@@ -65,9 +65,6 @@ export const InputSetUserName = z.object({
 export const InputLike = z.object({
   id: z.string(),
 });
-export const InputDeletelike = z.object({
-  reportId: z.string(),
-});
 
 export const InputCreatePost: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date

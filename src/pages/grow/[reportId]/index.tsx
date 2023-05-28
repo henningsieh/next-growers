@@ -304,7 +304,10 @@ export default function PublicReport(
         />
       </Head>
       {/* // Main Content Container */}
-      <Container size="xl" className="flex w-full flex-col space-y-1">
+      <Container
+        size="xl"
+        className="mb-8 flex w-full flex-col space-y-1"
+      >
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}

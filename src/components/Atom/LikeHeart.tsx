@@ -114,20 +114,6 @@ const LikeHeart = (props: LikeHeartProps) => {
     isError,
   } = api.like.getLikesByItemId.useQuery(item.id as string);
 
-  const { mutate: likePostMutation } = api.like.likePost.useMutation({
-    onError: (error) => {
-      notifications.show(createLikeErrorMsg(error.message));
-    },
-    onSuccess: (likedPost) => {
-      notifications.show(likeSuccessfulMsg);
-      console.debug("likedReport", likedPost);
-    },
-    // Always refetch after error or success:
-    onSettled: async () => {
-      await trpc.like.getLikesByItemId.invalidate();
-      await trpc.notifications.invalidate();
-    },
-  });
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
       onError: (error) => {
@@ -143,7 +129,7 @@ const LikeHeart = (props: LikeHeartProps) => {
         await trpc.notifications.invalidate();
       },
     });
-  const { mutate: deleteLikeMutation } =
+  const { mutate: dislikeReportMutation } =
     api.like.dislikeReport.useMutation({
       onError: (error) => {
         console.error(error);
@@ -158,8 +144,38 @@ const LikeHeart = (props: LikeHeartProps) => {
         await trpc.notifications.getNotificationsByUserId.invalidate();
       },
     });
+  const { mutate: likePostMutation } = api.like.likePost.useMutation({
+    onError: (error) => {
+      notifications.show(createLikeErrorMsg(error.message));
+    },
+    onSuccess: (likedPost) => {
+      notifications.show(likeSuccessfulMsg);
+      console.debug("likedReport", likedPost);
+    },
+    // Always refetch after error or success:
+    onSettled: async () => {
+      await trpc.like.getLikesByItemId.invalidate();
+      await trpc.notifications.invalidate();
+    },
+  });
+  const { mutate: dislikePostMutation } =
+    api.like.dislikePost.useMutation({
+      onError: (error) => {
+        console.error(error);
+        // Handle error, e.g., show an error message
+      },
+      onSuccess: (res) => {
+        console.log(res);
+        notifications.show(dislikeSuccessfulMsg);
+      },
+      onSettled: async () => {
+        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        await trpc.like.getLikesByItemId.invalidate();
+        await trpc.notifications.getNotificationsByUserId.invalidate();
+      },
+    });
 
-  const handleLikeReport = () => {
+  const handleLikeItem = () => {
     // Ensure that the user is authenticated
     if (!session) {
       // Redirect to login or show a login prompt
@@ -174,15 +190,21 @@ const LikeHeart = (props: LikeHeartProps) => {
     }
   };
 
-  const handleDisLikeReport = () => {
+  const handleDisLikeItem = () => {
     // Ensure that the user is authenticated
     if (status !== "authenticated") {
       // Redirect to login or show a login prompt
       return;
     }
 
-    // Call the likeReport mutation
-    deleteLikeMutation({ reportId: item.id as string });
+    // Call the correct mutation// Call the correct mutation
+    if (itemType === "Report") {
+      // Call the dislikeReport mutation
+      dislikeReportMutation({ id: item.id as string });
+    } else if (itemType === "Post") {
+      // Call the dislikePost mutation
+      dislikePostMutation({ id: item.id as string });
+    }
   };
 
   return (
@@ -208,14 +230,14 @@ const LikeHeart = (props: LikeHeartProps) => {
             (like) => like.userId === session?.user.id
           ) ? (
             <IconHeartFilled
-              onClick={handleDisLikeReport}
+              onClick={handleDisLikeItem}
               size="1.2rem"
               className={`${classes.like} icon-transition`}
               stroke={1.5}
             />
           ) : (
             <IconHeart
-              onClick={handleLikeReport}
+              onClick={handleLikeItem}
               size="1.2rem"
               className={`${classes.like} icon-transition`}
               stroke={1.5}

@@ -239,7 +239,7 @@ export default function ReportCard({
     }
 
     // Call the likeReport mutation
-    deleteLikeMutation({ reportId: report.id });
+    deleteLikeMutation({ id: report.id });
   };
 
   const reportStrains = report.strains.map((badge) => (

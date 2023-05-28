@@ -160,6 +160,10 @@ export function PostCard(props: PostCardProps) {
       icon: IconHome,
     },
     {
+      label: "1468",
+      icon: IconEye,
+    },
+    {
       label: sanatizeDateString(
         report?.updatedAt,
         router.locale === Locale.DE ? Locale.DE : Locale.EN
@@ -271,12 +275,6 @@ export function PostCard(props: PostCardProps) {
               {post?.title}
             </Text>
 
-            <Group spacing={4}>
-              <IconEye size="1rem" />
-              <Text fz="xs" fw={500}>
-                1468
-              </Text>
-            </Group>
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
 
@@ -346,7 +344,7 @@ export function PostCard(props: PostCardProps) {
           <Text fz="sm" c="dimmed">
             Grow data:
           </Text>
-          <Text fz="sm">Grow data: {report.title}</Text>
+          <Text fz="md">{report.title}</Text>
           <LikeHeart itemToLike={report} itemType={"Report"} />
         </Group>
 
