@@ -8,12 +8,12 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 
-import type { SortingPanelProps } from "~/types";
-
 import React from "react";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+
+import type { SortingPanelProps } from "~/types";
 
 export default function SortingPanel({
   sortBy,

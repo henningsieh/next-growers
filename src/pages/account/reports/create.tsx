@@ -1,15 +1,15 @@
 import { Container, Title } from "@mantine/core";
 
-import AccessDenied from "~/components/Atom/AccessDenied";
-import AddForm from "~/components/Report/AddForm";
-
-import { authOptions } from "~/server/auth";
-
 import type { GetServerSidePropsContext, NextPage } from "next";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+
+import AccessDenied from "~/components/Atom/AccessDenied";
+import AddForm from "~/components/Report/AddForm";
+
+import { authOptions } from "~/server/auth";
 
 /**
  * PROTECTED PAGE with translations

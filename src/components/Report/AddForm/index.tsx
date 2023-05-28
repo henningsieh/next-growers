@@ -22,10 +22,6 @@ import {
 } from "@tabler/icons-react";
 import { handleDrop } from "~/helpers";
 import { InputCreateReport } from "~/helpers/inputValidation";
-import { api } from "~/utils/api";
-
-import AccessDenied from "~/components/Atom/AccessDenied";
-import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import { useEffect, useRef } from "react";
 import { useState } from "react";
@@ -33,6 +29,11 @@ import toast from "react-hot-toast";
 
 import type { User } from "next-auth";
 import { useRouter } from "next/router";
+
+import AccessDenied from "~/components/Atom/AccessDenied";
+import { ImagePreview } from "~/components/Atom/ImagePreview";
+
+import { api } from "~/utils/api";
 
 interface AddFormProps {
   user: User;

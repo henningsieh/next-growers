@@ -1,12 +1,13 @@
 import formidable from "formidable";
 import path from "path";
-import cloudinary from "~/utils/cloudinary";
+
+import type { NextApiHandler, NextApiRequest } from "next";
+import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
-import type { NextApiHandler, NextApiRequest } from "next";
-import { getServerSession } from "next-auth/next";
+import cloudinary from "~/utils/cloudinary";
 
 export const config = {
   api: {

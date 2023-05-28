@@ -8,9 +8,9 @@ import { DatePicker } from "@mantine/dates";
 import "dayjs/locale/de";
 import "dayjs/locale/en";
 
-import { Locale } from "~/types";
-
 import { useRouter } from "next/router";
+
+import { Locale } from "~/types";
 
 interface PostsDatePickerProps {
   defaultDate: Date;

@@ -19,10 +19,10 @@ import {
 } from "@tabler/icons-react";
 import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
-
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
+
+import type { IsoReportWithPostsFromDb } from "~/types";
 
 interface ImageUploaderProps {
   report: IsoReportWithPostsFromDb;

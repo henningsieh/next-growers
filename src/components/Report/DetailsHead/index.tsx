@@ -1,6 +1,6 @@
-import type { IsoReportWithPostsFromDb } from "~/types";
-
 import React from "react";
+
+import type { IsoReportWithPostsFromDb } from "~/types";
 
 interface ReportDetailsProps {
   report: IsoReportWithPostsFromDb; // Replace 'Report' with the actual type of your report

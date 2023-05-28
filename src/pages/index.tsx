@@ -1,8 +1,8 @@
-import LandingCard from "~/components/LandingCard";
-
 import type { GetServerSideProps, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+
+import LandingCard from "~/components/LandingCard";
 
 /**
  * // PUBLIC PAGE with translations

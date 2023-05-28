@@ -1,14 +1,14 @@
 import { Container, Title } from "@mantine/core";
 
-import AccessDenied from "~/components/Atom/AccessDenied";
-
-import { authOptions } from "~/server/auth";
-
 import { type GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+
+import AccessDenied from "~/components/Atom/AccessDenied";
+
+import { authOptions } from "~/server/auth";
 
 /**
  * PROTECTED PAGE with translations

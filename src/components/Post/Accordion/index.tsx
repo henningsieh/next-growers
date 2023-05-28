@@ -1,13 +1,13 @@
 import AddPost from "../AddForm/index";
 import { Accordion, Container, Paper, Title } from "@mantine/core";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
-import { Posts } from "~/types";
-
 import { useState } from "react";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+
+import type { IsoReportWithPostsFromDb } from "~/types";
+import { Posts } from "~/types";
 
 interface PostsAccordionProps {
   report: IsoReportWithPostsFromDb | undefined;

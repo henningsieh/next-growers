@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import axios from "axios";
 
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
+
 import type {
   ImageUploadResponse,
   Locale,
@@ -10,8 +12,6 @@ import type {
   Report,
   SplitObject,
 } from "~/types";
-
-import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 export function getKeyByValue<T extends string>(
   object: Record<string, T>,

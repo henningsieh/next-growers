@@ -1,11 +1,11 @@
 import axios from "axios";
 
+import type { Dispatch, SetStateAction } from "react";
+
 import type {
   IsoReportWithPostsFromDb,
   MultiUploadResponse,
 } from "~/types";
-
-import type { Dispatch, SetStateAction } from "react";
 
 export const handleMultipleDrop = async (
   files: File[],
