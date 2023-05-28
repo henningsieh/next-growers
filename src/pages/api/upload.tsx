@@ -1,11 +1,12 @@
-import type { NextApiHandler, NextApiRequest } from "next";
+import formidable from "formidable";
+import path from "path";
+import cloudinary from "~/utils/cloudinary";
 
 import { authOptions } from "~/server/auth";
-import cloudinary from "~/utils/cloudinary";
-import formidable from "formidable";
-import { getServerSession } from "next-auth/next";
-import path from "path";
 import { prisma } from "~/server/db";
+
+import type { NextApiHandler, NextApiRequest } from "next";
+import { getServerSession } from "next-auth/next";
 
 export const config = {
   api: {
@@ -20,10 +21,7 @@ const handler: NextApiHandler = async (req, res) => {
     res.status(401).json({ error: "unauthorized" });
   } else {
     const data = await readUploadedFile(req, false);
-    if (
-      !!data.files.image &&
-      !Array.isArray(data.files.image)
-    ) {
+    if (!!data.files.image && !Array.isArray(data.files.image)) {
       // now handle the case where image is NOT an array
       const now = new Date();
       const year = now.getFullYear();
@@ -35,20 +33,14 @@ const handler: NextApiHandler = async (req, res) => {
 
       const formattedTimestamp = `${year}${month
         .toString()
-        .padStart(2, "0")}${day
-        .toString()
-        .padStart(2, "0")}${hours
+        .padStart(2, "0")}${day.toString().padStart(2, "0")}${hours
         .toString()
         .padStart(2, "0")}${minutes
         .toString()
-        .padStart(2, "0")}${seconds
-        .toString()
-        .padStart(2, "0")}`;
+        .padStart(2, "0")}${seconds.toString().padStart(2, "0")}`;
 
       const publicIdWithTimestamp = `${formattedTimestamp}_${
-        data.files.image.originalFilename?.split(
-          "."
-        )[0] as string
+        data.files.image.originalFilename?.split(".")[0] as string
       }`;
 
       const localPathToImage = data.files.image.filepath;
@@ -65,9 +57,7 @@ const handler: NextApiHandler = async (req, res) => {
       );
 
       // console.log("cloudinaryResult", result);
-      console.log(
-        `✅ Successfully uploaded ${localPathToImage}`
-      );
+      console.log(`✅ Successfully uploaded ${localPathToImage}`);
       console.log(`Public ID: ${result.public_id}`);
       console.log(`URL: ${result.secure_url}`);
 
@@ -103,10 +93,7 @@ const readUploadedFile = (
   const options: formidable.Options = {};
 
   if (saveLocally) {
-    options.uploadDir = path.join(
-      process.cwd(),
-      "/public/images"
-    );
+    options.uploadDir = path.join(process.cwd(), "/public/images");
     options.keepExtensions = true; // Keep the file extensions for multiple files
   }
 

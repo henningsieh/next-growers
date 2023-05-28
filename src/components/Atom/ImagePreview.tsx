@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
+import UserAvatar from "./UserAvatar";
 import {
   Blockquote,
   Box,
@@ -11,15 +11,11 @@ import {
   getStylesRef,
   rem,
 } from "@mantine/core";
-import {
-  IconEye,
-  IconMessageCircle,
-} from "@tabler/icons-react";
+import { IconEye, IconMessageCircle } from "@tabler/icons-react";
 
 import Link from "next/link";
-import UserAvatar from "./UserAvatar";
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme) => ({
   card: {
     transition: "transform 250ms ease, box-shadow 250ms ease",
     zIndex: 40,
@@ -162,21 +158,14 @@ export function ImagePreview({
         {/* Cite blockquote */}
         <Box pos="absolute" className="-m-5">
           {/* Blockquote */}
-          <Blockquote
-            className={classes.cite}
-            cite={authorName}
-          >
+          <Blockquote className={classes.cite} cite={authorName}>
             {description}
           </Blockquote>
         </Box>
 
         <div className={classes.content}>
           {/* Title */}
-          <Text
-            size="lg"
-            className={classes.title}
-            weight={500}
-          >
+          <Text size="lg" className={classes.title} weight={500}>
             {title}
           </Text>
 

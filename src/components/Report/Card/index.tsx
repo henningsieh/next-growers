@@ -14,6 +14,7 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import {
   IconAlertTriangleFilled,
   IconCalendar,
@@ -24,22 +25,24 @@ import {
   IconHeart,
   IconHeartFilled,
 } from "@tabler/icons-react";
-
 import { IconCheck } from "@tabler/icons-react";
+import { sanatizeDateString } from "~/helpers";
+import { api } from "~/utils/api";
+
 import { ImagePreview } from "~/components/Atom/ImagePreview";
-import Link from "next/link";
+
 import { Locale } from "~/types";
 import type { ReportCardProps } from "~/types";
-import { api } from "~/utils/api";
-import { notifications } from "@mantine/notifications";
-import { sanatizeDateString } from "~/helpers";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { useTranslation } from "next-i18next";
 
-const useStyles = createStyles(theme => ({
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+
+import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
+import Link from "next/link";
+import { useRouter } from "next/router";
+
+const useStyles = createStyles((theme) => ({
   card: {
     transition: "transform 150ms ease, box-shadow 150ms ease",
 
@@ -56,9 +59,7 @@ const useStyles = createStyles(theme => ({
           : `0 0 8px ${theme.colors.orange[8]}`,
     },
     backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[7]
-        : theme.white,
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
   section: {
@@ -123,11 +124,11 @@ export default function ReportCard({
 
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
-      onError: error => {
+      onError: (error) => {
         toast.error(error.message);
         console.error(error.message);
       },
-      onSuccess: likedReport => {
+      onSuccess: (likedReport) => {
         notifications.show(likeSuccessfulMsg);
         console.debug("likedReport", likedReport);
       },
@@ -140,7 +141,7 @@ export default function ReportCard({
 
   const { mutate: deleteLikeMutation } =
     api.like.deleteLike.useMutation({
-      onError: error => {
+      onError: (error) => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
@@ -161,16 +162,15 @@ export default function ReportCard({
           // Cancel any outgoing refetches so they don't overwrite optimistic update
           await trpc.reports.getOwnReports.cancel();
           // Snapshot the previous value
-          const previousReports =
-            trpc.reports.getOwnReports.getData();
+          const previousReports = trpc.reports.getOwnReports.getData();
           // Optimistically update to the new value
           trpc.reports.getOwnReports.setData(
             { search: "", orderBy: "createdAt", desc: true },
-            prev => {
+            (prev) => {
               console.log("PREV", prev);
               if (!prev) return previousReports;
               return prev.filter(
-                report => report.id !== deletedReportId
+                (report) => report.id !== deletedReportId
               );
             }
           );
@@ -180,15 +180,14 @@ export default function ReportCard({
           // Cancel any outgoing refetches so they don't overwrite optimistic update
           await trpc.reports.getAllReports.cancel();
           // Snapshot the previous value
-          const previousReports =
-            trpc.reports.getAllReports.getData();
+          const previousReports = trpc.reports.getAllReports.getData();
           // Optimistically update to the new value
           trpc.reports.getAllReports.setData(
             { search: "", orderBy: "createdAt", desc: true },
-            prev => {
+            (prev) => {
               if (!prev) return previousReports;
               return prev.filter(
-                report => report.id !== deletedReportId
+                (report) => report.id !== deletedReportId
               );
             }
           );
@@ -242,7 +241,7 @@ export default function ReportCard({
     deleteLikeMutation({ reportId: report.id });
   };
 
-  const reportStrains = report.strains.map(badge => (
+  const reportStrains = report.strains.map((badge) => (
     <Box key={badge.id}>
       <Badge
         className="cursor-pointer"
@@ -267,12 +266,7 @@ export default function ReportCard({
   ));
 
   return (
-    <Card
-      withBorder
-      radius="sm"
-      p="sm"
-      className={classes.card}
-    >
+    <Card withBorder radius="sm" p="sm" className={classes.card}>
       <Card.Section>
         <ImagePreview
           imageUrl={report.imageCloudUrl as string}
@@ -288,10 +282,7 @@ export default function ReportCard({
 
       <Card.Section className={classes.section} mt={4}>
         <Flex justify="space-between">
-          <Group
-            position="left"
-            className="inline-flex space-y-0"
-          >
+          <Group position="left" className="inline-flex space-y-0">
             {/* Strains */}
             {reportStrains}
           </Group>
@@ -314,7 +305,7 @@ export default function ReportCard({
                 size={25}
               >
                 {report.likes.find(
-                  like => like.userId === session?.user.id
+                  (like) => like.userId === session?.user.id
                 ) ? (
                   <IconHeartFilled
                     onClick={handleDisLikeReport}
@@ -339,23 +330,18 @@ export default function ReportCard({
                   duration={100}
                   timingFunction="ease-in-out"
                 >
-                  {transitionStyles => (
+                  {(transitionStyles) => (
                     <Paper
                       withBorder
                       className={`absolute bottom-full right-0 z-40 m-0 -mr-1 mb-2 w-max rounded p-0 text-right`}
                       style={transitionStyles}
                     >
-                      {report.likes.map(like => (
+                      {report.likes.map((like) => (
                         <Box key={like.id} mx={10} fz={"xs"}>
                           {like.name}
                         </Box>
                       ))}
-                      <Text
-                        fz="xs"
-                        td="overline"
-                        pr={4}
-                        fs="italic"
-                      >
+                      <Text fz="xs" td="overline" pr={4} fs="italic">
                         {report.likes.length} Like
                         {report.likes.length > 1 ? "s" : ""} 👍
                       </Text>
@@ -392,9 +378,7 @@ export default function ReportCard({
                 >
                   {sanatizeDateString(
                     report.createdAt,
-                    router.locale === Locale.DE
-                      ? Locale.DE
-                      : Locale.EN
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN
                   )}
                 </Text>
               </Center>
@@ -419,9 +403,7 @@ export default function ReportCard({
                 >
                   {sanatizeDateString(
                     report.updatedAt,
-                    router.locale === Locale.DE
-                      ? Locale.DE
-                      : Locale.EN
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN
                   )}
                 </Text>
                 <Box pl={4}>
@@ -474,11 +456,7 @@ export default function ReportCard({
               style={{ flex: 1 }}
             >
               {t("common:report-edit")}
-              <IconEdit
-                className="ml-2"
-                height={22}
-                stroke={1.5}
-              />
+              <IconEdit className="ml-2" height={22} stroke={1.5} />
             </Button>
           </Link>
         </Group>

@@ -1,13 +1,13 @@
+import type { AppRouter } from "./server/api/root";
+import type { inferRouterOutputs } from "@trpc/server";
+
 import type { Dispatch, SetStateAction } from "react";
 
-import type { AppRouter } from "./server/api/root";
 import type { User } from "next-auth";
-import type { inferRouterOutputs } from "@trpc/server";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
-type getAllReportsOutput =
-  RouterOutput["reports"]["getAllReports"];
+type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
 export type Reports = getAllReportsOutput;
 export type Report = getAllReportsOutput[number];
 
@@ -37,11 +37,10 @@ export type PostDbInput = {
 
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
-export type Notifications = getAllNotificationsOutput;
+export type UserNotifications = getAllNotificationsOutput;
 export type Notification = getAllNotificationsOutput[number];
 
-type getAllStrainsOutput =
-  RouterOutput["strains"]["getAllStrains"];
+type getAllStrainsOutput = RouterOutput["strains"]["getAllStrains"];
 export type Strains = getAllStrainsOutput;
 export type Strain = getAllStrainsOutput[number];
 

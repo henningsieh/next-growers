@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { GoogleButtonWithText } from "../Atom/GoogleButton";
+import EmailForm from "./EmailForm";
 import * as z from "zod";
 
-import { GoogleButtonWithText } from "../Atom/GoogleButton";
-
-import EmailForm from "./EmailForm";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
+
+import { signIn } from "next-auth/react";
 
 interface LoginFormContent {
   email: string;
@@ -19,19 +20,16 @@ interface Errors {
 }
 
 const useLoginForm = () => {
-  const [formContent, setFormContent] =
-    useState<LoginFormContent>({
-      email: "",
-    });
+  const [formContent, setFormContent] = useState<LoginFormContent>({
+    email: "",
+  });
   const [errors, setErrors] = useState<Errors>({});
 
   const emailSchema = z.string().email("Invalid email address");
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     console.log(value);
-    setFormContent(prevState => ({
+    setFormContent((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -51,9 +49,7 @@ const useLoginForm = () => {
     setErrors(newErrors);
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validate email field
     const newErrors: Errors = {};
@@ -92,7 +88,7 @@ export default function LoginForm() {
       {/* Google In */}
       <form
         className="p-2 md:p-3 lg:p-4"
-        onSubmit={e => {
+        onSubmit={(e) => {
           e.preventDefault();
           void handleGoogleSignIn(e);
         }}

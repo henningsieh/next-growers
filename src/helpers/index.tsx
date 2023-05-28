@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-import type {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-} from "react";
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import axios from "axios";
+
 import type {
   ImageUploadResponse,
   Locale,
@@ -14,14 +11,14 @@ import type {
   SplitObject,
 } from "~/types";
 
-import axios from "axios";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 export function getKeyByValue<T extends string>(
   object: Record<string, T>,
   value: T
 ): keyof typeof object | undefined {
   return Object.keys(object).find(
-    key => object[key] === value
+    (key) => object[key] === value
   ) as keyof typeof object;
 }
 
@@ -30,15 +27,11 @@ export function hasUnreadNotifications(
 ): boolean {
   return (
     notifications &&
-    notifications.some(
-      notification => notification.readAt === null
-    )
+    notifications.some((notification) => notification.readAt === null)
   );
 }
 
-export function splitSearchString(
-  searchString: string
-): SplitObject {
+export function splitSearchString(searchString: string): SplitObject {
   const splitObject: SplitObject = {
     strain: "",
     searchstring: "",
@@ -50,9 +43,7 @@ export function splitSearchString(
 
     if (matches) {
       const strainValue = matches[1] || matches[2];
-      const searchstring = searchString
-        .replace(matches[0], "")
-        .trim();
+      const searchstring = searchString.replace(matches[0], "").trim();
       splitObject.strain = strainValue?.trim() ?? "";
       splitObject.searchstring = searchstring;
     } else {
@@ -77,8 +68,7 @@ export function formatLabel(key: string): string {
   // Convert snake case to title case
   const words = key.split("_");
   const formattedWords = words.map(
-    word =>
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   );
   return formattedWords.join(" ");
 }
@@ -199,9 +189,7 @@ export function getUsername(): string {
     "Weed Whipping Wonder",
   ];
 
-  const randomIndex = Math.floor(
-    Math.random() * usernames.length
-  );
+  const randomIndex = Math.floor(Math.random() * usernames.length);
   return usernames[randomIndex] as string;
 }
 
@@ -229,9 +217,7 @@ export function getEmailaddress(): string {
     "plantdadjr@gmail.com",
   ];
 
-  const randomIndex = Math.floor(
-    Math.random() * emailAddresses.length
-  );
+  const randomIndex = Math.floor(Math.random() * emailAddresses.length);
   return emailAddresses[randomIndex] as string;
 }
 
@@ -248,8 +234,10 @@ export const handleDrop = async (
     // files.map((file) => formData.append("image", file));
     formData.append("image", files[0]); // Assuming only one file is uploaded
     try {
-      const { data }: { data: ImageUploadResponse } =
-        await axios.post("/api/upload", formData);
+      const { data }: { data: ImageUploadResponse } = await axios.post(
+        "/api/upload",
+        formData
+      );
 
       if (data.success) {
         console.log("File uploaded successfully", data);
@@ -305,19 +293,13 @@ export function sanatizeDateString(
 
   if (locale === "en") {
     // intl. date
-    const intlFormatter = new Intl.DateTimeFormat(
-      "en-US",
-      options
-    );
+    const intlFormatter = new Intl.DateTimeFormat("en-US", options);
     const intlDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
     // console.debug(intlDate);
     return intlDate;
   } else {
     // german date
-    const germanFormatter = new Intl.DateTimeFormat(
-      "de-DE",
-      options
-    );
+    const germanFormatter = new Intl.DateTimeFormat("de-DE", options);
     const germanDate = germanFormatter.format(reportStartDate); // "11. Mai 2023"
     // console.debug(germanDate);
     return germanDate;

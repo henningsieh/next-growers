@@ -1,5 +1,6 @@
-import { IconCheck } from "@tabler/icons-react";
 import { Notification } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
+
 import React from "react";
 
 type PropsType = {

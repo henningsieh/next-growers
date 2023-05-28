@@ -3,9 +3,8 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../trpc";
-
-import { InputCreatePostServer } from "~/helpers/inputValidation";
 import { z } from "zod";
+import { InputCreatePostServer } from "~/helpers/inputValidation";
 
 export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
@@ -68,7 +67,7 @@ export const postRouter = createTRPCRouter({
             },
           },
           images: {
-            connect: images.map(imageId => ({ id: imageId })),
+            connect: images.map((imageId) => ({ id: imageId })),
           },
         },
         create: {
@@ -88,7 +87,7 @@ export const postRouter = createTRPCRouter({
             },
           },
           images: {
-            connect: images.map(imageId => ({ id: imageId })),
+            connect: images.map((imageId) => ({ id: imageId })),
           },
         },
       });
@@ -147,7 +146,7 @@ export const postRouter = createTRPCRouter({
         },
       });
 
-      const formattedPosts = posts.map(tempPost => {
+      const formattedPosts = posts.map((tempPost) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { date, createdAt, updatedAt, likes, ...temppost } =
           tempPost;
@@ -195,7 +194,7 @@ export const postRouter = createTRPCRouter({
         throw new Error(`Post with id ${postId} does not exist`);
       }
 
-      const imageIds = post.images.map(image => image.id);
+      const imageIds = post.images.map((image) => image.id);
 
       return { ...post, images: imageIds };
     }),

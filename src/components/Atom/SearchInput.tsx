@@ -1,10 +1,7 @@
 import { ActionIcon, TextInput } from "@mantine/core";
-import type {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-} from "react";
 import { IconX } from "@tabler/icons-react";
+
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 type SearchInputProps = {
   value: string;

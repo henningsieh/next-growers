@@ -1,3 +1,4 @@
+import ReportDetailsHead from "../DetailsHead";
 import {
   Badge,
   Box,
@@ -20,21 +21,22 @@ import {
   IconEdit,
   IconLogin,
 } from "@tabler/icons-react";
-
 import { IconCheck } from "@tabler/icons-react";
+import { sanatizeDateString } from "~/helpers";
+import { api } from "~/utils/api";
+
 import { ImagePreview } from "~/components/Atom/ImagePreview";
-import Link from "next/link";
+import LikeHeart from "~/components/Atom/LikeHeart";
+
 import { Locale } from "~/types";
 import type { IsoReportCardProps } from "~/types";
-import { api } from "~/utils/api";
-import { sanatizeDateString } from "~/helpers";
-import { useRouter } from "next/router";
+
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import LikeHeart from "~/components/Atom/LikeHeart";
-import ReportDetailsHead from "../DetailsHead";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme) => ({
   card: {
     transition: "transform 150ms ease, box-shadow 150ms ease",
 
@@ -49,9 +51,7 @@ const useStyles = createStyles(theme => ({
           : `0 0 8px ${theme.colors.orange[8]}`,
     },
     backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[7]
-        : theme.white,
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
   section: {
@@ -125,16 +125,15 @@ export default function IsoReportCard({
           // Cancel any outgoing refetches so they don't overwrite optimistic update
           await trpc.reports.getOwnReports.cancel();
           // Snapshot the previous value
-          const previousReports =
-            trpc.reports.getOwnReports.getData();
+          const previousReports = trpc.reports.getOwnReports.getData();
           // Optimistically update to the new value
           trpc.reports.getOwnReports.setData(
             { search: "", orderBy: "createdAt", desc: true },
-            prev => {
+            (prev) => {
               console.log("PREV", prev);
               if (!prev) return previousReports;
               return prev.filter(
-                report => report.id !== deletedReportId
+                (report) => report.id !== deletedReportId
               );
             }
           );
@@ -144,15 +143,14 @@ export default function IsoReportCard({
           // Cancel any outgoing refetches so they don't overwrite optimistic update
           await trpc.reports.getAllReports.cancel();
           // Snapshot the previous value
-          const previousReports =
-            trpc.reports.getAllReports.getData();
+          const previousReports = trpc.reports.getAllReports.getData();
           // Optimistically update to the new value
           trpc.reports.getAllReports.setData(
             { search: "", orderBy: "createdAt", desc: true },
-            prev => {
+            (prev) => {
               if (!prev) return previousReports;
               return prev.filter(
-                report => report.id !== deletedReportId
+                (report) => report.id !== deletedReportId
               );
             }
           );
@@ -183,7 +181,7 @@ export default function IsoReportCard({
       },
     });
 
-  const reportStrains = isoReport.strains.map(badge => (
+  const reportStrains = isoReport.strains.map((badge) => (
     <Box key={badge.id}>
       <Badge
         className="badgecontainer cursor-pointer"
@@ -196,9 +194,7 @@ export default function IsoReportCard({
         fw="bolder"
         px={2}
         color={
-          theme.colorScheme === "dark"
-            ? theme.colors.lime[9]
-            : "green"
+          theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"
         }
         leftSection={<IconCannabis size={rem(14)} />}
         // leftSection={badge.emoji}
@@ -209,12 +205,7 @@ export default function IsoReportCard({
   ));
 
   return (
-    <Card
-      withBorder
-      radius="sm"
-      p="sm"
-      className={classes.card}
-    >
+    <Card withBorder radius="sm" p="sm" className={classes.card}>
       <Card.Section>
         <ImagePreview
           imageUrl={isoReport.image?.cloudUrl as string}
@@ -269,9 +260,7 @@ export default function IsoReportCard({
                 >
                   {sanatizeDateString(
                     isoReport.createdAt,
-                    router.locale === Locale.DE
-                      ? Locale.DE
-                      : Locale.EN
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN
                   )}
                 </Text>
               </Center>
@@ -296,9 +285,7 @@ export default function IsoReportCard({
                 >
                   {sanatizeDateString(
                     isoReport.updatedAt,
-                    router.locale === Locale.DE
-                      ? Locale.DE
-                      : Locale.EN
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN
                   )}
                 </Text>
                 <Box pl={4}>
@@ -343,11 +330,7 @@ export default function IsoReportCard({
                 stroke={1.5}
               />
             </Button>
-            <Link
-              href={`/account/reports/${
-                isoReport.id as string
-              }`}
-            >
+            <Link href={`/account/reports/${isoReport.id as string}`}>
               <Button
                 size="sm" /*
               className="border-orange-600" */
@@ -356,11 +339,7 @@ export default function IsoReportCard({
                 style={{ flex: 1 }}
               >
                 {t("common:report-edit")}
-                <IconEdit
-                  className="ml-2"
-                  height={22}
-                  stroke={1.5}
-                />
+                <IconEdit className="ml-2" height={22} stroke={1.5} />
               </Button>
             </Link>
           </Group>

@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import "~/styles/globals.css";
-
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
-
-import AppLayout from "~/layout/AppLayout";
-import type { AppType } from "next/app";
 import type { ColorScheme } from "@mantine/core";
-import Loading from "~/components/Atom/Loading";
+import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
+import { useRouteLoader } from "~/helpers/routeLoader";
+import AppLayout from "~/layout/AppLayout";
+import "~/styles/globals.css";
+import { api } from "~/utils/api";
+
+import Loading from "~/components/Atom/Loading";
+
+import { Toaster } from "react-hot-toast";
+
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { Toaster } from "react-hot-toast";
-import { api } from "~/utils/api";
 import { appWithTranslation } from "next-i18next";
-import { useLocalStorage } from "@mantine/hooks";
-import { useRouteLoader } from "~/helpers/routeLoader";
+import type { AppType } from "next/app";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -84,7 +85,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               defaultProps: {
                 variant: "filled",
               },
-              styles: theme => ({
+              styles: (theme) => ({
                 root: {
                   // overriding the tailwind overrides... 👀
                   button: {},
@@ -104,7 +105,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               }),
             },
           },
-          globalStyles: theme => ({
+          globalStyles: (theme) => ({
             body: {
               ...theme.fn.fontStyles(),
               backgroundColor:

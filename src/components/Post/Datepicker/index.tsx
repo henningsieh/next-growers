@@ -1,15 +1,15 @@
-import "dayjs/locale/de";
-import "dayjs/locale/en";
-
 import {
   Group,
   Indicator,
   Paper,
   useMantineTheme,
 } from "@mantine/core";
-
 import { DatePicker } from "@mantine/dates";
+import "dayjs/locale/de";
+import "dayjs/locale/en";
+
 import { Locale } from "~/types";
+
 import { useRouter } from "next/router";
 
 interface PostsDatePickerProps {
@@ -42,7 +42,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
         <DatePicker
           locale={router.locale === Locale.DE ? Locale.DE : Locale.EN}
           size="sm"
-          renderDay={date => {
+          renderDay={(date) => {
             const day = date.getDate();
             const calDay = date.getTime();
             const isDisabled = !postDays.includes(calDay);

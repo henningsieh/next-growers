@@ -1,13 +1,15 @@
 import { Container, Title } from "@mantine/core";
-import type { GetServerSidePropsContext, NextPage } from "next";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AddForm from "~/components/Report/AddForm";
-import Head from "next/head";
+
 import { authOptions } from "~/server/auth";
+
+import type { GetServerSidePropsContext, NextPage } from "next";
 import { getServerSession } from "next-auth";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useSession } from "next-auth/react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 /**
  * PROTECTED PAGE with translations
@@ -56,10 +58,7 @@ const ProtectedCreateReport: NextPage = () => {
       </Head>
 
       {/* // Main Content Container */}
-      <Container
-        size="xl"
-        className="flex w-full flex-col space-y-1"
-      >
+      <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}

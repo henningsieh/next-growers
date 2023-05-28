@@ -5,21 +5,24 @@ import {
   Space,
   Title,
 } from "@mantine/core";
-import type { GetServerSidePropsContext, NextPage } from "next";
-import type { IsoReportWithPostsFromDb, Posts, Strains } from "~/types";
+import { api } from "~/utils/api";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
+import PostsAccordion from "~/components/Post/Accordion";
 import AddPost from "~/components/Post/AddForm";
 import { EditForm } from "~/components/Report/EditForm";
-import Head from "next/head";
-import { api } from "~/utils/api";
+
 import { authOptions } from "~/server/auth";
+
+import type { IsoReportWithPostsFromDb, Posts, Strains } from "~/types";
+
+import type { GetServerSidePropsContext, NextPage } from "next";
 import { getServerSession } from "next-auth";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import PostsAccordion from "~/components/Post/Accordion";
 import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
 /**
  * PROTECTED PAGE with translations

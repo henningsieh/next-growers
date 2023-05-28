@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
+import { z } from "zod";
+import { splitSearchString } from "~/helpers";
 import {
   InputCreateReport,
   InputEditReport,
   InputGetReports,
 } from "~/helpers/inputValidation";
+
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-
-import { splitSearchString } from "~/helpers";
-import { z } from "zod";
 
 export const reportRouter = createTRPCRouter({
   /**
@@ -336,45 +335,47 @@ export const reportRouter = createTRPCRouter({
             },
           },
         })
-        .then(reportsFromDb => {
+        .then((reportsFromDb) => {
           // Convert all Dates to IsoStrings
-          const isoReportsFromDb = reportsFromDb.map(reportFromDb => ({
-            ...reportFromDb,
-            createdAt: reportFromDb?.createdAt.toISOString(),
-            updatedAt: reportFromDb?.updatedAt.toISOString(),
+          const isoReportsFromDb = reportsFromDb.map(
+            (reportFromDb) => ({
+              ...reportFromDb,
+              createdAt: reportFromDb?.createdAt.toISOString(),
+              updatedAt: reportFromDb?.updatedAt.toISOString(),
 
-            likes: reportFromDb.likes.map(
-              ({ id, createdAt, updatedAt, user }) => ({
-                id,
-                userId: user.id,
-                name: user.name,
-                createdAt: createdAt.toISOString(),
-                updatedAt: updatedAt.toISOString(),
-              })
-            ),
+              likes: reportFromDb.likes.map(
+                ({ id, createdAt, updatedAt, user }) => ({
+                  id,
+                  userId: user.id,
+                  name: user.name,
+                  createdAt: createdAt.toISOString(),
+                  updatedAt: updatedAt.toISOString(),
+                })
+              ),
 
-            posts: (reportFromDb?.posts || []).map(
-              ({ date, likes, createdAt, updatedAt, ...post }) => ({
-                date: date.toISOString(),
-                likes: likes.map(
-                  ({ id, createdAt, updatedAt, user }) => ({
-                    id,
-                    userId: user.id,
-                    name: user.name,
-                    createdAt: createdAt.toISOString(),
-                    updatedAt: updatedAt.toISOString(),
-                  })
-                ),
-                ...post,
+              posts: (reportFromDb?.posts || []).map(
+                ({ date, likes, createdAt, updatedAt, ...post }) => ({
+                  date: date.toISOString(),
+                  likes: likes.map(
+                    ({ id, createdAt, updatedAt, user }) => ({
+                      id,
+                      userId: user.id,
+                      name: user.name,
+                      createdAt: createdAt.toISOString(),
+                      updatedAt: updatedAt.toISOString(),
+                    })
+                  ),
+                  ...post,
 
-                comments: post.comments.map(comment => ({
-                  ...comment,
-                  createdAt: comment.createdAt.toISOString(),
-                  updatedAt: comment.updatedAt.toISOString(),
-                })),
-              })
-            ),
-          }));
+                  comments: post.comments.map((comment) => ({
+                    ...comment,
+                    createdAt: comment.createdAt.toISOString(),
+                    updatedAt: comment.updatedAt.toISOString(),
+                  })),
+                })
+              ),
+            })
+          );
 
           return isoReportsFromDb;
         });
@@ -482,7 +483,7 @@ export const reportRouter = createTRPCRouter({
             })),
             ...post,
 
-            comments: post.comments.map(comment => ({
+            comments: post.comments.map((comment) => ({
               ...comment,
               createdAt: comment.createdAt.toISOString(),
               updatedAt: comment.updatedAt.toISOString(),
@@ -610,7 +611,7 @@ export const reportRouter = createTRPCRouter({
         ...reportData,
         authorId: ctx.session.user.id,
         strains: {
-          set: strains.map(strainId => ({ id: strainId })),
+          set: strains.map((strainId) => ({ id: strainId })),
         },
         createdAt: createdAt,
         // updatedAt: createdAt,

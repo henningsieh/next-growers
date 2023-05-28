@@ -1,20 +1,22 @@
 import {
-  createStyles,
-  Card,
   Avatar,
-  Text,
-  Group,
-  Button,
-  rem,
-  Box,
   Blockquote,
+  Box,
+  Button,
+  Card,
   Center,
+  Group,
+  Text,
+  createStyles,
+  rem,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import Link from "next/link";
-import { IsoReportWithPostsFromDb } from "~/types";
 
-const useStyles = createStyles(theme => ({
+import type { IsoReportWithPostsFromDb } from "~/types";
+
+import Link from "next/link";
+
+const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
@@ -53,7 +55,7 @@ export function ReportHeader({
 }: ReportHeaderProps) {
   const { classes, theme } = useStyles();
 
-  const items = stats.map(stat => (
+  const items = stats.map((stat) => (
     <div key={stat.label}>
       <Text ta="center" fz="lg" fw={500}>
         {stat.value}

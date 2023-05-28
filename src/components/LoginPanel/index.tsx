@@ -1,3 +1,4 @@
+import LoginForm from "./LoginForm";
 import {
   ActionIcon,
   Button,
@@ -7,21 +8,21 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconLogout,
   IconPhoto,
   IconSquarePlus,
   IconUser,
 } from "@tabler/icons-react";
-import { signOut, useSession } from "next-auth/react";
 
+import { useEffect } from "react";
+
+import { signOut, useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import Link from "next/link";
-import LoginForm from "./LoginForm";
-import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 
 export default function LoginModal() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -93,9 +94,7 @@ export default function LoginModal() {
                   height={32}
                   width={32}
                   src={session.user.image as string}
-                  alt={`${
-                    session.user.name as string
-                  }'s Profile Image`}
+                  alt={`${session.user.name as string}'s Profile Image`}
                 />
               </ActionIcon>
               {/* </ActionIcon> */}

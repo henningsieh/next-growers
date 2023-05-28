@@ -10,42 +10,42 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
+import { Paper } from "@mantine/core";
+import { Transition } from "@mantine/core";
+import { useClickOutside } from "@mantine/hooks";
+import { notifications as userNotifications } from "@mantine/notifications";
 import {
   IconBell,
   IconCheck,
   IconHeartFilled,
 } from "@tabler/icons-react";
-import React, { useState } from "react";
-
 import { IconEyeCheck } from "@tabler/icons-react";
-import Link from "next/link";
-import { Notifications } from "~/types";
-import type { NotificationEventMap } from "~/types";
-import { Paper } from "@mantine/core";
-import { Transition } from "@mantine/core";
-import { api } from "~/utils/api";
-import { toast } from "react-hot-toast";
-import { useClickOutside } from "@mantine/hooks";
-import { useSession } from "next-auth/react";
 import { hasUnreadNotifications } from "~/helpers";
-import { notifications as appNotification } from "@mantine/notifications";
+import { api } from "~/utils/api";
 
-const useStyles = createStyles(theme => ({
+import type { UserNotifications } from "~/types";
+import type { NotificationEventMap } from "~/types";
+
+import React, { useState } from "react";
+import { toast } from "react-hot-toast";
+
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+
+const useStyles = createStyles((theme) => ({
   like: {
     color: theme.colors.red[8],
     marginTop: "2px",
   },
 }));
 
-const Notifications = () => {
+const ProtectedUserNotifications = () => {
   const [open, setOpen] = useState(false);
   const { colorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
-  const clickOutsidePaper = useClickOutside(() =>
-    setOpen(false)
-  );
+  const clickOutsidePaper = useClickOutside(() => setOpen(false));
   const { data: session, status } = useSession();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
@@ -59,13 +59,13 @@ const Notifications = () => {
 
   const { mutate: markAllNotificationsAsReadMutation } =
     api.notifications.markAllNotificationsAsRead.useMutation({
-      onError: error => {
+      onError: (error) => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onSuccess: _res => {
-        appNotification.show(markAllReadMessage);
+      onSuccess: (_res) => {
+        userNotifications.show(markAllReadMessage);
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
@@ -75,11 +75,11 @@ const Notifications = () => {
 
   const { mutate: markNotificationAsReadMutation } =
     api.notifications.markNotificationAsRead.useMutation({
-      onError: error => {
+      onError: (error) => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
-      onSuccess: res => {
+      onSuccess: (res) => {
         toast.success("markNotificationAsRead!");
         console.debug("success.res", res);
       },
@@ -95,9 +95,7 @@ const Notifications = () => {
     if (!!session && status === "authenticated")
       markAllNotificationsAsReadMutation();
   };
-  const handleMarkNotificationAsRead = (
-    notidicationId: string
-  ) => {
+  const handleMarkNotificationAsRead = (notidicationId: string) => {
     // Ensure that the user is authenticated
     // Call the likeReport mutationnotification.id
     if (!!session && status === "authenticated")
@@ -112,10 +110,7 @@ const Notifications = () => {
     loading: false,
   };
 
-  const notificationEvents: Record<
-    NotificationEventMap,
-    string
-  > = {
+  const notificationEvents: Record<NotificationEventMap, string> = {
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "Comment Created",
     POST_CREATED: "Post Created",
@@ -134,9 +129,7 @@ const Notifications = () => {
         variant="outline"
         color={dark ? theme.primaryColor : "grape"}
       >
-        {hasUnreadNotifications(
-          notifications as Notifications
-        ) ? (
+        {hasUnreadNotifications(notifications as UserNotifications) ? (
           <Indicator
             color={theme.colors.pink[7]}
             position="bottom-end"
@@ -158,7 +151,7 @@ const Notifications = () => {
         mounted={open}
         onExit={() => setOpen(false)}
       >
-        {transitionStyles => (
+        {(transitionStyles) => (
           <Paper
             ref={clickOutsidePaper}
             withBorder
@@ -174,20 +167,16 @@ const Notifications = () => {
           >
             <Container miw={300} p={4}>
               <Box className="space-y-1">
-                {!isLoading &&
-                !isError &&
-                notifications?.length ? (
-                  notifications.map(notification => (
+                {!isLoading && !isError && notifications?.length ? (
+                  notifications.map((notification) => (
                     <Box
                       onClick={() => {
-                        handleMarkNotificationAsRead(
-                          notification.id
-                        );
+                        handleMarkNotificationAsRead(notification.id);
                       }}
                       p={2}
                       // my={4}
                       key={notification.id}
-                      sx={theme => ({
+                      sx={(theme) => ({
                         backgroundColor:
                           theme.colorScheme === "dark"
                             ? theme.colors.dark[6]
@@ -223,11 +212,7 @@ const Notifications = () => {
                             className="grow text-left"
                           >
                             {notification.like?.user.name}{" "}
-                            {
-                              notificationEvents[
-                                notification.event
-                              ]
-                            }
+                            {notificationEvents[notification.event]}
                             {" your "}
                             Report
                           </Box>
@@ -294,4 +279,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications;
+export default ProtectedUserNotifications;

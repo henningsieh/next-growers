@@ -1,9 +1,10 @@
 const config = {
   importOrder: [
     "^~/components/(.*)$",
-    "^next(.*)$",
+    "^~/server(.*)$",
+    "^~/types(.*)$",
     "^react(.*)$",
-    "^~/(.*)$",
+    "^next(.*)$",
   ],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,

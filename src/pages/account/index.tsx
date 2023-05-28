@@ -1,12 +1,14 @@
-import { type GetServerSidePropsContext } from "next";
+import { Container, Title } from "@mantine/core";
+
+import AccessDenied from "~/components/Atom/AccessDenied";
+
 import { authOptions } from "~/server/auth";
+
+import { type GetServerSidePropsContext } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
-
-import { Container, Title } from "@mantine/core";
-import AccessDenied from "~/components/Atom/AccessDenied";
-import Head from "next/head";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
 
 /**
  * PROTECTED PAGE with translations
@@ -55,10 +57,7 @@ export default function Page() {
       </Head>
 
       {/* // Main Content Container */}
-      <Container
-        size="xl"
-        className="flex w-full flex-col space-y-1"
-      >
+      <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}

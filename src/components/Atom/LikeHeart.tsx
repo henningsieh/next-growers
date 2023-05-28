@@ -9,21 +9,20 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconCheck, IconError404 } from "@tabler/icons-react";
-import {
-  IconHeart,
-  IconHeartFilled,
-} from "@tabler/icons-react";
+import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
+import { api } from "~/utils/api";
+
 import type { IsoReportWithPostsFromDb, Post } from "~/types";
+
 import React, { useState } from "react";
 
-import { api } from "~/utils/api";
-import { notifications } from "@mantine/notifications";
-import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme) => ({
   card: {
     transition: "transform 150ms ease, box-shadow 150ms ease",
 
@@ -40,9 +39,7 @@ const useStyles = createStyles(theme => ({
           : `0 0 8px ${theme.colors.orange[8]}`,
     },
     backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[7]
-        : theme.white,
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
 
   section: {
@@ -106,10 +103,10 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
-      onError: error => {
+      onError: (error) => {
         notifications.show(createLikeErrorMsg(error.message));
       },
-      onSuccess: likedReport => {
+      onSuccess: (likedReport) => {
         notifications.show(likeSuccessfulMsg);
         console.debug("likedReport", likedReport);
       },
@@ -121,11 +118,11 @@ const LikeHeart = (props: LikeHeartProps) => {
     });
   const { mutate: deleteLikeMutation } =
     api.like.deleteLike.useMutation({
-      onError: error => {
+      onError: (error) => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
-      onSuccess: res => {
+      onSuccess: (res) => {
         notifications.show(dislikeSuccessfulMsg);
       },
       onSettled: async () => {
@@ -177,7 +174,7 @@ const LikeHeart = (props: LikeHeartProps) => {
           size={25}
         >
           {item.likes?.find(
-            like => like.userId === session?.user.id
+            (like) => like.userId === session?.user.id
           ) ? (
             <IconHeartFilled
               onClick={handleDisLikeReport}
@@ -202,24 +199,21 @@ const LikeHeart = (props: LikeHeartProps) => {
             duration={100}
             timingFunction="ease-in-out"
           >
-            {transitionStyles => (
+            {(transitionStyles) => (
               <Paper
                 withBorder
                 className={`absolute bottom-full right-0 z-40 m-0 -mr-1 mb-2 w-max rounded p-0 text-right`}
                 style={transitionStyles}
               >
                 {item.likes &&
-                  item.likes.map(like => (
+                  item.likes.map((like) => (
                     <Box key={like.id} mx={10} fz={"xs"}>
                       {like.name}
                     </Box>
                   ))}
                 <Text fz="xs" td="overline" pr={4} fs="italic">
                   {item.likes && item.likes.length} Like
-                  {item.likes && item.likes.length > 1
-                    ? "s"
-                    : ""}{" "}
-                  👍
+                  {item.likes && item.likes.length > 1 ? "s" : ""} 👍
                 </Text>
               </Paper>
             )}

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
-import { type ReactNode } from "react";
+import LightDarkButton from "../components/Atom/LightDarkButton";
+import LoginPanel from "../components/LoginPanel";
 import {
   Anchor,
   Box,
@@ -21,6 +21,7 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconChevronDown,
   IconMapPin,
@@ -31,16 +32,16 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 
-import { useDisclosure } from "@mantine/hooks";
-import LoginPanel from "../components/LoginPanel";
+import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
+import Notifications from "~/components/UserNotifications";
+
+import { type ReactNode } from "react";
+
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import LightDarkButton from "../components/Atom/LightDarkButton";
-import Notifications from "~/components/Notifications";
-import { useSession } from "next-auth/react";
-import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme) => ({
   link: {
     display: "flex",
     alignItems: "center",
@@ -48,8 +49,7 @@ const useStyles = createStyles(theme => ({
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
     textDecoration: "none",
-    color:
-      theme.colorScheme === "dark" ? theme.white : theme.black,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
     fontWeight: 500,
     fontSize: theme.fontSizes.lg,
 
@@ -122,8 +122,7 @@ const mockdata = [
   {
     icon: IconMapPin,
     title: "Cannabis Social Clubs",
-    description:
-      "Find a Social Club nearby you! (...coming soon 👀)",
+    description: "Find a Social Club nearby you! (...coming soon 👀)",
   },
   {
     icon: IconUsers,
@@ -134,8 +133,7 @@ const mockdata = [
   {
     icon: IconSocial,
     title: "Social Media Groups",
-    description:
-      "Join groups on social media dedicated to growing.",
+    description: "Join groups on social media dedicated to growing.",
   },
   {
     icon: IconTools,
@@ -160,15 +158,12 @@ export default function HeaderMegaMenu({
 }: {
   children: ReactNode;
 }) {
-  const [
-    drawerOpened,
-    { toggle: toggleDrawer, close: closeDrawer },
-  ] = useDisclosure(false);
-  const [linksOpened, { toggle: toggleLinks }] =
+  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
+  const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const { classes, theme } = useStyles();
 
-  const links = mockdata.map(item => (
+  const links = mockdata.map((item) => (
     <UnstyledButton
       onClick={() => openUrlInNewTab(item.url as string)}
       className={classes.subLink}
@@ -176,10 +171,7 @@ export default function HeaderMegaMenu({
     >
       <Group noWrap align="flex-start">
         <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon
-            size={rem(22)}
-            color={theme.fn.primaryColor()}
-          />
+          <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
         </ThemeIcon>
         <div>
           <Text size="sm" fw={500}>
@@ -279,9 +271,7 @@ export default function HeaderMegaMenu({
                   my="sm"
                   mx="-md"
                   color={
-                    theme.colorScheme === "dark"
-                      ? "dark.5"
-                      : "gray.1"
+                    theme.colorScheme === "dark" ? "dark.5" : "gray.1"
                   }
                 />
 
@@ -296,13 +286,11 @@ export default function HeaderMegaMenu({
                         Get started
                       </Text>
                       <Text size="xs" color="dimmed">
-                        Their food sources have decreased, and
-                        their numbers
+                        Their food sources have decreased, and their
+                        numbers
                       </Text>
                     </div>
-                    <Button variant="default">
-                      Get started
-                    </Button>
+                    <Button variant="default">Get started</Button>
                   </Group>
                 </div>
               </HoverCard.Dropdown>
@@ -347,9 +335,7 @@ export default function HeaderMegaMenu({
         >
           <Divider
             my="sm"
-            color={
-              theme.colorScheme === "dark" ? "dark.5" : "gray.1"
-            }
+            color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
           />
 
           <Link href="/" className={classes.link}>
@@ -380,9 +366,7 @@ export default function HeaderMegaMenu({
 
           <Divider
             my="sm"
-            color={
-              theme.colorScheme === "dark" ? "dark.5" : "gray.1"
-            }
+            color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
           />
         </ScrollArea>
       </Drawer>

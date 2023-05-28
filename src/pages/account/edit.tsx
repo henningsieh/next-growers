@@ -12,27 +12,26 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import type { GetServerSidePropsContext, NextPage } from "next";
-import {
-  IconAt,
-  IconMail,
-  IconReload,
-} from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
+import { IconAt, IconMail, IconReload } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { z } from "zod";
+import { getUsername } from "~/helpers";
+import { api } from "~/utils/api";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AppNotification from "~/components/Atom/Notification";
-import Head from "next/head";
-import { IconAlertCircle } from "@tabler/icons-react";
-import Image from "next/image";
-import { api } from "~/utils/api";
+
 import { authOptions } from "~/server/auth";
-import { getServerSession } from "next-auth/next";
-import { getUsername } from "~/helpers";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useSession } from "next-auth/react";
+
 import { useState } from "react";
-import { z } from "zod";
+
+import type { GetServerSidePropsContext, NextPage } from "next";
+import { getServerSession } from "next-auth/next";
+import { useSession } from "next-auth/react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+import Image from "next/image";
 
 /**
  * PROTECTED PAGE with translations
@@ -87,9 +86,7 @@ const ProtectedEditReport: NextPage = () => {
         message: "Userame must not contain whitespace characters",
       }),
       */
-    email: z
-      .string()
-      .email({ message: "Invalid email address" }),
+    email: z.string().email({ message: "Invalid email address" }),
   });
 
   const form = useForm({
@@ -127,10 +124,7 @@ const ProtectedEditReport: NextPage = () => {
       </Head>
 
       {/* // Main Content Container */}
-      <Container
-        size="lg"
-        className="flex w-full flex-col space-y-1"
-      >
+      <Container size="lg" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -153,9 +147,7 @@ const ProtectedEditReport: NextPage = () => {
                 height={142}
                 width={142}
                 src={session.user.image as string}
-                alt={`${
-                  session.user.name as string
-                }'s Profile Image`}
+                alt={`${session.user.name as string}'s Profile Image`}
               />
             </Box>
           </Group>
@@ -169,8 +161,8 @@ const ProtectedEditReport: NextPage = () => {
               variant="outline"
             >
               <Box className="">
-                You must first set a username before you can
-                explore all grows.
+                You must first set a username before you can explore all
+                grows.
               </Box>
             </Alert>
           )}
@@ -187,7 +179,7 @@ const ProtectedEditReport: NextPage = () => {
           </Box>
           <Space />
           <form
-            onSubmit={form.onSubmit(values =>
+            onSubmit={form.onSubmit((values) =>
               tRPCsetUsername({
                 id: session.user.id,
                 name: values.name,
@@ -236,11 +228,7 @@ const ProtectedEditReport: NextPage = () => {
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? (
-                  <Loader size={24} />
-                ) : (
-                  "Save Profile"
-                )}
+                {isLoading ? <Loader size={24} /> : "Save Profile"}
               </Button>
             </Group>
           </form>

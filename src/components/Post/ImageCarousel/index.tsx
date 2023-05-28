@@ -1,3 +1,4 @@
+import { Carousel } from "@mantine/carousel";
 import {
   Button,
   Paper,
@@ -7,11 +8,9 @@ import {
   rem,
   useMantineTheme,
 } from "@mantine/core";
-
-import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme) => ({
   card: {
     height: rem(180),
     // width: rem(200),
@@ -88,15 +87,13 @@ const data = [
   {
     image:
       "https://images.unsplash.com/photo-1608481337062-4093bf3ed404?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    title:
-      "Mountains at night: 12 best locations to enjoy the view",
+    title: "Mountains at night: 12 best locations to enjoy the view",
     category: "nature",
   },
   {
     image:
       "https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80",
-    title:
-      "Aurora in Norway: when to visit for best experience",
+    title: "Aurora in Norway: when to visit for best experience",
     category: "nature",
   },
   {
@@ -115,26 +112,16 @@ const data = [
 
 export function PostImagesCarousel() {
   const theme = useMantineTheme();
-  const slides = data.map(item => (
+  const slides = data.map((item) => (
     <Carousel.Slide key={item.title}>
       <Card {...item} />
     </Carousel.Slide>
   ));
-  const xs = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xs})`
-  );
-  const sm = useMediaQuery(
-    `(max-width: ${theme.breakpoints.sm})`
-  );
-  const md = useMediaQuery(
-    `(max-width: ${theme.breakpoints.md})`
-  );
-  const lg = useMediaQuery(
-    `(max-width: ${theme.breakpoints.lg})`
-  );
-  const xl = useMediaQuery(
-    `(max-width: ${theme.breakpoints.xl})`
-  );
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
 
   const breakpointNumber = xs
     ? 1

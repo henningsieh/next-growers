@@ -1,12 +1,13 @@
-import type { NextApiHandler, NextApiRequest } from "next";
-
 import type { Image } from "@prisma/client";
-import { authOptions } from "~/server/auth";
-import cloudinary from "~/utils/cloudinary";
 import formidable from "formidable";
-import { getServerSession } from "next-auth";
 import path from "path";
+import cloudinary from "~/utils/cloudinary";
+
+import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+
+import type { NextApiHandler, NextApiRequest } from "next";
+import { getServerSession } from "next-auth";
 
 export const config = {
   api: {
@@ -46,11 +47,8 @@ const handler: NextApiHandler = async (req, res) => {
         // await Promise.all(files.map(handleFileUpload));
         // We have to collect all results
         await Promise.all(
-          files.map(async file => {
-            const result = await handleFileUpload(
-              file,
-              ownerId
-            );
+          files.map(async (file) => {
+            const result = await handleFileUpload(file, ownerId);
             imageIds.push(result.id);
             imagePublicIds.push(result.publicId);
             cloudUrls.push(result.cloudUrl);
@@ -85,24 +83,21 @@ const handleFileUpload = async (
     .toString()
     .padStart(2, "0")}${day.toString().padStart(2, "0")}${hours
     .toString()
-    .padStart(2, "0")}${minutes
+    .padStart(2, "0")}${minutes.toString().padStart(2, "0")}${seconds
     .toString()
-    .padStart(2, "0")}${seconds.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}`;
 
   const publicIdWithTimestamp = `${formattedTimestamp}_${
     file.originalFilename?.split(".")[0] as string
   }`;
 
-  const result = await cloudinary.uploader.upload(
-    file.filepath,
-    {
-      public_id: publicIdWithTimestamp,
-      quality: "auto",
-      fetch_format: "auto",
-      flags: "lossy",
-      invalidate: true,
-    }
-  );
+  const result = await cloudinary.uploader.upload(file.filepath, {
+    public_id: publicIdWithTimestamp,
+    quality: "auto",
+    fetch_format: "auto",
+    flags: "lossy",
+    invalidate: true,
+  });
 
   const image = await prisma.image.create({
     data: {
@@ -133,10 +128,7 @@ const readUploadedFile = (
   };
 
   if (saveLocally) {
-    options.uploadDir = path.join(
-      process.cwd(),
-      "/public/images"
-    );
+    options.uploadDir = path.join(process.cwd(), "/public/images");
     options.keepExtensions = true; // Keep the file extensions for multiple files
   }
 

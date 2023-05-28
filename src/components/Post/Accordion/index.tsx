@@ -1,9 +1,13 @@
-import { useState } from "react";
-import { Accordion, Container, Paper, Title } from "@mantine/core";
-import { IsoReportWithPostsFromDb, Posts } from "~/types";
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
 import AddPost from "../AddForm/index";
+import { Accordion, Container, Paper, Title } from "@mantine/core";
+
+import type { IsoReportWithPostsFromDb } from "~/types";
+import { Posts } from "~/types";
+
+import { useState } from "react";
+
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 interface PostsAccordionProps {
   report: IsoReportWithPostsFromDb | undefined;
@@ -23,7 +27,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
         <Paper withBorder>
           <Accordion value={postIsOpen} onChange={setPostIsOpen}>
             {!!isoReport &&
-              isoReport.posts.map(post => (
+              isoReport.posts.map((post) => (
                 <Accordion.Item key={post.id} value={post.id}>
                   <Accordion.Control>{post.date}</Accordion.Control>
                   <Accordion.Panel>

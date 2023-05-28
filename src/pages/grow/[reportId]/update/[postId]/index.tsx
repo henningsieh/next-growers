@@ -1,25 +1,30 @@
-import { Container, useMantineTheme, Title, Box } from "@mantine/core";
+import { Box, Container, Title, useMantineTheme } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconCalendarOff } from "@tabler/icons-react";
+import dayjs from "dayjs";
+import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
+
+import { ImagePreview } from "~/components/Atom/ImagePreview";
+import { PostCard } from "~/components/Post/Card";
+import PostsDatePicker from "~/components/Post/Datepicker";
+import ReportDetailsHead from "~/components/Report/DetailsHead";
+import { ReportHeader } from "~/components/Report/Header";
+
+import { prisma } from "~/server/db";
+
+import { Environment } from "~/types";
+import { type IsoReportWithPostsFromDb } from "~/types";
+
+import { useState } from "react";
+
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
-import dayjs from "dayjs";
-import { notifications } from "@mantine/notifications";
-import { Environment } from "~/types";
-import Head from "next/head";
-import { ImagePreview } from "~/components/Atom/ImagePreview";
-import { type IsoReportWithPostsFromDb } from "~/types";
-import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
-import { prisma } from "~/server/db";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useState } from "react";
-import { useMediaQuery } from "@mantine/hooks";
-import { PostCard } from "~/components/Post/Card";
-import PostsDatePicker from "~/components/Post/Datepicker";
-import { IconCalendarOff } from "@tabler/icons-react";
-import ReportDetailsHead from "~/components/Report/DetailsHead";
-import { ReportHeader } from "~/components/Report/Header";
+import Head from "next/head";
 
 /**
  * getStaticProps
@@ -136,7 +141,7 @@ export async function getStaticProps(
         })),
         ...post,
 
-        comments: post.comments.map(comment => ({
+        comments: post.comments.map((comment) => ({
           ...comment,
           createdAt: comment.createdAt.toISOString(),
           updatedAt: comment.updatedAt.toISOString(),
@@ -180,7 +185,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     },
   });
 
-  const paths = reports.flatMap(staticReport => {
+  const paths = reports.flatMap((staticReport) => {
     const localizedPaths = [
       {
         params: {
@@ -196,8 +201,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
       },
     ];
 
-    return staticReport.posts.flatMap(post =>
-      localizedPaths.map(path => ({
+    return staticReport.posts.flatMap((post) =>
+      localizedPaths.map((path) => ({
         ...path,
         params: {
           ...path.params,
@@ -255,11 +260,11 @@ export default function PublicReportPost(
   const [postId, setPostId] = useState<string>(postIdfromProps);
 
   const post = staticReportFromProps.posts.find(
-    post => post.id === postIdfromProps
+    (post) => post.id === postIdfromProps
   );
 
   const postDate = new Date(post?.date as string);
-  const postDays = staticReportFromProps.posts.map(post =>
+  const postDays = staticReportFromProps.posts.map((post) =>
     new Date(post.date).getTime()
   );
   const dateOfGermination = new Date(staticReportFromProps.createdAt);
@@ -280,7 +285,7 @@ export default function PublicReportPost(
       return;
     }
 
-    const matchingPost = staticReportFromProps.posts.find(post => {
+    const matchingPost = staticReportFromProps.posts.find((post) => {
       const postDate = new Date(post.date);
       return selectedDate.toISOString() === postDate.toISOString();
     });

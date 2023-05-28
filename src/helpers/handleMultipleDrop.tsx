@@ -1,10 +1,11 @@
-import type { Dispatch, SetStateAction } from "react";
+import axios from "axios";
+
 import type {
   IsoReportWithPostsFromDb,
   MultiUploadResponse,
 } from "~/types";
 
-import axios from "axios";
+import type { Dispatch, SetStateAction } from "react";
 
 export const handleMultipleDrop = async (
   files: File[],
@@ -24,20 +25,22 @@ export const handleMultipleDrop = async (
 
       console.debug("formData", formData);
 
-      const { data }: { data: MultiUploadResponse } =
-        await axios.post("/api/multiple-upload", formData);
+      const { data }: { data: MultiUploadResponse } = await axios.post(
+        "/api/multiple-upload",
+        formData
+      );
 
       if (data.success) {
         // Add the image information to the component state
-        setImageIds(prevImageIds => [
+        setImageIds((prevImageIds) => [
           ...prevImageIds,
           ...data.imageIds,
         ]);
-        setImagePublicIds(prevImagePublicIds => [
+        setImagePublicIds((prevImagePublicIds) => [
           ...prevImagePublicIds,
           ...data.imagePublicIds,
         ]);
-        setCloudUrls(prevCloudUrls => [
+        setCloudUrls((prevCloudUrls) => [
           ...prevCloudUrls,
           ...data.cloudUrls,
         ]);

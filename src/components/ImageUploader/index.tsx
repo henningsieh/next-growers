@@ -1,3 +1,4 @@
+import { Carousel } from "@mantine/carousel";
 import {
   Box,
   Container,
@@ -8,19 +9,19 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import type { Dispatch, SetStateAction } from "react";
+import { Image, Text } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import type { FileWithPath } from "@mantine/dropzone";
 import {
   IconArrowBigLeft,
   IconArrowBigRight,
   IconCamera,
 } from "@tabler/icons-react";
-import { Image, Text } from "@mantine/core";
+import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
+
 import type { IsoReportWithPostsFromDb } from "~/types";
 
-import { Carousel } from "@mantine/carousel";
-import type { FileWithPath } from "@mantine/dropzone";
-import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
+import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 
 interface ImageUploaderProps {
@@ -36,9 +37,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [files, setFiles] = useState<FileWithPath[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imagePublicIds, setImagePublicIds] = useState<
-    string[]
-  >([]);
+  const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
 
   const theme = useMantineTheme();
 
@@ -72,7 +71,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
       setImagePublicIds,
       setCloudUrls,
       setIsUploading
-    ).catch(error => {
+    ).catch((error) => {
       console.debug(error);
     });
   };
@@ -83,9 +82,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
         <Box className="space-y-2">
           <Group position="left">
             <IconCamera color={theme.colors.orange[7]} />
-            <Title order={4}>
-              Append some images to this update!
-            </Title>
+            <Title order={4}>Append some images to this update!</Title>
           </Group>
           <div>
             <Box className="relative">

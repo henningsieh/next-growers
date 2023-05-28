@@ -14,9 +14,9 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
-import type { EditFormProps } from "~/types";
-import { Environment } from "~/types";
+import { useForm, zodResolver } from "@mantine/form";
 import {
   IconCalendar,
   IconCloudUpload,
@@ -25,17 +25,19 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { useForm, zodResolver } from "@mantine/form";
-import { useRef, useState } from "react";
-
-import { DateInput } from "@mantine/dates";
-import { ImagePreview } from "~/components/Atom/ImagePreview";
+import { handleDrop } from "~/helpers";
 import { InputEditReport } from "~/helpers/inputValidation";
 import { api } from "~/utils/api";
-import { handleDrop } from "~/helpers";
+
+import { ImagePreview } from "~/components/Atom/ImagePreview";
+
+import type { EditFormProps } from "~/types";
+import { Environment } from "~/types";
+
+import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
     alignItems: "center", // add this line
@@ -73,8 +75,7 @@ export function EditForm(props: EditFormProps) {
     user: user,
   } = props;
 
-  const [strainsSarchValue, onSttrinsSearchChange] =
-    useState("");
+  const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
@@ -85,8 +86,7 @@ export function EditForm(props: EditFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reportTitle, setReportTitle] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reportDescription, setReportDescription] =
-    useState("");
+  const [reportDescription, setReportDescription] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imageId, setImageId] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -95,9 +95,9 @@ export function EditForm(props: EditFormProps) {
   const [cloudUrl, setCloudUrl] = useState("");
 
   const trpc = api.useContext();
-  const { mutate: tRPCsaveReport } =
-    api.reports.saveReport.useMutation({
-      onMutate: savedReport => {
+  const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
+    {
+      onMutate: (savedReport) => {
         console.log("START api.reports.saveReport.useMutation");
         console.log("newReportDB", savedReport);
       },
@@ -108,7 +108,7 @@ export function EditForm(props: EditFormProps) {
         if (!context) return;
         console.debug(context);
       },
-      onSuccess: async savedReport => {
+      onSuccess: async (savedReport) => {
         toast.success("Your report was successfully saved");
         console.debug(savedReport);
         // Navigate to the new report page
@@ -121,7 +121,8 @@ export function EditForm(props: EditFormProps) {
       onSettled: () => {
         console.log("END api.reports.saveReport.useMutation");
       },
-    });
+    }
+  );
 
   const form = useForm({
     validate: zodResolver(InputEditReport),
@@ -130,9 +131,8 @@ export function EditForm(props: EditFormProps) {
       title: report?.title as string,
       description: report?.description as string,
       createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
-      strains: report.strains.map(strain => strain.id),
-      environment:
-        report.environment as keyof typeof Environment,
+      strains: report.strains.map((strain) => strain.id),
+      environment: report.environment as keyof typeof Environment,
     },
   });
 
@@ -170,7 +170,7 @@ export function EditForm(props: EditFormProps) {
       setImagePublicId,
       setCloudUrl,
       setIsUploading
-    ).catch(error => {
+    ).catch((error) => {
       // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
       console.debug(error);
     });
@@ -226,7 +226,7 @@ export function EditForm(props: EditFormProps) {
                 multiple={false} // only one header image!
                 openRef={openReference}
                 onDrop={handleDropWrapper}
-                onChange={e => {
+                onChange={(e) => {
                   console.debug(e.currentTarget);
                 }}
                 className={classes.dropzone}
@@ -274,36 +274,26 @@ export function EditForm(props: EditFormProps) {
                   </Group>
 
                   <Text ta="center" fw={700} fz="lg" mt="xl">
-                    <Dropzone.Accept>
-                      Drop files here{" "}
-                    </Dropzone.Accept>
+                    <Dropzone.Accept>Drop files here </Dropzone.Accept>
                     <Dropzone.Reject>
                       Only one Images, less than 10mb
                     </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      {" "}
-                      Upload Header Image{" "}
-                    </Dropzone.Idle>
+                    <Dropzone.Idle> Upload Header Image </Dropzone.Idle>
                   </Text>
                   <Text ta="center" fz="sm" my="xs" c="dimmed">
-                    Drag & apos; n & apos;drop your image here
-                    to upload!
+                    Drag & apos; n & apos;drop your image here to
+                    upload!
                     <br />
-                    We only can accept one{" "}
-                    <i>.jpg/.png/.gif </i> file that is less
-                    than 4.5 MB in size.
+                    We only can accept one <i>.jpg/.png/.gif </i> file
+                    that is less than 4.5 MB in size.
                   </Text>
                 </div>
               </Dropzone>
             </div>
           )}
-          {
-            Environment[
-              report.environment as keyof typeof Environment
-            ]
-          }
+          {Environment[report.environment as keyof typeof Environment]}
           <form
-            onSubmit={form.onSubmit(values => {
+            onSubmit={form.onSubmit((values) => {
               submitEditReportForm(values);
             }, handleErrors)}
           >
@@ -326,10 +316,9 @@ export function EditForm(props: EditFormProps) {
             <Select
               label="Environment"
               description="Environment of your Grow"
-              data={Object.keys(Environment).map(key => ({
+              data={Object.keys(Environment).map((key) => ({
                 value: key,
-                label:
-                  Environment[key as keyof typeof Environment],
+                label: Environment[key as keyof typeof Environment],
               }))}
               withAsterisk
               {...form.getInputProps("environment")}
@@ -349,10 +338,7 @@ export function EditForm(props: EditFormProps) {
                   withAsterisk
                   {...form.getInputProps("createdAt")}
                   onChange={(selectedDate: Date) => {
-                    form.setFieldValue(
-                      "createdAt",
-                      selectedDate
-                    );
+                    form.setFieldValue("createdAt", selectedDate);
                   }}
                 />
               </Grid.Col>
@@ -362,7 +348,7 @@ export function EditForm(props: EditFormProps) {
                   description="Select all strain(s) of your Grow"
                   placeholder="Pick strains of your Grow"
                   {...form.getInputProps("strains")}
-                  data={allStrains.map(strain => ({
+                  data={allStrains.map((strain) => ({
                     value: strain.id,
                     label: strain.name,
                   }))}

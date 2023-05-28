@@ -1,5 +1,4 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
@@ -25,7 +24,7 @@ export const strainRouter = createTRPCRouter({
       },
     });
 
-    const formattedStrains = strains.map(strain => ({
+    const formattedStrains = strains.map((strain) => ({
       ...strain,
       createdAt: strain.createdAt.toISOString(),
       updatedAt: strain.updatedAt.toISOString(),
@@ -65,12 +64,8 @@ export const strainRouter = createTRPCRouter({
       }
 
       // Check if the user is the owner of the notification
-      if (
-        existingNotification.recipientId !== ctx.session.user.id
-      ) {
-        throw new Error(
-          "You are not the owner of this notification"
-        );
+      if (existingNotification.recipientId !== ctx.session.user.id) {
+        throw new Error("You are not the owner of this notification");
       }
 
       // Update the readAt field of the notification
@@ -84,9 +79,7 @@ export const strainRouter = createTRPCRouter({
           });
         return updatedNotification;
       } catch (error: unknown) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError
-        ) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
           console.debug(error.message);
           throw new Error(
             `Failed to delete notification: ${error.message}`

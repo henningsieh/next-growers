@@ -6,25 +6,29 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
-import type { GetServerSidePropsContext } from "next";
+import { api } from "~/utils/api";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import type { ChangeEvent } from "react";
-import Head from "next/head";
 import LoadingError from "~/components/Atom/LoadingError";
-import ReportCard from "~/components/Report/Card";
 import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
-import type { SortingPanelProps } from "~/types";
-import { api } from "~/utils/api";
-import { authOptions } from "~/server/auth";
-import { getServerSession } from "next-auth";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { useTranslation } from "next-i18next";
+import ReportCard from "~/components/Report/Card";
 
-const useStyles = createStyles(theme => ({
+import { authOptions } from "~/server/auth";
+
+import type { SortingPanelProps } from "~/types";
+
+import type { ChangeEvent } from "react";
+import { useState } from "react";
+
+import type { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+
+const useStyles = createStyles((theme) => ({
   hiddenMobile: {
     [theme.fn.smallerThan("md")]: {
       display: "none",
@@ -95,7 +99,7 @@ export default function ProtectedMyGrows() {
     setSortBy,
     desc,
     handleToggleDesc: () =>
-      setDesc(previousSorting => !previousSorting),
+      setDesc((previousSorting) => !previousSorting),
   };
 
   // Fake Data for Fake Card
@@ -119,9 +123,7 @@ export default function ProtectedMyGrows() {
     ],
   };
 
-  const handleSearchChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);
   };
 
@@ -141,10 +143,7 @@ export default function ProtectedMyGrows() {
       </Head>
 
       {/* // Main Content Container */}
-      <Container
-        size="lg"
-        className="flex w-full flex-col space-y-2"
-      >
+      <Container size="lg" className="flex w-full flex-col space-y-2">
         {/* // Header with Title and Sorting */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -179,7 +178,7 @@ export default function ProtectedMyGrows() {
           <Grid gutter="sm">
             {/* LOOP OVER REPORTS */}
             {reports && reports.length
-              ? reports.map(report => {
+              ? reports.map((report) => {
                   return (
                     <Grid.Col
                       key={report.id}
@@ -208,8 +207,7 @@ export default function ProtectedMyGrows() {
                           No Reports found! 😢
                         </h1>
                         <p className="error py-6 text-lg font-bold">
-                          You haven&apos;t created any reports
-                          yet.
+                          You haven&apos;t created any reports yet.
                         </p>
                       </div>
                     </div>

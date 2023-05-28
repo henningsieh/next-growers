@@ -1,37 +1,39 @@
+import { Carousel } from "@mantine/carousel";
 import {
+  Alert,
   Card,
+  Center,
   Group,
   Image,
-  Center,
   Paper,
+  Space,
   Text,
-  useMantineTheme,
   createStyles,
   getStylesRef,
   rem,
-  Alert,
-  Space,
+  useMantineTheme,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   IconCalendar,
   IconClock,
   IconEye,
   IconHome,
 } from "@tabler/icons-react";
-
-import { Carousel } from "@mantine/carousel";
-import type { Post } from "~/types";
-import { Environment, type IsoReportWithPostsFromDb } from "~/types";
-import { useEffect, useState } from "react";
 import { formatLabel, sanatizeDateString } from "~/helpers";
-import { Locale } from "~/types";
 
-import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next";
-import { useMediaQuery } from "@mantine/hooks";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
-const useStyles = createStyles(theme => ({
+import type { Post } from "~/types";
+import { Environment, type IsoReportWithPostsFromDb } from "~/types";
+import { Locale } from "~/types";
+
+import { useEffect, useState } from "react";
+
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+
+const useStyles = createStyles((theme) => ({
   price: {
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
   },
@@ -119,7 +121,7 @@ export function PostCard(props: PostCardProps) {
   const { report, postId } = props;
 
   useEffect(() => {
-    const post = report.posts.find(post => post.id === postId);
+    const post = report.posts.find((post) => post.id === postId);
     if (post) {
       setPostHTMLContent(post.content);
     }
@@ -165,7 +167,7 @@ export function PostCard(props: PostCardProps) {
       icon: IconClock,
     },
   ];
-  const reportBasics = reportBasicData.map(growBasic => (
+  const reportBasics = reportBasicData.map((growBasic) => (
     <Center key={growBasic.label}>
       <growBasic.icon
         size="1.05rem"
@@ -195,7 +197,7 @@ export function PostCard(props: PostCardProps) {
       </>
     );
   } else {
-    const post = report.posts.find(post => post.id === postId);
+    const post = report.posts.find((post) => post.id === postId);
 
     const reportCreatedAt = new Date(report.createdAt);
     const postDate = new Date(post?.date as string);
@@ -239,7 +241,7 @@ export function PostCard(props: PostCardProps) {
         },
       ],
     };
-    const postData = postBasicData.details.map(basicData => (
+    const postData = postBasicData.details.map((basicData) => (
       <div key={basicData.title}>
         <Text size="xs" color="dimmed" align="center">
           {basicData.title}
@@ -249,7 +251,7 @@ export function PostCard(props: PostCardProps) {
         </Text>
       </div>
     ));
-    const postImagesSlides = postImages?.map(image => (
+    const postImagesSlides = postImages?.map((image) => (
       <Carousel.Slide key={image.id}>
         <Center>
           <Image

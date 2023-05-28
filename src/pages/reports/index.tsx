@@ -9,22 +9,25 @@ import {
   createStyles,
   useMantineTheme,
 } from "@mantine/core";
-import { type GetServerSideProps, type NextPage } from "next";
-
-import type { ChangeEvent } from "react";
-import Head from "next/head";
 import { IconDatabaseSearch } from "@tabler/icons-react";
+import { api } from "~/utils/api";
+
 import LoadingError from "~/components/Atom/LoadingError";
 import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
-import type { SortingPanelProps } from "~/types";
-import { api } from "~/utils/api";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useState } from "react";
-import { useTranslation } from "next-i18next";
 import IsoReportCard from "~/components/Report/IsoCard";
 
-const useStyles = createStyles(theme => ({
+import type { SortingPanelProps } from "~/types";
+
+import type { ChangeEvent } from "react";
+import { useState } from "react";
+
+import { type GetServerSideProps, type NextPage } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Head from "next/head";
+
+const useStyles = createStyles((theme) => ({
   hiddenMobile: {
     [theme.fn.smallerThan("md")]: {
       display: "none",
@@ -48,9 +51,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, [
-        "common",
-      ])),
+      ...(await serverSideTranslations(locale as string, ["common"])),
     },
   };
 };
@@ -79,7 +80,7 @@ const PublicAllGrows: NextPage = () => {
     sortBy,
     setSortBy,
     desc,
-    handleToggleDesc: () => setDesc(prev => !prev),
+    handleToggleDesc: () => setDesc((prev) => !prev),
   };
 
   // Fake Data for Fake Card
@@ -101,9 +102,7 @@ const PublicAllGrows: NextPage = () => {
     ],
   };
 
-  const handleSearchChange = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);
   };
 
@@ -121,10 +120,7 @@ const PublicAllGrows: NextPage = () => {
       {/* <Loading isLoading={isLoading} /> */}
 
       {/* // Main Content Container */}
-      <Container
-        size="lg"
-        className="flex w-full flex-col space-y-2"
-      >
+      <Container size="lg" className="flex w-full flex-col space-y-2">
         {/* // Header with Title */}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
@@ -160,7 +156,7 @@ const PublicAllGrows: NextPage = () => {
             <Grid gutter="sm">
               {/* LOOP OVER REPORTS */}
               {isoReports.length ? (
-                isoReports.map(isoReport => {
+                isoReports.map((isoReport) => {
                   return (
                     <Grid.Col
                       key={isoReport.id}
@@ -185,9 +181,7 @@ const PublicAllGrows: NextPage = () => {
                     <Alert
                       p="xl"
                       m="xl"
-                      icon={
-                        <IconDatabaseSearch size="1.4rem" />
-                      }
+                      icon={<IconDatabaseSearch size="1.4rem" />}
                       title="Empty search result"
                       color="red"
                       variant="outline"

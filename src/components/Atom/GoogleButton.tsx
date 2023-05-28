@@ -1,5 +1,6 @@
 import { Button } from "@mantine/core";
 import type { ButtonProps } from "@mantine/core";
+
 import { FcGoogle } from "react-icons/fc";
 
 export function GoogleButton(props: ButtonProps) {

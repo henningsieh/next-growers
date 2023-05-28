@@ -6,9 +6,9 @@ import type {
   ZodString,
   ZodType,
 } from "zod";
+import { z } from "zod";
 
 import { Environment, GrowStage } from "~/types";
-import { z } from "zod";
 
 export const InputCreateReport = z.object({
   title: z
@@ -67,7 +67,7 @@ export const InputCreatePost: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
 ) => {
   return z.object({
-    date: z.date().refine(value => value >= reportStartDate, {
+    date: z.date().refine((value) => value >= reportStartDate, {
       message:
         "Date should be greater than or equal to report's germination date",
     }),

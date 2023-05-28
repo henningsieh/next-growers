@@ -10,6 +10,10 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import { useForm, zodResolver } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { RichTextEditor } from "@mantine/tiptap";
 import {
   IconBulb,
   IconCalendarEvent,
@@ -17,33 +21,32 @@ import {
   IconNumber,
   IconPlant,
 } from "@tabler/icons-react";
+import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
+import SubScript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { formatLabel } from "~/helpers";
+import { InputCreatePost } from "~/helpers/inputValidation";
+import { api } from "~/utils/api";
+
+import ImageUploader from "~/components/ImageUploader";
+
 import type {
   IsoReportWithPostsFromDb,
   Post,
   PostDbInput,
 } from "~/types";
-import React, { useEffect, useState } from "react";
-import { useForm, zodResolver } from "@mantine/form";
-
-import { DateInput } from "@mantine/dates";
 import { GrowStage } from "~/types";
-import Highlight from "@tiptap/extension-highlight";
-import ImageUploader from "~/components/ImageUploader";
-import { InputCreatePost } from "~/helpers/inputValidation";
-import Link from "@tiptap/extension-link";
-import { RichTextEditor } from "@mantine/tiptap";
-import StarterKit from "@tiptap/starter-kit";
-import SubScript from "@tiptap/extension-subscript";
-import Superscript from "@tiptap/extension-superscript";
-import TextAlign from "@tiptap/extension-text-align";
-import Underline from "@tiptap/extension-underline";
-import { api } from "~/utils/api";
-import { formatLabel } from "~/helpers";
-import { notifications } from "@mantine/notifications";
+
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useEditor } from "@tiptap/react";
-import { useRouter } from "next/router";
+
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 interface AddPostProps {
   isoReport: IsoReportWithPostsFromDb;
@@ -91,7 +94,7 @@ const AddPost = (props: AddPostProps) => {
 
   const { mutate: tRPCaddPostToReport } =
     api.posts.createPost.useMutation({
-      onMutate: addPostToReport => {
+      onMutate: (addPostToReport) => {
         console.log("START posts.createPost.useMutation");
         console.log("addPostToReport", addPostToReport);
       },
@@ -189,7 +192,7 @@ const AddPost = (props: AddPostProps) => {
       <Box mt="sm">
         <form
           className="space-y-4"
-          onSubmit={form.onSubmit(values => {
+          onSubmit={form.onSubmit((values) => {
             console.log("Form submitted");
             console.debug(values);
             handleSubmit(values);
@@ -289,7 +292,7 @@ const AddPost = (props: AddPostProps) => {
                   <Select
                     label="Grow stage"
                     description="Actual grow stage"
-                    data={Object.keys(GrowStage).map(key => ({
+                    data={Object.keys(GrowStage).map((key) => ({
                       value: key,
                       label: formatLabel(key),
                     }))}

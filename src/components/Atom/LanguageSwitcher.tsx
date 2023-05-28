@@ -1,12 +1,13 @@
-import { Group, SegmentedControl } from "@mantine/core";
-import type { NextPage } from "next";
-
-import Image from "next/image";
-import React from "react";
 import deFlag from "../../../public/DE.svg";
 import usFlag from "../../../public/US.svg";
-import { useRouter } from "next/router";
+import { Group, SegmentedControl } from "@mantine/core";
+
+import React from "react";
+
+import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 const LanguageSwitcher: NextPage = () => {
   const router = useRouter();

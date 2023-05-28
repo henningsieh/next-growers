@@ -1,5 +1,4 @@
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
@@ -10,57 +9,56 @@ export const notificationRouter = createTRPCRouter({
    */
   getNotificationsByUserId: protectedProcedure.query(
     async ({ ctx }) => {
-      const notifications =
-        await ctx.prisma.notification.findMany({
-          orderBy: {
-            createdAt: "desc",
-          },
-          where: {
-            recipientId: ctx.session?.user.id,
-          },
-          include: {
-            like: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-            report: {
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-            post: {
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
-                },
-              },
-            },
-            comment: {
-              include: {
-                author: {
-                  select: {
-                    id: true,
-                    name: true,
-                  },
+      const notifications = await ctx.prisma.notification.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        where: {
+          recipientId: ctx.session?.user.id,
+        },
+        include: {
+          like: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
                 },
               },
             },
           },
-        });
+          report: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          post: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          comment: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
       return notifications;
 
       /* return notifications.map(
@@ -96,12 +94,8 @@ export const notificationRouter = createTRPCRouter({
       }
 
       // Check if the user is the owner of the notification
-      if (
-        existingNotification.recipientId !== ctx.session.user.id
-      ) {
-        throw new Error(
-          "You are not the owner of this notification"
-        );
+      if (existingNotification.recipientId !== ctx.session.user.id) {
+        throw new Error("You are not the owner of this notification");
       }
 
       // Update the readAt field of the notification
@@ -115,9 +109,7 @@ export const notificationRouter = createTRPCRouter({
           });
         return updatedNotification;
       } catch (error: unknown) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError
-        ) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
           console.debug(error.message);
           throw new Error(
             `Failed to delete notification: ${error.message}`

@@ -15,12 +15,7 @@ async function main() {
       description:
         "Blue Dream is a sativa-dominant hybrid that combines the best traits of its parent strains, Blueberry and Haze. It offers a sweet berry aroma and delivers a balanced high, providing a relaxed body sensation while keeping the mind clear and focused.",
       flavors: ["blueberry", "sweet", "vanilla", "herbal"],
-      effects: [
-        "euphoria",
-        "relaxation",
-        "creativity",
-        "happiness",
-      ],
+      effects: ["euphoria", "relaxation", "creativity", "happiness"],
       type: CannabisStraintype.Hybrid,
     },
     {
@@ -28,12 +23,7 @@ async function main() {
       description:
         "Girl Scout Cookies, also known as GSC, is a potent hybrid that gained popularity for its unique flavor profile and powerful effects. It offers a blend of sweet and earthy flavors with hints of mint. The high is characterized by full-body relaxation and a cerebral euphoria that uplifts the mood.",
       flavors: ["sweet", "earthy", "mint", "spicy"],
-      effects: [
-        "euphoria",
-        "relaxation",
-        "happiness",
-        "creativity",
-      ],
+      effects: ["euphoria", "relaxation", "happiness", "creativity"],
       type: CannabisStraintype.Hybrid,
     },
     {
@@ -41,12 +31,7 @@ async function main() {
       description:
         "Gorilla Glue, also known as GG4, is an indica-dominant hybrid that is highly regarded for its powerful effects and sticky resinous buds. It has a pungent aroma with notes of earth and diesel. The high is intense and long-lasting, providing a deep relaxation that can glue you to the couch.",
       flavors: ["earthy", "diesel", "pine", "spicy"],
-      effects: [
-        "relaxation",
-        "euphoria",
-        "happiness",
-        "sedation",
-      ],
+      effects: ["relaxation", "euphoria", "happiness", "sedation"],
       type: CannabisStraintype.Indica,
     },
     {
@@ -69,12 +54,7 @@ async function main() {
       description:
         "AK-47 is a sativa-dominant hybrid that delivers a steady and long-lasting cerebral buzz that keeps you mentally alert and engaged in creative or social activities. Its flavor profile combines earthy, floral, and sweet notes, making it a popular choice among cannabis enthusiasts.",
       flavors: ["earthy", "floral", "sweet", "spicy"],
-      effects: [
-        "euphoria",
-        "energy",
-        "creativity",
-        "relaxation",
-      ],
+      effects: ["euphoria", "energy", "creativity", "relaxation"],
       type: CannabisStraintype.Hybrid,
     },
     {
@@ -82,12 +62,7 @@ async function main() {
       description:
         "Northern Lights is an indica strain renowned for its resinous buds, pungent aroma, and potent relaxation effects. It offers a sweet and spicy flavor profile with hints of pine. Northern Lights is widely appreciated for its ability to relax the body and ease the mind, making it a go-to strain for stress relief and sleep aid.",
       flavors: ["sweet", "spicy", "pine", "earthy"],
-      effects: [
-        "relaxation",
-        "euphoria",
-        "sleepiness",
-        "happiness",
-      ],
+      effects: ["relaxation", "euphoria", "sleepiness", "happiness"],
       type: CannabisStraintype.Hybrid,
     },
     {
@@ -111,12 +86,7 @@ async function main() {
       description:
         "White Widow is a classic hybrid strain known for its white, frosty appearance and potent effects. It offers a balanced high with a combination of cerebral euphoria and relaxing body sensations. The aroma is a mix of earthy and floral notes.",
       flavors: ["earthy", "floral", "sweet", "spicy"],
-      effects: [
-        "euphoria",
-        "relaxation",
-        "creativity",
-        "happiness",
-      ],
+      effects: ["euphoria", "relaxation", "creativity", "happiness"],
       type: CannabisStraintype.Indica,
     },
     {
@@ -124,12 +94,7 @@ async function main() {
       description:
         "Super Lemon Haze is a sativa-dominant strain that combines Lemon Skunk and Super Silver Haze. It has a zesty lemon aroma with undertones of citrus and earth. The high is uplifting and energetic, providing a burst of creativity and a happy, euphoric feeling.",
       flavors: ["lemon", "citrus", "sweet", "spicy"],
-      effects: [
-        "euphoria",
-        "energizing",
-        "happiness",
-        "creativity",
-      ],
+      effects: ["euphoria", "energizing", "happiness", "creativity"],
       type: CannabisStraintype.Sativa,
     },
     {
@@ -137,12 +102,7 @@ async function main() {
       description:
         "Jack Herer is a sativa-dominant strain named after the famous cannabis activist and author. It has a spicy and piney aroma with hints of citrus. The high is uplifting and clear-headed, promoting creativity and focus, while still providing a relaxed and euphoric experience.",
       flavors: ["spicy", "pine", "citrus", "earthy"],
-      effects: [
-        "euphoria",
-        "creativity",
-        "focus",
-        "relaxation",
-      ],
+      effects: ["euphoria", "creativity", "focus", "relaxation"],
       type: CannabisStraintype.Hybrid,
     },
     {
@@ -150,12 +110,7 @@ async function main() {
       description:
         "Wedding Cake is an indica-dominant hybrid known for its sweet and vanilla-like aroma. It has dense buds covered in a thick layer of trichomes. The high is calming and euphoric, providing a sense of relaxation and happiness.",
       flavors: ["sweet", "vanilla", "earthy", "spicy"],
-      effects: [
-        "relaxation",
-        "euphoria",
-        "happiness",
-        "creativity",
-      ],
+      effects: ["relaxation", "euphoria", "happiness", "creativity"],
       type: CannabisStraintype.Hybrid,
     },
     {
@@ -171,12 +126,7 @@ async function main() {
       description:
         "Gelato is a hybrid strain that offers a delicious dessert-like flavor profile. It combines the sweet and creamy taste of Gelato with a hint of citrus. The high is known for its euphoric and relaxing effects, providing a balanced experience.",
       flavors: ["sweet", "creamy", "citrus", "fruity"],
-      effects: [
-        "euphoria",
-        "relaxation",
-        "happiness",
-        "creativity",
-      ],
+      effects: ["euphoria", "relaxation", "happiness", "creativity"],
       type: CannabisStraintype.Hybrid,
     },
     {
@@ -184,12 +134,7 @@ async function main() {
       description:
         "Bruce Banner is a potent hybrid strain named after the alter ego of the Hulk. It has a sweet and diesel-like aroma with earthy undertones. The high is characterized by a powerful euphoria and creative energy, gradually transitioning into deep relaxation.",
       flavors: ["sweet", "diesel", "earthy", "spicy"],
-      effects: [
-        "euphoria",
-        "energy",
-        "relaxation",
-        "creativity",
-      ],
+      effects: ["euphoria", "energy", "relaxation", "creativity"],
       type: CannabisStraintype.Hybrid,
     },
   ];
@@ -207,9 +152,7 @@ async function main() {
       },
     });
 
-    console.log(
-      `Created Cannabis Strain: ${createdStrain.name}`
-    );
+    console.log(`Created Cannabis Strain: ${createdStrain.name}`);
   }
 }
 
@@ -217,7 +160,7 @@ main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async e => {
+  .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
     process.exit(1);

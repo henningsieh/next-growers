@@ -1,9 +1,3 @@
-import {
-  InputDeletelike,
-  InputLike,
-} from "~/helpers/inputValidation";
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { NotificationEvent, Prisma } from "@prisma/client";
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   createTRPCRouter,
@@ -11,18 +5,20 @@ import {
   publicProcedure,
 } from "../trpc";
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NotificationEvent, Prisma } from "@prisma/client";
+import { InputDeletelike, InputLike } from "~/helpers/inputValidation";
+
 export const likeRouter = createTRPCRouter({
   likeReport: protectedProcedure
     .input(InputLike)
     .mutation(async ({ ctx, input }) => {
       // Check if the report exists
-      const existingReport = await ctx.prisma.report.findUnique(
-        {
-          where: {
-            id: input.reportId,
-          },
-        }
-      );
+      const existingReport = await ctx.prisma.report.findUnique({
+        where: {
+          id: input.reportId,
+        },
+      });
       if (!existingReport) {
         throw new Error("Report does not exist");
       }
@@ -111,13 +107,9 @@ export const likeRouter = createTRPCRouter({
           },
         });
       } catch (error: unknown) {
-        if (
-          error instanceof Prisma.PrismaClientKnownRequestError
-        ) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
           console.debug(error.message);
-          throw new Error(
-            `Failed to delete like: ${error.message}`
-          );
+          throw new Error(`Failed to delete like: ${error.message}`);
         } else {
           throw new Error("Failed to delete like");
         }

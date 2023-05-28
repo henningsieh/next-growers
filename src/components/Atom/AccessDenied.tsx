@@ -1,5 +1,4 @@
 import { Alert, Box, Container } from "@mantine/core";
-
 import { IconAlertCircle } from "@tabler/icons-react";
 
 const AccessDenied = () => {

@@ -7,11 +7,13 @@ import {
   IconSortAscending2,
   IconSortDescending2,
 } from "@tabler/icons-react";
-import React from "react";
 
 import type { SortingPanelProps } from "~/types";
-import { useRouter } from "next/router";
+
+import React from "react";
+
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 export default function SortingPanel({
   sortBy,
@@ -46,7 +48,7 @@ export default function SortingPanel({
       <NativeSelect
         variant="default"
         value={sortBy}
-        onChange={event => setSortBy(event.currentTarget.value)}
+        onChange={(event) => setSortBy(event.currentTarget.value)}
         size="xs"
         placeholder="Sort by..."
         fz="xs"

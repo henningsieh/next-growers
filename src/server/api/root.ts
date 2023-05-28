@@ -1,11 +1,12 @@
-import { createTRPCRouter } from "~/server/api/trpc";
-import { exampleRouter } from "~/server/api/routers/example";
 import { likeRouter } from "./routers/like";
 import { notificationRouter } from "./routers/notification";
 import { postRouter } from "./routers/posts";
-import { reportRouter } from "~/server/api/routers/report";
 import { strainRouter } from "./routers/strains";
+
+import { exampleRouter } from "~/server/api/routers/example";
+import { reportRouter } from "~/server/api/routers/report";
 import { userRouter } from "~/server/api/routers/user";
+import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
  * This is the primary router for your server.
