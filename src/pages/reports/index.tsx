@@ -7,7 +7,6 @@ import {
   LoadingOverlay,
   Title,
   createStyles,
-  useMantineTheme,
 } from "@mantine/core";
 import { IconDatabaseSearch } from "@tabler/icons-react";
 
@@ -122,7 +121,7 @@ const PublicAllGrows: NextPage = () => {
 
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">
-        {/* // Header with Title */}
+        {/* // Header with Title and Sorting*/}
         <div className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">

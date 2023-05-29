@@ -26,7 +26,7 @@ import type { IsoReportWithPostsFromDb, Posts, Strains } from "~/types";
 import { api } from "~/utils/api";
 
 /**
- * PROTECTED PAGE with translations
+ * PROTECTED PAGE with session and translations
  * async getServerSideProps()
  *
  * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>

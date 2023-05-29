@@ -11,7 +11,7 @@ import AccessDenied from "~/components/Atom/AccessDenied";
 import { authOptions } from "~/server/auth";
 
 /**
- * PROTECTED PAGE with translations
+ * PROTECTED PAGE with session and translations
  * async getServerSideProps()
  *
  * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
@@ -39,7 +39,7 @@ export async function getServerSideProps(
   };
 }
 
-export default function Page() {
+export default function ProtectedMyAccount() {
   const pageTitle = "Your Account Settings";
 
   const { data: session } = useSession();

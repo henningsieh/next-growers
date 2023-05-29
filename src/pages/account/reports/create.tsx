@@ -12,7 +12,7 @@ import AddForm from "~/components/Report/AddForm";
 import { authOptions } from "~/server/auth";
 
 /**
- * PROTECTED PAGE with translations
+ * PROTECTED PAGE with session and translations
  * async getServerSideProps()
  *
  * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>

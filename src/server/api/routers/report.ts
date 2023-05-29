@@ -119,114 +119,182 @@ export const reportRouter = createTRPCRouter({
     }),
 
   /**
-   * Get own Reports by authorId
-   * @Input: userId: String
+   * Get Own IsoReportwithPosts with SearchString
+   * @Input: orderBy: z.ZodString; desc: z.ZodBoolean; search: z.ZodString;
    */
-  getOwnReports: protectedProcedure
+  getOwnIsoReportsWithPostsFromDb: protectedProcedure
     .input(InputGetReports)
-    .query(async ({ ctx, input }) => {
+    .query(({ ctx, input }) => {
       const { orderBy, desc, search } = input;
-
       const { searchstring, strain } = splitSearchString(search);
-
-      const reports = await ctx.prisma.report.findMany({
-        where: {
-          authorId: ctx.session.user.id,
-          OR: [
-            {
-              title: {
-                contains: searchstring,
-                mode: "insensitive",
-              },
-            },
-            {
-              description: {
-                contains: searchstring,
-                mode: "insensitive",
-              },
-            },
-            {
-              author: {
-                name: {
+      return ctx.prisma.report
+        .findMany({
+          where: {
+            authorId: ctx.session.user.id,
+            OR: [
+              {
+                title: {
                   contains: searchstring,
                   mode: "insensitive",
                 },
               },
+              {
+                description: {
+                  contains: searchstring,
+                  mode: "insensitive",
+                },
+              },
+              {
+                author: {
+                  name: {
+                    contains: searchstring,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ],
+            strains: strain
+              ? {
+                  some: {
+                    name: {
+                      contains: strain,
+                      mode: "insensitive",
+                    },
+                  },
+                }
+              : {},
+          },
+          orderBy: {
+            [orderBy]: desc ? "desc" : "asc",
+          },
+          include: {
+            author: {
+              select: { id: true, name: true, image: true },
             },
-          ],
-          strains: {
-            some: {
-              name: {
-                contains: strain,
-                mode: "insensitive",
+            image: {
+              select: {
+                id: true,
+                publicId: true,
+                cloudUrl: true,
               },
             },
-          },
-        },
-        orderBy: {
-          [orderBy]: desc ? "desc" : "asc",
-        },
-        include: {
-          author: {
-            select: { id: true, name: true, image: true },
-          },
-          image: {
-            select: {
-              id: true,
-              publicId: true,
-              cloudUrl: true,
+            strains: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                effects: true,
+                flavors: true,
+              },
             },
-          },
-          strains: true,
-          likes: {
-            // Include the Like relation and select the users who liked the report
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
+            likes: {
+              // Include the Like relation and select the users who liked the report
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  },
                 },
               },
             },
+            posts: {
+              orderBy: {
+                date: "asc",
+              },
+              include: {
+                author: {
+                  select: { id: true, name: true, image: true },
+                },
+                images: {
+                  select: {
+                    id: true,
+                    publicId: true,
+                    cloudUrl: true,
+                  },
+                },
+
+                likes: {
+                  // Include the Like relation and select the users who liked the report
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                      },
+                    },
+                  },
+                },
+                comments: true,
+              },
+            },
           },
-        },
-      });
-      return reports.map(
-        ({
-          id,
-          image,
-          title,
-          description,
-          strains,
-          author,
-          likes,
-          createdAt,
-          updatedAt,
-        }) => ({
-          id,
-          imagePublicId: image?.publicId,
-          imageCloudUrl: image?.cloudUrl,
-          title,
-          description,
-          strains,
-          authorId: author?.id,
-          authorName: author?.name,
-          authorImage: author?.image,
-          createdAt: createdAt.toISOString(),
-          updatedAt: updatedAt.toISOString(),
-          likes: likes.map(({ id, user }) => ({
-            id,
-            userId: user.id,
-            name: user.name,
-          })),
         })
-      );
+        .then((reportsFromDb) => {
+          // Convert all Dates to IsoStrings
+          const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
+            const isoPosts = (reportFromDb?.posts || []).map((post) => {
+              const postDate = new Date(post.date);
+              const reportCreatedAt = new Date(reportFromDb.createdAt);
+              const timeDifference =
+                postDate.getTime() - reportCreatedAt.getTime();
+              const growDay = Math.floor(
+                timeDifference / (1000 * 60 * 60 * 24)
+              );
+
+              const isoLikes = post.likes.map(
+                ({ id, createdAt, updatedAt, user }) => ({
+                  id,
+                  userId: user.id,
+                  name: user.name,
+                  createdAt: createdAt.toISOString(),
+                  updatedAt: updatedAt.toISOString(),
+                })
+              );
+
+              const isoComments = post.comments.map((comment) => ({
+                ...comment,
+                createdAt: comment.createdAt.toISOString(),
+                updatedAt: comment.updatedAt.toISOString(),
+              }));
+
+              return {
+                ...post,
+                date: postDate.toISOString(),
+                likes: isoLikes,
+                comments: isoComments,
+                growDay,
+              };
+            });
+
+            const isoLikes = reportFromDb.likes.map(
+              ({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: createdAt.toISOString(),
+                updatedAt: updatedAt.toISOString(),
+              })
+            );
+
+            return {
+              ...reportFromDb,
+              createdAt: reportFromDb?.createdAt.toISOString(),
+              updatedAt: reportFromDb?.updatedAt.toISOString(),
+              likes: isoLikes,
+              posts: isoPosts,
+            };
+          });
+
+          return isoReportsFromDb;
+        });
     }),
 
   /**
-   * Get IsoReportwithPosts by Id
-   * @Input: userId: String
+   * Get IsoReportwithPosts with SearchString
+   * @Input: orderBy: z.ZodString; desc: z.ZodBoolean; search: z.ZodString;
    */
   getIsoReportsWithPostsFromDb: publicProcedure
     .input(InputGetReports)

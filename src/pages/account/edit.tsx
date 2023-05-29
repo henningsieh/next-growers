@@ -35,7 +35,7 @@ import { authOptions } from "~/server/auth";
 import { api } from "~/utils/api";
 
 /**
- * PROTECTED PAGE with translations
+ * PROTECTED PAGE with session and translations
  * async getServerSideProps()
  *
  * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>

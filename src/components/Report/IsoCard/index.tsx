@@ -125,11 +125,12 @@ export default function IsoReportCard({
       onMutate: async (deletedReportId: string) => {
         if (procedure == "own") {
           // Cancel any outgoing refetches so they don't overwrite optimistic update
-          await trpc.reports.getOwnReports.cancel();
+          await trpc.reports.getOwnIsoReportsWithPostsFromDb.cancel();
           // Snapshot the previous value
-          const previousReports = trpc.reports.getOwnReports.getData();
+          const previousReports =
+            trpc.reports.getOwnIsoReportsWithPostsFromDb.getData();
           // Optimistically update to the new value
-          trpc.reports.getOwnReports.setData(
+          trpc.reports.getOwnIsoReportsWithPostsFromDb.setData(
             { search: "", orderBy: "createdAt", desc: true },
             (prev) => {
               console.log("PREV", prev);
@@ -143,11 +144,12 @@ export default function IsoReportCard({
           return { previousReports };
         } else {
           // Cancel any outgoing refetches so they don't overwrite optimistic update
-          await trpc.reports.getAllReports.cancel();
+          await trpc.reports.getIsoReportsWithPostsFromDb.cancel();
           // Snapshot the previous value
-          const previousReports = trpc.reports.getAllReports.getData();
+          const previousReports =
+            trpc.reports.getIsoReportsWithPostsFromDb.getData();
           // Optimistically update to the new value
-          trpc.reports.getAllReports.setData(
+          trpc.reports.getIsoReportsWithPostsFromDb.setData(
             { search: "", orderBy: "createdAt", desc: true },
             (prev) => {
               if (!prev) return previousReports;
@@ -164,12 +166,12 @@ export default function IsoReportCard({
       onError: (_err, _variables, context) => {
         if (!!context) {
           if (procedure == "own") {
-            trpc.reports.getOwnReports.setData(
+            trpc.reports.getOwnIsoReportsWithPostsFromDb.setData(
               { search: "", orderBy: "createdAt", desc: true },
               () => context.previousReports
             );
           } else {
-            trpc.reports.getAllReports.setData(
+            trpc.reports.getIsoReportsWithPostsFromDb.setData(
               { search: "", orderBy: "createdAt", desc: true },
               () => context.previousReports
             );
@@ -178,8 +180,8 @@ export default function IsoReportCard({
       },
       // Always refetch after error or success:
       onSettled: async () => {
-        await trpc.reports.getOwnReports.invalidate();
-        await trpc.reports.getAllReports.invalidate();
+        await trpc.reports.getOwnIsoReportsWithPostsFromDb.invalidate();
+        await trpc.reports.getIsoReportsWithPostsFromDb.invalidate();
       },
     });
 

@@ -10,7 +10,7 @@ import {
 import type { ChangeEvent } from "react";
 import { useState } from "react";
 
-import type { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -21,7 +21,7 @@ import AccessDenied from "~/components/Atom/AccessDenied";
 import LoadingError from "~/components/Atom/LoadingError";
 import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
-import ReportCard from "~/components/Report/Card";
+import IsoReportCard from "~/components/Report/IsoCard";
 
 import { authOptions } from "~/server/auth";
 
@@ -44,7 +44,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 /**
- * PROTECTED PAGE with translations
+ * PROTECTED PAGE with session and translations
  * async getServerSideProps()
  *
  * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
@@ -72,7 +72,7 @@ export async function getServerSideProps(
   };
 }
 
-export default function ProtectedMyGrows() {
+const ProtectedAllGrows: NextPage = () => {
   const { t } = useTranslation();
   const pageTitle = t("common:myreports-headline");
 
@@ -85,10 +85,10 @@ export default function ProtectedMyGrows() {
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
-    data: reports,
+    data: ownIsoReports,
     isLoading,
     isError,
-  } = api.reports.getOwnReports.useQuery({
+  } = api.reports.getOwnIsoReportsWithPostsFromDb.useQuery({
     search: searchString,
     orderBy: sortBy, // Set the desired orderBy field
     desc: desc, // Set the desired order (true for descending, false for ascending)
@@ -99,8 +99,7 @@ export default function ProtectedMyGrows() {
     sortBy,
     setSortBy,
     desc,
-    handleToggleDesc: () =>
-      setDesc((previousSorting) => !previousSorting),
+    handleToggleDesc: () => setDesc((prev) => !prev),
   };
 
   // Fake Data for Fake Card
@@ -178,21 +177,21 @@ export default function ProtectedMyGrows() {
           />
           <Grid gutter="sm">
             {/* LOOP OVER REPORTS */}
-            {reports && reports.length
-              ? reports.map((report) => {
+            {ownIsoReports && ownIsoReports.length
+              ? ownIsoReports.map((ownIsoReport) => {
                   return (
                     <Grid.Col
-                      key={report.id}
+                      key={ownIsoReport.id}
                       xs={12}
                       sm={6}
                       md={4}
                       lg={3}
                       xl={3}
                     >
-                      <ReportCard
+                      <IsoReportCard
                         {...cardProps}
                         procedure="own"
-                        report={report}
+                        report={ownIsoReport}
                         setSearchString={setSearchString}
                       />
                     </Grid.Col>
@@ -219,4 +218,5 @@ export default function ProtectedMyGrows() {
       </Container>
     </>
   );
-}
+};
+export default ProtectedAllGrows;
