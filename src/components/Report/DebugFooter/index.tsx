@@ -1,3 +1,5 @@
+import { Container } from "@mantine/core";
+
 import React from "react";
 
 import type { IsoReportWithPostsFromDb } from "~/types";

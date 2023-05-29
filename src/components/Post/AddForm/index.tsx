@@ -372,7 +372,7 @@ const AddPost = (props: AddPostProps) => {
       </Box>
       {/* </Paper> */}
 
-      <ReportDebugFooter report={report} />
+      {/* <ReportDebugFooter report={report} /> */}
     </Container>
   );
 };

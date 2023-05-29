@@ -15,7 +15,6 @@ import {
 } from "@mantine/core";
 import {
   IconAlertTriangle,
-  IconAlertTriangleFilled,
   IconCalendar,
   IconCannabis,
   IconClock,

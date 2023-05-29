@@ -50,9 +50,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
           headings: {
             fontFamily: `'Open Sans', sans-serif`,
             sizes: {
-              h1: { fontSize: "1.66rem" },
-              h2: { fontSize: "1.42rem" },
-              h3: { fontSize: "1.28rem" },
+              h1: { fontSize: "1.48rem" },
+              h2: { fontSize: "1.36rem" },
+              h3: { fontSize: "1.24rem" },
+              h4: { fontSize: "1.12rem" },
+              h5: { fontSize: "0.94rem" },
             },
           },
           primaryColor: "orange",
@@ -98,8 +100,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
                     cursor: "default",
                     backgroundColor:
                       theme.colorScheme === "dark"
-                        ? theme.colors.dark[4]
-                        : "#FF7700",
+                        ? theme.colors.orange[7]
+                        : theme.colors.orange[3],
                   },
                 },
               }),

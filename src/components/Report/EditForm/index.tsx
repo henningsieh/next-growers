@@ -376,7 +376,7 @@ export function ProtectedEditForm(props: EditFormProps) {
             </Grid>
 
             <Group position="right" mt="xl">
-              <Button w={180} variant="outline" type="submit">
+              <Button w={140} variant="outline" type="submit">
                 Save Grow
                 <Box ml={12} mt={2}>
                   <IconCloudUpload size={20} />

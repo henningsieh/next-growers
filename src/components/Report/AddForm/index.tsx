@@ -316,7 +316,12 @@ function Form({ user }: AddFormProps) {
           />
 
           <Group position="right" mt="xl">
-            <Button type="submit" disabled={!form.isValid()}>
+            <Button
+              type="submit"
+              w={140}
+              variant="outline"
+              disabled={!form.isValid()}
+            >
               Continue
             </Button>
           </Group>
