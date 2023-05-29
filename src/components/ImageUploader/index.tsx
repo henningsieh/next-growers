@@ -84,7 +84,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
         <Box className="space-y-2">
           <Group position="left">
             <IconCamera color={theme.colors.orange[7]} />
-            <Title order={4}>Append some images to this update!</Title>
+            <Title order={4}>Append images</Title>
           </Group>
           <div>
             <Box className="relative">
@@ -95,7 +95,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
                   onDrop={handleMultipleDropWrapper}
                 >
                   <Text align="center">
-                    Drop images for this update here
+                    Drag & Drop images for this update here!
                   </Text>
                 </Dropzone>
                 <Space h="sm" />

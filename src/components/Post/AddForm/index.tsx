@@ -5,9 +5,11 @@ import {
   Flex,
   Grid,
   Group,
+  Input,
   NumberInput,
   Paper,
   Select,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
@@ -190,188 +192,190 @@ const AddPost = (props: AddPostProps) => {
   };
 
   return (
-    <Container
-      p={0}
-      size="md"
-      className="flex w-full flex-col space-y-2"
-    >
-      <Paper p="sm" withBorder>
+    <Container p={0} size="md">
+      <Paper px="sm" withBorder>
         <form
-          // className="space-y-4"
           onSubmit={form.onSubmit((values) => {
             handleSubmit(values);
           }, handleErrors)}
         >
-          <TextInput {...form.getInputProps("id")} hidden />
-          {imageIds.map((imageId, index) => (
-            <input
-              key={index}
-              type="hidden"
-              name={`images[${index}]`}
-              value={imageId}
-            />
-          ))}
+          <Box className="space-y-2">
+            <TextInput {...form.getInputProps("id")} hidden />
+            {imageIds.map((imageId, index) => (
+              <input
+                key={index}
+                type="hidden"
+                name={`images[${index}]`}
+                value={imageId}
+              />
+            ))}
 
-          <Box>
-            <Grid gutter="sm">
-              <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
-                <Flex
-                  className="justify-start space-x-2"
-                  align="baseline"
-                >
-                  <NumberInput
-                    label={t("common:post-growday")}
-                    description={t("common:addpost-growdaydescription")}
-                    w={142}
-                    placeholder="1"
-                    icon={<IconNumber size="1.2rem" />}
-                    withAsterisk
-                    min={0}
-                    {...form.getInputProps("day")}
-                    onChange={(value: number) => {
-                      const growDayOffSet = parseInt(
-                        value.toString(),
-                        10
-                      );
-                      if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
-                      const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
-                      newPostDate.setUTCDate(
-                        newPostDate.getUTCDate() + growDayOffSet
-                      );
-                      form.setFieldValue("date", newPostDate);
-                      form.setFieldValue("day", growDayOffSet);
-                    }}
-                  />
-                  <DateInput
-                    label={t("common:post-updatedate")}
-                    description={t(
-                      "common:addpost-updatedatedescription"
-                    )}
-                    valueFormat="MMM DD, YYYY HH:mm"
-                    // valueFormat="DD/MM/YYYY HH:mm:ss"
-                    className="w-full"
-                    icon={<IconCalendarEvent size="1.2rem" />}
-                    withAsterisk
-                    {...form.getInputProps("date")}
-                    onChange={(selectedDate: Date) => {
-                      const newDate = new Date(selectedDate);
-                      /* 
+            <Box>
+              <Grid gutter="sm">
+                <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
+                  <Flex
+                    className="justify-start space-x-2"
+                    align="baseline"
+                  >
+                    <NumberInput
+                      label={t("common:post-growday")}
+                      description={t(
+                        "common:addpost-growdaydescription"
+                      )}
+                      w={142}
+                      placeholder="1"
+                      icon={<IconNumber size="1.2rem" />}
+                      withAsterisk
+                      min={0}
+                      {...form.getInputProps("day")}
+                      onChange={(value: number) => {
+                        const growDayOffSet = parseInt(
+                          value.toString(),
+                          10
+                        );
+                        if (!growDayOffSet && growDayOffSet != 0)
+                          return; // prevent error if changed to empty string
+                        const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+                        newPostDate.setUTCDate(
+                          newPostDate.getUTCDate() + growDayOffSet
+                        );
+                        form.setFieldValue("date", newPostDate);
+                        form.setFieldValue("day", growDayOffSet);
+                      }}
+                    />
+                    <DateInput
+                      label={t("common:post-updatedate")}
+                      description={t(
+                        "common:addpost-updatedatedescription"
+                      )}
+                      valueFormat="MMM DD, YYYY HH:mm"
+                      // valueFormat="DD/MM/YYYY HH:mm:ss"
+                      className="w-full"
+                      icon={<IconCalendarEvent size="1.2rem" />}
+                      withAsterisk
+                      {...form.getInputProps("date")}
+                      onChange={(selectedDate: Date) => {
+                        const newDate = new Date(selectedDate);
+                        /* 
   newDate.setHours(reportStartDate.getHours());
   newDate.setMinutes(reportStartDate.getMinutes());
   newDate.setSeconds(reportStartDate.getSeconds());
   newDate.setMilliseconds(reportStartDate.getMilliseconds()); 
   */
 
-                      form.setFieldValue("date", newDate);
+                        form.setFieldValue("date", newDate);
 
-                      /* const timeDifferenceMs =
+                        /* const timeDifferenceMs =
     selectedDate.getTime() - reportStartDate.getTime(); */
 
-                      const timeDifferenceDays = Math.floor(
-                        (selectedDate.getTime() -
-                          reportStartDate.getTime()) /
-                          (1000 * 60 * 60 * 24)
-                      );
+                        const timeDifferenceDays = Math.floor(
+                          (selectedDate.getTime() -
+                            reportStartDate.getTime()) /
+                            (1000 * 60 * 60 * 24)
+                        );
 
-                      form.setFieldValue("day", timeDifferenceDays);
-                    }}
-                  />
-                </Flex>
-              </Grid.Col>
-              <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
-                <Flex
-                  className="justify-start space-x-2"
-                  align="baseline"
-                >
-                  <NumberInput
-                    label="Light hours"
-                    description="Light/ day (h)"
-                    withAsterisk
-                    w={142}
-                    min={0}
-                    max={24}
-                    {...form.getInputProps("lightHoursPerDay")}
-                    icon={<IconBulb size="1.2rem" />}
-                  />
-                  <Select
-                    label="Grow stage"
-                    description="Actual grow stage"
-                    data={Object.keys(GrowStage).map((key) => ({
-                      value: key,
-                      label: GrowStage[key as keyof typeof GrowStage],
-                    }))}
-                    withAsterisk
-                    {...form.getInputProps("growStage")}
-                    className="w-full"
-                    icon={<IconPlant size="1.2rem" />}
-                  />
-                </Flex>
-              </Grid.Col>
-            </Grid>
-          </Box>
-          <TextInput
-            withAsterisk
-            label="Titel for this update"
-            placeholder="Titel of this Update"
-            {...form.getInputProps("title")}
-          />
-          <TextInput hidden {...form.getInputProps("content")} />
+                        form.setFieldValue("day", timeDifferenceDays);
+                      }}
+                    />
+                  </Flex>
+                </Grid.Col>
+                <Grid.Col xs={12} sm={6} md={6} lg={6} xl={6}>
+                  <Flex
+                    className="justify-start space-x-2"
+                    align="baseline"
+                  >
+                    <NumberInput
+                      label="Light hours"
+                      description="Light/ day (h)"
+                      withAsterisk
+                      w={142}
+                      min={0}
+                      max={24}
+                      {...form.getInputProps("lightHoursPerDay")}
+                      icon={<IconBulb size="1.2rem" />}
+                    />
+                    <Select
+                      label="Grow stage"
+                      description="Actual grow stage"
+                      data={Object.keys(GrowStage).map((key) => ({
+                        value: key,
+                        label: GrowStage[key as keyof typeof GrowStage],
+                      }))}
+                      withAsterisk
+                      {...form.getInputProps("growStage")}
+                      className="w-full"
+                      icon={<IconPlant size="1.2rem" />}
+                    />
+                  </Flex>
+                </Grid.Col>
+              </Grid>
+            </Box>
+            <TextInput
+              withAsterisk
+              label="Titel for this update"
+              placeholder="Titel of this Update"
+              {...form.getInputProps("title")}
+            />
+            <Input hidden {...form.getInputProps("content")} />
+            <Box fz={"sm"}>
+              Text<sup className="ml-1 text-red-600">*</sup>
+            </Box>
+            <RichTextEditor mt={-10} editor={editor}>
+              <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Bold />
+                  <RichTextEditor.Italic />
+                  <RichTextEditor.Underline />
+                  <RichTextEditor.Strikethrough />
+                  <RichTextEditor.ClearFormatting />
+                  <RichTextEditor.Highlight />
+                  <RichTextEditor.Code />
+                </RichTextEditor.ControlsGroup>
 
-          <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar sticky stickyOffset={60}>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-                <RichTextEditor.Highlight />
-                <RichTextEditor.Code />
-              </RichTextEditor.ControlsGroup>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.H1 />
+                  <RichTextEditor.H2 />
+                  <RichTextEditor.H3 />
+                  <RichTextEditor.H4 />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Blockquote />
+                  <RichTextEditor.Hr />
+                  <RichTextEditor.BulletList />
+                  <RichTextEditor.OrderedList />
+                  <RichTextEditor.Subscript />
+                  <RichTextEditor.Superscript />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-                <RichTextEditor.Subscript />
-                <RichTextEditor.Superscript />
-              </RichTextEditor.ControlsGroup>
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.Link />
+                  <RichTextEditor.Unlink />
+                </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.AlignLeft />
-                <RichTextEditor.AlignCenter />
-                {/* 
+                <RichTextEditor.ControlsGroup>
+                  <RichTextEditor.AlignLeft />
+                  <RichTextEditor.AlignCenter />
+                  {/* 
                 <RichTextEditor.AlignJustify/>
                 <RichTextEditor.AlignRight/> */}
-              </RichTextEditor.ControlsGroup>
-            </RichTextEditor.Toolbar>
+                </RichTextEditor.ControlsGroup>
+              </RichTextEditor.Toolbar>
 
-            <RichTextEditor.Content />
-          </RichTextEditor>
-          <ImageUploader
-            report={report}
-            cloudUrls={post?.images.map((image) => image.cloudUrl)}
-            setImageIds={setImageIds}
-          />
+              <RichTextEditor.Content />
+            </RichTextEditor>
+            <ImageUploader
+              report={report}
+              cloudUrls={post?.images.map((image) => image.cloudUrl)}
+              setImageIds={setImageIds}
+            />
 
-          <Group position="right" mt="xl">
-            <Button w={180} variant="outline" type="submit">
-              Update Grow 🪴
-            </Button>
-          </Group>
+            <Group position="right" mt="xl">
+              <Button w={180} variant="outline" type="submit">
+                Update your Grow 🪴
+              </Button>
+            </Group>
+          </Box>
         </form>
       </Paper>
 

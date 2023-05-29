@@ -1,9 +1,8 @@
-import { Box, Container, Title, useMantineTheme } from "@mantine/core";
+import { Container, Title, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconCalendarOff } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import { convertDatesToISO } from "~/helpers/Intl.DateTimeFormat";
 
 import { useState } from "react";
 
@@ -15,16 +14,11 @@ import type {
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-import { ImagePreview } from "~/components/Atom/ImagePreview";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
-import ReportDebugFooter from "~/components/Report/DebugFooter";
 import { ReportHeader } from "~/components/Report/Header";
 
 import { prisma } from "~/server/db";
-
-import { Environment } from "~/types";
-import { type IsoReportWithPostsFromDb } from "~/types";
 
 /**
  * getStaticProps
@@ -63,7 +57,6 @@ export async function getStaticProps(
         },
       },
       likes: {
-        // Include the Like relation and select the users who liked the report
         include: {
           user: {
             select: {
@@ -75,6 +68,9 @@ export async function getStaticProps(
         },
       },
       posts: {
+        orderBy: {
+          date: "asc",
+        },
         include: {
           author: {
             select: { id: true, name: true, image: true },
@@ -86,9 +82,7 @@ export async function getStaticProps(
               cloudUrl: true,
             },
           },
-          comments: true,
           likes: {
-            // Include the Like relation and select the users who liked the report
             include: {
               user: {
                 select: {
@@ -99,6 +93,7 @@ export async function getStaticProps(
               },
             },
           },
+          comments: true,
         },
       },
     },
@@ -106,19 +101,27 @@ export async function getStaticProps(
       id: reportId,
     },
   });
-
+  // Report not found, handle the error accordingly (e.g., redirect to an error page)
   if (!reportFromDb) {
-    // Report not found, handle the error accordingly (e.g., redirect to an error page)
     return {
       notFound: true,
     };
   }
-
   // Convert all Dates to IsoStrings
+  const newestPostDate = reportFromDb?.posts.reduce(
+    (prevDate, post) => {
+      const postDate = new Date(post.date);
+      return postDate > prevDate ? postDate : prevDate;
+    },
+    new Date(reportFromDb.createdAt)
+  );
   const isoReportFromDb = {
     ...reportFromDb,
     createdAt: reportFromDb?.createdAt.toISOString(),
-    updatedAt: reportFromDb?.updatedAt.toISOString(),
+    updatedAt: newestPostDate
+      ? newestPostDate.toISOString()
+      : reportFromDb?.updatedAt.toISOString(),
+
     likes: reportFromDb?.likes.map(
       ({ id, createdAt, updatedAt, user }) => ({
         id,
@@ -129,41 +132,43 @@ export async function getStaticProps(
       })
     ),
 
-    posts: (reportFromDb?.posts || []).map(
-      ({ date, likes, createdAt, updatedAt, ...post }) => {
-        const postDate = new Date(date);
-        const reportCreatedAt = new Date(reportFromDb?.createdAt);
-        const timeDifference =
-          postDate.getTime() - reportCreatedAt.getTime();
-        const growDay = Math.floor(
-          timeDifference / (1000 * 60 * 60 * 24) + 1
-        );
+    posts: (reportFromDb?.posts || []).map((post) => {
+      const postDate = post.date ? new Date(post.date) : null;
+      const reportCreatedAt = reportFromDb?.createdAt
+        ? new Date(reportFromDb.createdAt)
+        : null;
+      const timeDifference =
+        postDate && reportCreatedAt
+          ? postDate.getTime() - reportCreatedAt.getTime()
+          : 0;
+      const growDay = Math.floor(
+        timeDifference / (1000 * 60 * 60 * 24) + 1
+      );
 
-        const isoLikes = likes.map(
-          ({ id, createdAt, updatedAt, user }) => ({
-            id,
-            userId: user.id,
-            name: user.name,
-            createdAt: createdAt.toISOString(),
-            updatedAt: updatedAt.toISOString(),
-          })
-        );
+      const isoLikes = post.likes.map(
+        ({ id, createdAt, updatedAt, user }) => ({
+          id,
+          userId: user.id,
+          name: user.name,
+          createdAt: createdAt.toISOString(),
+          updatedAt: updatedAt.toISOString(),
+        })
+      );
 
-        const isoComments = post.comments.map((comment) => ({
-          ...comment,
-          createdAt: comment.createdAt.toISOString(),
-          updatedAt: comment.updatedAt.toISOString(),
-        }));
+      const isoComments = post.comments.map((comment) => ({
+        ...comment,
+        createdAt: comment.createdAt.toISOString(),
+        updatedAt: comment.updatedAt.toISOString(),
+      }));
 
-        return {
-          date: postDate.toISOString(),
-          likes: isoLikes,
-          ...post,
-          comments: isoComments,
-          growDay,
-        };
-      }
-    ),
+      return {
+        ...post,
+        date: postDate?.toISOString() as string,
+        likes: isoLikes,
+        comments: isoComments,
+        growDay,
+      };
+    }),
     strains: reportFromDb?.strains || [],
   };
 

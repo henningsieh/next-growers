@@ -287,7 +287,7 @@ export default function IsoReportCard({
                   c="dimmed"
                 >
                   {sanatizeDateString(
-                    isoReport.updatedAt,
+                    isoReport.updatedAt as string,
                     router.locale === Locale.DE ? Locale.DE : Locale.EN
                   )}
                 </Text>

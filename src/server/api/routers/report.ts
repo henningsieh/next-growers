@@ -175,10 +175,19 @@ export const reportRouter = createTRPCRouter({
               })
             );
 
+            // Find the newest and youngest post dates
+            const newestPostDate = new Date(
+              Math.max(
+                ...isoPosts.map((post) => new Date(post.date).getTime())
+              )
+            );
+
             return {
               ...reportFromDb,
               createdAt: reportFromDb?.createdAt.toISOString(),
-              updatedAt: reportFromDb?.updatedAt.toISOString(),
+              updatedAt: newestPostDate
+                ? newestPostDate.toISOString()
+                : reportFromDb?.updatedAt.toISOString(),
               likes: isoLikes,
               posts: isoPosts,
             };
@@ -223,6 +232,7 @@ export const reportRouter = createTRPCRouter({
               },
             ],
             strains: {
+              //FIXME: workaround for hiding "unready" (without strains) reports
               some: {
                 name: {
                   contains: strain,
@@ -230,6 +240,17 @@ export const reportRouter = createTRPCRouter({
                 },
               },
             },
+            /* 
+            strains: strain
+              ? {
+                  some: {
+                    name: {
+                      contains: strain,
+                      mode: "insensitive",
+                    },
+                  },
+                }
+              : {}, */
           },
           orderBy: {
             [orderBy]: desc ? "desc" : "asc",
@@ -255,7 +276,6 @@ export const reportRouter = createTRPCRouter({
               },
             },
             likes: {
-              // Include the Like relation and select the users who liked the report
               include: {
                 user: {
                   select: {
@@ -281,9 +301,7 @@ export const reportRouter = createTRPCRouter({
                     cloudUrl: true,
                   },
                 },
-
                 likes: {
-                  // Include the Like relation and select the users who liked the report
                   include: {
                     user: {
                       select: {
@@ -300,56 +318,79 @@ export const reportRouter = createTRPCRouter({
           },
         })
         .then((reportsFromDb) => {
-          // Convert all Dates to IsoStrings
           const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
-            const isoPosts = (reportFromDb?.posts || []).map((post) => {
-              const postDate = new Date(post.date);
-              const reportCreatedAt = new Date(reportFromDb.createdAt);
-              const timeDifference =
-                postDate.getTime() - reportCreatedAt.getTime();
-              const growDay = Math.floor(
-                timeDifference / (1000 * 60 * 60 * 24)
-              );
+            const isoPosts =
+              (reportFromDb.posts || []).length > 0
+                ? reportFromDb.posts.map((post) => {
+                    const postDate = new Date(post.date).toISOString();
+                    const reportCreatedAt =
+                      reportFromDb.createdAt.toISOString();
+                    const timeDifference =
+                      new Date(postDate).getTime() -
+                      new Date(reportCreatedAt).getTime();
+                    const growDay = Math.floor(
+                      timeDifference / (1000 * 60 * 60 * 24)
+                    );
 
-              const isoLikes = post.likes.map(
-                ({ id, createdAt, updatedAt, user }) => ({
-                  id,
-                  userId: user.id,
-                  name: user.name,
-                  createdAt: createdAt.toISOString(),
-                  updatedAt: updatedAt.toISOString(),
-                })
-              );
+                    const isoLikes = post.likes.map(
+                      ({ id, createdAt, updatedAt, user }) => ({
+                        id,
+                        userId: user.id,
+                        name: user.name,
+                        createdAt: new Date(createdAt).toISOString(),
+                        updatedAt: new Date(updatedAt).toISOString(),
+                      })
+                    );
 
-              const isoComments = post.comments.map((comment) => ({
-                ...comment,
-                createdAt: comment.createdAt.toISOString(),
-                updatedAt: comment.updatedAt.toISOString(),
-              }));
+                    const isoComments = post.comments.map(
+                      (comment) => ({
+                        ...comment,
+                        createdAt: new Date(
+                          comment.createdAt
+                        ).toISOString(),
+                        updatedAt: new Date(
+                          comment.updatedAt
+                        ).toISOString(),
+                      })
+                    );
 
-              return {
-                ...post,
-                date: postDate.toISOString(),
-                likes: isoLikes,
-                comments: isoComments,
-                growDay,
-              };
-            });
+                    return {
+                      ...post,
+                      date: postDate,
+                      likes: isoLikes,
+                      comments: isoComments,
+                      growDay,
+                    };
+                  })
+                : [];
 
             const isoLikes = reportFromDb.likes.map(
               ({ id, createdAt, updatedAt, user }) => ({
                 id,
                 userId: user.id,
                 name: user.name,
-                createdAt: createdAt.toISOString(),
-                updatedAt: updatedAt.toISOString(),
+                createdAt: new Date(createdAt).toISOString(),
+                updatedAt: new Date(updatedAt).toISOString(),
               })
             );
 
+            const newestPostDate =
+              isoPosts.length > 0
+                ? new Date(
+                    Math.max(
+                      ...isoPosts.map((post) =>
+                        new Date(post.date).getTime()
+                      )
+                    )
+                  )
+                : null;
+
             return {
               ...reportFromDb,
-              createdAt: reportFromDb?.createdAt.toISOString(),
-              updatedAt: reportFromDb?.updatedAt.toISOString(),
+              updatedAt: newestPostDate
+                ? newestPostDate.toISOString()
+                : reportFromDb.updatedAt.toISOString(),
+              createdAt: reportFromDb.createdAt.toISOString(),
               likes: isoLikes,
               posts: isoPosts,
             };
@@ -434,10 +475,20 @@ export const reportRouter = createTRPCRouter({
         },
       });
       // Convert all Dates to IsoStrings
+      const newestPostDate = reportFromDb?.posts.reduce(
+        (prevDate, post) => {
+          const postDate = new Date(post.date);
+          return postDate > prevDate ? postDate : prevDate;
+        },
+        new Date(reportFromDb.createdAt)
+      );
+
       const isoReportFromDb = {
         ...reportFromDb,
         createdAt: reportFromDb?.createdAt.toISOString() as string,
-        updatedAt: reportFromDb?.updatedAt.toISOString() as string,
+        updatedAt: newestPostDate
+          ? newestPostDate.toISOString()
+          : reportFromDb?.updatedAt.toISOString(),
         likes: reportFromDb?.likes.map(
           ({ id, createdAt, updatedAt, user }) => ({
             id,
@@ -448,44 +499,43 @@ export const reportRouter = createTRPCRouter({
           })
         ),
 
-        posts: (reportFromDb?.posts || []).map(
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          ({ date, likes, createdAt, updatedAt, ...post }) => {
-            const postDate = new Date(date);
-            const reportCreatedAt = new Date(
-              reportFromDb?.createdAt as Date
-            );
-            const timeDifference =
-              postDate.getTime() - reportCreatedAt.getTime();
-            const growDay = Math.floor(
-              timeDifference / (1000 * 60 * 60 * 24) + 1
-            );
+        posts: (reportFromDb?.posts || []).map((post) => {
+          const postDate = post.date ? new Date(post.date) : null;
+          const reportCreatedAt = reportFromDb?.createdAt
+            ? new Date(reportFromDb.createdAt)
+            : null;
+          const timeDifference =
+            postDate && reportCreatedAt
+              ? postDate.getTime() - reportCreatedAt.getTime()
+              : 0;
+          const growDay = Math.floor(
+            timeDifference / (1000 * 60 * 60 * 24) + 1
+          );
 
-            const isoLikes = likes.map(
-              ({ id, createdAt, updatedAt, user }) => ({
-                id,
-                userId: user.id,
-                name: user.name,
-                createdAt: createdAt.toISOString(),
-                updatedAt: updatedAt.toISOString(),
-              })
-            );
+          const isoLikes = post.likes.map(
+            ({ id, createdAt, updatedAt, user }) => ({
+              id,
+              userId: user.id,
+              name: user.name,
+              createdAt: createdAt.toISOString(),
+              updatedAt: updatedAt.toISOString(),
+            })
+          );
 
-            const isoComments = post.comments.map((comment) => ({
-              ...comment,
-              createdAt: comment.createdAt.toISOString(),
-              updatedAt: comment.updatedAt.toISOString(),
-            }));
+          const isoComments = post.comments.map((comment) => ({
+            ...comment,
+            createdAt: comment.createdAt.toISOString(),
+            updatedAt: comment.updatedAt.toISOString(),
+          }));
 
-            return {
-              date: postDate.toISOString(),
-              likes: isoLikes,
-              ...post,
-              comments: isoComments,
-              growDay,
-            };
-          }
-        ),
+          return {
+            ...post,
+            date: postDate?.toISOString() as string,
+            likes: isoLikes,
+            comments: isoComments,
+            growDay,
+          };
+        }),
         strains: reportFromDb?.strains || [],
       };
 
@@ -496,7 +546,7 @@ export const reportRouter = createTRPCRouter({
    * Get Reports by foreign AuthourId
    * @Input: userId: String
    */
-  getReportsByAuthorId: publicProcedure
+  /*   getReportsByAuthorId: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
       const reports = await ctx.prisma.report.findMany({
@@ -533,7 +583,7 @@ export const reportRouter = createTRPCRouter({
           updatedAt,
         })
       );
-    }),
+    }), */
 
   deleteOwnReport: protectedProcedure
     .input(z.string())

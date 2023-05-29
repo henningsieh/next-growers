@@ -83,7 +83,9 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                     </Group>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <Title order={3}>Edit Update</Title>
+                    <Title order={3}>
+                      {t("common:editpost-headline")}{" "}
+                    </Title>
 
                     <AddPost isoReport={isoReport} post={post} />
                   </Accordion.Panel>

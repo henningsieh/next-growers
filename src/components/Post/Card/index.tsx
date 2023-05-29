@@ -165,7 +165,7 @@ export function PostCard(props: PostCardProps) {
     },
     {
       label: sanatizeDateString(
-        report?.updatedAt,
+        report?.updatedAt as string,
         router.locale === Locale.DE ? Locale.DE : Locale.EN
       ),
       icon: IconClock,

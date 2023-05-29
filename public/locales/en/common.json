@@ -15,11 +15,12 @@
   "editreport-headline": "Edit Grow",
   "report-edit": "Edit",
   "report-delete": "Delete",
+  "post-growday": "Grow day",
+  "post-updatedate": "Date of this Update",
+  "post-lighthperday": "Light (h) / Day",
+  "editallpost-headline": "All Updates",
   "addpost-headline": "Create Update",
   "addpost-growdaydescription": "Start is day 0",
   "addpost-updatedatedescription": "Date of this Update",
-  "editallpost-headline": "All Updates",
-  "post-growday": "Grow day",
-  "post-updatedate": "Date of this Update",
-  "post-lighthperday": "Light (h) / Day"
+  "editpost-headline": "Edit Update"
 }
