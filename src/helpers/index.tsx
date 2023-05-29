@@ -9,7 +9,6 @@ import type {
   ImageUploadResponse,
   Locale,
   Notification,
-  Report,
   SplitObject,
 } from "~/types";
 
@@ -260,7 +259,8 @@ export const handleDrop = async (
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function stringifyReportData(report: any): Report {
+/* 
+export function stringifyReportData(report: any): IsoReportWithPostsFromDb {
   return {
     id: report?.id,
     imagePublicId: report?.image?.publicId,
@@ -277,7 +277,7 @@ export function stringifyReportData(report: any): Report {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     updatedAt: report?.updatedAt?.toISOString(),
   };
-}
+} */
 
 export function sanatizeDateString(
   originalDateString: string,

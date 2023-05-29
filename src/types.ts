@@ -7,17 +7,46 @@ import type { User } from "next-auth";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
-type getAllReportsOutput = RouterOutput["reports"]["getAllReports"];
-export type Reports = getAllReportsOutput;
-export type Report = getAllReportsOutput[number];
+type GetIsoReporstWithPostsFromDbOutput =
+  RouterOutput["reports"]["getIsoReportsWithPostsFromDb"];
+export type IsoReportsWithPostsFromDb =
+  GetIsoReportWithPostsFromDbOutput;
+
+type GetIsoReportWithPostsFromDbOutput =
+  RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
+
+export type IsoReportWithPostsFromDb =
+  GetIsoReportWithPostsFromDbOutput;
+
+export interface EditFormProps {
+  report: IsoReportWithPostsFromDb;
+  strains: Strains;
+  user: User;
+}
+export interface EditFormProps {
+  report: IsoReportWithPostsFromDb;
+  strains: Strains;
+  user: User;
+}
+/* 
+export interface ReportCardProps extends FakeCardBadgeProps {
+  report: Report;
+  procedure: "all" | "own";
+
+  setSearchString: Dispatch<SetStateAction<string>>;
+} */
+
+export interface IsoReportCardProps extends FakeCardBadgeProps {
+  report: IsoReportWithPostsFromDb;
+  procedure: "all" | "own";
+
+  setSearchString: Dispatch<SetStateAction<string>>;
+}
 
 type getPostsByReportIdOutput =
   RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
-
-export type IsoReportWithPostsFromDb =
-  RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 
 export type PostDbInput = {
   date: Date;
@@ -42,12 +71,6 @@ export type Strain = getAllStrainsOutput[number];
 type getLikesByItemIdOutput = RouterOutput["like"]["getLikesByItemId"];
 export type Likes = getLikesByItemIdOutput;
 export type Like = getLikesByItemIdOutput[number];
-
-export interface EditFormProps {
-  report: IsoReportWithPostsFromDb;
-  strains: Strains;
-  user: User;
-}
 
 export interface ImageUploadResponse {
   success: boolean;
@@ -78,20 +101,6 @@ export interface FakeCardBadgeProps {
     emoji: string;
     label: string;
   }[];
-}
-
-export interface ReportCardProps extends FakeCardBadgeProps {
-  report: Report;
-  procedure: "all" | "own";
-
-  setSearchString: Dispatch<SetStateAction<string>>;
-}
-
-export interface IsoReportCardProps extends FakeCardBadgeProps {
-  report: IsoReportWithPostsFromDb;
-  procedure: "all" | "own";
-
-  setSearchString: Dispatch<SetStateAction<string>>;
 }
 
 export interface SplitObject {

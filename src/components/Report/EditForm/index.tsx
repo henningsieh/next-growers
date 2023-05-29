@@ -119,8 +119,7 @@ export function ProtectedEditForm(props: EditFormProps) {
         // Navigate to the new report page
         // void router.push(`/grow-report/${savedReport.id}`);
         await trpc.reports.getIsoReportWithPostsFromDb.invalidate();
-        await trpc.reports.getAllReports.invalidate();
-        trpc.reports.getAllReports.getData();
+        trpc.reports.getIsoReportWithPostsFromDb.getData();
       },
       // Always refetch after error or success:
       onSettled: () => {
