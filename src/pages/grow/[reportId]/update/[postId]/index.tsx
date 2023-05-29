@@ -369,36 +369,6 @@ export default function PublicReportPost(
               },
             ]}
           />
-
-          {/* 
-          <ImagePreview
-            authorName={
-              staticReportFromProps.author?.name as string
-            }
-            publicLink={`/grow/${staticReportFromProps.id}`}
-            imageUrl={
-              staticReportFromProps.image?.cloudUrl as string
-            }
-            title={""}
-            // title={staticReportFromProps.title as string}
-            description={staticReportFromProps.description}
-            authorImageUrl={
-              staticReportFromProps.author?.image as string
-            }
-            views={0}
-            comments={0}
-          /> */}
-          {/* // Grow Parameter: Environment, ... */}
-          <Box className="flex items-center justify-between pt-2">
-            <Title order={5} className="inline">
-              {
-                Environment[
-                  staticReportFromProps.environment as keyof typeof Environment
-                ]
-              }
-            </Title>
-          </Box>
-
           {/* // Posts Date Picker */}
           <PostsDatePicker
             defaultDate={

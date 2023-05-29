@@ -344,18 +344,6 @@ export default function PublicReport(
               },
             ]}
           />
-
-          {/* // Grow Parameter: Environment, ... */}
-          <Box className="flex items-center justify-between pt-2">
-            <Title order={5} className="inline">
-              {
-                Environment[
-                  staticReportFromProps.environment as keyof typeof Environment
-                ]
-              }
-            </Title>
-          </Box>
-
           {/* // Posts Date Picker */}
           <PostsDatePicker
             defaultDate={

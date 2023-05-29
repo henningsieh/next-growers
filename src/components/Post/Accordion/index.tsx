@@ -5,6 +5,7 @@ import {
   Card,
   Center,
   Container,
+  Flex,
   Group,
   Paper,
   Title,
@@ -32,7 +33,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
 
   return (
     <div>
-      <Container p={0}>
+      <Container p={0} className="flex flex-col space-y-2">
         <Title order={2}> {t("common:editallpost-headline")} </Title>
         <Paper withBorder>
           <Accordion
@@ -45,7 +46,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                 <Accordion.Item key={post.id} value={post.id}>
                   <Accordion.Control px={"xs"}>
                     <Group position="apart">
-                      <Card withBorder w={92} m={0} p={4}>
+                      <Card withBorder w={80} m={0} p={4}>
                         <Center>
                           <Box fz={"sm"} m={4}>
                             {"Day "}
@@ -62,10 +63,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                           )}
                         </Box> */}
                       </Card>
-                      <Box>
-                        <Title order={5}>{post.title}</Title>
-                      </Box>
-                      <Box fz={"xs"} mb={0} pt={0}>
+                      <Box fz={"md"} mb={0} pt={0}>
                         {sanatizeDateString(
                           post.date,
                           router.locale === Locale.DE
@@ -73,6 +71,15 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                             : Locale.EN
                         )}
                       </Box>
+                      {/* 
+                      <Box fz={"xs"} mb={0} pt={0}>
+                        {sanatizeDateString(
+                          post.date,
+                          router.locale === Locale.DE
+                            ? Locale.DE
+                            : Locale.EN
+                        )}
+                      </Box> */}
                     </Group>
                   </Accordion.Control>
                   <Accordion.Panel>

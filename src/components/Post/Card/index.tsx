@@ -236,22 +236,22 @@ export function PostCard(props: PostCardProps) {
           value: postDayOfGrow,
         },
         {
-          title: "Grow Stage",
-          value: formatLabel(post?.growStage as string),
-        },
-        {
           title: t("common:post-lighthperday"),
           value: post?.lightHoursPerDay,
         },
+        {
+          title: "Grow Stage",
+          value: formatLabel(post?.growStage as string),
+        },
       ],
     };
-    const postData = postBasicData.details.map((basicData) => (
-      <div key={basicData.title}>
+    const postData = postBasicData.details.map((postBasicData) => (
+      <div key={postBasicData.title}>
         <Text size="xs" color="dimmed" align="center">
-          {basicData.title}
+          {postBasicData.title}
         </Text>
         <Text weight={500} size="sm" align="center">
-          {basicData.value}
+          {postBasicData.value}
         </Text>
       </div>
     ));
@@ -277,10 +277,6 @@ export function PostCard(props: PostCardProps) {
 
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
-
-          <Card.Section className={classes.section}>
-            <Group position="apart"> {postData} </Group>
-          </Card.Section>
           {/* 
         <Card.Section className={classes.section} mt="md">
           <Text fz="sm" c="dimmed" className={classes.label}>
@@ -294,7 +290,7 @@ export function PostCard(props: PostCardProps) {
    */}
           <Text fz="sm" c="dimmed" mt="sm">
             <Paper
-              fz={18}
+              fz={16}
               withBorder
               p={theme.spacing.xs}
               mb={theme.spacing.sm}
@@ -303,6 +299,11 @@ export function PostCard(props: PostCardProps) {
               }}
             />
           </Text>
+
+          <Card.Section className={classes.section}>
+            <Group position="apart"> {postData} </Group>
+          </Card.Section>
+
           {/* 
         <div className="importedhtmlcontent">
           <div dangerouslySetInnerHTML={{ __html: postHTMLContent }}/>

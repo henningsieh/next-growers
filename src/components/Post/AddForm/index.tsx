@@ -6,6 +6,7 @@ import {
   Grid,
   Group,
   NumberInput,
+  Paper,
   Select,
   TextInput,
   Title,
@@ -189,11 +190,14 @@ const AddPost = (props: AddPostProps) => {
   };
 
   return (
-    <Container p={0} mt="lg" size="md">
-      {/* <Paper withBorder> */}
-      <Box mt="sm">
+    <Container
+      p={0}
+      size="md"
+      className="flex w-full flex-col space-y-2"
+    >
+      <Paper p="sm" withBorder>
         <form
-          className="space-y-4"
+          // className="space-y-4"
           onSubmit={form.onSubmit((values) => {
             handleSubmit(values);
           }, handleErrors)}
@@ -369,8 +373,7 @@ const AddPost = (props: AddPostProps) => {
             </Button>
           </Group>
         </form>
-      </Box>
-      {/* </Paper> */}
+      </Paper>
 
       {/* <ReportDebugFooter report={report} /> */}
     </Container>

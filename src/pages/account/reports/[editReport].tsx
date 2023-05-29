@@ -59,13 +59,14 @@ export async function getServerSideProps(
  * @param props: { trpcState: DehydratedState, id: string }
  * @returns HTML Component
  */
-const EditReportDetails: NextPage = () => {
-  const pageTitle = "Edit Grow Details";
 
+const EditReportDetails: NextPage = () => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
   const id = router.query.editReport as string;
+
+  const pageTitle = t("common:editreport-headline");
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -125,17 +126,11 @@ const EditReportDetails: NextPage = () => {
               <Space h="xl" />
 
               {/* // AddPost Component */}
-              <Container
-                size="md"
-                pt="xl"
-                px={0}
-                className="flex w-full flex-col space-y-1"
-              >
-                <Title order={2}>
-                  {" "}
-                  {t("common:addpost-headline")}{" "}
-                </Title>
-              </Container>
+
+              <Title order={2}>{t("common:addpost-headline")}</Title>
+
+              <Space h="xs" />
+
               <AddPost
                 isoReport={report as IsoReportWithPostsFromDb}
                 post={null}
