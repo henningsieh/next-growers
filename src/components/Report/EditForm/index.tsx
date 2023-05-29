@@ -28,7 +28,7 @@ import {
 import { handleDrop } from "~/helpers";
 import { InputEditReport } from "~/helpers/inputValidation";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
@@ -69,7 +69,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function EditForm(props: EditFormProps) {
+export function ProtectedEditForm(props: EditFormProps) {
   const {
     report: reportfromProps,
     strains: allStrains,
@@ -89,11 +89,15 @@ export function EditForm(props: EditFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [reportDescription, setReportDescription] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imageId, setImageId] = useState("");
+  const [imageId, setImageId] = useState(
+    reportfromProps.image?.id as string
+  );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imagePublicId, setImagePublicId] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [cloudUrl, setCloudUrl] = useState("");
+  const [cloudUrl, setCloudUrl] = useState(
+    reportfromProps.image?.cloudUrl as string
+  );
 
   const trpc = api.useContext();
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
@@ -130,6 +134,7 @@ export function EditForm(props: EditFormProps) {
     initialValues: {
       id: report?.id as string,
       title: report?.title as string,
+      imageId: imageId,
       description: report?.description as string,
       createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
       strains: report.strains.map((strain) => strain.id),
@@ -140,6 +145,7 @@ export function EditForm(props: EditFormProps) {
   const submitEditReportForm = (values: {
     id: string;
     title: string;
+    imageId: string;
     description: string;
     strains: string[];
     environment: keyof typeof Environment;
@@ -162,6 +168,13 @@ export function EditForm(props: EditFormProps) {
       toast.error(errors.environment as string);
     }
   };
+
+  // Update "imageId" state, if "imageId" form field value changes
+  useEffect(() => {
+    form.setFieldValue("imageId", imageId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageId]);
+
   const handleDropWrapper = (files: File[]): void => {
     // handleDrop calls the/api/upload endpoint
     setIsUploading(true);
@@ -176,6 +189,7 @@ export function EditForm(props: EditFormProps) {
       console.debug(error);
     });
   };
+
   return (
     <>
       {reportfromProps && (
@@ -185,7 +199,7 @@ export function EditForm(props: EditFormProps) {
           className="flex w-full flex-col space-y-4"
         >
           {/*// Upload Panel */}
-          {reportfromProps.image?.cloudUrl ? (
+          {cloudUrl ? (
             <>
               {/*// Image Preview */}
               <Box className="relative" px={0}>
@@ -203,7 +217,7 @@ export function EditForm(props: EditFormProps) {
                   </ActionIcon>
                 </Box>
                 <ImagePreview
-                  imageUrl={reportfromProps.image?.cloudUrl}
+                  imageUrl={cloudUrl}
                   title={form.values.title}
                   description={form.values.description}
                   publicLink={`/grow/${report.id as string}`}

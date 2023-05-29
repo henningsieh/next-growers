@@ -36,6 +36,7 @@ export const InputEditReport = z.object({
     .string()
     .min(8, { message: "Title should have at least 8 letters" })
     .max(32, { message: "Title should have max 32 letters" }),
+  imageId: z.string().min(1, { message: "Header image is missing" }),
   description: z
     .string()
     .min(12, {
@@ -100,25 +101,9 @@ export const InputCreatePostServer = z.object({
   date: z.date(),
   title: z.string().min(1),
   lightHoursPerDay: z.number().nullable(),
-  growStage: z.nativeEnum(GrowStage), // Use z.nativeEnum to accept the GrowStage enum type
+  growStage: z.enum(Object.keys(GrowStage) as [keyof typeof GrowStage]),
   content: z.string().min(1),
   reportId: z.string().min(1),
   authorId: z.string().min(1),
   images: z.array(z.string()),
 });
-/* 
-type InputCreatePostFormSchema = {
-  date: ZodEffects<ZodDate, Date, Date>;
-  day: ZodNumber;
-  title: ZodString;
-  content: ZodString;
-  lightHoursPerDay: ZodNullable<ZodNumber>;
-  growStage: ZodString;
-};
-
-// Create a new type by omitting the 'day' field
-export type InputCreatePostFormWithoutDay = Omit<
-  InputCreatePostFormSchema,
-  "day"
->;
- */

@@ -248,9 +248,11 @@ export const handleDrop = async (
 
         setIsUploading(false);
       } else {
-        throw new Error("File uploaded NOT successfully");
+        setIsUploading(false);
+        throw new Error("Server Error 500: upload failed");
       }
     } catch (error) {
+      setIsUploading(false);
       console.debug(error);
       throw new Error("Error uploading file");
     }

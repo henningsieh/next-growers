@@ -60,7 +60,6 @@ const prefillHTMLContent =
 
 const AddPost = (props: AddPostProps) => {
   const { isoReport: report, post } = props;
-  console.debug("addPost.post", post);
   const [imageIds, setImageIds] = useState<string[]>([]);
 
   const router = useRouter();
@@ -105,7 +104,6 @@ const AddPost = (props: AddPostProps) => {
       onError: (err, newReport, context) => {
         notifications.show(onlyOnePostPerDayAllowed);
         if (!context) return;
-        console.log(context);
       },
       onSuccess: async () => {
         toast.success("The update was saved to your report");
@@ -148,7 +146,7 @@ const AddPost = (props: AddPostProps) => {
       day: growDay, //FIXME: calculate GrowDay if prop post,
       title: post ? post.title : "",
       content: post ? post.content : prefillHTMLContent,
-      growStage: undefined,
+      growStage: post ? post.growStage : undefined,
       lightHoursPerDay: post ? (post.lightHoursPerDay as number) : 0,
       images: imageIds,
     },
@@ -159,7 +157,7 @@ const AddPost = (props: AddPostProps) => {
     day: number;
     title: string;
     content: string;
-    growStage: GrowStage | undefined;
+    growStage: keyof typeof GrowStage | undefined;
     lightHoursPerDay: number;
     images: string[];
   }) {
@@ -171,7 +169,7 @@ const AddPost = (props: AddPostProps) => {
     const savePost: PostDbInput = {
       ...restValues,
       images: imageIds,
-      growStage: restValues.growStage as GrowStage,
+      growStage: restValues.growStage as keyof typeof GrowStage,
       reportId: report.id as string,
       authorId: report.authorId as string,
     };
@@ -296,7 +294,7 @@ const AddPost = (props: AddPostProps) => {
                     description="Actual grow stage"
                     data={Object.keys(GrowStage).map((key) => ({
                       value: key,
-                      label: formatLabel(key),
+                      label: GrowStage[key as keyof typeof GrowStage],
                     }))}
                     withAsterisk
                     {...form.getInputProps("growStage")}

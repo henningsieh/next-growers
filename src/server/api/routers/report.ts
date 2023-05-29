@@ -639,16 +639,23 @@ export const reportRouter = createTRPCRouter({
       }
 
       // Update the report
-      const { strains, createdAt, ...reportData } = input;
+      const { strains, createdAt, imageId, ...reportData } = input;
       const data = {
         ...reportData,
         authorId: ctx.session.user.id,
         strains: {
           set: strains.map((strainId) => ({ id: strainId })),
         },
+        image: {
+          connect: {
+            id: imageId,
+          },
+        },
+
         createdAt: createdAt,
         // updatedAt: createdAt,
       };
+      console.debug(data);
       const report = await ctx.prisma.report.update({
         where: {
           id: input.id,

@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostsAccordion from "~/components/Post/Accordion";
 import AddPost from "~/components/Post/AddForm";
-import { EditForm } from "~/components/Report/EditForm";
+import { ProtectedEditForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
 
@@ -112,7 +112,7 @@ const EditReportDetails: NextPage = () => {
 
           {status === "authenticated" && !reportIsLoading && (
             <>
-              <EditForm
+              <ProtectedEditForm
                 report={report as IsoReportWithPostsFromDb}
                 strains={strains as Strains}
                 user={session.user}

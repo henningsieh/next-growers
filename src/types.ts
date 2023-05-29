@@ -22,7 +22,7 @@ export type IsoReportWithPostsFromDb =
 export type PostDbInput = {
   date: Date;
   title: string;
-  growStage: GrowStage;
+  growStage: keyof typeof GrowStage;
   lightHoursPerDay: number | null;
   images: string[];
   content: string;
@@ -100,10 +100,10 @@ export interface SplitObject {
 }
 
 export type NotificationEventMap =
-  | "LIKE_CREATED"
-  | "COMMENT_CREATED"
-  | "POST_CREATED"
-  | "REPORT_CREATED";
+  | "LIKE_CREATED" // TODO: NOTIFY item.author
+  | "COMMENT_CREATED" //TODO: NOTIFY report.author + comment.parent.author
+  | "POST_CREATED" //TODO: NOTIFY report.author + report.followers
+  | "REPORT_CREATED"; //TODO: NOTIFY user.followers
 
 export enum Locale {
   EN = "en",
@@ -111,9 +111,9 @@ export enum Locale {
 }
 
 export enum GrowStage {
-  SEEDLING_STAGE = "SEEDLING_STAGE",
-  VEGETATIVE_STAGE = "VEGETATIVE_STAGE",
-  FLOWERING_STAGE = "FLOWERING_STAGE",
+  SEEDLING_STAGE = "Seedling",
+  VEGETATIVE_STAGE = "Vegetative ",
+  FLOWERING_STAGE = "Flowering",
 }
 
 export enum Environment {
