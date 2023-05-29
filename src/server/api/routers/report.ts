@@ -158,6 +158,8 @@ export const reportRouter = createTRPCRouter({
 
               return {
                 ...post,
+                createdAt: post.createdAt.toISOString(),
+                updatedAt: post.createdAt.toISOString(),
                 date: postDate.toISOString(),
                 likes: isoLikes,
                 comments: isoComments,
@@ -356,6 +358,8 @@ export const reportRouter = createTRPCRouter({
 
                     return {
                       ...post,
+                      createdAt: post.createdAt.toISOString(),
+                      updatedAt: post.createdAt.toISOString(),
                       date: postDate,
                       likes: isoLikes,
                       comments: isoComments,
@@ -530,6 +534,8 @@ export const reportRouter = createTRPCRouter({
 
           return {
             ...post,
+            createdAt: post.createdAt.toISOString(),
+            updatedAt: post.createdAt.toISOString(),
             date: postDate?.toISOString() as string,
             likes: isoLikes,
             comments: isoComments,

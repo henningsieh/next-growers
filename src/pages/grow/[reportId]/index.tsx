@@ -130,9 +130,11 @@ export async function getStaticProps(
 
     posts: (reportFromDb?.posts || []).map((post) => {
       const postDate = post.date ? new Date(post.date) : null;
+
       const reportCreatedAt = reportFromDb?.createdAt
         ? new Date(reportFromDb.createdAt)
         : null;
+
       const timeDifference =
         postDate && reportCreatedAt
           ? postDate.getTime() - reportCreatedAt.getTime()
@@ -159,6 +161,8 @@ export async function getStaticProps(
 
       return {
         ...post,
+        createdAt: post.createdAt.toISOString(),
+        updatedAt: post.createdAt.toISOString(),
         date: postDate?.toISOString() as string,
         likes: isoLikes,
         comments: isoComments,
