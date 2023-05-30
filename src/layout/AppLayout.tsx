@@ -179,14 +179,14 @@ export default function HeaderMegaMenu({
         <ThemeIcon size={34} variant="default" radius="md">
           <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
         </ThemeIcon>
-        <div>
+        <Box>
           <Text size="sm" fw={500}>
             {item.title}
           </Text>
           <Text size="xs" color="dimmed">
             {item.description}
           </Text>
-        </div>
+        </Box>
       </Group>
     </UnstyledButton>
   ));
@@ -285,9 +285,9 @@ export default function HeaderMegaMenu({
                   {links}
                 </SimpleGrid>
 
-                <div className={classes.dropdownFooter}>
+                <Box className={classes.dropdownFooter}>
                   <Group position="apart">
-                    <div>
+                    <Box>
                       <Text fw={500} fz="sm">
                         Get started
                       </Text>
@@ -295,10 +295,10 @@ export default function HeaderMegaMenu({
                         Their food sources have decreased, and their
                         numbers
                       </Text>
-                    </div>
+                    </Box>
                     <Button variant="default">Get started</Button>
                   </Group>
-                </div>
+                </Box>
               </HoverCard.Dropdown>
             </HoverCard>
             {/* 
@@ -377,7 +377,7 @@ export default function HeaderMegaMenu({
         </ScrollArea>
       </Drawer>
 
-      <div className="mt-16 ">{children}</div>
+      <Box className="mt-16 ">{children}</Box>
     </>
   );
 }

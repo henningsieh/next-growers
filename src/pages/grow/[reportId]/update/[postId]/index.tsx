@@ -1,4 +1,4 @@
-import { Container, Title, useMantineTheme } from "@mantine/core";
+import { Box, Container, Title, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconCalendarOff } from "@tabler/icons-react";
@@ -340,12 +340,12 @@ export default function PublicReportPost(
         className="mb-8 flex w-full flex-col space-y-1"
       >
         {/* // Header with Title */}
-        <div className="flex items-center justify-between pt-2">
+        <Box className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {`${pageTitle}`}
           </Title>
-        </div>
+        </Box>
         {/* // Header End */}
         <Container
           size="xl"

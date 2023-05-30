@@ -122,7 +122,7 @@ const PublicAllGrows: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title and Sorting*/}
-        <div className="flex items-center justify-between pt-2">
+        <Box className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {t("common:reports-headline")}
@@ -135,7 +135,7 @@ const PublicAllGrows: NextPage = () => {
             />
           </Box>
           <SortingPanel {...sortingPanelProps} />
-        </div>
+        </Box>
         <Box className={classes.hiddenDesktop}>
           <SearchInput
             setSearchString={setSearchString}

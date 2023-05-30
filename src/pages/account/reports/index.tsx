@@ -145,7 +145,7 @@ const ProtectedAllGrows: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">
         {/* // Header with Title and Sorting */}
-        <div className="flex items-center justify-between pt-2">
+        <Box className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {pageTitle}
@@ -158,7 +158,7 @@ const ProtectedAllGrows: NextPage = () => {
             />
           </Box>
           <SortingPanel {...sortingPanelProps} />
-        </div>
+        </Box>
         <Box className={classes.hiddenDesktop}>
           <SearchInput
             value={searchString}
@@ -199,19 +199,19 @@ const ProtectedAllGrows: NextPage = () => {
                 })
               : // rendering "not found" only if isLoading is false
                 !isLoading && (
-                  <div className="hero bg-primary text-primary-content max-h-screen rounded-md">
-                    <div className="hero-content flex-col md:flex-row">
+                  <Box className="hero bg-primary text-primary-content max-h-screen rounded-md">
+                    <Box className="hero-content flex-col md:flex-row">
                       {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
-                      <div className="text-center">
+                      <Box className="text-center">
                         <h1 className="whitespace-nowrap text-3xl font-bold">
                           No Reports found! 😢
                         </h1>
                         <p className="error py-6 text-lg font-bold">
                           You haven&apos;t created any reports yet.
                         </p>
-                      </div>
-                    </div>
-                  </div>
+                      </Box>
+                    </Box>
+                  </Box>
                 )}
           </Grid>
         </Box>

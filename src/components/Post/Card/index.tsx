@@ -1,20 +1,18 @@
-import { Carousel } from "@mantine/carousel";
 import {
   Alert,
+  Box,
   Card,
   Center,
   Group,
-  Image,
   Paper,
   Space,
-  Stack,
   Text,
   createStyles,
   getStylesRef,
   rem,
   useMantineTheme,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+// import { useMediaQuery } from "@mantine/hooks";
 import {
   IconCalendar,
   IconClock,
@@ -132,13 +130,13 @@ export function PostCard(props: PostCardProps) {
 
   const { classes } = useStyles();
   const theme = useMantineTheme();
+  /* 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
   const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
-  /* 
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
-  */
+  */ /* 
   const getResponsiveImageHeight = xs
     ? 460
     : sm
@@ -148,7 +146,7 @@ export function PostCard(props: PostCardProps) {
     : lg
     ? 1180
     : 1390;
-
+ */
   const reportBasicData = [
     {
       label: sanatizeDateString(
@@ -241,31 +239,21 @@ export function PostCard(props: PostCardProps) {
     };
 
     const postData = postBasicData.details.map((postBasicData) => (
-      <div key={postBasicData.title}>
+      <Box key={postBasicData.title}>
         <Text size="xs" color="dimmed" align="center">
           {postBasicData.title}
         </Text>
         <Text weight={500} size="sm" align="center">
           {postBasicData.value}
         </Text>
-      </div>
+      </Box>
     ));
 
-    const postImagesSlides = postImages?.map((image) => (
-      <Carousel.Slide key={image.id}>
-        <Center>
-          <Image
-            alt=""
-            src={image.cloudUrl}
-            height={getResponsiveImageHeight / 1.6}
-          />
-        </Center>
-      </Carousel.Slide>
-    ));
-
-    const cloudUrls = postImages?.map((image) => image.cloudUrl) ?? [];
+    const postImagesPulbicUrls =
+      postImages?.map((image) => image.cloudUrl) ?? [];
 
     const commentHtmlProps = {
+      //FIXME: comment fake data
       postedAt: post?.date as string,
       body: '<p>I use <a href="https://heroku.com/" rel="noopener noreferrer" target="_blank">Heroku</a> to host my Node.js application, but MongoDB add-on appears to be too <strong>expensive</strong>. I consider switching to <a href="https://www.digitalocean.com/" rel="noopener noreferrer" target="_blank">Digital Ocean</a> VPS to save some cash.</p>',
       author: {
@@ -313,16 +301,16 @@ export function PostCard(props: PostCardProps) {
             <Group position="apart"> {postData} </Group>
           </Card.Section>
  */}
-          <ImagesSlider cloudUrls={cloudUrls} />
+          <ImagesSlider cloudUrls={postImagesPulbicUrls} />
 
           {/* 
-        <div className="importedhtmlcontent">
-          <div dangerouslySetInnerHTML={{ __html: postHTMLContent }}/>
-        </div> */}
+        <Box className="importedhtmlcontent">
+          <Box dangerouslySetInnerHTML={{ __html: postHTMLContent }}/>
+        </Box> */}
           {/*       
         <Card.Section className={classes.section} mt="md">
           <Group position="apart" mt="md">
-            <div>
+            <Box>
               <Text fz="xl" span fw={500} className={classes.price}>
                 397$
               </Text>
@@ -330,7 +318,7 @@ export function PostCard(props: PostCardProps) {
                 {" "}
                / night
               </Text>
-            </div>
+            </Box>
             <Button radius="md">Book now</Button>
           </Group>
         </Card.Section>
@@ -352,10 +340,10 @@ export function PostCard(props: PostCardProps) {
           </Card.Section>
            */}
         </Card>
-        <div>
+        <Box>
           <Text pb="xs">Comments</Text>
           <UserComment {...commentHtmlProps} />
-        </div>
+        </Box>
         <Space h="xs" />
 
         <Group position="apart" className={classes.section}>

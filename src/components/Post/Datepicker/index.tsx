@@ -1,4 +1,5 @@
 import {
+  Box,
   Group,
   Indicator,
   Paper,
@@ -55,7 +56,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
                 color={theme.colors.green[8]}
                 offset={-2}
               >
-                <div>{day}</div>
+                <Box>{day}</Box>
               </Indicator>
             );
           }} /* 

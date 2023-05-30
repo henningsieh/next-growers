@@ -32,7 +32,6 @@ export default function SortingPanel({
   return (
     <Box pt={3} m={0} className="inline-flex space-x-1">
       <Button
-        className="cursor-default"
         c="dimmed"
         variant="default"
         px={4}

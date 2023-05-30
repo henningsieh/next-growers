@@ -88,7 +88,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
             <IconCamera color={theme.colors.orange[7]} />
             <Title order={4}>Append images</Title>
           </Group>
-          <div>
+          <Box>
             <Box className="relative">
               <LoadingOverlay visible={isUploading} />
               <Box>
@@ -117,7 +117,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
               </Carousel>
                  */}
             </Box>
-          </div>
+          </Box>
           {/* 
           <Group position="right" mt="xl">
             <Button w={180} variant="outline" type="submit">

@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Group,
   Paper,
   Text,
@@ -9,7 +10,7 @@ import {
 } from "@mantine/core";
 import { sanatizeDateString } from "~/helpers";
 
-import { useTranslation } from "next-i18next";
+// import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import { Locale } from "~/types";
@@ -48,13 +49,13 @@ export function UserComment({
 }: CommentHtmlProps) {
   const { classes } = useStyles();
   const router = useRouter();
-  const { t } = useTranslation(router.locale);
+  // const { t } = useTranslation(router.locale);
 
   return (
     <Paper withBorder radius="md" className={classes.comment}>
       <Group>
         <Avatar src={author.image} alt={author.name} radius="xl" />
-        <div>
+        <Box>
           <Text fz="sm">{author.name}</Text>
           <Text fz="xs" c="dimmed">
             {sanatizeDateString(
@@ -63,10 +64,10 @@ export function UserComment({
               true
             )}
           </Text>
-        </div>
+        </Box>
       </Group>
       <TypographyStylesProvider className={classes.body}>
-        <div
+        <Box
           className={classes.content}
           dangerouslySetInnerHTML={{ __html: body }}
         />

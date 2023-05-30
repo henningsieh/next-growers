@@ -66,7 +66,7 @@ const EditReportDetails: NextPage = () => {
   const { t } = useTranslation(activeLocale);
   const id = router.query.editReport as string;
 
-  const pageTitle = t("common:editreport-headline");
+  const pageTitle = t("common:report-edit-headline");
 
   // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -97,12 +97,12 @@ const EditReportDetails: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <div className="flex items-center justify-between pt-2">
+        <Box className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
-        </div>
+        </Box>
         {/* // Header End */}
         <Box pos="relative">
           <LoadingOverlay

@@ -1,4 +1,5 @@
 import {
+  Box,
   Container,
   Overlay,
   Text,
@@ -82,7 +83,7 @@ export default function LandingCard() {
   const { t } = useTranslation(activeLocale);
 
   return (
-    <div className={classes.hero}>
+    <Box className={classes.hero}>
       <Overlay
         opacity={1}
         zIndex={0}
@@ -117,6 +118,6 @@ from-pink-600 via-red-600 to-orange-500 text-white"
       <a href="https://unsplash.com/de/fotos/--JxxyIUHnU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
         Unsplash
       </a>
-    </div>
+    </Box>
   );
 }

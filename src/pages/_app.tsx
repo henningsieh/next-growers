@@ -57,6 +57,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
               h5: { fontSize: "0.94rem" },
             },
           },
+          white: "#FAFAFA",
+          black: "#333333",
           primaryColor: "orange",
           breakpoints: {
             xs: "30em",
@@ -85,23 +87,23 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
             Button: {
               defaultProps: {
-                variant: "filled",
+                variant: "default",
               },
               styles: (theme) => ({
                 root: {
                   // overriding the tailwind overrides... 👀
-                  button: {},
+
                   color:
                     theme.colorScheme === "dark"
-                      ? theme.colors.gray[4]
-                      : theme.black,
+                      ? theme.colors.gray[5]
+                      : theme.colors.dark[5],
 
                   "&:hover": {
                     cursor: "default",
                     backgroundColor:
                       theme.colorScheme === "dark"
-                        ? theme.colors.orange[7]
-                        : theme.colors.orange[3],
+                        ? theme.colors.orange[8]
+                        : theme.colors.orange[5],
                   },
                 },
               }),

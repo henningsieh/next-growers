@@ -1,5 +1,6 @@
 import { Carousel } from "@mantine/carousel";
 import {
+  Box,
   Button,
   Paper,
   Text,
@@ -56,14 +57,14 @@ function Card({ image, title, category }: CardProps) {
       sx={{ backgroundImage: `url(${image})` }}
       className={classes.card}
     >
-      <div>
+      <Box>
         <Text className={classes.category} size="xs">
           {category}
         </Text>
         <Title order={3} className={classes.title}>
           {title}
         </Title>
-      </div>
+      </Box>
       <Button variant="white" color="dark">
         Read article
       </Button>

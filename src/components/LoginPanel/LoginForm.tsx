@@ -1,5 +1,6 @@
 import { GoogleButtonWithText } from "../Atom/GoogleButton";
 import EmailForm from "./EmailForm";
+import { Box } from "@mantine/core";
 import { InputLogin } from "~/helpers/inputValidation";
 
 import { useState } from "react";
@@ -73,11 +74,11 @@ export default function LoginForm() {
     <>
       <EmailForm />
 
-      <div className="my-3 flex items-center px-3">
+      <Box className="my-3 flex items-center px-3">
         <hr className="w-full border-slate-600" />
         <span className="mx-3 text-slate-500">or</span>
         <hr className="w-full border-slate-600" />
-      </div>
+      </Box>
 
       {/* Google In */}
       <form
@@ -87,9 +88,9 @@ export default function LoginForm() {
           void handleGoogleSignIn(e);
         }}
       >
-        <div className="grid gap-y-3">
+        <Box className="grid gap-y-3">
           <GoogleButtonWithText />
-        </div>
+        </Box>
       </form>
     </>
   );

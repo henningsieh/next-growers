@@ -135,7 +135,7 @@ export function ImagePreview({
         style={{ display: "block", width: "100%" }}
         // target="_blank"
       >
-        <div
+        <Box
           className={classes.image}
           style={{
             backgroundImage: `url(${imageUrl})`,
@@ -144,7 +144,7 @@ export function ImagePreview({
             backgroundSize: "cover",
           }}
         />
-        <div className={classes.overlay} />
+        <Box className={classes.overlay} />
 
         {/* Avatar */}
         <Box pos="absolute" className=" z-20 -ml-2 pt-6">
@@ -163,7 +163,7 @@ export function ImagePreview({
           </Blockquote>
         </Box>
 
-        <div className={classes.content}>
+        <Box className={classes.content}>
           {/* Title */}
           <Text size="lg" className={classes.title} weight={500}>
             {title}
@@ -200,7 +200,7 @@ export function ImagePreview({
           </Group>
 
           {/* Delete Button */}
-          {/*<div className={classes.deleteButtonWrapper}>
+          {/*<Box className={classes.deleteButtonWrapper}>
                      <button
             onClick={() => {
               alert("delete");
@@ -209,8 +209,8 @@ export function ImagePreview({
           >
             Delete Image
           </button>
-        </div> */}
-        </div>
+        </Box> */}
+        </Box>
       </Card>
     </Link>
   );

@@ -208,7 +208,7 @@ function Form({ user }: AddFormProps) {
           </>
         ) : (
           /* // Dropzone */
-          <div className={classes.wrapper}>
+          <Box className={classes.wrapper}>
             <LoadingOverlay
               visible={isUploading}
               transitionDuration={600}
@@ -227,7 +227,7 @@ function Form({ user }: AddFormProps) {
               accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
               maxSize={4.4 * 1024 ** 2} // trying to match the Vercel production environment post size limit which is about 4.5mb
             >
-              <div style={{ pointerEvents: "none" }}>
+              <Box style={{ pointerEvents: "none" }}>
                 <Group position="center">
                   {/* <Center> */}
                   <Dropzone.Accept>
@@ -275,9 +275,9 @@ function Form({ user }: AddFormProps) {
                   We can accept only one <i>.jpg/.png/.gif</i> file that
                   is less than 10mb in size.
                 </Text>
-              </div>
+              </Box>
             </Dropzone>
-          </div>
+          </Box>
         )}
 
         {/* // Report form */}
@@ -289,7 +289,7 @@ function Form({ user }: AddFormProps) {
             tRPCcreateReport(values);
           }, handleErrors)}
         >
-          {/* <div>form.values.title: {form.values.title}</div> */}
+          {/* <Box>form.values.title: {form.values.title}</Box> */}
 
           <Input
             hidden

@@ -229,7 +229,7 @@ export function ProtectedEditForm(props: EditFormProps) {
             </>
           ) : (
             /*// Dropzone */
-            <div className={classes.wrapper}>
+            <Box className={classes.wrapper}>
               <LoadingOverlay
                 visible={isUploading}
                 transitionDuration={600}
@@ -252,7 +252,7 @@ export function ProtectedEditForm(props: EditFormProps) {
                 ]}
                 maxSize={10 * 1024 ** 2}
               >
-                <div style={{ pointerEvents: "none" }}>
+                <Box style={{ pointerEvents: "none" }}>
                   <Group position="center">
                     {/* <Center> */}
                     <Dropzone.Accept>
@@ -301,9 +301,9 @@ export function ProtectedEditForm(props: EditFormProps) {
                     We only can accept one <i>.jpg/.png/.gif </i> file
                     that is less than 4.5 MB in size.
                   </Text>
-                </div>
+                </Box>
               </Dropzone>
-            </div>
+            </Box>
           )}
           {Environment[report.environment as keyof typeof Environment]}
           <form

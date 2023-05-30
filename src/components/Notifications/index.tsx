@@ -119,7 +119,7 @@ const ProtectedNotifications = () => {
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <Box style={{ position: "relative" }}>
       {/* Notification Icon */}
       <ActionIcon
         className="cursor-default"
@@ -204,7 +204,7 @@ const ProtectedNotifications = () => {
                           notification.like?.reportId as string
                         }`}
                       >
-                        <div style={{ display: "flex" }}>
+                        <Box style={{ display: "flex" }}>
                           <Center>
                             <IconHeartFilled
                               size="1.2rem"
@@ -235,14 +235,14 @@ const ProtectedNotifications = () => {
                               </Badge>
                             )}
                           </Center>
-                        </div>
+                        </Box>
                       </Link>
                     </Box>
                   ))
                 ) : (
                   <p>No notifications</p>
                 )}
-                {/* <Divider /> */}
+                {/* <Boxider /> */}
                 {!isLoading &&
                   !isError &&
                   notificationsFromDb?.length > 0 && (
@@ -280,7 +280,7 @@ const ProtectedNotifications = () => {
           </Paper>
         )}
       </Transition>
-    </div>
+    </Box>
   );
 };
 

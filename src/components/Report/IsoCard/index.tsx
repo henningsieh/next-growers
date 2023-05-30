@@ -52,7 +52,7 @@ const useStyles = createStyles((theme) => ({
           : `0 0 8px ${theme.colors.orange[8]}`,
     },
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+      theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
   },
 
   section: {
@@ -240,7 +240,7 @@ export default function IsoReportCard({
       </Card.Section>
 
       <Card.Section className={classes.section} mt={4}>
-        <Group position="apart">
+        <Group position="apart" c="dimmed">
           {/*// Stage/ Date */}
           <Group position="left">
             <Tooltip
@@ -257,10 +257,7 @@ export default function IsoReportCard({
                 <Box pr={4}>
                   <IconCalendar size="1.2rem" />
                 </Box>
-                <Text
-                  className={`${classes.label} cursor-default`}
-                  c="dimmed"
-                >
+                <Text className={`${classes.label} cursor-default`}>
                   {sanatizeDateString(
                     isoReport.createdAt,
                     router.locale === Locale.DE ? Locale.DE : Locale.EN,
@@ -283,10 +280,7 @@ export default function IsoReportCard({
               arrowPosition="side"
             >
               <Center>
-                <Text
-                  className={`${classes.label} cursor-default`}
-                  c="dimmed"
-                >
+                <Text className={`${classes.label} cursor-default`}>
                   {sanatizeDateString(
                     isoReport.updatedAt as string,
                     router.locale === Locale.DE ? Locale.DE : Locale.EN,
@@ -319,11 +313,9 @@ export default function IsoReportCard({
           <Group mt="xs" position="apart">
             <Button
               size="xs"
-              variant="filled"
-              color="red"
               radius="sm"
               style={{ flex: 0 }}
-              className="border-1 cursor-default border-red-600"
+              className="hover:bg-red-600 border-red-500"
               onClick={() => {
                 deleteMutation(isoReport.id as string);
               }}
@@ -337,9 +329,9 @@ export default function IsoReportCard({
             </Button>
             <Link href={`/account/reports/${isoReport.id as string}`}>
               <Button
-                size="xs" /*
-              className="border-orange-600" */
-                variant="outline"
+                className=" border-orange-400"
+                size="xs"
+                variant="filled"
                 radius="sm"
                 style={{ flex: 1 }}
               >

@@ -1,10 +1,12 @@
-import { Container, Title } from "@mantine/core";
+import { Box, Container, Title } from "@mantine/core";
 
 import type { GetServerSidePropsContext, NextPage } from "next";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import AddForm from "~/components/Report/AddForm";
@@ -41,7 +43,11 @@ export async function getServerSideProps(
 }
 
 const ProtectedCreateReport: NextPage = () => {
-  const pageTitle = "Create a Report";
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
+  const pageTitle = t("common:report-create-headline");
 
   const { data: session } = useSession();
 
@@ -60,12 +66,12 @@ const ProtectedCreateReport: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-1">
         {/* // Header with Title */}
-        <div className="flex items-center justify-between pt-2">
+        <Box className="flex items-center justify-between pt-2">
           {/* // Title */}
           <Title order={1} className="inline">
             {pageTitle}
           </Title>
-        </div>
+        </Box>
         {/* // Header End */}
         {/* // Add Component */}
 
