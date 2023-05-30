@@ -29,6 +29,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
+import ImagesSlider from "~/components/ImagesSlider";
 import { UserComment } from "~/components/User/Comment";
 
 import type { Post } from "~/types";
@@ -262,6 +263,8 @@ export function PostCard(props: PostCardProps) {
       </Carousel.Slide>
     ));
 
+    const cloudUrls = postImages?.map((image) => image.cloudUrl) ?? [];
+
     const commentHtmlProps = {
       postedAt: post?.date as string,
       body: '<p>I use <a href="https://heroku.com/" rel="noopener noreferrer" target="_blank">Heroku</a> to host my Node.js application, but MongoDB add-on appears to be too <strong>expensive</strong>. I consider switching to <a href="https://www.digitalocean.com/" rel="noopener noreferrer" target="_blank">Digital Ocean</a> VPS to save some cash.</p>',
@@ -274,7 +277,7 @@ export function PostCard(props: PostCardProps) {
 
     return (
       <>
-        <Card h={850} p="sm" withBorder>
+        <Card p="sm" withBorder>
           <Group position="apart"> {postData} </Group>
 
           <Group position="apart" className={classes.section}>
@@ -305,10 +308,12 @@ export function PostCard(props: PostCardProps) {
               __html: postHTMLContent as TrustedHTML,
             }}
           />
-
+          {/* 
           <Card.Section className={classes.section}>
             <Group position="apart"> {postData} </Group>
           </Card.Section>
+ */}
+          <ImagesSlider cloudUrls={cloudUrls} />
 
           {/* 
         <div className="importedhtmlcontent">
@@ -331,6 +336,7 @@ export function PostCard(props: PostCardProps) {
         </Card.Section>
         */}
           {/*//BOTTOM CAROUSEL */}
+          {/* 
           <Card.Section>
             <Carousel
               withIndicators
@@ -344,6 +350,7 @@ export function PostCard(props: PostCardProps) {
               {postImagesSlides}
             </Carousel>
           </Card.Section>
+           */}
         </Card>
         <div>
           <Text pb="xs">Comments</Text>

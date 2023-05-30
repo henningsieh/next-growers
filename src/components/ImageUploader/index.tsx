@@ -1,3 +1,4 @@
+import ImagesSlider from "../ImagesSlider";
 import { Carousel } from "@mantine/carousel";
 import {
   Box,
@@ -5,6 +6,7 @@ import {
   Group,
   LoadingOverlay,
   Paper,
+  SimpleGrid,
   Space,
   Title,
   useMantineTheme,
@@ -98,48 +100,22 @@ const ImageUploader = (props: ImageUploaderProps) => {
                     Drag & Drop images for this update here!
                   </Text>
                 </Dropzone>
+
                 <Space h="sm" />
-                <Paper withBorder>
-                  <Carousel
-                    withIndicators
-                    height={90}
-                    previousControlIcon={
-                      <IconArrowBigLeft
-                        color={theme.colors.orange[7]}
-                        size={28}
-                        stroke={2}
-                      />
-                    }
-                    nextControlIcon={
-                      <IconArrowBigRight
-                        color={theme.colors.orange[7]}
-                        size={28}
-                        stroke={2}
-                      />
-                    }
-                    slideSize="20%"
-                    slideGap="xs"
-                    loop
-                    align="start"
-                    breakpoints={[
-                      { maxWidth: "md", slideSize: "25%" },
-                      { maxWidth: "sm", slideSize: "25%" },
-                      { maxWidth: "xs", slideSize: "50%" },
-                    ]}
-                  >
-                    {previews}
-                    {/* ...other slides */}
-                  </Carousel>
-                </Paper>
+
+                <ImagesSlider cloudUrls={cloudUrls} />
               </Box>
               {/* 
-              <SimpleGrid
-                cols={4}
-                breakpoints={[{ maxWidth: "xs", cols: 1 }]}
-                // mt={previews.length > 0 ? "xl" : 0}
-              >
-                {previews}
-              </SimpleGrid> */}
+              <Carousel>
+                <SimpleGrid
+                  cols={4}
+                  breakpoints={[{ maxWidth: "xs", cols: 1 }]}
+                  // mt={previews.length > 0 ? "xl" : 0}
+                >
+                  {previews}
+                </SimpleGrid>
+              </Carousel>
+                 */}
             </Box>
           </div>
           {/* 

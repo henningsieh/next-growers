@@ -46,7 +46,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
           {!!isoReport &&
             isoReport.posts.map((post) => (
               <Accordion.Item key={post.id} value={post.id}>
-                <Accordion.Control px={"xs"}>
+                <Accordion.Control px="sm">
                   <Group position="apart">
                     <Card withBorder w={80} m={0} p={4}>
                       <Center>
@@ -85,8 +85,8 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                       </Box> */}
                   </Group>
                 </Accordion.Control>
-                <Accordion.Panel>
-                  <Title order={3}>
+                <Accordion.Panel mx={-8}>
+                  <Title pb="xs" order={3}>
                     {t("common:editpost-headline")}{" "}
                   </Title>
 

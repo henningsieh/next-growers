@@ -193,7 +193,7 @@ const AddPost = (props: AddPostProps) => {
 
   return (
     <Container p={0} size="md">
-      <Paper px="sm" withBorder>
+      <Paper p="sm" withBorder>
         <form
           onSubmit={form.onSubmit((values) => {
             handleSubmit(values);
@@ -378,7 +378,6 @@ const AddPost = (props: AddPostProps) => {
           </Box>
         </form>
       </Paper>
-
       {/* <ReportDebugFooter report={report} /> */}
     </Container>
   );
