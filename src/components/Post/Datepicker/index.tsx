@@ -34,7 +34,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   const theme = useMantineTheme();
   const router = useRouter();
 
-  console.debug("defaultDate", defaultDate);
+  // console.debug("defaultDate", defaultDate);
 
   return (
     <Paper py="xs" withBorder key={getResponsiveColumnCount}>

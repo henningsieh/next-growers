@@ -223,7 +223,7 @@ const LikeHeart = (props: LikeHeartProps) => {
           onBlur={() => setShowLikes(false)}
           radius="sm"
           p={0}
-          mr={-4}
+          mr={0}
           size={25}
         >
           {itemLikes?.find(

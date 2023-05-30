@@ -7,6 +7,7 @@ import {
   Image,
   Paper,
   Space,
+  Stack,
   Text,
   createStyles,
   getStylesRef,
@@ -28,6 +29,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
+import { UserComment } from "~/components/User/Comment";
 
 import type { Post } from "~/types";
 import { Environment, type IsoReportWithPostsFromDb } from "~/types";
@@ -150,7 +152,8 @@ export function PostCard(props: PostCardProps) {
     {
       label: sanatizeDateString(
         report?.createdAt,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN
+        router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false
       ),
       icon: IconCalendar,
     },
@@ -166,7 +169,8 @@ export function PostCard(props: PostCardProps) {
     {
       label: sanatizeDateString(
         report?.updatedAt as string,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN
+        router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false
       ),
       icon: IconClock,
     },
@@ -202,22 +206,10 @@ export function PostCard(props: PostCardProps) {
     );
   } else {
     const post = report.posts.find((post) => post.id === postId);
-
-    const reportCreatedAt = new Date(report.createdAt);
-    const postDate = new Date(post?.date as string);
-
-    // Calculate the difference in milliseconds between the two dates
-    const timeDifference =
-      postDate.getTime() - reportCreatedAt.getTime();
-
-    // Convert the difference to days
-    const postDayOfGrow = Math.floor(
-      timeDifference / (1000 * 60 * 60 * 24) + 1
-    );
-
-    // console.log(postDayOfGrow); // The difference in days
+    // FIXME: if (!post)...
 
     const postImages = post?.images;
+
     const postBasicData = {
       image:
         "https://images.unsplash.com/photo-1581889470536-467bdbe30cd0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
@@ -228,12 +220,13 @@ export function PostCard(props: PostCardProps) {
           title: t("common:post-updatedate"),
           value: sanatizeDateString(
             post?.date as string,
-            router.locale === Locale.DE ? Locale.DE : Locale.EN
+            router.locale === Locale.DE ? Locale.DE : Locale.EN,
+            false
           ),
         },
         {
           title: t("common:post-growday"),
-          value: postDayOfGrow,
+          value: post?.growDay as number,
         },
         {
           title: t("common:post-lighthperday"),
@@ -245,6 +238,7 @@ export function PostCard(props: PostCardProps) {
         },
       ],
     };
+
     const postData = postBasicData.details.map((postBasicData) => (
       <div key={postBasicData.title}>
         <Text size="xs" color="dimmed" align="center">
@@ -255,6 +249,7 @@ export function PostCard(props: PostCardProps) {
         </Text>
       </div>
     ));
+
     const postImagesSlides = postImages?.map((image) => (
       <Carousel.Slide key={image.id}>
         <Center>
@@ -267,16 +262,28 @@ export function PostCard(props: PostCardProps) {
       </Carousel.Slide>
     ));
 
+    const commentHtmlProps = {
+      postedAt: post?.date as string,
+      body: '<p>I use <a href="https://heroku.com/" rel="noopener noreferrer" target="_blank">Heroku</a> to host my Node.js application, but MongoDB add-on appears to be too <strong>expensive</strong>. I consider switching to <a href="https://www.digitalocean.com/" rel="noopener noreferrer" target="_blank">Digital Ocean</a> VPS to save some cash.</p>',
+      author: {
+        name: "Jacob Warnhalter",
+        image:
+          "https://images.unsplash.com/photo-1624298357597-fd92dfbec01d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=250&q=80",
+      },
+    };
+
     return (
       <>
-        <Card h={850} p="sm" radius="sm" withBorder>
-          <Group position="apart">
+        <Card h={850} p="sm" withBorder>
+          <Group position="apart"> {postData} </Group>
+
+          <Group position="apart" className={classes.section}>
             <Text fw={700} fz="xl">
               {post?.title}
             </Text>
-
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
+
           {/* 
         <Card.Section className={classes.section} mt="md">
           <Text fz="sm" c="dimmed" className={classes.label}>
@@ -288,17 +295,16 @@ export function PostCard(props: PostCardProps) {
           </Group>
         </Card.Section>
    */}
-          <Text fz="sm" c="dimmed" mt="sm">
-            <Paper
-              fz={16}
-              withBorder
-              p={theme.spacing.xs}
-              mb={theme.spacing.sm}
-              dangerouslySetInnerHTML={{
-                __html: postHTMLContent as TrustedHTML,
-              }}
-            />
-          </Text>
+          <Paper
+            fz={16}
+            c="dimmed"
+            withBorder
+            p={theme.spacing.xs}
+            mb={theme.spacing.sm}
+            dangerouslySetInnerHTML={{
+              __html: postHTMLContent as TrustedHTML,
+            }}
+          />
 
           <Card.Section className={classes.section}>
             <Group position="apart"> {postData} </Group>
@@ -339,7 +345,11 @@ export function PostCard(props: PostCardProps) {
             </Carousel>
           </Card.Section>
         </Card>
-        <Space h="sm" />
+        <div>
+          <Text pb="xs">Comments</Text>
+          <UserComment {...commentHtmlProps} />
+        </div>
+        <Space h="xs" />
 
         <Group position="apart" className={classes.section}>
           <Text fz="sm" c="dimmed">

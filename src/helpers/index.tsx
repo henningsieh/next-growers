@@ -281,16 +281,18 @@ export function stringifyReportData(report: any): IsoReportWithPostsFromDb {
 
 export function sanatizeDateString(
   originalDateString: string,
-  locale: Locale
+  locale: Locale,
+  withTime: boolean
 ) {
   const reportStartDate = new Date(originalDateString);
   const options: Intl.DateTimeFormatOptions = {
     month: "long",
     day: "numeric",
-    year: "numeric" /* 
-    hour: "numeric",
-    minute: "numeric",
-    hour12: false, */,
+    year: "numeric",
+    hour: withTime ? "numeric" : undefined,
+    minute: withTime ? "numeric" : undefined,
+
+    // hour12: false,
   };
 
   if (locale === "en") {
@@ -303,7 +305,9 @@ export function sanatizeDateString(
     // german date
     const germanFormatter = new Intl.DateTimeFormat("de-DE", options);
     const germanDate = germanFormatter.format(reportStartDate); // "11. Mai 2023"
-    // console.debug(germanDate);
-    return germanDate;
+    const germanTime = withTime ? ` Uhr` : "";
+    const formattedDate = `${germanDate}${germanTime}`;
+    // console.debug(formattedDate);
+    return formattedDate;
   }
 }

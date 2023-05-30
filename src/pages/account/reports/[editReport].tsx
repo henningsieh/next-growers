@@ -126,9 +126,9 @@ const EditReportDetails: NextPage = () => {
               <Space h="xl" />
 
               {/* // AddPost Component */}
-
-              <Title order={2}>{t("common:addpost-headline")}</Title>
-
+              <Container p={0}>
+                <Title order={2}>{t("common:addpost-headline")}</Title>
+              </Container>
               <Space h="xs" />
 
               <AddPost

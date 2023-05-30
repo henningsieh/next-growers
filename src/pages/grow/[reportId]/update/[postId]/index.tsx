@@ -195,8 +195,7 @@ export async function getStaticProps(
   };
 }
 
-/**
- * getStaticPaths
+/** getStaticPaths
  * @param reports: { id: string; }[]
  * @returns { paths[] }
  */

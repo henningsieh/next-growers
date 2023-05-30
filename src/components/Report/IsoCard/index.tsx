@@ -263,7 +263,8 @@ export default function IsoReportCard({
                 >
                   {sanatizeDateString(
                     isoReport.createdAt,
-                    router.locale === Locale.DE ? Locale.DE : Locale.EN
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN,
+                    false
                   )}
                 </Text>
               </Center>
@@ -288,7 +289,8 @@ export default function IsoReportCard({
                 >
                   {sanatizeDateString(
                     isoReport.updatedAt as string,
-                    router.locale === Locale.DE ? Locale.DE : Locale.EN
+                    router.locale === Locale.DE ? Locale.DE : Locale.EN,
+                    false
                   )}
                 </Text>
                 <Box pl={4}>
