@@ -19,6 +19,12 @@ export const notificationRouter = createTRPCRouter({
         include: {
           like: {
             include: {
+              post: {
+                // needed for link to post
+                include: {
+                  report: { select: { id: true } },
+                },
+              },
               user: {
                 select: {
                   id: true,

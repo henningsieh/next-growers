@@ -48,6 +48,7 @@ const ProtectedNotifications = () => {
   const dark = colorScheme === "dark";
   const clickOutsidePaper = useClickOutside(() => setOpen(false));
   const { data: session, status } = useSession();
+  const trpc = api.useContext();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -55,8 +56,8 @@ const ProtectedNotifications = () => {
     isLoading,
     isError,
   } = api.notifications.getNotificationsByUserId.useQuery();
-  // console.debug(notifications);
-  const trpc = api.useContext();
+
+  console.debug(notificationsFromDb);
 
   const { mutate: markAllNotificationsAsReadMutation } =
     api.notifications.markAllNotificationsAsRead.useMutation({
@@ -200,9 +201,16 @@ const ProtectedNotifications = () => {
                       })}
                     >
                       <Link
-                        href={`/grow/${
-                          notification.like?.reportId as string
-                        }`}
+                        href={
+                          notification.like?.postId == null
+                            ? `/grow/${
+                                notification.like?.reportId as string
+                              }`
+                            : `/grow/${
+                                notification.like?.post
+                                  ?.reportId as string
+                              }/update/${notification.like?.postId}`
+                        }
                       >
                         <Box style={{ display: "flex" }}>
                           <Center>
@@ -211,15 +219,13 @@ const ProtectedNotifications = () => {
                               className={`${classes.like} icon-transition`}
                             />
                           </Center>
-                          <Box
-                            p={4}
-                            fz="0.8rem"
-                            className="grow text-left"
-                          >
+                          <Box p={4} fz="0.78rem" className="text-left">
                             {notification.like?.user.name}{" "}
-                            {notificationEvents[notification.event]}
-                            {" your "}
-                            Report
+                            {notificationEvents[notification.event]}{" "}
+                            {"your"}{" "}
+                            {notification.like?.postId != null
+                              ? "Update"
+                              : "Grow"}
                           </Box>
                           <Center>
                             {!notification.readAt && (

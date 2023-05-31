@@ -7,11 +7,6 @@ import type { User } from "next-auth";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
-type GetIsoReporstWithPostsFromDbOutput =
-  RouterOutput["reports"]["getIsoReportsWithPostsFromDb"];
-export type IsoReportsWithPostsFromDb =
-  GetIsoReportWithPostsFromDbOutput;
-
 type GetIsoReportWithPostsFromDbOutput =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 
