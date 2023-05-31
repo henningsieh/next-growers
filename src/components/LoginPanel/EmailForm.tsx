@@ -24,7 +24,6 @@ export default function EmailForm() {
 
   const handleSubmit = (values: { email: string }): void => {
     setIsLoading(true);
-    console.log(values.email);
     signIn("email", { email: values.email })
       .catch((error) => {
         console.log(error);

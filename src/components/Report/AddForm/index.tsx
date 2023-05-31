@@ -283,7 +283,6 @@ function Form({ user }: AddFormProps) {
         {/* // Report form */}
         <form
           onSubmit={form.onSubmit((values) => {
-            console.log(form.values);
             // send imageId as formField so that the report can be related
             form.setValues({ imageId: imageId });
             tRPCcreateReport(values);

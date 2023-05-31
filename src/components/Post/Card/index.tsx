@@ -34,6 +34,8 @@ import type { Post } from "~/types";
 import { Environment, type IsoReportWithPostsFromDb } from "~/types";
 import { Locale } from "~/types";
 
+import { api } from "~/utils/api";
+
 const useStyles = createStyles((theme) => ({
   price: {
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
@@ -114,12 +116,31 @@ interface PostCardProps {
 }
 
 export function PostCard(props: PostCardProps) {
+  const { report, postId } = props;
+
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
   const [postHTMLContent, setPostHTMLContent] = useState("");
-  const { report, postId } = props;
+
+  // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+  const {
+    data: postComments,
+    isLoading,
+    isError,
+  } = api.comments.getCommentsByPostId.useQuery({
+    postId: postId, // Set the desired order (true for descending, false for ascending)
+  });
+
+  const comments = postComments?.map((postComment, index) => {
+    // const imageUrl = URL.createObjectURL(file);
+    return (
+      <div key={index}>
+        <UserComment comment={postComment} />
+      </div>
+    );
+  });
 
   useEffect(() => {
     const post = report.posts.find((post) => post.id === postId);
@@ -342,19 +363,18 @@ export function PostCard(props: PostCardProps) {
         </Card>
         <Box>
           <Text pb="xs">Comments</Text>
-          <UserComment {...commentHtmlProps} />
+          {comments}
         </Box>
         <Space h="xs" />
 
-        <Group position="apart" className={classes.section}>
+        <Group px="sm" position="apart" className={classes.section}>
           <Text fz="sm" c="dimmed">
             Grow data:
           </Text>
           <Text fz="md">{report.title}</Text>
           <LikeHeart itemToLike={report} itemType={"Report"} />
         </Group>
-
-        <Group position="apart" spacing="xs">
+        <Group px="sm" position="apart" spacing="xs">
           {reportBasics}
         </Group>
       </>

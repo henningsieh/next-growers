@@ -82,28 +82,6 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const likeSuccessfulMsg = {
-  title: "Success",
-  message: "Woohoo... you ❤️ this Grow!",
-  color: "green",
-  icon: <IconCheck />,
-  loading: false,
-};
-export const dislikeSuccessfulMsg = {
-  title: "Success",
-  message: "Oh no... you removed your Like! 😢",
-  color: "green",
-  icon: <IconCheck />,
-  loading: false,
-};
-export const likeErrorMsg = (msg: string) => ({
-  loading: false,
-  title: "Error",
-  message: msg,
-  color: "red",
-  icon: <IconLogin />,
-});
-
 export default function IsoReportCard({
   report: isoReport,
   procedure,
@@ -132,7 +110,6 @@ export default function IsoReportCard({
           trpc.reports.getOwnIsoReportsWithPostsFromDb.setData(
             { search: "", orderBy: "createdAt", desc: true },
             (prev) => {
-              console.log("PREV", prev);
               if (!prev) return previousReports;
               return prev.filter(
                 (report) => report.id !== deletedReportId

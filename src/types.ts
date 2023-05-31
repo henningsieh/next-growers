@@ -13,24 +13,6 @@ type GetIsoReportWithPostsFromDbOutput =
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
 
-export interface EditFormProps {
-  report: IsoReportWithPostsFromDb;
-  strains: Strains;
-  user: User;
-}
-export interface EditFormProps {
-  report: IsoReportWithPostsFromDb;
-  strains: Strains;
-  user: User;
-}
-/* 
-export interface ReportCardProps extends FakeCardBadgeProps {
-  report: Report;
-  procedure: "all" | "own";
-
-  setSearchString: Dispatch<SetStateAction<string>>;
-} */
-
 export interface IsoReportCardProps extends FakeCardBadgeProps {
   report: IsoReportWithPostsFromDb;
   procedure: "all" | "own";
@@ -42,6 +24,11 @@ type getPostsByReportIdOutput =
   RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
+
+type getCommentsByPostIdOutput =
+  RouterOutput["comments"]["getCommentsByPostId"];
+export type Comments = getCommentsByPostIdOutput;
+export type Comment = getCommentsByPostIdOutput[number];
 
 export type PostDbInput = {
   date: Date;
@@ -66,6 +53,24 @@ export type Strain = getAllStrainsOutput[number];
 type getLikesByItemIdOutput = RouterOutput["like"]["getLikesByItemId"];
 export type Likes = getLikesByItemIdOutput;
 export type Like = getLikesByItemIdOutput[number];
+
+export interface EditFormProps {
+  report: IsoReportWithPostsFromDb;
+  strains: Strains;
+  user: User;
+}
+export interface EditFormProps {
+  report: IsoReportWithPostsFromDb;
+  strains: Strains;
+  user: User;
+}
+/* 
+export interface ReportCardProps extends FakeCardBadgeProps {
+  report: Report;
+  procedure: "all" | "own";
+
+  setSearchString: Dispatch<SetStateAction<string>>;
+} */
 
 export interface ImageUploadResponse {
   success: boolean;

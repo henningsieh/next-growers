@@ -57,7 +57,7 @@ const ProtectedNotifications = () => {
     isError,
   } = api.notifications.getNotificationsByUserId.useQuery();
 
-  console.debug(notificationsFromDb);
+  // console.debug("notificationsFromDb",notificationsFromDb);
 
   const { mutate: markAllNotificationsAsReadMutation } =
     api.notifications.markAllNotificationsAsRead.useMutation({

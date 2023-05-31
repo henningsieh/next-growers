@@ -1,6 +1,8 @@
 import {
+  ActionIcon,
   Avatar,
   Box,
+  Flex,
   Group,
   Paper,
   Text,
@@ -8,16 +10,19 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { IconEdit, IconTrash, IconTrashX } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
 
-// import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
-import { Locale } from "~/types";
+import LikeHeart from "~/components/Atom/LikeHeart";
+
+import { type Comment, Locale } from "~/types";
 
 const useStyles = createStyles((theme) => ({
   comment: {
-    padding: `${theme.spacing.lg} ${theme.spacing.xl}`,
+    padding: `${theme.spacing.lg} ${theme.spacing.lg}`,
   },
 
   body: {
@@ -34,42 +39,51 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface CommentHtmlProps {
-  postedAt: string;
-  body: string;
-  author: {
-    name: string;
-    image: string;
-  };
+  comment: Comment;
 }
 
-export function UserComment({
-  postedAt,
-  body,
-  author,
-}: CommentHtmlProps) {
+export function UserComment({ comment }: CommentHtmlProps) {
   const { classes } = useStyles();
   const router = useRouter();
-  // const { t } = useTranslation(router.locale);
 
   return (
-    <Paper withBorder radius="md" className={classes.comment}>
-      <Group>
-        <Avatar src={author.image} alt={author.name} radius="xl" />
-        <Box>
-          <Text fz="sm">{author.name}</Text>
-          <Text fz="xs" c="dimmed">
-            {sanatizeDateString(
-              postedAt,
-              router.locale === Locale.DE ? Locale.DE : Locale.EN,
-              true
-            )}
-          </Text>
-        </Box>
+    <Paper withBorder p="sm" radius="md" className={classes.comment}>
+      <Group position="apart">
+        <Group position="left">
+          <Avatar
+            src={comment.author.image}
+            alt={comment.author.name as string}
+            radius="xl"
+          />
+          <Box>
+            <Text fz="sm">{comment.author.name}</Text>
+            <Text fz="xs" c="dimmed">
+              {sanatizeDateString(
+                comment.createdAt.toISOString(),
+                router.locale === Locale.DE ? Locale.DE : Locale.EN,
+                true
+              )}
+            </Text>
+          </Box>
+        </Group>
+        <Group position="right">
+          <ActionIcon m={0} p={0} className=" cursor-default">
+            <Paper p={3} withBorder>
+              <IconEdit size="1.2rem" stroke={1.4} />
+            </Paper>
+          </ActionIcon>
+          <ActionIcon m={0} p={0} className=" cursor-default">
+            <Paper p={3} withBorder>
+              <IconTrashX size="1.2rem" stroke={1.4} />
+            </Paper>
+          </ActionIcon>
+          <LikeHeart itemToLike={comment} itemType={"Comment"} />
+        </Group>
       </Group>
       <TypographyStylesProvider className={classes.body}>
         <Box
           className={classes.content}
-          dangerouslySetInnerHTML={{ __html: body }}
+          dangerouslySetInnerHTML={{ __html: comment.content }}
         />
       </TypographyStylesProvider>
     </Paper>

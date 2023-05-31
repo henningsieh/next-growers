@@ -1,4 +1,8 @@
-import type { NotificationProps } from "@mantine/core";
+import {
+  createLikeErrorMsg,
+  dislikeSuccessfulMsg,
+  likeSuccessfulMsg,
+} from "../Notifications/messages";
 import {
   ActionIcon,
   Box,
@@ -10,11 +14,6 @@ import {
   rem,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import {
-  IconCannabis,
-  IconCheck,
-  IconError404,
-} from "@tabler/icons-react";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 
 import React, { useState } from "react";
@@ -23,7 +22,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
-import type { IsoReportWithPostsFromDb, Post } from "~/types";
+import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -70,33 +69,9 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const createLikeErrorMsg = (msg: string) => ({
-  loading: false,
-  title: "Error",
-  message: msg,
-  color: "red",
-  icon: <IconError404 />,
-});
-export const likeSuccessfulMsg: NotificationProps & {
-  message: string;
-} = {
-  loading: false,
-  title: "Success",
-  message: "🚀 Woohoo... you ❤️ this!",
-  color: "green",
-  icon: <IconCannabis />,
-};
-export const dislikeSuccessfulMsg = {
-  loading: false,
-  title: "Success",
-  message: "Oh no... you removed your Like! 😢",
-  color: "green",
-  icon: <IconCannabis />,
-};
-
 interface LikeHeartProps {
-  itemToLike: Post | IsoReportWithPostsFromDb;
-  itemType: "Report" | "Post";
+  itemToLike: Comment | Post | IsoReportWithPostsFromDb;
+  itemType: "Comment" | "Post" | "Report";
 }
 
 const LikeHeart = (props: LikeHeartProps) => {
@@ -187,6 +162,8 @@ const LikeHeart = (props: LikeHeartProps) => {
       likeReportMutation({ id: item.id as string });
     } else if (itemType === "Post") {
       likePostMutation({ id: item.id as string });
+    } else if (itemType === "Comment") {
+      console.log(item.id as string);
     }
   };
 

@@ -149,17 +149,19 @@ model Post {
 }
 
 model Like {
-  id       String  @id @default(cuid())
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String
-  report   Report? @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  reportId String?
-  post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId   String?
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  report    Report?  @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId  String?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String?
+  Notification Notification[]
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  Notification Notification[]
 
   @@unique([userId, postId])
   @@unique([userId, reportId])
@@ -188,10 +190,11 @@ model Comment {
   author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   postId   String? // One Post has many Comments
   post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Notification Notification[]
+  likes         Like[]
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
-  Notification Notification[]
 }
 
 model Company {

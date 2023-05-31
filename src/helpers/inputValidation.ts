@@ -67,6 +67,10 @@ export const InputLike = z.object({
   id: z.string(),
 });
 
+export const InputGetCommentsByPostId = z.object({
+  postId: z.string(),
+});
+
 export const InputCreatePost: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
 ) => {
