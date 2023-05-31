@@ -163,6 +163,7 @@ model Like {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
+  @@unique([userId, commentId])
   @@unique([userId, postId])
   @@unique([userId, reportId])
 }

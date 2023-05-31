@@ -119,6 +119,39 @@ const LikeHeart = (props: LikeHeartProps) => {
         await trpc.notifications.getNotificationsByUserId.invalidate();
       },
     });
+  const { mutate: likeCommentMutation } =
+    api.like.likeComment.useMutation({
+      onError: (error) => {
+        notifications.show(createLikeErrorMsg(error.message));
+      },
+      onSuccess: (likedComment) => {
+        notifications.show(likeSuccessfulMsg);
+        console.debug("likedReport", likedComment);
+      },
+      // Always refetch after error or success:
+      onSettled: async () => {
+        await trpc.like.getLikesByItemId.invalidate();
+        await trpc.notifications.invalidate();
+      },
+    });
+
+  /*   const { mutate: dislikeCommentMutation } =
+    api.like.dislikeComment.useMutation({
+      onError: (error) => {
+        console.error(error);
+        // Handle error, e.g., show an error message
+      },
+      onSuccess: (likedComment) => {
+        notifications.show(dislikeSuccessfulMsg);
+        console.log(likedComment);
+      },
+      onSettled: async () => {
+        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        await trpc.like.getLikesByItemId.invalidate();
+        await trpc.notifications.getNotificationsByUserId.invalidate();
+      },
+    }); */
+
   const { mutate: likePostMutation } = api.like.likePost.useMutation({
     onError: (error) => {
       notifications.show(createLikeErrorMsg(error.message));
@@ -163,7 +196,7 @@ const LikeHeart = (props: LikeHeartProps) => {
     } else if (itemType === "Post") {
       likePostMutation({ id: item.id as string });
     } else if (itemType === "Comment") {
-      console.log(item.id as string);
+      likeCommentMutation({ id: item.id as string });
     }
   };
 
@@ -181,7 +214,10 @@ const LikeHeart = (props: LikeHeartProps) => {
     } else if (itemType === "Post") {
       // Call the dislikePost mutation
       dislikePostMutation({ id: item.id as string });
-    }
+    } /* else if (itemType === "Comment") {
+      // Call the dislikePost mutation
+      dislikeCommentMutation({ id: item.id as string });
+    } */
   };
 
   return (

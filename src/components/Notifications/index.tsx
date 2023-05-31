@@ -5,6 +5,8 @@ import {
   Button,
   Center,
   Container,
+  Flex,
+  Group,
   Indicator,
   createStyles,
   useMantineColorScheme,
@@ -83,7 +85,6 @@ const ProtectedNotifications = () => {
       },
       onSuccess: (res) => {
         toast.success("markNotificationAsRead!");
-        console.debug("success.res", res);
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
@@ -202,7 +203,15 @@ const ProtectedNotifications = () => {
                     >
                       <Link
                         href={
-                          notification.like?.postId == null
+                          notification.like?.commentId != null
+                            ? `/grow/${
+                                notification.like.comment?.post
+                                  ?.reportId as string
+                              }/update/${
+                                notification.like.comment
+                                  ?.postId as string
+                              }#${notification.like.commentId}`
+                            : notification.like?.postId == null
                             ? `/grow/${
                                 notification.like?.reportId as string
                               }`
@@ -223,11 +232,18 @@ const ProtectedNotifications = () => {
                             {notification.like?.user.name}{" "}
                             {notificationEvents[notification.event]}{" "}
                             {"your"}{" "}
-                            {notification.like?.postId != null
-                              ? "Update"
-                              : "Grow"}
+                            {notification.like?.commentId != null
+                              ? "Comment"
+                              : notification.like?.postId == null
+                              ? "Grow"
+                              : "Update"}
                           </Box>
-                          <Center>
+                          <Flex
+                            pt={2}
+                            pl={8}
+                            justify="flex-end"
+                            align="flex-start"
+                          >
                             {!notification.readAt && (
                               <Badge
                                 mt={0}
@@ -240,7 +256,7 @@ const ProtectedNotifications = () => {
                                 new
                               </Badge>
                             )}
-                          </Center>
+                          </Flex>
                         </Box>
                       </Link>
                     </Box>

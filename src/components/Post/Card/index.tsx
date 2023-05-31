@@ -21,7 +21,7 @@ import {
 } from "@tabler/icons-react";
 import { formatLabel, sanatizeDateString } from "~/helpers";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -133,10 +133,29 @@ export function PostCard(props: PostCardProps) {
     postId: postId, // Set the desired order (true for descending, false for ascending)
   });
 
-  const comments = postComments?.map((postComment, index) => {
-    // const imageUrl = URL.createObjectURL(file);
+  const commentsRef = useRef<HTMLElement[]>([]);
+
+  useEffect(() => {
+    const commentId = window.location.hash.substring(1); // Get the comment ID from the URL hash
+
+    if (commentId && commentsRef.current.length > 0) {
+      const commentElement = commentsRef.current.find(
+        (element) => element.id === commentId
+      );
+
+      if (commentElement) {
+        commentElement.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, []);
+
+  const comments = postComments?.map((postComment) => {
     return (
-      <div key={index}>
+      <div
+        key={postComment.id}
+        id={postComment.id}
+        ref={(ref) => commentsRef.current.push(ref as HTMLDivElement)}
+      >
         <UserComment comment={postComment} />
       </div>
     );
@@ -273,17 +292,6 @@ export function PostCard(props: PostCardProps) {
     const postImagesPulbicUrls =
       postImages?.map((image) => image.cloudUrl) ?? [];
 
-    const commentHtmlProps = {
-      //FIXME: comment fake data
-      postedAt: post?.date as string,
-      body: '<p>I use <a href="https://heroku.com/" rel="noopener noreferrer" target="_blank">Heroku</a> to host my Node.js application, but MongoDB add-on appears to be too <strong>expensive</strong>. I consider switching to <a href="https://www.digitalocean.com/" rel="noopener noreferrer" target="_blank">Digital Ocean</a> VPS to save some cash.</p>',
-      author: {
-        name: "Jacob Warnhalter",
-        image:
-          "https://images.unsplash.com/photo-1624298357597-fd92dfbec01d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=250&q=80",
-      },
-    };
-
     return (
       <>
         <Card p="sm" withBorder>
@@ -296,17 +304,6 @@ export function PostCard(props: PostCardProps) {
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
 
-          {/* 
-        <Card.Section className={classes.section} mt="md">
-          <Text fz="sm" c="dimmed" className={classes.label}>
-            Grow Informations
-          </Text>
-  
-          <Group spacing={8} mb={-8}>
-            {growBasics}
-          </Group>
-        </Card.Section>
-   */}
           <Paper
             fz={16}
             c="dimmed"
@@ -317,49 +314,8 @@ export function PostCard(props: PostCardProps) {
               __html: postHTMLContent as TrustedHTML,
             }}
           />
-          {/* 
-          <Card.Section className={classes.section}>
-            <Group position="apart"> {postData} </Group>
-          </Card.Section>
- */}
-          <ImagesSlider cloudUrls={postImagesPulbicUrls} />
 
-          {/* 
-        <Box className="importedhtmlcontent">
-          <Box dangerouslySetInnerHTML={{ __html: postHTMLContent }}/>
-        </Box> */}
-          {/*       
-        <Card.Section className={classes.section} mt="md">
-          <Group position="apart" mt="md">
-            <Box>
-              <Text fz="xl" span fw={500} className={classes.price}>
-                397$
-              </Text>
-              <Text span fz="sm" c="dimmed">
-                {" "}
-               / night
-              </Text>
-            </Box>
-            <Button radius="md">Book now</Button>
-          </Group>
-        </Card.Section>
-        */}
-          {/*//BOTTOM CAROUSEL */}
-          {/* 
-          <Card.Section>
-            <Carousel
-              withIndicators
-              loop
-              classNames={{
-                root: classes.carousel,
-                controls: classes.carouselControls,
-                indicator: classes.carouselIndicator,
-              }}
-            >
-              {postImagesSlides}
-            </Carousel>
-          </Card.Section>
-           */}
+          <ImagesSlider cloudUrls={postImagesPulbicUrls} />
         </Card>
         <Box>
           <Text pb="xs">Comments</Text>

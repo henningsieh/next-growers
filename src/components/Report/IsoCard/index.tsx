@@ -285,7 +285,7 @@ export default function IsoReportCard({
       </Card.Section> */}
 
       {/*// Session buttons */}
-      {status == "authenticated" &&
+      {status === "authenticated" &&
         session.user.id == isoReport.authorId && (
           <Group mt="xs" position="apart">
             <Button

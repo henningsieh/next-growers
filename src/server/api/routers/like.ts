@@ -16,7 +16,11 @@ export const likeRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const likes = await ctx.prisma.like.findMany({
         where: {
-          OR: [{ reportId: input }, { postId: input }],
+          OR: [
+            { reportId: input },
+            { postId: input },
+            { commentId: input },
+          ],
         },
         orderBy: {
           createdAt: "desc",
@@ -225,6 +229,114 @@ export const likeRouter = createTRPCRouter({
       return like;
     }),
   dislikePost: protectedProcedure
+    .input(InputLike)
+    .mutation(async ({ ctx, input }) => {
+      // Check if the like exists
+      const existingLike = await ctx.prisma.like.findFirst({
+        where: {
+          postId: input.id,
+          userId: ctx.session.user.id,
+        },
+      });
+      if (!existingLike) {
+        throw new Error("Like does not exist");
+      }
+
+      // Check if the user is the owner of the like
+      if (existingLike.userId !== ctx.session.user.id) {
+        throw new Error("You are not the owner of this like");
+      }
+
+      // Delete the like
+      try {
+        await ctx.prisma.like.delete({
+          where: {
+            id: existingLike.id,
+          },
+        });
+      } catch (error: unknown) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          console.debug(error.message);
+          throw new Error(`Failed to delete like: ${error.message}`);
+        } else {
+          throw new Error("Failed to delete like");
+        }
+      }
+
+      return true;
+    }),
+
+  // like / dislike Post
+  likeComment: protectedProcedure
+    .input(InputLike)
+    .mutation(async ({ ctx, input }) => {
+      // Check if the report exists
+      const existingComment = await ctx.prisma.comment.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+      if (!existingComment) {
+        throw new Error("Report does not exist");
+      }
+
+      // Check if the user exists
+      const existingUser = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+      if (!existingUser) {
+        throw new Error("User does not exist");
+      }
+
+      // Check if the user has already liked the report
+      const existingLike = await ctx.prisma.like.findUnique({
+        where: {
+          userId_commentId: {
+            userId: ctx.session.user.id,
+            commentId: input.id,
+          },
+        },
+      });
+      if (existingLike) {
+        throw new Error("You have already liked this report");
+      }
+
+      // Create a new like
+      const like = await ctx.prisma.like.create({
+        data: {
+          user: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+          comment: {
+            connect: {
+              id: input.id,
+            },
+          },
+        },
+      });
+      // Create a notification for the report author
+      await ctx.prisma.notification.create({
+        data: {
+          recipient: {
+            connect: {
+              id: existingComment.authorId,
+            },
+          },
+          event: NotificationEvent.LIKE_CREATED,
+          like: {
+            connect: {
+              id: like.id,
+            },
+          },
+        },
+      });
+      return like;
+    }),
+  dislikeCommentFIXME: protectedProcedure
     .input(InputLike)
     .mutation(async ({ ctx, input }) => {
       // Check if the like exists

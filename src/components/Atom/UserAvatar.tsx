@@ -14,7 +14,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   return (
     <Tooltip position="bottom" label={userName} color="grape" withArrow>
       <Avatar
-        src={imageUrl}
+        src={imageUrl as string}
         className="cursor-pointer"
         variant="outline"
         radius="xl"

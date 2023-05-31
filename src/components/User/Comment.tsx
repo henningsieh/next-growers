@@ -1,3 +1,4 @@
+import UserAvatar from "../Atom/UserAvatar";
 import {
   ActionIcon,
   Avatar,
@@ -13,6 +14,7 @@ import {
 import { IconEdit, IconTrash, IconTrashX } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
 
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -46,14 +48,22 @@ export function UserComment({ comment }: CommentHtmlProps) {
   const { classes } = useStyles();
   const router = useRouter();
 
+  const { data: session, status } = useSession();
+
   return (
-    <Paper withBorder p="sm" radius="md" className={classes.comment}>
+    <Paper
+      withBorder
+      p="sm"
+      pt="xs"
+      radius="md"
+      className={classes.comment}
+    >
       <Group position="apart">
         <Group position="left">
-          <Avatar
-            src={comment.author.image}
-            alt={comment.author.name as string}
-            radius="xl"
+          <UserAvatar
+            imageUrl={comment.author.image}
+            userName={comment.author.name as string}
+            avatarRadius="md"
           />
           <Box>
             <Text fz="sm">{comment.author.name}</Text>
@@ -67,16 +77,22 @@ export function UserComment({ comment }: CommentHtmlProps) {
           </Box>
         </Group>
         <Group position="right">
-          <ActionIcon m={0} p={0} className=" cursor-default">
-            <Paper p={3} withBorder>
-              <IconEdit size="1.2rem" stroke={1.4} />
-            </Paper>
-          </ActionIcon>
-          <ActionIcon m={0} p={0} className=" cursor-default">
-            <Paper p={3} withBorder>
-              <IconTrashX size="1.2rem" stroke={1.4} />
-            </Paper>
-          </ActionIcon>
+          {status === "authenticated" &&
+            session.user.id === comment.author.id && (
+              <>
+                <ActionIcon m={0} p={0} className=" cursor-default">
+                  <Paper p={2} withBorder>
+                    <IconEdit size="1.2rem" stroke={1.4} />
+                  </Paper>
+                </ActionIcon>
+                <ActionIcon m={0} p={0} className=" cursor-default">
+                  <Paper p={2} withBorder>
+                    <IconTrashX size="1.2rem" stroke={1.4} />
+                  </Paper>
+                </ActionIcon>
+              </>
+            )}
+
           <LikeHeart itemToLike={comment} itemType={"Comment"} />
         </Group>
       </Group>
