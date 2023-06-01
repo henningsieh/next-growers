@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
@@ -100,12 +101,14 @@ export default function LandingCard() {
         <Text className={classes.description} size="xl" mt="xl">
           {t("common:landing-text2")}
         </Text>
-        <button
-          className="my-8 h-12 w-96 rounded-md bg-gradient-to-r
-from-pink-600 via-red-600 to-orange-500 text-white"
-        >
-          COMING SOON... 🤞
-        </button>
+        <Link href="/reports">
+          <button
+            className="my-8 h-12 w-96 rounded-md bg-gradient-to-r
+          from-pink-600 via-red-600 to-orange-500 text-white"
+          >
+            EXPLORE REPORTS 🔎
+          </button>
+        </Link>
         <Text className={classes.description} size="md">
           {t("common:landing-text3")}
         </Text>
