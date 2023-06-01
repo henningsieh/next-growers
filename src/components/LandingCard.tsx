@@ -101,7 +101,7 @@ export default function LandingCard() {
         <Text className={classes.description} size="xl" mt="xl">
           {t("common:landing-text2")}
         </Text>
-        <Link href="/reports">
+        <Link href="/grows">
           <button
             className="my-8 h-12 w-96 rounded-md bg-gradient-to-r
           from-pink-600 via-red-600 to-orange-500 text-white"

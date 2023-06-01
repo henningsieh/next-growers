@@ -223,7 +223,7 @@ export default function HeaderMegaMenu({
                 onClick={toggleDrawer}
               />
             </Box>
-            <Link href="/reports">
+            <Link href="/grows">
               <Image
                 className="rounded-sm"
                 height={40}
@@ -239,9 +239,9 @@ export default function HeaderMegaMenu({
             className={classes.hiddenMobile}
           >
             <Link href="/" className={classes.link}>
-              Landing Page
+              Welcome
             </Link>
-            <Link href="/reports" className={classes.link}>
+            <Link href="/grows" className={classes.link}>
               Explore all Grows
             </Link>
             <HoverCard
@@ -347,7 +347,7 @@ export default function HeaderMegaMenu({
           <Link href="/" className={classes.link}>
             Welcome
           </Link>
-          <Link href="/reports" className={classes.link}>
+          <Link href="/grows" className={classes.link}>
             Explore all Grows
           </Link>
           <UnstyledButton
