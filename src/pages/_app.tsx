@@ -150,12 +150,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
           // },
         }}
       >
-        <Loading isLoading={isLoading} />
         <SessionProvider session={session}>
           {/* // FUTURE BANNERS GO HERE!! */}
           <Notifications limit={5} position="bottom-right" />
           <Toaster />
           <AppLayout>
+            <Loading isLoading={isLoading} />
             <Component {...pageProps} />
           </AppLayout>
         </SessionProvider>

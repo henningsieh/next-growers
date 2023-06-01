@@ -1,9 +1,11 @@
 import { Avatar, Tooltip } from "@mantine/core";
 
+import Image from "next/image";
+
 type UserAvatarProps = {
-  imageUrl: string | null | undefined;
-  userName: string | null | undefined;
-  avatarRadius: "xs" | "sm" | "md" | "lg" | "xl";
+  imageUrl: string;
+  userName: string;
+  avatarRadius: number;
 };
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
@@ -13,13 +15,21 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
 }) => {
   return (
     <Tooltip position="bottom" label={userName} color="grape" withArrow>
+      <Image
+        className="  border-2  rounded-full"
+        width={avatarRadius}
+        height={avatarRadius}
+        src={imageUrl}
+        alt={`${userName}'s Proile Image`}
+      />
+      {/* 
       <Avatar
         src={imageUrl as string}
         className="cursor-pointer"
         variant="outline"
         radius="xl"
         size={avatarRadius}
-      />
+      /> */}
     </Tooltip>
   );
 };

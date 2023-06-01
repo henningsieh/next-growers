@@ -12,7 +12,10 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+
+import UserAvatar from "~/components/Atom/UserAvatar";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 
@@ -55,6 +58,8 @@ export function ReportHeader({
 }: ReportHeaderProps) {
   const { classes, theme } = useStyles();
 
+  const { data: session, status } = useSession();
+
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
@@ -84,15 +89,13 @@ export function ReportHeader({
           height: getResponsiveHeaderImageHeight,
         }}
       />
-
-      <Avatar
-        src={avatar}
-        size={120}
-        radius={120}
-        mx="auto"
-        mt={-30}
-        className={classes.avatar}
-      />
+      <Center mt={-82} /* className={classes.avatar} */>
+        <UserAvatar
+          imageUrl={avatar}
+          userName={name}
+          avatarRadius={180} // className={classes.avatar}
+        />
+      </Center>
       {/* 
       <Text ta="center" fz="lg" fw={500} mt="sm">
         {name}
@@ -114,24 +117,29 @@ export function ReportHeader({
         {items}
       </Group>*/}
 
-      <Box className="absolute bottom-4 right-3 cursor-pointer">
-        <Group className="cursor-pointer" position="right">
-          <Link href={`/account/reports/${report.id as string}`}>
-            <Button
-              className="cursor-pointer"
-              py={0}
-              px={12}
-              variant="outline"
-              radius="sm"
-              size="xs"
-              fz={12}
-              color={theme.colorScheme === "dark" ? undefined : "dark"}
-            >
-              Edit Report
-            </Button>
-          </Link>
-        </Group>
-      </Box>
+      {status === "authenticated" &&
+        report.authorId === session.user.id && (
+          <Box className="absolute bottom-4 right-3 cursor-pointer">
+            <Group className="cursor-pointer" position="right">
+              <Link href={`/account/reports/${report.id as string}`}>
+                <Button
+                  className="cursor-pointer"
+                  py={0}
+                  px={12}
+                  variant="outline"
+                  radius="sm"
+                  size="xs"
+                  fz={12}
+                  color={
+                    theme.colorScheme === "dark" ? undefined : "dark"
+                  }
+                >
+                  Edit Report
+                </Button>
+              </Link>
+            </Group>
+          </Box>
+        )}
     </Card>
   );
 }

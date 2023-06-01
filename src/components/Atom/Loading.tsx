@@ -7,8 +7,9 @@ interface LoadingProps {
 const Loading = ({ isLoading }: LoadingProps) => {
   return (
     <LoadingOverlay
-      mt={60}
+      // mt={60}
       overlayBlur={2}
+      overlayOpacity={0.2}
       transitionDuration={600}
       visible={isLoading}
     />

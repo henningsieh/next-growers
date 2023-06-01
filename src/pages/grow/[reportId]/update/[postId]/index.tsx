@@ -4,7 +4,7 @@ import { notifications } from "@mantine/notifications";
 import { IconCalendarOff } from "@tabler/icons-react";
 import dayjs from "dayjs";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type {
   GetStaticPaths,
@@ -13,12 +13,15 @@ import type {
 } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
 
 import { prisma } from "~/server/db";
+
+import { Post } from "~/types";
 
 /**
  * getStaticProps
@@ -248,11 +251,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export default function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
+  const theme = useMantineTheme();
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+
   const { report: staticReportFromProps, postId: postIdfromProps } =
     props;
   const pageTitle = `${staticReportFromProps.title}`;
-
-  const theme = useMantineTheme();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -271,26 +276,23 @@ export default function PublicReportPost(
     : xl
     ? 4
     : 5;
-  const dateOfnewestPost = staticReportFromProps.posts.reduce(
-    (maxDate, post) => {
-      const postDate = new Date(post.date);
-      return postDate > maxDate ? postDate : maxDate;
-    },
-    new Date(0)
-  );
 
-  const [postId, setPostId] = useState<string>(postIdfromProps);
+  const dateOfGermination = new Date(staticReportFromProps.createdAt);
+  // const [postId, setPostId] = useState<string>(postIdfromProps);
 
   const post = staticReportFromProps.posts.find(
     (post) => post.id === postIdfromProps
   );
-
   const postDate = new Date(post?.date as string);
-  const postDays = staticReportFromProps.posts.map((post) =>
-    new Date(post.date).getTime()
-  );
-  const dateOfGermination = new Date(staticReportFromProps.createdAt);
   const [selectedDate, selectDate] = useState<Date | null>(postDate);
+
+  useEffect(() => {
+    const post = staticReportFromProps.posts.find(
+      (post) => post.id === postIdfromProps
+    );
+    const postDate = new Date(post?.date as string);
+    selectDate(postDate);
+  }, [postIdfromProps, staticReportFromProps.posts]);
 
   const defaultRelDate =
     dayjs(selectedDate)
@@ -301,6 +303,17 @@ export default function PublicReportPost(
     defaultRelDate < dateOfGermination
       ? dateOfGermination
       : defaultRelDate;
+
+  const postDays = staticReportFromProps.posts.map((post) =>
+    new Date(post.date).getTime()
+  );
+  const dateOfnewestPost = staticReportFromProps.posts.reduce(
+    (maxDate, post) => {
+      const postDate = new Date(post.date);
+      return postDate > maxDate ? postDate : maxDate;
+    },
+    new Date(0)
+  );
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
@@ -314,10 +327,10 @@ export default function PublicReportPost(
 
     if (matchingPost) {
       selectDate(new Date(matchingPost.date));
-      setPostId(matchingPost.id);
-
+      // setPostId(matchingPost.id);
       const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
-      window.history.replaceState({}, "", newUrl);
+      void router.push(newUrl, undefined, { scroll: false });
+      // window.history.replaceState({}, "", newUrl);
     } else {
       notifications.show(noPostAtThisDay);
     }
@@ -387,7 +400,7 @@ export default function PublicReportPost(
             dateOfGermination={dateOfGermination}
             getResponsiveColumnCount={getResponsiveColumnCount}
           />
-          <PostCard postId={postId} report={staticReportFromProps} />
+          <PostCard postId={post?.id} report={staticReportFromProps} />
         </Container>
 
         {/* <ReportDetailsHead report={staticReportFromProps} /> */}

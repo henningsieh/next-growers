@@ -151,7 +151,7 @@ export function ImagePreview({
           <UserAvatar
             userName={authorName}
             imageUrl={authorImageUrl}
-            avatarRadius="md"
+            avatarRadius={42}
           />
         </Box>
 

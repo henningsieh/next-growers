@@ -35,8 +35,6 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   const theme = useMantineTheme();
   const router = useRouter();
 
-  // console.debug("defaultDate", defaultDate);
-
   return (
     <Paper py="xs" withBorder key={getResponsiveColumnCount}>
       <Group position="center">
@@ -59,10 +57,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
                 <Box>{day}</Box>
               </Indicator>
             );
-          }} /* 
-          defaultDate={
-            leftDate < dateOfGermination ? dateOfGermination : leftDate
-          } */
+          }}
           defaultDate={defaultDate}
           value={selectedDate}
           onChange={handleSelectDate}

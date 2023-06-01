@@ -13,6 +13,7 @@ import type {
 } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
@@ -283,6 +284,9 @@ export default function PublicReport(
       ? dateOfGermination
       : defaultRelDate;
 
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
       return;
@@ -296,12 +300,8 @@ export default function PublicReport(
     if (matchingPost) {
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
-      window.history.pushState(
-        {},
-        "",
-        // void router.replace(
-        `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`
-      );
+      const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
+      void router.push(newUrl, undefined, { scroll: false });
     } else {
       notifications.show(noPostAtThisDay);
     }

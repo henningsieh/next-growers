@@ -377,7 +377,7 @@ export default function HeaderMegaMenu({
         </ScrollArea>
       </Drawer>
 
-      <Box className="mt-16 ">{children}</Box>
+      <Box className="relative mt-16 ">{children}</Box>
     </>
   );
 }

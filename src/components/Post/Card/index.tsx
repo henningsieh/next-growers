@@ -112,7 +112,7 @@ const useStyles = createStyles((theme) => ({
 
 interface PostCardProps {
   report: IsoReportWithPostsFromDb;
-  postId: string;
+  postId: string | undefined;
 }
 
 export function PostCard(props: PostCardProps) {
@@ -130,7 +130,7 @@ export function PostCard(props: PostCardProps) {
     isLoading,
     isError,
   } = api.comments.getCommentsByPostId.useQuery({
-    postId: postId, // Set the desired order (true for descending, false for ascending)
+    postId: postId as string, // Set the desired order (true for descending, false for ascending)
   });
 
   const commentsRef = useRef<HTMLElement[]>([]);
@@ -214,6 +214,7 @@ export function PostCard(props: PostCardProps) {
       icon: IconClock,
     },
   ];
+
   const reportBasics = reportBasicData.map((growBasic) => (
     <Center key={growBasic.label}>
       <growBasic.icon
@@ -294,35 +295,42 @@ export function PostCard(props: PostCardProps) {
 
     return (
       <>
-        <Card p="sm" withBorder>
-          <Group position="apart"> {postData} </Group>
-
-          <Group position="apart" className={classes.section}>
+        <Paper
+          bg={
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[6]
+              : theme.colors.gray[1]
+          }
+          p="sm"
+          withBorder
+        >
+          <Group position="apart">
             <Text fw={700} fz="xl">
               {post?.title}
             </Text>
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
-
+          <Group position="apart" px={2} className={classes.section}>
+            {postData}
+          </Group>
           <Paper
             fz={16}
             c="dimmed"
             withBorder
             p={theme.spacing.xs}
             mb={theme.spacing.sm}
+            m={0}
             dangerouslySetInnerHTML={{
               __html: postHTMLContent as TrustedHTML,
             }}
           />
-
           <ImagesSlider cloudUrls={postImagesPulbicUrls} />
-        </Card>
+        </Paper>
         <Box>
           <Text pb="xs">Comments</Text>
           {comments}
         </Box>
         <Space h="xs" />
-
         <Group px="sm" position="apart" className={classes.section}>
           <Text fz="sm" c="dimmed">
             Grow data:

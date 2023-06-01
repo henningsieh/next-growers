@@ -82,7 +82,13 @@ const EditReportDetails: NextPage = () => {
   } = api.strains.getAllStrains.useQuery();
 
   const { data: session, status } = useSession();
-  if (status === "unauthenticated") return <AccessDenied />;
+  if (
+    !reportIsLoading &&
+    status !== "loading" &&
+    (status === "unauthenticated" ||
+      report?.authorId != session?.user.id)
+  )
+    return <AccessDenied />;
 
   return (
     <>

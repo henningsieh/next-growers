@@ -47,12 +47,14 @@ const useStyles = createStyles((theme) => ({
 
       // Add the desired box-shadow color and theme's md shadow here
       boxShadow:
-        theme.colorScheme === "dark"
-          ? `0 0 4px ${theme.colors.pink[6]}`
-          : `0 0 8px ${theme.colors.orange[8]}`,
+        theme.colorScheme !== "dark"
+          ? `0 0 4px ${theme.colors.pink[7]}`
+          : `0 0 8px ${theme.colors.orange[7]}`,
     },
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[6]
+        : theme.colors.gray[1],
   },
 
   section: {

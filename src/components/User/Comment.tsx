@@ -61,9 +61,9 @@ export function UserComment({ comment }: CommentHtmlProps) {
       <Group position="apart">
         <Group position="left">
           <UserAvatar
-            imageUrl={comment.author.image}
+            imageUrl={comment.author.image as string}
             userName={comment.author.name as string}
-            avatarRadius="md"
+            avatarRadius={42}
           />
           <Box>
             <Text fz="sm">{comment.author.name}</Text>
