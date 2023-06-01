@@ -1,6 +1,6 @@
 import { noPostAtThisDay } from "./update/[postId]";
 import { Box, Container, Title, useMantineTheme } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
 
@@ -287,6 +287,11 @@ export default function PublicReport(
   const router = useRouter();
   const { locale: activeLocale } = router;
 
+  const { scrollIntoView, targetRef } =
+    useScrollIntoView<HTMLDivElement>({
+      offset: 60,
+    });
+
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
       return;
@@ -298,6 +303,9 @@ export default function PublicReport(
     });
 
     if (matchingPost) {
+      scrollIntoView({
+        alignment: "start",
+      });
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
       const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
@@ -360,17 +368,19 @@ export default function PublicReport(
             ]}
           />
           {/* // Posts Date Picker */}
-          <PostsDatePicker
-            defaultDate={
-              selectedDate ? columnStartMonth : dateOfGermination
-            }
-            postDays={postDays}
-            selectedDate={selectedDate}
-            handleSelectDate={handleSelectDate}
-            dateOfnewestPost={dateOfnewestPost}
-            dateOfGermination={dateOfGermination}
-            getResponsiveColumnCount={getResponsiveColumnCount}
-          />
+          <Box ref={targetRef}>
+            <PostsDatePicker
+              defaultDate={
+                selectedDate ? columnStartMonth : dateOfGermination
+              }
+              postDays={postDays}
+              selectedDate={selectedDate}
+              handleSelectDate={handleSelectDate}
+              dateOfnewestPost={dateOfnewestPost}
+              dateOfGermination={dateOfGermination}
+              getResponsiveColumnCount={getResponsiveColumnCount}
+            />
+          </Box>
           <PostCard postId={postId} report={staticReportFromProps} />
         </Container>
 

@@ -1,5 +1,5 @@
 import { Box, Container, Title, useMantineTheme } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconCalendarOff } from "@tabler/icons-react";
 import dayjs from "dayjs";
