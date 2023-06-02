@@ -57,7 +57,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
               h5: { fontSize: "0.94rem" },
             },
           },
-          white: "#FAFAFA",
+          white: "#F6F6F6",
           black: "#333333",
           primaryColor: "orange",
           breakpoints: {

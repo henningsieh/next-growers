@@ -75,7 +75,7 @@ const useStyles = createStyles((theme) => ({
 
   deleteButton: {
     backgroundColor: "red",
-    color: "white",
+    color: theme.white,
     border: "none",
     borderRadius: "0.5rem",
     padding: "0.5rem 1rem",
@@ -152,6 +152,7 @@ export function ImagePreview({
             userName={authorName}
             imageUrl={authorImageUrl}
             avatarRadius={42}
+            tailwindMarginTop={0}
           />
         </Box>
 

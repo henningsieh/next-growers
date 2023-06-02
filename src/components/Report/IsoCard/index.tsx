@@ -7,6 +7,7 @@ import {
   Center,
   Flex,
   Group,
+  Paper,
   Text,
   Tooltip,
   createStyles,
@@ -48,13 +49,13 @@ const useStyles = createStyles((theme) => ({
       // Add the desired box-shadow color and theme's md shadow here
       boxShadow:
         theme.colorScheme !== "dark"
-          ? `0 0 4px ${theme.colors.pink[7]}`
+          ? `0 0 4px ${theme.colors.grape[7]}`
           : `0 0 8px ${theme.colors.orange[7]}`,
     },
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[6]
-        : theme.colors.gray[1],
+        : theme.colors.gray[2],
   },
 
   section: {
@@ -187,7 +188,7 @@ export default function IsoReportCard({
   ));
 
   return (
-    <Card withBorder radius="sm" p="sm" className={classes.card}>
+    <Paper m={0} withBorder radius="sm" p={0} className={classes.card}>
       <Card.Section>
         <ImagePreview
           imageUrl={isoReport.image?.cloudUrl as string}
@@ -321,6 +322,6 @@ export default function IsoReportCard({
           </Group>
         )}
       {/* <ReportDetailsHead report={isoReport} /> */}
-    </Card>
+    </Paper>
   );
 }

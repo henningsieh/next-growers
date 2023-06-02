@@ -81,21 +81,22 @@ export function ReportHeader({
 
   return (
     <Card withBorder padding="sm" radius="sm" className={classes.card}>
-      <Card.Section
-        sx={{
-          backgroundSize: "cover",
-          backgroundImage: `url(${image})`,
-          backgroundPosition: "center", // Add this line
-          height: getResponsiveHeaderImageHeight,
-        }}
-      />
-      <Center mt={-82} /* className={classes.avatar} */>
-        <UserAvatar
-          imageUrl={avatar}
-          userName={name}
-          avatarRadius={180} // className={classes.avatar}
+      <Link title="back to Grow" href={`/grow/${report.id as string}`}>
+        <Card.Section
+          sx={{
+            backgroundSize: "cover",
+            backgroundImage: `url(${image})`,
+            backgroundPosition: "center",
+            height: getResponsiveHeaderImageHeight,
+          }}
         />
-      </Center>
+      </Link>
+      <UserAvatar
+        imageUrl={avatar}
+        userName={name}
+        avatarRadius={180}
+        tailwindMarginTop={16}
+      />
       {/* 
       <Text ta="center" fz="lg" fw={500} mt="sm">
         {name}

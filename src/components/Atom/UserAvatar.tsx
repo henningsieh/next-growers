@@ -6,30 +6,30 @@ type UserAvatarProps = {
   imageUrl: string;
   userName: string;
   avatarRadius: number;
+  tailwindMarginTop: number;
 };
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
   imageUrl,
   userName,
   avatarRadius,
+  tailwindMarginTop,
 }) => {
   return (
-    <Tooltip position="bottom" label={userName} color="grape" withArrow>
+    <Tooltip
+      transitionProps={{ transition: "pop-bottom-left", duration: 300 }}
+      position="top"
+      label={userName}
+      color="grape"
+      withArrow
+    >
       <Image
-        className="  border-2  rounded-full"
+        className={`-mt-${tailwindMarginTop} mx-auto rounded-full`}
         width={avatarRadius}
         height={avatarRadius}
         src={imageUrl}
         alt={`${userName}'s Proile Image`}
       />
-      {/* 
-      <Avatar
-        src={imageUrl as string}
-        className="cursor-pointer"
-        variant="outline"
-        radius="xl"
-        size={avatarRadius}
-      /> */}
     </Tooltip>
   );
 };

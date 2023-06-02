@@ -185,7 +185,7 @@ model Product {
 
 model Comment {
   id      String @id @default(cuid())
-  content String
+  content String @db.VarChar(10000)
 
   authorId String // One User has many Comments
   author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)

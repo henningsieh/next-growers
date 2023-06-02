@@ -1,6 +1,14 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "../trpc";
 import { z } from "zod";
-import { InputGetCommentsByPostId } from "~/helpers/inputValidation";
+import {
+  InputCreatePostServer,
+  InputGetCommentsByPostId,
+  InputSaveComment,
+} from "~/helpers/inputValidation";
 
 export const commentRouter = createTRPCRouter({
   /**
@@ -99,133 +107,52 @@ export const commentRouter = createTRPCRouter({
       return comments;
     }),
 
-  /* 
-  createPost: protectedProcedure
-    .input(InputCreatePostServer)
+  saveComment: protectedProcedure
+    .input(InputSaveComment)
     .mutation(async ({ ctx, input }) => {
-      const {
-        id,
-        date,
-        title,
-        content,
-        growStage,
-        lightHoursPerDay,
-        reportId,
-        authorId,
-        images, // Include the images field in the input
-      } = input;
+      const { id, postId, content } = input;
 
-      const report = await ctx.prisma.report.findFirst({
-        where: {
-          id: reportId,
-        },
-      });
+      if (id) {
+        // Saving an edited comment
+        const existingComment = await ctx.prisma.comment.findUnique({
+          where: { id },
+        });
 
-      if (authorId != ctx.session.user.id) {
-        throw new Error(
-          "A SECURITY ISSSUE OCCURED! (Missmatch: authorId != userId )"
-        );
+        if (!existingComment) {
+          throw new Error(`Comment with id ${id} does not exist`);
+        }
+
+        if (existingComment.authorId !== ctx.session.user.id) {
+          throw new Error(
+            "You are not authorized to edit this comment"
+          );
+        }
+
+        const updatedComment = await ctx.prisma.comment.update({
+          where: { id },
+          data: { content },
+        });
+
+        return updatedComment;
+      } else {
+        // Creating a new comment
+        const post = await ctx.prisma.post.findUnique({
+          where: { id: postId },
+        });
+
+        if (!post) {
+          throw new Error(`Post with id ${postId} does not exist`);
+        }
+
+        const newComment = await ctx.prisma.comment.create({
+          data: {
+            content,
+            author: { connect: { id: ctx.session.user.id } },
+            post: { connect: { id: postId } },
+          },
+        });
+
+        return newComment;
       }
-
-      if (!report) {
-        throw new Error(
-          `The report with id: ${reportId} does not exist`
-        );
-      }
-
-      if (report.authorId != ctx.session.user.id) {
-        throw new Error(
-          `You are not the owner of this report with id: ${reportId}`
-        );
-      }
-
-      // const formattedDate = new Date(date);
-
-      const post = await ctx.prisma.post.upsert({
-        where: { id }, // Optional: Set the condition for upserting based on the id
-        update: {
-          date,
-          title,
-          content,
-          growStage,
-          lightHoursPerDay,
-          report: {
-            connect: {
-              id: reportId,
-            },
-          },
-          author: {
-            connect: {
-              id: authorId,
-            },
-          },
-          images: {
-            connect: images.map((imageId) => ({ id: imageId })),
-          },
-        },
-        create: {
-          date,
-          title,
-          content,
-          growStage,
-          lightHoursPerDay,
-          report: {
-            connect: {
-              id: reportId,
-            },
-          },
-          author: {
-            connect: {
-              id: authorId,
-            },
-          },
-          images: {
-            connect: images.map((imageId) => ({ id: imageId })),
-          },
-        },
-      });
-
-      // console.debug("date", date);
-      // Update the `updated_at` field of the connected report
-      await ctx.prisma.report.update({
-        where: {
-          id: reportId,
-        },
-        data: {
-          updatedAt: date,
-        },
-      });
-      return post;
-    }), */
-
-  /**
-   * Get PostDbInput // ONLY NEEDED AS TYPE
-   * @Input: postId: String
-   */
-  getPostDbInput: publicProcedure
-    .input(z.string().min(1))
-    .query(async ({ ctx, input }) => {
-      const postId = input;
-
-      const post = await ctx.prisma.post.findUnique({
-        where: {
-          id: postId,
-        },
-        include: {
-          images: {
-            select: {
-              id: true,
-            },
-          },
-        },
-      });
-
-      if (!post) {
-        throw new Error(`Post with id ${postId} does not exist`);
-      }
-
-      const imageIds = post.images.map((image) => image.id);
-
-      return { ...post, images: imageIds };
     }),
 });

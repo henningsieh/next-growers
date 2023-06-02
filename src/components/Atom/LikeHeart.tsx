@@ -268,7 +268,7 @@ const LikeHeart = (props: LikeHeartProps) => {
             {(transitionStyles) => (
               <Paper
                 withBorder
-                className={`absolute top-full right-0 z-50 m-0 -mr-1 mt-2 w-max rounded p-0 text-right`}
+                className={`absolute bottom-full right-0 z-50 m-0 -mr-1 mt-2 w-max rounded p-0 text-right`}
                 style={{ ...transitionStyles }}
               >
                 {itemLikes &&
@@ -277,10 +277,11 @@ const LikeHeart = (props: LikeHeartProps) => {
                       {like.name}
                     </Box>
                   ))}
+                {/* 
                 <Text fz="xs" td="overline" pr={4} fs="italic">
                   {itemLikes && itemLikes.length} Like
                   {itemLikes && itemLikes.length > 1 ? "s" : ""} 👍
-                </Text>
+                </Text> */}
               </Paper>
             )}
           </Transition>

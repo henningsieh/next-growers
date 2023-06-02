@@ -309,7 +309,10 @@ export default function PublicReport(
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
       const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
-      void router.push(newUrl, undefined, { scroll: false });
+      void router.push(newUrl, undefined, {
+        shallow: true,
+        scroll: false,
+      });
     } else {
       notifications.show(noPostAtThisDay);
     }
