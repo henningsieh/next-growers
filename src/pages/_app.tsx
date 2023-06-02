@@ -91,13 +91,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
               },
               styles: (theme) => ({
                 root: {
-                  // overriding the tailwind overrides... 👀
-
                   color:
                     theme.colorScheme === "dark"
                       ? theme.colors.gray[5]
                       : theme.colors.dark[5],
-
                   "&:hover": {
                     cursor: "default",
                     backgroundColor:
@@ -110,6 +107,41 @@ const MyApp: AppType<{ session: Session | null }> = ({
             },
           },
           globalStyles: (theme) => ({
+            ul: {
+              paddingLeft: "1.5em",
+            },
+            "ul li": {
+              position: "relative",
+              paddingLeft: "1em",
+            },
+            "ul li::before": {
+              content: '""',
+              position: "absolute",
+              top: "0.66em",
+              left: 0,
+              width: "0.5em",
+              height: "0.5em",
+              borderRadius: "50%",
+              backgroundColor: theme.colors.orange[7], // Change the color to match your theme
+            },
+            ol: {
+              paddingLeft: "1.5em",
+              counterReset: "list-counter",
+            },
+            "ol li": {
+              position: "relative",
+              paddingLeft: "1em",
+              marginBottom: "0.5em",
+              counterIncrement: "list-counter",
+            },
+            "ol li::before": {
+              content: "counter(list-counter)",
+              position: "absolute",
+              top: "0em",
+              left: 0,
+              fontWeight: "bold",
+              color: theme.colors.orange[7], // Change the color to match your theme
+            },
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             body: {
               ...theme.fn.fontStyles(),
@@ -126,14 +158,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
             "*, *::before, *::after": {
               boxSizing: "border-box",
-            },
-
-            ".your-class": {
-              backgroundColor: "red",
-            },
-
-            "#your-id > [data-active]": {
-              backgroundColor: "pink",
             },
           }),
 
