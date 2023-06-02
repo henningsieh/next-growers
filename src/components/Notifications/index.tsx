@@ -202,6 +202,7 @@ const ProtectedNotifications = () => {
                       })}
                     >
                       <Link
+                        scroll={false}
                         href={
                           notification.like?.commentId != null
                             ? `/grow/${

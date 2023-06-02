@@ -11,6 +11,7 @@ import {
   Text,
   Textarea,
   Transition,
+  TypographyStylesProvider,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -20,6 +21,7 @@ import {
   IconNewSection,
   IconTextPlus,
   IconTrashX,
+  IconX,
 } from "@tabler/icons-react";
 import { IconNews } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
@@ -51,6 +53,9 @@ const PostComments = ({ postId }: PostCommentsProps) => {
   const { data: session, status } = useSession();
 
   const [isSaving, setIsSaving] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
+  const [selectedCommentText, setSelectedCommentText] = useState("");
+
   const trpc = api.useContext();
 
   const now = new Date();
@@ -95,32 +100,6 @@ const PostComments = ({ postId }: PostCommentsProps) => {
 
   const commentsRef = useRef<HTMLElement[]>([]);
 
-  useEffect(() => {
-    const commentId = window.location.hash.substring(1); // Get the comment ID from the URL hash
-
-    if (commentId && commentsRef.current.length > 0) {
-      const commentElement = commentsRef.current.find(
-        (element) => element.id === commentId
-      );
-
-      if (commentElement) {
-        commentElement.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  }, []);
-
-  const comments = postComments?.map((postComment) => {
-    return (
-      <div
-        key={postComment.id}
-        id={postComment.id}
-        ref={(ref) => commentsRef.current.push(ref as HTMLDivElement)}
-      >
-        <UserComment comment={postComment} />
-      </div>
-    );
-  });
-
   const newForm = useForm({
     validate: zodResolver(InputSaveComment),
     validateInputOnChange: true,
@@ -129,6 +108,22 @@ const PostComments = ({ postId }: PostCommentsProps) => {
       postId: postId,
       content: "",
     },
+  });
+
+  const comments = postComments?.map((postComment) => {
+    return (
+      <div
+        key={postComment.id}
+        id={postComment.id}
+        ref={(ref) => commentsRef.current.push(ref as HTMLDivElement)}
+      >
+        <UserComment
+          comment={postComment}
+          setNewOpen={setNewOpen}
+          newForm={newForm}
+        />
+      </div>
+    );
   });
 
   const handleErrors = (errors: typeof newForm.errors) => {
@@ -143,7 +138,6 @@ const PostComments = ({ postId }: PostCommentsProps) => {
     }
   };
 
-  const [newOpen, setNewOpen] = useState(false);
   return (
     <Box>
       <Group pb="xs" position="apart">
@@ -197,7 +191,7 @@ const PostComments = ({ postId }: PostCommentsProps) => {
                     imageUrl={session?.user.image as string}
                     userName={session?.user.name as string}
                     avatarRadius={42}
-                    tailwindMarginTop={0}
+                    tailwindMarginTop={false}
                   />
                   <Box>
                     <Text fz="sm">{session?.user.name as string}</Text>
@@ -222,7 +216,7 @@ const PostComments = ({ postId }: PostCommentsProps) => {
                       className=" cursor-default"
                     >
                       <Paper p={2} withBorder>
-                        <IconTrashX size="1.2rem" stroke={1.4} />
+                        <IconX size="1.2rem" stroke={1.4} />
                       </Paper>
                     </ActionIcon>
                   </>
@@ -231,17 +225,17 @@ const PostComments = ({ postId }: PostCommentsProps) => {
                 </Group>
               </Group>
               <Box>
-                <Alert
-                  p="xs"
-                  mt="sm"
-                  ml={42}
-                  // w={420}
-                  icon={<IconInfoCircle size="1rem" />}
-                  title="Markdown support"
-                  color="orange"
-                  variant="light"
-                >
-                  <Code>
+                <TypographyStylesProvider>
+                  <Alert
+                    p="xs"
+                    mt="sm"
+                    ml={42}
+                    // w={420}
+                    icon={<IconInfoCircle size="1rem" />}
+                    title="Markdown support"
+                    color="orange"
+                    variant="outline"
+                  >
                     Use{" "}
                     <Link
                       title="Markdown Cheat Sheet"
@@ -253,8 +247,8 @@ const PostComments = ({ postId }: PostCommentsProps) => {
                       markdown
                     </Link>{" "}
                     to style your comment!
-                  </Code>
-                </Alert>
+                  </Alert>
+                </TypographyStylesProvider>
               </Box>
               <form
                 onSubmit={newForm.onSubmit((values) => {
@@ -280,7 +274,17 @@ const PostComments = ({ postId }: PostCommentsProps) => {
                     ml={42}
                     pt={12}
                     withAsterisk
-                    placeholder=""
+                    placeholder={`# **bold headline 1**
+## headline 2
+\`code\`
+---
+**bold text**
+*italicized text*
+> blockquote
+1. First item
+2. Second item
+- First item
+- Second item`}
                     {...newForm.getInputProps("content")}
                   />
                 </Box>

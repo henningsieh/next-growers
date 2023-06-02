@@ -16,7 +16,7 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
+import { UseFormReturnType, useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconEdit, IconTrash, IconTrashX } from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";
@@ -64,6 +64,19 @@ const useStyles = createStyles((theme) => ({
 
 interface CommentHtmlProps {
   comment: Comment;
+  setNewOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  newForm: UseFormReturnType<
+    {
+      id: undefined;
+      postId: string;
+      content: string;
+    },
+    (values: { id: undefined; postId: string; content: string }) => {
+      id: undefined;
+      postId: string;
+      content: string;
+    }
+  >;
 }
 
 // Use remark to convert markdown into HTML string
@@ -82,18 +95,21 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
   });
 }
 
-export function UserComment({ comment }: CommentHtmlProps) {
+export function UserComment({
+  comment,
+  setNewOpen,
+  newForm,
+}: CommentHtmlProps) {
   const { classes } = useStyles();
-  const router = useRouter();
-
   const { data: session, status } = useSession();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
   const [transformedHtml, setTransformedHtml] = useState<string | null>(
     null
   );
+
+  const router = useRouter();
   const trpc = api.useContext();
 
   const { mutate: tRPCdeleteComment } =
@@ -191,6 +207,38 @@ export function UserComment({ comment }: CommentHtmlProps) {
     }
   };
 
+  const [selectedCommentText, setSelectedCommentText] = useState("");
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      const selectedText = window.getSelection()?.toString() || "";
+      setSelectedCommentText(selectedText);
+    };
+
+    document.addEventListener("selectionchange", handleSelectionChange);
+
+    return () => {
+      document.removeEventListener(
+        "selectionchange",
+        handleSelectionChange
+      );
+    };
+  }, []);
+
+  const handleQuote = () => {
+    const quotedText = selectedCommentText
+      .split("\n")
+      .map((line) => `> ${line}`)
+      .join("\n");
+
+    newForm.setValues({
+      ...newForm.values,
+      content: `${newForm.values.content}\n\n${quotedText}\n\n`,
+    });
+
+    setNewOpen(true);
+  };
+
   return (
     <Paper
       withBorder
@@ -205,7 +253,7 @@ export function UserComment({ comment }: CommentHtmlProps) {
             imageUrl={comment.author.image as string}
             userName={comment.author.name as string}
             avatarRadius={42}
-            tailwindMarginTop={0}
+            tailwindMarginTop={false}
           />
           <Box>
             <Text fz="sm">{comment.author.name}</Text>
@@ -266,6 +314,9 @@ export function UserComment({ comment }: CommentHtmlProps) {
       </Group>
       {!isEditing ? (
         <TypographyStylesProvider className={classes.body}>
+          {selectedCommentText && (
+            <button onClick={handleQuote}>Quote</button>
+          )}
           {transformedHtml ? (
             <Box
               className={classes.content}

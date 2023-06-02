@@ -289,7 +289,7 @@ export default function PublicReport(
 
   const { scrollIntoView, targetRef } =
     useScrollIntoView<HTMLDivElement>({
-      offset: 60,
+      offset: 1,
     });
 
   const handleSelectDate = (selectedDate: Date | null) => {
@@ -381,7 +381,7 @@ export default function PublicReport(
               handleSelectDate={handleSelectDate}
               dateOfnewestPost={dateOfnewestPost}
               dateOfGermination={dateOfGermination}
-              getResponsiveColumnCount={getResponsiveColumnCount}
+              responsiveColumnCount={getResponsiveColumnCount}
             />
           </Box>
           <PostCard postId={postId} report={staticReportFromProps} />

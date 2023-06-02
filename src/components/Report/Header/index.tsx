@@ -80,7 +80,7 @@ export function ReportHeader({
     : 220;
 
   return (
-    <Card withBorder padding="sm" radius="sm" className={classes.card}>
+    <Card withBorder pt={0} radius="sm" className={classes.card}>
       <Link title="back to Grow" href={`/grow/${report.id as string}`}>
         <Card.Section
           sx={{
@@ -95,7 +95,7 @@ export function ReportHeader({
         imageUrl={avatar}
         userName={name}
         avatarRadius={180}
-        tailwindMarginTop={16}
+        tailwindMarginTop={true}
       />
       {/* 
       <Text ta="center" fz="lg" fw={500} mt="sm">

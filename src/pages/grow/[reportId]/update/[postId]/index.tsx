@@ -21,8 +21,6 @@ import { ReportHeader } from "~/components/Report/Header";
 
 import { prisma } from "~/server/db";
 
-import { Post } from "~/types";
-
 /**
  * getStaticProps
  * @param context : GetStaticPropsContext<{ reportId: string }>
@@ -307,6 +305,7 @@ export default function PublicReportPost(
   const postDays = staticReportFromProps.posts.map((post) =>
     new Date(post.date).getTime()
   );
+
   const dateOfnewestPost = staticReportFromProps.posts.reduce(
     (maxDate, post) => {
       const postDate = new Date(post.date);
@@ -314,6 +313,11 @@ export default function PublicReportPost(
     },
     new Date(0)
   );
+
+  const { scrollIntoView, targetRef } =
+    useScrollIntoView<HTMLDivElement>({
+      offset: 1,
+    });
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
@@ -326,6 +330,9 @@ export default function PublicReportPost(
     });
 
     if (matchingPost) {
+      scrollIntoView({
+        alignment: "start",
+      });
       selectDate(new Date(matchingPost.date));
       // setPostId(matchingPost.id);
       const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
@@ -389,17 +396,19 @@ export default function PublicReportPost(
             ]}
           />
           {/* // Posts Date Picker */}
-          <PostsDatePicker
-            defaultDate={
-              selectedDate ? columnStartMonth : dateOfGermination
-            }
-            postDays={postDays}
-            selectedDate={selectedDate}
-            handleSelectDate={handleSelectDate}
-            dateOfnewestPost={dateOfnewestPost}
-            dateOfGermination={dateOfGermination}
-            getResponsiveColumnCount={getResponsiveColumnCount}
-          />
+          <Box ref={targetRef}>
+            <PostsDatePicker
+              defaultDate={
+                selectedDate ? columnStartMonth : dateOfGermination
+              }
+              postDays={postDays}
+              selectedDate={selectedDate}
+              handleSelectDate={handleSelectDate}
+              dateOfnewestPost={dateOfnewestPost}
+              dateOfGermination={dateOfGermination}
+              responsiveColumnCount={getResponsiveColumnCount}
+            />
+          </Box>
           <PostCard postId={post?.id} report={staticReportFromProps} />
         </Container>
 

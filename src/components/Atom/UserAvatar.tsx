@@ -6,7 +6,7 @@ type UserAvatarProps = {
   imageUrl: string;
   userName: string;
   avatarRadius: number;
-  tailwindMarginTop: number;
+  tailwindMarginTop: boolean;
 };
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
@@ -24,7 +24,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       withArrow
     >
       <Image
-        className={`-mt-${tailwindMarginTop} mx-auto rounded-full`}
+        className={`mx-auto rounded-full ${
+          tailwindMarginTop ? "-mt-16" : ""
+        }`}
         width={avatarRadius}
         height={avatarRadius}
         src={imageUrl}

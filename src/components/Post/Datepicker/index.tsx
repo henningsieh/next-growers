@@ -20,7 +20,7 @@ interface PostsDatePickerProps {
   handleSelectDate: (date: Date | null) => void;
   dateOfnewestPost: Date;
   dateOfGermination: Date;
-  getResponsiveColumnCount: number;
+  responsiveColumnCount: number;
 }
 
 const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
@@ -30,13 +30,13 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   handleSelectDate,
   dateOfnewestPost,
   dateOfGermination,
-  getResponsiveColumnCount,
+  responsiveColumnCount,
 }) => {
   const theme = useMantineTheme();
   const router = useRouter();
 
   return (
-    <Paper py="xs" withBorder key={getResponsiveColumnCount}>
+    <Paper py="xs" withBorder key={responsiveColumnCount}>
       <Group position="center">
         <DatePicker
           locale={router.locale === Locale.DE ? Locale.DE : Locale.EN}
@@ -63,7 +63,7 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
           onChange={handleSelectDate}
           maxDate={dateOfnewestPost}
           minDate={dateOfGermination}
-          numberOfColumns={getResponsiveColumnCount}
+          numberOfColumns={responsiveColumnCount}
           maxLevel="month"
         />
       </Group>
