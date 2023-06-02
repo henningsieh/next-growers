@@ -17,6 +17,7 @@ import {
   rem,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import { IconEdit, IconTrash, IconTrashX } from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";
 import { remark } from "remark";
@@ -34,6 +35,10 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
+import {
+  commentDeletedSuccessfulMsg,
+  likeSuccessfulMsg,
+} from "~/components/Notifications/messages";
 
 import { type Comment, Locale } from "~/types";
 
@@ -90,6 +95,37 @@ export function UserComment({ comment }: CommentHtmlProps) {
     null
   );
   const trpc = api.useContext();
+
+  const { mutate: tRPCdeleteComment } =
+    api.comments.deleteCommentById.useMutation({
+      onMutate: (newCommentDB) => {
+        console.log("START api.comments.deleteCommentById.useMutation");
+        setIsSaving(true);
+        console.log("newReportDB", newCommentDB);
+      },
+      // If the mutation fails,
+      // use the context returned from onMutate to roll back
+      onError: (err, newReport, context) => {
+        toast.error("An error occured when deleting the comment");
+        console.log("err", err);
+        if (!context) return;
+        console.log(context);
+      },
+      onSuccess: async (deletedComment) => {
+        notifications.show(commentDeletedSuccessfulMsg);
+
+        await trpc.comments.getCommentsByPostId.fetch({
+          postId: deletedComment.postId as string,
+        });
+        // Navigate to the new report page
+        // void router.push(`/account/reports/${newReportDB.id}`);
+      },
+      // Always refetch after error or success:
+      onSettled: () => {
+        setIsSaving(false);
+        console.log("END api.comments.deleteCommentById.useMutation");
+      },
+    });
 
   const { mutate: tRPCsaveComment } =
     api.comments.saveComment.useMutation({
@@ -212,7 +248,12 @@ export function UserComment({ comment }: CommentHtmlProps) {
                     </Paper>
                   </ActionIcon>
                 )}
-                <ActionIcon m={0} p={0} className=" cursor-default">
+                <ActionIcon
+                  onClick={() => tRPCdeleteComment(comment.id)}
+                  m={0}
+                  p={0}
+                  className=" cursor-default"
+                >
                   <Paper p={2} withBorder>
                     <IconTrashX size="1.2rem" stroke={1.4} />
                   </Paper>
@@ -251,6 +292,9 @@ export function UserComment({ comment }: CommentHtmlProps) {
               }}
             />
             <Textarea
+              autosize
+              minRows={3}
+              maxRows={14}
               ml={42}
               pt={12}
               withAsterisk

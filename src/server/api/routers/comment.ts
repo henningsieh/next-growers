@@ -155,4 +155,30 @@ export const commentRouter = createTRPCRouter({
         return newComment;
       }
     }),
+
+  deleteCommentById: protectedProcedure
+    .input(z.string().nonempty())
+    .mutation(async ({ ctx, input }) => {
+      const commentId = input;
+
+      const existingComment = await ctx.prisma.comment.findUnique({
+        where: { id: commentId },
+      });
+
+      if (!existingComment) {
+        throw new Error(`Comment with id ${commentId} does not exist`);
+      }
+
+      if (existingComment.authorId !== ctx.session.user.id) {
+        throw new Error(
+          "You are not authorized to delete this comment"
+        );
+      }
+
+      const deletedComment = await ctx.prisma.comment.delete({
+        where: { id: commentId },
+      });
+
+      return deletedComment;
+    }),
 });

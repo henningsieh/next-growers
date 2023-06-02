@@ -21,11 +21,29 @@ export const likeSuccessfulMsg: NotificationProps & {
   icon: <IconCannabis />,
   loading: false,
 };
+export const commentSuccessfulMsg: NotificationProps & {
+  message: string;
+} = {
+  title: "Success",
+  message: "Woohoo... you commented this Grow! 🥳",
+  color: "green",
+  icon: <IconCannabis />,
+  loading: false,
+};
 export const dislikeSuccessfulMsg: NotificationProps & {
   message: string;
 } = {
   title: "Success",
-  message: "Oh no... you removed your Like! 😢",
+  message: "Oh no... you removed your like! 😢",
+  color: "green",
+  icon: <IconCannabis />,
+  loading: false,
+};
+export const commentDeletedSuccessfulMsg: NotificationProps & {
+  message: string;
+} = {
+  title: "Success",
+  message: "Oh no... you removed your comment! 😢",
   color: "green",
   icon: <IconCannabis />,
   loading: false,

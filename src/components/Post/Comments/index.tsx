@@ -1,16 +1,27 @@
 import {
   ActionIcon,
+  Alert,
   Box,
   Button,
+  Code,
   Flex,
   Group,
   LoadingOverlay,
   Paper,
   Text,
   Textarea,
+  Transition,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { IconEditOff, IconTrashX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconEditOff,
+  IconInfoCircle,
+  IconNewSection,
+  IconTextPlus,
+  IconTrashX,
+} from "@tabler/icons-react";
+import { IconNews } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
 import { InputSaveComment } from "~/helpers/inputValidation";
 
@@ -19,9 +30,11 @@ import { toast } from "react-hot-toast";
 
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import UserAvatar from "~/components/Atom/UserAvatar";
+import { commentSuccessfulMsg } from "~/components/Notifications/messages";
 import { UserComment } from "~/components/User/Comment";
 
 import { Locale } from "~/types";
@@ -38,7 +51,6 @@ const PostComments = ({ postId }: PostCommentsProps) => {
   const { data: session, status } = useSession();
 
   const [isSaving, setIsSaving] = useState(false);
-  const [newOpen, setNewOpen] = useState(true);
   const trpc = api.useContext();
 
   const now = new Date();
@@ -56,7 +68,6 @@ const PostComments = ({ postId }: PostCommentsProps) => {
       onMutate: (newCommentDB) => {
         console.log("START api.reports.create.useMutation");
         setIsSaving(true);
-        console.log("newReportDB", newCommentDB);
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back
@@ -66,6 +77,8 @@ const PostComments = ({ postId }: PostCommentsProps) => {
         console.log(context);
       },
       onSuccess: async (newReportDB) => {
+        notifications.show(commentSuccessfulMsg);
+        newForm.reset();
         await trpc.comments.getCommentsByPostId.fetch({
           postId: newReportDB.postId as string,
         });
@@ -74,6 +87,7 @@ const PostComments = ({ postId }: PostCommentsProps) => {
       },
       // Always refetch after error or success:
       onSettled: () => {
+        setNewOpen(false);
         setIsSaving(false);
         console.log("END api.reports.create.useMutation");
       },
@@ -129,111 +143,162 @@ const PostComments = ({ postId }: PostCommentsProps) => {
     }
   };
 
+  const [newOpen, setNewOpen] = useState(false);
   return (
     <Box>
       <Group pb="xs" position="apart">
         <Text pb="xs">Comments</Text>
         {status === "authenticated" && (
-          <Button
-            size="xs"
-            variant="outline"
-            onClick={() => setNewOpen(true)}
-          >
-            new comment
-          </Button>
+          <>
+            <ActionIcon
+              title="add new comment"
+              // onClick={() => setIsEditing((prev) => !prev)}
+              onClick={() => setNewOpen((prev) => !prev)}
+              m={0}
+              p={0}
+              className="cursor-default"
+            >
+              <Paper p={2} withBorder>
+                <IconTextPlus size="1.4rem" stroke={1.6} />
+              </Paper>
+            </ActionIcon>
+            {/* 
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={() => setNewOpen((prev) => !prev)}
+            >
+              add new comment
+            </Button> */}
+          </>
         )}
       </Group>
-      {status === "authenticated" && newOpen && (
-        <Paper p="sm" mb="xs" withBorder>
-          <Group position="apart">
-            <Group position="left">
-              <UserAvatar
-                imageUrl={session?.user.image as string}
-                userName={session?.user.name as string}
-                avatarRadius={42}
-                tailwindMarginTop={0}
-              />
+
+      {status === "authenticated" && (
+        <Transition
+          mounted={newOpen}
+          transition="scale-y"
+          duration={500}
+          timingFunction="ease"
+        >
+          {(transitionStyles) => (
+            <Paper
+              style={{ ...transitionStyles }}
+              p="sm"
+              mb="xs"
+              withBorder
+              className={`transition-opacity duration-300 ${
+                newOpen ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <Group position="apart">
+                <Group position="left">
+                  <UserAvatar
+                    imageUrl={session?.user.image as string}
+                    userName={session?.user.name as string}
+                    avatarRadius={42}
+                    tailwindMarginTop={0}
+                  />
+                  <Box>
+                    <Text fz="sm">{session?.user.name as string}</Text>
+                    <Text fz="xs" c="dimmed">
+                      {sanatizeDateString(
+                        now.toISOString(),
+                        router.locale === Locale.DE
+                          ? Locale.DE
+                          : Locale.EN,
+                        true
+                      )}
+                    </Text>
+                  </Box>
+                </Group>
+                <Group position="right">
+                  <>
+                    <ActionIcon
+                      title="close"
+                      onClick={() => setNewOpen(false)}
+                      m={0}
+                      p={0}
+                      className=" cursor-default"
+                    >
+                      <Paper p={2} withBorder>
+                        <IconTrashX size="1.2rem" stroke={1.4} />
+                      </Paper>
+                    </ActionIcon>
+                  </>
+
+                  {/* <LikeHeart itemToLike={comment} itemType={"Comment"} /> */}
+                </Group>
+              </Group>
               <Box>
-                <Text fz="sm">{session?.user.name as string}</Text>
-                <Text fz="xs" c="dimmed">
-                  {sanatizeDateString(
-                    now.toISOString(),
-                    router.locale === Locale.DE ? Locale.DE : Locale.EN,
-                    true
-                  )}
-                </Text>
+                <Alert
+                  p="xs"
+                  mt="sm"
+                  ml={42}
+                  // w={420}
+                  icon={<IconInfoCircle size="1rem" />}
+                  title="Markdown support"
+                  color="orange"
+                  variant="light"
+                >
+                  <Code>
+                    Use{" "}
+                    <Link
+                      title="Markdown Cheat Sheet"
+                      href={
+                        "https://www.markdownguide.org/cheat-sheet/"
+                      }
+                      target="_blank"
+                    >
+                      markdown
+                    </Link>{" "}
+                    to style your comment!
+                  </Code>
+                </Alert>
               </Box>
-            </Group>
-            <Group position="right">
-              <>
-                <ActionIcon
-                  title="end editing"
-                  // onClick={() => setIsEditing((prev) => !prev)}
-                  onClick={() => setIsSaving((prev) => !prev)}
-                  m={0}
-                  p={0}
-                  className="cursor-default"
-                >
-                  <Paper p={2} withBorder>
-                    <IconEditOff size="1.2rem" stroke={1.4} />
-                  </Paper>
-                </ActionIcon>
-
-                <ActionIcon
-                  title="close"
-                  onClick={() => setNewOpen(false)}
-                  m={0}
-                  p={0}
-                  className=" cursor-default"
-                >
-                  <Paper p={2} withBorder>
-                    <IconTrashX size="1.2rem" stroke={1.4} />
-                  </Paper>
-                </ActionIcon>
-              </>
-
-              {/* <LikeHeart itemToLike={comment} itemType={"Comment"} /> */}
-            </Group>
-          </Group>
-
-          <form
-            onSubmit={newForm.onSubmit((values) => {
-              tRPCsaveComment(values);
-            }, handleErrors)}
-          >
-            <Box className="relative">
-              <LoadingOverlay
-                ml={42}
-                mt={12}
-                radius="sm"
-                visible={isSaving}
-                transitionDuration={50}
-                loaderProps={{
-                  size: "sm",
-                  variant: "dots",
-                }}
-              />
-              <Textarea
-                ml={42}
-                pt={12}
-                withAsterisk
-                placeholder=""
-                {...newForm.getInputProps("content")}
-              />
-            </Box>
-            <Flex justify="flex-end" align="center">
-              <Button
-                disabled={isSaving}
-                mt="xs"
-                size="xs"
-                type="submit"
-                variant="outline"
+              <form
+                onSubmit={newForm.onSubmit((values) => {
+                  tRPCsaveComment(values);
+                }, handleErrors)}
               >
-                save
-              </Button>
-            </Flex>
-          </form>
-        </Paper>
+                <Box className="relative">
+                  <LoadingOverlay
+                    ml={42}
+                    mt={12}
+                    radius="sm"
+                    visible={isSaving}
+                    transitionDuration={50}
+                    loaderProps={{
+                      size: "sm",
+                      variant: "dots",
+                    }}
+                  />
+                  <Textarea
+                    autosize
+                    minRows={3}
+                    maxRows={14}
+                    ml={42}
+                    pt={12}
+                    withAsterisk
+                    placeholder=""
+                    {...newForm.getInputProps("content")}
+                  />
+                </Box>
+                <Flex justify="flex-end" align="center">
+                  <Button
+                    disabled={isSaving}
+                    mt="xs"
+                    size="xs"
+                    type="submit"
+                    variant="outline"
+                  >
+                    save new comment
+                  </Button>
+                </Flex>
+              </form>
+            </Paper>
+          )}
+        </Transition>
       )}
 
       {comments}

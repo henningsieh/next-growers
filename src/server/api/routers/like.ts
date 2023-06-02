@@ -336,13 +336,14 @@ export const likeRouter = createTRPCRouter({
       });
       return like;
     }),
-  dislikeCommentFIXME: protectedProcedure
+
+  dislikeComment: protectedProcedure
     .input(InputLike)
     .mutation(async ({ ctx, input }) => {
       // Check if the like exists
       const existingLike = await ctx.prisma.like.findFirst({
         where: {
-          postId: input.id,
+          commentId: input.id,
           userId: ctx.session.user.id,
         },
       });
