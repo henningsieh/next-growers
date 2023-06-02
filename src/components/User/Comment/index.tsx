@@ -4,8 +4,11 @@ import {
   Avatar,
   Box,
   Button,
+  Card,
   Flex,
   Group,
+  List,
+  LoadingOverlay,
   Paper,
   Text,
   Textarea,
@@ -38,7 +41,7 @@ import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   comment: {
-    padding: `${theme.spacing.lg} ${theme.spacing.lg}`,
+    marginBottom: theme.spacing.xs,
   },
 
   body: {
@@ -81,6 +84,7 @@ export function UserComment({ comment }: CommentHtmlProps) {
   const { data: session, status } = useSession();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [transformedHtml, setTransformedHtml] = useState<string | null>(
     null
@@ -91,6 +95,7 @@ export function UserComment({ comment }: CommentHtmlProps) {
     api.comments.saveComment.useMutation({
       onMutate: (newCommentDB) => {
         console.log("START api.reports.create.useMutation");
+        setIsSaving(true);
         console.log("newReportDB", newCommentDB);
       },
       // If the mutation fails,
@@ -110,13 +115,10 @@ export function UserComment({ comment }: CommentHtmlProps) {
       },
       // Always refetch after error or success:
       onSettled: () => {
+        setIsSaving(false);
         console.log("END api.reports.create.useMutation");
       },
     });
-  const source = `# Demo
-  1. Line 1
-  2. Line 2
-  3. Line 3`;
 
   const editForm = useForm({
     validate: zodResolver(InputSaveComment),
@@ -138,20 +140,17 @@ export function UserComment({ comment }: CommentHtmlProps) {
         // Handle the error if necessary
       }
     };
-
     void fetchHtml();
   }, [comment.content]);
 
   const handleErrors = (errors: typeof editForm.errors) => {
-    alert("huh");
-    console.log(errors);
     if (errors.id) {
       toast.error(errors.id as string);
     }
-    if (errors.title) {
+    if (errors.postId) {
       toast.error(errors.postId as string);
     }
-    if (errors.imageId) {
+    if (errors.content) {
       toast.error(errors.content as string);
     }
   };
@@ -225,38 +224,52 @@ export function UserComment({ comment }: CommentHtmlProps) {
         </Group>
       </Group>
       {!isEditing ? (
-        <Paper className={classes.body}>
+        <TypographyStylesProvider className={classes.body}>
           {transformedHtml ? (
             <Box
               className={classes.content}
               dangerouslySetInnerHTML={{ __html: transformedHtml }}
             />
           ) : null}
-        </Paper>
+        </TypographyStylesProvider>
       ) : (
-        <>
-          <form
-            onSubmit={editForm.onSubmit((values) => {
-              console.log(values);
-              tRPCsaveComment(values);
-            }, handleErrors)}
-          >
+        <form
+          onSubmit={editForm.onSubmit((values) => {
+            tRPCsaveComment(values);
+          }, handleErrors)}
+        >
+          <Box className="relative">
+            <LoadingOverlay
+              ml={42}
+              mt={12}
+              radius="sm"
+              visible={isSaving}
+              transitionDuration={50}
+              loaderProps={{
+                size: "sm",
+                variant: "dots",
+              }}
+            />
             <Textarea
-              p={0}
-              pl={42}
+              ml={42}
               pt={12}
-              /*mt={0} */
               withAsterisk
               placeholder={comment.content}
               {...editForm.getInputProps("content")}
             />
-            <Flex justify="flex-end" align="center">
-              <Button mt="xs" size="xs" type="submit" variant="outline">
-                save
-              </Button>
-            </Flex>
-          </form>
-        </>
+          </Box>
+          <Flex justify="flex-end" align="center">
+            <Button
+              disabled={isSaving}
+              mt="xs"
+              size="xs"
+              type="submit"
+              variant="outline"
+            >
+              save
+            </Button>
+          </Flex>
+        </form>
       )}
     </Paper>
   );

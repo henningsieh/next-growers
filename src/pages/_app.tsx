@@ -44,7 +44,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         withGlobalStyles
         withNormalizeCSS
         theme={{
-          loader: "bars",
+          loader: "dots",
           colorScheme,
           fontFamily: `'Lato', sans-serif`,
           headings: {

@@ -74,7 +74,10 @@ export const InputGetCommentsByPostId = z.object({
 export const InputSaveComment = z.object({
   id: z.string().optional(),
   postId: z.string(),
-  content: z.string().min(1).max(420),
+  content: z
+    .string()
+    .min(3, "Comments must have at least 3 chracters")
+    .max(420),
 });
 
 export const InputCreatePost: (reportStartDate: Date) => ZodType = (

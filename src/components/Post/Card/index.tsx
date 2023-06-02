@@ -1,3 +1,4 @@
+import PostComments from "../Comments";
 import {
   Alert,
   Box,
@@ -21,20 +22,17 @@ import {
 } from "@tabler/icons-react";
 import { formatLabel, sanatizeDateString } from "~/helpers";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
 import ImagesSlider from "~/components/ImagesSlider";
-import { UserComment } from "~/components/User/Comment";
 
 import type { Post } from "~/types";
 import { Environment, type IsoReportWithPostsFromDb } from "~/types";
 import { Locale } from "~/types";
-
-import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   price: {
@@ -123,43 +121,6 @@ export function PostCard(props: PostCardProps) {
   const { t } = useTranslation(activeLocale);
 
   const [postHTMLContent, setPostHTMLContent] = useState("");
-
-  // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
-  const {
-    data: postComments,
-    isLoading,
-    isError,
-  } = api.comments.getCommentsByPostId.useQuery({
-    postId: postId as string, // Set the desired order (true for descending, false for ascending)
-  });
-
-  const commentsRef = useRef<HTMLElement[]>([]);
-
-  useEffect(() => {
-    const commentId = window.location.hash.substring(1); // Get the comment ID from the URL hash
-
-    if (commentId && commentsRef.current.length > 0) {
-      const commentElement = commentsRef.current.find(
-        (element) => element.id === commentId
-      );
-
-      if (commentElement) {
-        commentElement.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  }, []);
-
-  const comments = postComments?.map((postComment) => {
-    return (
-      <div
-        key={postComment.id}
-        id={postComment.id}
-        ref={(ref) => commentsRef.current.push(ref as HTMLDivElement)}
-      >
-        <UserComment comment={postComment} />
-      </div>
-    );
-  });
 
   useEffect(() => {
     const post = report.posts.find((post) => post.id === postId);
@@ -326,10 +287,9 @@ export function PostCard(props: PostCardProps) {
           />
           <ImagesSlider cloudUrls={postImagesPulbicUrls} />
         </Paper>
-        <Box>
-          <Text pb="xs">Comments</Text>
-          {comments}
-        </Box>
+
+        <PostComments postId={postId} />
+
         <Space h="xs" />
         <Group px="sm" position="apart" className={classes.section}>
           <Text fz="sm" c="dimmed">

@@ -309,7 +309,7 @@ export default function PublicReport(
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
       const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
-      void router.push(newUrl, undefined, {
+      void router.replace(newUrl, undefined, {
         shallow: true,
         scroll: false,
       });
