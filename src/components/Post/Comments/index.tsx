@@ -102,7 +102,7 @@ const PostComments = ({ postId }: PostCommentsProps) => {
 
   const newForm = useForm({
     validate: zodResolver(InputSaveComment),
-    validateInputOnChange: true,
+    validateInputOnChange: false,
     initialValues: {
       id: undefined,
       postId: postId,
@@ -143,28 +143,18 @@ const PostComments = ({ postId }: PostCommentsProps) => {
       <Group pb="xs" position="apart">
         <Text pb="xs">Comments</Text>
         {status === "authenticated" && (
-          <>
-            <ActionIcon
-              title="add new comment"
-              // onClick={() => setIsEditing((prev) => !prev)}
-              onClick={() => setNewOpen((prev) => !prev)}
-              m={0}
-              p={0}
-              className="cursor-default"
-            >
-              <Paper p={2} withBorder>
-                <IconTextPlus size="1.4rem" stroke={1.6} />
-              </Paper>
-            </ActionIcon>
-            {/* 
-            <Button
-              size="xs"
-              variant="outline"
-              onClick={() => setNewOpen((prev) => !prev)}
-            >
-              add new comment
-            </Button> */}
-          </>
+          <ActionIcon
+            title="add new comment"
+            // onClick={() => setIsEditing((prev) => !prev)}
+            onClick={() => setNewOpen((prev) => !prev)}
+            m={0}
+            p={0}
+            className="cursor-default"
+          >
+            <Paper p={2} withBorder>
+              <IconTextPlus size="1.4rem" stroke={1.6} />
+            </Paper>
+          </ActionIcon>
         )}
       </Group>
 
@@ -244,9 +234,9 @@ const PostComments = ({ postId }: PostCommentsProps) => {
                       }
                       target="_blank"
                     >
-                      markdown
+                      <u>markdown</u>
                     </Link>{" "}
-                    to style your comment!
+                    to <i>style</i> your <b>comment</b>!
                   </Alert>
                 </TypographyStylesProvider>
               </Box>
@@ -274,17 +264,7 @@ const PostComments = ({ postId }: PostCommentsProps) => {
                     ml={42}
                     pt={12}
                     withAsterisk
-                    placeholder={`# **bold headline 1**
-## headline 2
-\`code\`
----
-**bold text**
-*italicized text*
-> blockquote
-1. First item
-2. Second item
-- First item
-- Second item`}
+                    // placeholder={`be nice and friendly :-)`}
                     {...newForm.getInputProps("content")}
                   />
                 </Box>

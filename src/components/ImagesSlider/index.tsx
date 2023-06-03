@@ -7,6 +7,7 @@ import {
   Overlay,
   Paper,
   Tooltip,
+  createStyles,
   useMantineTheme,
 } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
@@ -27,6 +28,15 @@ interface ImagesSliderProps {
   cloudUrls: string[];
 }
 
+const useStyles = createStyles((theme) => ({
+  card: {
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[7]
+        : theme.colors.gray[2],
+  },
+}));
+
 const ImagesSlider = (props: ImagesSliderProps) => {
   const { cloudUrls } = props;
   const [overlayOpen, setOverlayOpen] = useState(false);
@@ -34,7 +44,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
   const clickOutsideImage = useClickOutside(() =>
     setOverlayOpen(false)
   );
-  const theme = useMantineTheme();
+  const { classes, theme } = useStyles();
   // const router = useRouter();
   // const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
@@ -46,7 +56,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
 
   return (
     <>
-      <Card radius="sm" p={0} m={0} withBorder>
+      <Card className={classes.card} radius="sm" p={0} m={0} withBorder>
         {overlayOpen && (
           <Overlay opacity={0.85}>
             <Overlay

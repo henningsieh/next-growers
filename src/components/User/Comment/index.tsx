@@ -315,9 +315,9 @@ export function UserComment({
       </Group>
       {!isEditing ? (
         <TypographyStylesProvider className={classes.body}>
-          {selectedCommentText && (
+          {/*           {selectedCommentText && (
             <button onClick={handleQuote}>Quote</button>
-          )}
+          )} */}
           {transformedHtml ? (
             <Box
               className={classes.content}

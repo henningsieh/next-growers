@@ -24,17 +24,15 @@ const useStyles = createStyles((theme) => ({
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
   },
-
   avatar: {
     border: `${rem(2)} solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white
     }`,
   },
-
   cite: {
     fontFamily: `'Roboto Slab', sans-serif`,
     fontSize: "1.2rem",
-    color: theme.colors.gray[4],
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
     // width: "100%",
   },
 }));
@@ -45,7 +43,7 @@ interface ReportHeaderProps {
   avatar: string;
   name: string;
   job: string;
-  stats: { label: string; value: string }[];
+  // stats: { label: string; value: string }[];
 }
 
 export function ReportHeader({
@@ -54,8 +52,8 @@ export function ReportHeader({
   avatar,
   name,
   job,
-  stats, //FIXME: not needed
-}: ReportHeaderProps) {
+}: // stats, //FIXME: not needed
+ReportHeaderProps) {
   const { classes, theme } = useStyles();
 
   const { data: session, status } = useSession();

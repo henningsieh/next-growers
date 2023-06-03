@@ -259,8 +259,8 @@ export function PostCard(props: PostCardProps) {
         <Paper
           bg={
             theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[1]
+              ? theme.colors.dark[7]
+              : theme.colors.gray[2]
           }
           p="sm"
           withBorder
@@ -275,8 +275,8 @@ export function PostCard(props: PostCardProps) {
             {postData}
           </Group>
           <Paper
-            fz={16}
-            c="dimmed"
+            fz={14}
+            // c="dimmed"
             withBorder
             p={theme.spacing.xs}
             mb={theme.spacing.sm}

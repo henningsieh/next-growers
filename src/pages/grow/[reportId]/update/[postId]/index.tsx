@@ -380,20 +380,6 @@ export default function PublicReportPost(
             avatar={staticReportFromProps.author.image as string}
             name={staticReportFromProps.author.name as string}
             job={staticReportFromProps.description}
-            stats={[
-              {
-                value: "34K",
-                label: "Followers",
-              },
-              {
-                value: "187",
-                label: "Follows",
-              },
-              {
-                value: "1.6K",
-                label: "Posts",
-              },
-            ]}
           />
           {/* // Posts Date Picker */}
           <Box ref={targetRef}>

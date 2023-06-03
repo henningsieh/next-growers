@@ -27,45 +27,8 @@ import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
 import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
-  card: {
-    transition: "transform 150ms ease, box-shadow 150ms ease",
-
-    "&:hover": {
-      // transform: "scale(1.004)",
-      // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-
-      // Add the desired box-shadow color here
-
-      // Add the desired box-shadow color and theme's md shadow here
-      boxShadow:
-        theme.colorScheme === "dark"
-          ? `0 0 4px ${theme.colors.pink[6]}`
-          : `0 0 8px ${theme.colors.orange[8]}`,
-    },
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-  },
-
-  section: {
-    borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[5]
-        : theme.colors.gray[2]
-    }`,
-    paddingLeft: theme.spacing.sm,
-    paddingRight: theme.spacing.sm,
-    paddingBottom: theme.spacing.sm,
-  },
-
   like: {
     color: theme.colors.red[6],
-    transition: "transform 2.3s ease-in-out",
-  },
-
-  label: {
-    textTransform: "uppercase",
-    fontSize: theme.fontSizes.xs,
-    fontWeight: 700,
   },
 }));
 
@@ -229,7 +192,7 @@ const LikeHeart = (props: LikeHeartProps) => {
       </Box>
       <Box className="relative">
         <ActionIcon
-          title="Give props to the Grower"
+          // title="Give props to the Grower"
           variant="default"
           className="cursor-default"
           onMouseEnter={() => void setShowLikes(true)}
@@ -246,14 +209,14 @@ const LikeHeart = (props: LikeHeartProps) => {
             <IconHeartFilled
               onClick={handleDisLikeItem}
               size="1.2rem"
-              className={`${classes.like} icon-transition`}
+              className={`${classes.like}`}
               stroke={1.5}
             />
           ) : (
             <IconHeart
               onClick={handleLikeItem}
               size="1.2rem"
-              className={`${classes.like} icon-transition`}
+              className={`${classes.like}`}
               stroke={1.5}
             />
           )}
