@@ -71,6 +71,11 @@ export const notificationRouter = createTRPCRouter({
                   name: true,
                 },
               },
+              post: {
+                include: {
+                  report: { select: { id: true } },
+                },
+              },
             },
           },
         },

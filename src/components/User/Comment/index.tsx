@@ -16,7 +16,8 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { UseFormReturnType, useForm, zodResolver } from "@mantine/form";
+import type { UseFormReturnType } from "@mantine/form";
+import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconEdit, IconTrash, IconTrashX } from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";

@@ -59,7 +59,7 @@ const ProtectedNotifications = () => {
     isError,
   } = api.notifications.getNotificationsByUserId.useQuery();
 
-  // console.debug("notificationsFromDb",notificationsFromDb);
+  console.log("notificationsFromDb", notificationsFromDb);
 
   const { mutate: markAllNotificationsAsReadMutation } =
     api.notifications.markAllNotificationsAsRead.useMutation({
@@ -115,7 +115,7 @@ const ProtectedNotifications = () => {
 
   const notificationEvents: Record<NotificationEventMap, string> = {
     LIKE_CREATED: "likes",
-    COMMENT_CREATED: "Comment Created",
+    COMMENT_CREATED: "has commented on",
     POST_CREATED: "Post Created",
     REPORT_CREATED: "Report Created",
   };
@@ -204,7 +204,17 @@ const ProtectedNotifications = () => {
                       <Link
                         scroll={false}
                         href={
-                          notification.like?.commentId != null
+                          // handle Comment hrefs
+                          notification.event === "COMMENT_CREATED" &&
+                          notification.commentId != null
+                            ? `/grow/${
+                                notification.comment?.post
+                                  ?.reportId as string
+                              }/update/${
+                                notification.comment?.postId as string
+                              }#${notification.commentId}`
+                            : // handle Like hrefs
+                            notification.like?.commentId != null
                             ? `/grow/${
                                 notification.like.comment?.post
                                   ?.reportId as string
@@ -230,14 +240,29 @@ const ProtectedNotifications = () => {
                             />
                           </Center>
                           <Box p={4} fz="0.78rem" className="text-left">
-                            {notification.like?.user.name}{" "}
-                            {notificationEvents[notification.event]}{" "}
-                            {"your"}{" "}
-                            {notification.like?.commentId != null
-                              ? "Comment"
-                              : notification.like?.postId == null
-                              ? "Grow"
-                              : "Update"}
+                            {notification.event ===
+                              "COMMENT_CREATED" && (
+                              <>
+                                {notification.comment?.author.name}{" "}
+                                {notificationEvents[notification.event]}{" "}
+                                {"your"}{" "}
+                                {notification.comment?.postId == null
+                                  ? "Grow"
+                                  : "Update"}
+                              </>
+                            )}
+                            {notification.event === "LIKE_CREATED" && (
+                              <>
+                                {notification.like?.user.name}{" "}
+                                {notificationEvents[notification.event]}{" "}
+                                {"your"}{" "}
+                                {notification.like?.commentId != null
+                                  ? "Comment"
+                                  : notification.like?.postId == null
+                                  ? "Grow"
+                                  : "Update"}
+                              </>
+                            )}
                           </Box>
                           <Flex
                             pt={2}

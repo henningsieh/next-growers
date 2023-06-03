@@ -3,6 +3,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../trpc";
+import { NotificationEvent } from "@prisma/client";
 import { z } from "zod";
 import {
   InputCreatePostServer,
@@ -144,11 +145,29 @@ export const commentRouter = createTRPCRouter({
           throw new Error(`Post with id ${postId} does not exist`);
         }
 
+        // Create a new comment
         const newComment = await ctx.prisma.comment.create({
           data: {
             content,
             author: { connect: { id: ctx.session.user.id } },
             post: { connect: { id: postId } },
+          },
+        });
+
+        // Create a notification for the report author
+        await ctx.prisma.notification.create({
+          data: {
+            recipient: {
+              connect: {
+                id: post.authorId,
+              },
+            },
+            event: NotificationEvent.COMMENT_CREATED,
+            comment: {
+              connect: {
+                id: newComment.id,
+              },
+            },
           },
         });
 

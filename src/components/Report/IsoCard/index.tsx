@@ -34,7 +34,7 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
 import { Locale } from "~/types";
-import type { IsoReportCardProps } from "~/types";
+import type { IsoReportCardProps, Posts } from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -210,7 +210,7 @@ export default function IsoReportCard({
         >
           <Group
             position="left"
-            className=" bottom-0 inline-flex space-y-0"
+            className="bottom-0 inline-flex space-y-0"
           >
             {/* Strains */}
             {reportStrains}

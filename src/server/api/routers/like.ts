@@ -182,7 +182,7 @@ export const likeRouter = createTRPCRouter({
         throw new Error("User does not exist");
       }
 
-      // Check if the user has already liked the report
+      // Check if the user has already liked the post
       const existingLike = await ctx.prisma.like.findUnique({
         where: {
           userId_postId: {
@@ -192,7 +192,7 @@ export const likeRouter = createTRPCRouter({
         },
       });
       if (existingLike) {
-        throw new Error("You have already liked this report");
+        throw new Error("You have already liked this post");
       }
 
       // Create a new like

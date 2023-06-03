@@ -5,6 +5,7 @@ import {
   Group,
   Menu,
   Modal,
+  Text,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
@@ -12,6 +13,9 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconLogout,
   IconPhoto,
+  IconPlant,
+  IconPlant2,
+  IconSearch,
   IconSquarePlus,
   IconUser,
 } from "@tabler/icons-react";
@@ -74,14 +78,12 @@ export default function LoginModal() {
         <LoginForm />
       </Modal>
 
-      {/* // Open Modal from Navbar */}
       <Group position="center">
         {status === "authenticated" ? (
           <Menu shadow="xl" width={200}>
             <Menu.Target>
-              {/* <Button>Toggle menu</Button> */}
-              {/* <ActionIcon> */}
               <ActionIcon
+                className="cursor-default"
                 radius={3}
                 variant="outline"
                 color={dark ? theme.primaryColor : "grape"}
@@ -90,14 +92,13 @@ export default function LoginModal() {
                 p={0}
               >
                 <Image
-                  className="... cursor-default rounded-sm"
+                  className="rounded-sm"
                   height={32}
                   width={32}
                   src={session.user.image as string}
                   alt={`${session.user.name as string}'s Profile Image`}
                 />
               </ActionIcon>
-              {/* </ActionIcon> */}
             </Menu.Target>
 
             <Menu.Dropdown>
@@ -111,10 +112,23 @@ export default function LoginModal() {
                 Messages
               </Menu.Item> */}
               <Link href="/account/reports">
-                <Menu.Item icon={<IconPhoto size={14} />}>
+                <Menu.Item icon={<IconPlant size={14} />}>
                   {t("common:usermenu-mygrows")}
                 </Menu.Item>
               </Link>
+
+              <Menu.Item
+                icon={<IconPhoto size={14} />}
+                // Shotcut Indicator
+                /* rightSection={
+                  <Text size="xs" color="dimmed">
+                    ⌘K
+                  </Text>
+                } */
+              >
+                My Images
+              </Menu.Item>
+
               <Link href="/account/reports/create">
                 <Menu.Item
                   bg="green"
@@ -123,14 +137,6 @@ export default function LoginModal() {
                   {t("common:usermenu-addnewgrow")}
                 </Menu.Item>
               </Link>
-              {/* 
-              <Menu.Item
-                icon={<IconSearch size={14} />}
-                // Shotcut Indicator
-                // rightSection={<Text size="xs" color="dimmed">⌘K</Text>}
-              >
-                Search
-              </Menu.Item> */}
 
               <Menu.Divider />
 
