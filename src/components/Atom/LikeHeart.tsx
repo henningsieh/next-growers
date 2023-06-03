@@ -14,7 +14,11 @@ import {
   rem,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
+import {
+  IconCannabis,
+  IconHeart,
+  IconHeartFilled,
+} from "@tabler/icons-react";
 
 import React, { useState } from "react";
 
@@ -28,7 +32,7 @@ import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   like: {
-    color: theme.colors.red[6],
+    color: theme.colors.green[6],
   },
 }));
 
@@ -199,28 +203,26 @@ const LikeHeart = (props: LikeHeartProps) => {
           onMouseLeave={() => void setShowLikes(false)}
           onBlur={() => setShowLikes(false)}
           radius="sm"
-          p={0}
-          mr={0}
-          size={25}
         >
           {itemLikes?.find(
             (like) => like.userId === session?.user.id
           ) ? (
-            <IconHeartFilled
+            <IconCannabis
               onClick={handleDisLikeItem}
-              size="1.2rem"
+              size="1.3rem"
               className={`${classes.like}`}
-              stroke={1.5}
+              stroke={1.8}
             />
           ) : (
-            <IconHeart
+            <IconCannabis
               onClick={handleLikeItem}
-              size="1.2rem"
-              className={`${classes.like}`}
-              stroke={1.5}
+              size="1.3rem"
+              // className={`${classes.like}`}
+              stroke={1.2}
             />
           )}
         </ActionIcon>
+
         {/* // Likes Tooltip */}
         {!!itemLikes && !!itemLikes?.length && (
           <Transition

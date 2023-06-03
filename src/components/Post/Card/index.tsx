@@ -275,7 +275,7 @@ export function PostCard(props: PostCardProps) {
             {postData}
           </Group>
           <Paper
-            fz={14}
+            fz={16}
             // c="dimmed"
             withBorder
             p={theme.spacing.xs}
@@ -288,7 +288,7 @@ export function PostCard(props: PostCardProps) {
           <ImagesSlider cloudUrls={postImagesPulbicUrls} />
         </Paper>
 
-        <PostComments postId={postId} />
+        <PostComments reportId={report.id as string} postId={postId} />
 
         <Space h="xs" />
         <Group px="sm" position="apart" className={classes.section}>

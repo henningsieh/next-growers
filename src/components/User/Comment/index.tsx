@@ -19,7 +19,14 @@ import {
 import type { UseFormReturnType } from "@mantine/form";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconEdit, IconTrash, IconTrashX } from "@tabler/icons-react";
+import {
+  IconEdit,
+  IconMessage,
+  IconMessage2,
+  IconMessageForward,
+  IconTrash,
+  IconTrashX,
+} from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";
 import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
@@ -64,6 +71,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface CommentHtmlProps {
+  reportId: string;
   comment: Comment;
   setNewOpen: React.Dispatch<React.SetStateAction<boolean>>;
   newForm: UseFormReturnType<
@@ -97,6 +105,7 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
 }
 
 export function UserComment({
+  reportId,
   comment,
   setNewOpen,
   newForm,
@@ -275,46 +284,64 @@ export function UserComment({
                   <ActionIcon
                     title="edit comment"
                     onClick={() => setIsEditing((prev) => !prev)}
-                    m={0}
-                    p={0}
                     className="cursor-default"
+                    variant="default"
                   >
-                    <Paper p={2} withBorder>
-                      <IconEdit size="1.2rem" stroke={1.4} />
-                    </Paper>
+                    <IconEdit size="1.3rem" stroke={1.2} />
                   </ActionIcon>
                 ) : (
                   <ActionIcon
                     title="end editing"
-                    // onClick={() => setIsEditing((prev) => !prev)}
                     onClick={() => setIsEditing((prev) => !prev)}
-                    m={0}
-                    p={0}
                     className="cursor-default"
+                    variant="default"
                   >
-                    <Paper p={2} withBorder>
-                      <IconEditOff size="1.2rem" stroke={1.4} />
-                    </Paper>
+                    <IconEditOff size="1.3rem" stroke={1.2} />
                   </ActionIcon>
                 )}
                 <ActionIcon
                   onClick={() => tRPCdeleteComment(comment.id)}
-                  m={0}
-                  p={0}
                   className=" cursor-default"
+                  variant="default"
                 >
-                  <Paper p={2} withBorder>
-                    <IconTrashX size="1.2rem" stroke={1.4} />
-                  </Paper>
+                  <IconTrashX size="1.3rem" stroke={1.2} />
                 </ActionIcon>
               </>
             )}
 
+          <ActionIcon
+            // color="orange"
+            className=" cursor-default"
+            variant="default"
+            onClick={() => {
+              setNewOpen(true);
+
+              const lines = comment.content.split("\n");
+              const formattedContent = lines
+                .map((line) => `> ${line}`)
+                .join("\n");
+
+              newForm.setValues({
+                ...newForm.values,
+                content: `${newForm.values.content}> from: [${
+                  comment.author.name as string
+                } <comment#${comment.id}](/grow/${reportId}/update/${
+                  comment.postId as string
+                }#${comment.id})>\n${formattedContent}\n\n`,
+              });
+            }}
+          >
+            <IconMessageForward
+              color="orange"
+              size="1.3rem"
+              stroke={1.2}
+            />
+          </ActionIcon>
           <LikeHeart itemToLike={comment} itemType={"Comment"} />
         </Group>
       </Group>
       {!isEditing ? (
-        <TypographyStylesProvider className={classes.body}>
+        <Paper className={classes.body}>
           {/*           {selectedCommentText && (
             <button onClick={handleQuote}>Quote</button>
           )} */}
@@ -324,7 +351,7 @@ export function UserComment({
               dangerouslySetInnerHTML={{ __html: transformedHtml }}
             />
           ) : null}
-        </TypographyStylesProvider>
+        </Paper>
       ) : (
         <form
           onSubmit={editForm.onSubmit((values) => {

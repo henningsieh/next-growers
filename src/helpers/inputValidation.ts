@@ -76,13 +76,14 @@ export const InputSaveComment = z.object({
   postId: z.string(),
   content: z
     .string()
-    .min(3, "Comments must have at least 3 chracters")
-    .max(420),
+    .min(1, "Comments must have at least 1 chracter")
+    .max(1000),
 });
 
 export const InputCreatePost: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
 ) => {
+  console.log("buh");
   return z.object({
     date: z.date().refine((value) => value >= reportStartDate, {
       message:

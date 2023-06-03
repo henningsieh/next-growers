@@ -107,6 +107,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
             },
           },
           globalStyles: (theme) => ({
+            blockquote: {
+              margin: "0em 0em",
+              padding: "0.2em 0em 0.3em 0.5em",
+              fontSize: "0.96em",
+              borderLeft: `2px solid ${theme.colors.orange[7]}`,
+              fontStyle: "italic",
+            },
+            "blockquote a": {
+              textDecoration: "underline",
+              color: theme.colors.orange[6],
+            },
             ul: {
               paddingLeft: "1.5em",
             },
