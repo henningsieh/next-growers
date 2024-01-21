@@ -98,14 +98,6 @@ async function main() {
       type: CannabisStraintype.Sativa,
     },
     {
-      name: "Jack Herer",
-      description:
-        "Jack Herer is a sativa-dominant strain named after the famous cannabis activist and author. It has a spicy and piney aroma with hints of citrus. The high is uplifting and clear-headed, promoting creativity and focus, while still providing a relaxed and euphoric experience.",
-      flavors: ["spicy", "pine", "citrus", "earthy"],
-      effects: ["euphoria", "creativity", "focus", "relaxation"],
-      type: CannabisStraintype.Hybrid,
-    },
-    {
       name: "Wedding Cake",
       description:
         "Wedding Cake is an indica-dominant hybrid known for its sweet and vanilla-like aroma. It has dense buds covered in a thick layer of trichomes. The high is calming and euphoric, providing a sense of relaxation and happiness.",
@@ -136,6 +128,54 @@ async function main() {
       flavors: ["sweet", "diesel", "earthy", "spicy"],
       effects: ["euphoria", "energy", "relaxation", "creativity"],
       type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Cheese",
+      description:
+        "Cheese is a hybrid strain known for its pungent aroma and relaxing effects. It has a distinctive cheesy scent with earthy undertones. The high is calming and euphoric, making it a popular choice for relaxation.",
+      flavors: ["cheese", "earthy"],
+      effects: ["relaxation", "euphoria", "happiness"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Critical+",
+      description:
+        "Critical+ is an indica-dominant hybrid with a sweet and skunky aroma. It is celebrated for its potent relaxing effects, providing a soothing experience for both the body and mind.",
+      flavors: ["sweet", "skunky"],
+      effects: ["relaxation", "euphoria", "happiness"],
+      type: CannabisStraintype.Indica,
+    },
+    {
+      name: "Do-Si-Dos",
+      description:
+        "Do-Si-Dos is a potent indica strain with a sweet and earthy flavor profile. It is known for its relaxing and sedative effects, making it an excellent choice for those seeking stress relief and sleep aid.",
+      flavors: ["sweet", "earthy"],
+      effects: ["relaxation", "sedation", "euphoria"],
+      type: CannabisStraintype.Indica,
+    },
+    {
+      name: "Break-up Cake",
+      description:
+        "Break-up Cake is a hybrid strain that offers a delightful blend of sweet and fruity flavors. It provides a balanced high with euphoric and relaxing effects, making it suitable for various occasions.",
+      flavors: ["sweet", "fruity"],
+      effects: ["euphoria", "relaxation", "happiness"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Amnesia Haze",
+      description:
+        "Amnesia Haze is a sativa-dominant strain known for its uplifting and energetic effects. It has a citrusy aroma with hints of earthiness. The high is cerebral and euphoric, promoting creativity and focus.",
+      flavors: ["citrus", "earthy"],
+      effects: ["euphoria", "energizing", "creativity"],
+      type: CannabisStraintype.Sativa,
+    },
+    {
+      name: "Super Silver Haze",
+      description:
+        "Super Silver Haze is a sativa-dominant strain that combines the genetics of Skunk, Northern Lights, and Haze. It has a skunky and citrusy aroma with a hint of spice. The high is uplifting and cerebral, making it a popular choice for daytime use.",
+      flavors: ["skunky", "citrus", "spicy"],
+      effects: ["euphoria", "energizing", "happiness", "creativity"],
+      type: CannabisStraintype.Sativa,
     },
   ];
 
