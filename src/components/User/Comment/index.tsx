@@ -94,7 +94,8 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
     remark()
       .use(remarkHtml)
       .use(remarkBreaks)
-      .process(markdown, (err, file) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .process(markdown, (err: any, file: any) => {
         if (err) {
           reject(err);
         } else {
