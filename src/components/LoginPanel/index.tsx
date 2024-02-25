@@ -102,36 +102,28 @@ export default function LoginModal() {
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Label>High</Menu.Label>
-              <Link href="/account/edit">
-                <Menu.Item icon={<IconUser size={14} />}>
-                  {t("common:usermenu-myprofile")}
-                </Menu.Item>
-              </Link>
-              {/* <Menu.Item icon={<IconMessageCircle size={14} />}>
-                Messages
-              </Menu.Item> */}
+              <Menu.Label>Grows</Menu.Label>
               <Link href="/account/reports">
                 <Menu.Item icon={<IconPlant size={14} />}>
                   {t("common:usermenu-mygrows")}
                 </Menu.Item>
               </Link>
 
-              <Menu.Item
+              {/* <Menu.Item
                 icon={<IconPhoto size={14} />}
                 // Shotcut Indicator
-                /* rightSection={
+                rightSection={
                   <Text size="xs" color="dimmed">
                     ⌘K
                   </Text>
-                } */
+                }
               >
                 My Images
-              </Menu.Item>
+              </Menu.Item> */}
 
               <Link href="/account/reports/create">
                 <Menu.Item
-                  bg="green"
+                  color="green"
                   icon={<IconSquarePlus size={14} />}
                 >
                   {t("common:usermenu-addnewgrow")}
@@ -139,11 +131,15 @@ export default function LoginModal() {
               </Link>
 
               <Menu.Divider />
+              <Menu.Label>Profile</Menu.Label>
+              <Link href="/account/edit">
+                <Menu.Item icon={<IconUser size={14} />}>
+                  {t("common:usermenu-myprofile")}
+                </Menu.Item>
+              </Link>
 
-              <Menu.Label>Stoned</Menu.Label>
-              {/* <Menu.Item icon={<IconArrowsLeftRight size={14} />}>
-                Transfer my data
-              </Menu.Item> */}
+              <Menu.Divider />
+              <Menu.Label>Logout</Menu.Label>
               <Menu.Item
                 onClick={() => void signOut()}
                 color="red"

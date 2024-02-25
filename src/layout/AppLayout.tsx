@@ -121,15 +121,16 @@ const useStyles = createStyles((theme) => ({
 const mockdata = [
   {
     icon: IconMessageCircle,
-    title: "CannabisAnbauen.net",
+    title: "Grow Community von CannabisAnbauen.net",
     description: "A very cool and friendly german forum! 🤞",
     url: "https://forum.cannabisanbauen.net/",
   },
   {
     icon: IconMapPin,
-    title: "Cannabis Social Clubs",
-    description: "Find a Social Club nearby you! (...coming soon 👀)",
-  },
+    title: "Cannabis Social Clubs in der Nähe finden!",
+    description: "Wir bringen CSC Vereine und Mitglieder zusammen.",
+    url: "https://csc-maps.de/",
+  } /*
   {
     icon: IconUsers,
     title: "Online Communities",
@@ -152,7 +153,7 @@ const mockdata = [
     title: "Interest Groups",
     description:
       "Join groups dedicated to growing specific plants or using specific techniques.",
-  },
+  },*/,
 ];
 
 function openUrlInNewTab(url: string) {
@@ -171,7 +172,7 @@ export default function HeaderMegaMenu({
 
   const links = mockdata.map((item) => (
     <UnstyledButton
-      onClick={() => openUrlInNewTab(item.url as string)}
+      onClick={() => openUrlInNewTab(item.url)}
       className={classes.subLink}
       key={item.title}
     >
@@ -255,7 +256,7 @@ export default function HeaderMegaMenu({
                 <a href="#" className={classes.link}>
                   <Center inline>
                     <Box component="span" mr={5}>
-                      Community
+                      Extern
                     </Box>
                     <IconChevronDown
                       size={16}
@@ -345,7 +346,7 @@ export default function HeaderMegaMenu({
           />
 
           <Link href="/" className={classes.link}>
-            Welcome
+            GrowAGram
           </Link>
           <Link href="/grows" className={classes.link}>
             Explore all Grows
