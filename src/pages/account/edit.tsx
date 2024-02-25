@@ -141,23 +141,21 @@ const ProtectedEditReport: NextPage = () => {
           {/* // Error if no Username */}
           {!session?.user.name && (
             <Alert
-              mt="lg"
+              pt="lg"
+              pb="lg"
               icon={<IconAlertCircle size="1rem" />}
               title="You don't have a username yet!"
               color="red"
               variant="outline"
             >
-              <Box className="">
-                You must first set a username before you can explore all
-                grows.
-              </Box>
+              You must first set a username before you can explore all
+              grows.
             </Alert>
           )}
 
           {/* // "AI" Username Generater */}
           <Box
             mb="sm"
-            mt="xl"
             mr="sm"
             className="text-md flex justify-end font-bold"
           >
@@ -200,6 +198,7 @@ const ProtectedEditReport: NextPage = () => {
               }
             />
             <TextInput
+              disabled
               readOnly
               className="cursor-not-allowed"
               icon={<IconMail />}
