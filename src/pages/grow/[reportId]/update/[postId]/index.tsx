@@ -405,7 +405,7 @@ export default function PublicReportPost(
 }
 
 export const noPostAtThisDay = {
-  title: "Success",
+  title: "Error",
   message: "Sorry... no update for this day! 😢",
   color: "red",
   icon: <IconCalendarOff />,
