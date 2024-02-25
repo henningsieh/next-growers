@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Container,
   Grid,
@@ -6,6 +7,7 @@ import {
   Title,
   createStyles,
 } from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 import type { ChangeEvent } from "react";
 import { useState } from "react";
@@ -16,6 +18,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import LoadingError from "~/components/Atom/LoadingError";
@@ -199,19 +202,22 @@ const ProtectedAllGrows: NextPage = () => {
                 })
               : // rendering "not found" only if isLoading is false
                 !isLoading && (
-                  <Box className="hero bg-primary text-primary-content max-h-screen rounded-md">
-                    <Box className="hero-content flex-col md:flex-row">
-                      {/* <Image alt="no report image" width={640} height={429} src="/A-rAZGIE2pA-unsplash.jpg" className="max-w-sm rounded-lg shadow-2xl" /> */}
-                      <Box className="text-center">
-                        <h1 className="whitespace-nowrap text-3xl font-bold">
-                          No Reports found! 😢
-                        </h1>
-                        <p className="error py-6 text-lg font-bold">
-                          You haven&apos;t created any reports yet.
-                        </p>
-                      </Box>
-                    </Box>
-                  </Box>
+                  <Container>
+                    <Alert
+                      mt="xl"
+                      p="xl"
+                      icon={<IconAlertCircle size="1rem" />}
+                      title="You don't have any Grow Reports yet!"
+                      color="red"
+                      variant="outline"
+                    >
+                      You have to{" "}
+                      <Link href="/account/reports/create">
+                        <u>create your first Grow Report here</u>
+                      </Link>
+                      .
+                    </Alert>
+                  </Container>
                 )}
           </Grid>
         </Box>
