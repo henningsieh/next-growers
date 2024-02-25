@@ -1,9 +1,9 @@
 {
   "app-themetoggle": "Toggle light/dark color scheme",
   "app-switchlanguage": "Switch language",
-  "landing-text1": "At GrowAGram, we provide a platform for cannabis enthusiasts to showcase their growing skills and share their knowledge.",
-  "landing-text2": "As the legalization of cannabis approaches in Germany, we believe it's important to build a community that celebrates the plant and its unique growing process.",
-  "landing-text3": "If you're passionate about growing cannabis or just starting out, we invite you to explore our community and discover what makes us unique. With our platform, you can easily create and share your growing reports with the world, highlighting your progress, tools, and feedings.",
+  "landing-text-top1": "If you're passionate about or just getting started with cannabis cultivation, we invite you to explore our community.",
+  "landing-text-top2": "With our platform, you can easily create detailed growth reports, upload images, and share them with the world, highlighting your skills and tools.",
+  "landing-text-bottom": "As the legalization of cannabis in Germany draws closer, we believe it is important to establish a community that celebrates the plant and its unique growth process. We are currently in the alpha version and appreciate feedback and active participation.",
   "myreports-headline": "My Grows",
   "usermenu-myprofile": "My Profile",
   "usermenu-mygrows": "My Grows",

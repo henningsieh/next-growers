@@ -17,18 +17,18 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
     backgroundImage: "url(diyahna-lewis---JxxyIUHnU-unsplash.jpg)",
     backgroundSize: "cover",
-    backgroundPosition: "center",
+    backgroundPosition: "top",
   },
 
   container: {
     // height: rem(800),
-    height: "calc(100vh)",
+    height: "calc(90vh)",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "top",
     alignItems: "center",
     paddingBottom: `calc(${theme.spacing.xl} * 6)`,
-    zIndex: 1,
+    zIndex: 99,
     position: "relative",
 
     [theme.fn.smallerThan("sm")]: {
@@ -44,6 +44,7 @@ const useStyles = createStyles((theme) => ({
     fontSize: rem(48),
     fontWeight: 900,
     lineHeight: 1.1,
+    paddingTop: 12,
     paddingBottom: 12,
 
     [theme.fn.smallerThan("sm")]: {
@@ -59,19 +60,10 @@ const useStyles = createStyles((theme) => ({
 
   description: {
     color: theme.white,
-    // maxWidth: 860,
+    textAlign: "center",
 
     [theme.fn.smallerThan("sm")]: {
-      maxWidth: "96%",
       fontSize: theme.fontSizes.md,
-    },
-  },
-
-  control: {
-    marginTop: `calc(${theme.spacing.xl} * 1.5)`,
-
-    [theme.fn.smallerThan("sm")]: {
-      width: "80%",
     },
   },
 }));
@@ -91,26 +83,24 @@ export default function LandingCard() {
         gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
       />
       <Container size="md" className={classes.container}>
-        <Title className={classes.title}>GrowAGram.com</Title>
-        <Title pb={20} order={2}>
-          🪴 Show Your Grow! 🚀
-        </Title>
+        <Title className={classes.title}>GrowAGram</Title>
+        <Title order={2}>🪴 Show Your Grow! 🚀</Title>
         <Text className={classes.description} size="xl" mt="xl">
-          {t("common:landing-text1")}
-        </Text>
-        <Text className={classes.description} size="xl" mt="xl">
-          {t("common:landing-text2")}
+          {t("common:landing-text-top1")}
         </Text>
         <Link href="/grows">
           <button
             className="my-8 h-12 w-96 rounded-md bg-gradient-to-r
           from-pink-600 via-red-600 to-orange-500 text-white"
           >
-            EXPLORE REPORTS 🔎
+            EXPLORE ALL GROWS 🔎
           </button>
         </Link>
-        <Text className={classes.description} size="md">
-          {t("common:landing-text3")}
+        <Text className={classes.description} size="xl" mb="sm">
+          {t("common:landing-text-top2")}
+        </Text>
+        <Text className={classes.description} size="md" mt="xl">
+          {t("common:landing-text-bottom")}
         </Text>
       </Container>
       Foto von{" "}
