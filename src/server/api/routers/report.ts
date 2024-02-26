@@ -49,6 +49,18 @@ export const reportRouter = createTRPCRouter({
                 },
               },
             ],
+            /*
+            strains: {
+              //FIXME: workaround for hiding "unready" (without strains) reports
+              some: {
+                name: {
+                  contains: strain,
+                  mode: "insensitive",
+                },
+              },
+            },
+            */
+
             strains: strain
               ? {
                   some: {
@@ -84,7 +96,6 @@ export const reportRouter = createTRPCRouter({
               },
             },
             likes: {
-              // Include the Like relation and select the users who liked the report
               include: {
                 user: {
                   select: {
@@ -110,9 +121,7 @@ export const reportRouter = createTRPCRouter({
                     cloudUrl: true,
                   },
                 },
-
                 likes: {
-                  // Include the Like relation and select the users who liked the report
                   include: {
                     user: {
                       select: {
@@ -129,67 +138,81 @@ export const reportRouter = createTRPCRouter({
           },
         })
         .then((reportsFromDb) => {
-          // Convert all Dates to IsoStrings
           const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
-            const isoPosts = (reportFromDb?.posts || []).map((post) => {
-              const postDate = new Date(post.date);
-              const reportCreatedAt = new Date(reportFromDb.createdAt);
-              const timeDifference =
-                postDate.getTime() - reportCreatedAt.getTime();
-              const growDay = Math.floor(
-                timeDifference / (1000 * 60 * 60 * 24)
-              );
+            const isoPosts =
+              (reportFromDb.posts || []).length > 0
+                ? reportFromDb.posts.map((post) => {
+                    const postDate = new Date(post.date).toISOString();
+                    const reportCreatedAt =
+                      reportFromDb.createdAt.toISOString();
+                    const timeDifference =
+                      new Date(postDate).getTime() -
+                      new Date(reportCreatedAt).getTime();
+                    const growDay = Math.floor(
+                      timeDifference / (1000 * 60 * 60 * 24)
+                    );
 
-              const isoLikes = post.likes.map(
-                ({ id, createdAt, updatedAt, user }) => ({
-                  id,
-                  userId: user.id,
-                  name: user.name,
-                  createdAt: createdAt.toISOString(),
-                  updatedAt: updatedAt.toISOString(),
-                })
-              );
+                    const isoLikes = post.likes.map(
+                      ({ id, createdAt, updatedAt, user }) => ({
+                        id,
+                        userId: user.id,
+                        name: user.name,
+                        createdAt: new Date(createdAt).toISOString(),
+                        updatedAt: new Date(updatedAt).toISOString(),
+                      })
+                    );
 
-              const isoComments = post.comments.map((comment) => ({
-                ...comment,
-                createdAt: comment.createdAt.toISOString(),
-                updatedAt: comment.updatedAt.toISOString(),
-              }));
+                    const isoComments = post.comments.map(
+                      (comment) => ({
+                        ...comment,
+                        createdAt: new Date(
+                          comment.createdAt
+                        ).toISOString(),
+                        updatedAt: new Date(
+                          comment.updatedAt
+                        ).toISOString(),
+                      })
+                    );
 
-              return {
-                ...post,
-                createdAt: post.createdAt.toISOString(),
-                updatedAt: post.createdAt.toISOString(),
-                date: postDate.toISOString(),
-                likes: isoLikes,
-                comments: isoComments,
-                growDay,
-              };
-            });
+                    return {
+                      ...post,
+                      createdAt: post.createdAt.toISOString(),
+                      updatedAt: post.createdAt.toISOString(),
+                      date: postDate,
+                      likes: isoLikes,
+                      comments: isoComments,
+                      growDay,
+                    };
+                  })
+                : [];
 
             const isoLikes = reportFromDb.likes.map(
               ({ id, createdAt, updatedAt, user }) => ({
                 id,
                 userId: user.id,
                 name: user.name,
-                createdAt: createdAt.toISOString(),
-                updatedAt: updatedAt.toISOString(),
+                createdAt: new Date(createdAt).toISOString(),
+                updatedAt: new Date(updatedAt).toISOString(),
               })
             );
 
-            // Find the newest and youngest post dates
-            const newestPostDate = new Date(
-              Math.max(
-                ...isoPosts.map((post) => new Date(post.date).getTime())
-              )
-            );
+            const newestPostDate =
+              isoPosts.length > 0
+                ? new Date(
+                    Math.max(
+                      ...isoPosts.map((post) =>
+                        new Date(post.date).getTime()
+                      )
+                    )
+                  )
+                : null;
 
             return {
               ...reportFromDb,
-              createdAt: reportFromDb?.createdAt.toISOString(),
+              createdAt: reportFromDb.createdAt.toISOString(),
               updatedAt: newestPostDate
                 ? newestPostDate.toISOString()
-                : reportFromDb?.updatedAt.toISOString(),
+                : reportFromDb.updatedAt.toISOString(),
               likes: isoLikes,
               posts: isoPosts,
             };
