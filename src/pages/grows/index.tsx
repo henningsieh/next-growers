@@ -186,7 +186,7 @@ const PublicAllGrows: NextPage = () => {
                       color="red"
                       variant="outline"
                     >
-                      No reports where found!
+                      No Grows where found!
                     </Alert>
                   </Center>
                 </Container>

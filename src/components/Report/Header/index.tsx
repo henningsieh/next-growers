@@ -11,9 +11,12 @@ import {
   rem,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { IconEdit } from "@tabler/icons-react";
 
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import UserAvatar from "~/components/Atom/UserAvatar";
 
@@ -54,6 +57,11 @@ export function ReportHeader({
   job,
 }: // stats, //FIXME: not needed
 ReportHeaderProps) {
+  const router = useRouter();
+
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const { classes, theme } = useStyles();
 
   const { data: session, status } = useSession();
@@ -133,7 +141,8 @@ ReportHeaderProps) {
                     theme.colorScheme === "dark" ? undefined : "dark"
                   }
                 >
-                  Edit Report
+                  {t("common:report-edit-button")}
+                  <IconEdit className="ml-2" height={22} stroke={1.4} />
                 </Button>
               </Link>
             </Group>

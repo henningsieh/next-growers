@@ -90,7 +90,7 @@ export default function IsoReportCard({
   procedure,
   setSearchString,
 }: IsoReportCardProps) {
-  const trpc = api.useContext();
+  const trpc = api.useUtils();
   const router = useRouter();
 
   const { locale: activeLocale } = router;
@@ -290,7 +290,7 @@ export default function IsoReportCard({
       {/*// Session buttons */}
       {status === "authenticated" &&
         session.user.id == isoReport.authorId && (
-          <Group mt="xs" position="apart">
+          <Group m="xs" position="apart">
             <Button
               size="xs"
               radius="sm"
@@ -300,7 +300,7 @@ export default function IsoReportCard({
                 deleteMutation(isoReport.id as string);
               }}
             >
-              {t("common:report-delete")}
+              {t("common:report-delete-button")}
               <IconAlertTriangle
                 className="ml-2"
                 height={20}
@@ -315,7 +315,7 @@ export default function IsoReportCard({
                 radius="sm"
                 style={{ flex: 1 }}
               >
-                {t("common:report-edit")}
+                {t("common:report-edit-button")}
                 <IconEdit className="ml-2" height={22} stroke={1.4} />
               </Button>
             </Link>

@@ -59,7 +59,7 @@ interface AddPostProps {
 }
 
 const prefillHTMLContent =
-  '<h1 style="text-align: center">Update your Grow with a nice rich text</h1><p><code>RichTextEditor</code> <mark>component focuses on usability </mark>and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/">Tiptap.dev</a> and supports  <a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/extensions"> extensions.</a></p></li></ul>';
+  "<mark><i>[put your text here and delete further example text below]</i></mark></br><h1>RichTextEditor</h1>is designed to be as simple as possible to bring a familiar editing experience to regular users.";
 
 const AddPost = (props: AddPostProps) => {
   const { isoReport: report, post } = props;

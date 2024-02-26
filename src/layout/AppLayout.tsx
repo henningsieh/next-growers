@@ -26,17 +26,15 @@ import {
   IconChevronDown,
   IconMapPin,
   IconMessageCircle,
-  IconSocial,
-  IconStar,
-  IconTools,
-  IconUsers,
 } from "@tabler/icons-react";
 
 import { type ReactNode } from "react";
 
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
 import Notifications from "~/components/Notifications";
@@ -121,14 +119,14 @@ const useStyles = createStyles((theme) => ({
 const mockdata = [
   {
     icon: IconMessageCircle,
-    title: "Grow Community von CannabisAnbauen.net",
-    description: "A very cool and friendly german forum! 🤞",
+    title: "CannabisAnbauen.net",
+    description: "sehr gutes und freundliches deutsches Forum! 🤞",
     url: "https://forum.cannabisanbauen.net/",
   },
   {
     icon: IconMapPin,
-    title: "Cannabis Social Clubs in der Nähe finden!",
-    description: "Wir bringen CSC Vereine und Mitglieder zusammen.",
+    title: "CSC-Maps.de",
+    description: "Cannabis Social Clubs in der Nähe finden!",
     url: "https://csc-maps.de/",
   } /*
   {
@@ -199,6 +197,11 @@ export default function HeaderMegaMenu({
     toggleLinks();
   };
 
+  const router = useRouter();
+
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const { data: session, status } = useSession();
   return (
     <>
@@ -240,10 +243,10 @@ export default function HeaderMegaMenu({
             className={classes.hiddenMobile}
           >
             <Link href="/" className={classes.link}>
-              Welcome
+              {t("common:app-headermenu-welcome")}
             </Link>
             <Link href="/grows" className={classes.link}>
-              Explore all Grows
+              {t("common:app-headermenu-explore")}
             </Link>
             <HoverCard
               width={600}
