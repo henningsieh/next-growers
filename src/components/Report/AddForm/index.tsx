@@ -227,7 +227,7 @@ function Form({ user }: AddFormProps) {
                     message:
                       "File size of " +
                       fileSizeInMB +
-                      " MB exceeds the allowed maximum of ≈ 4.2 MB!",
+                      " MB exceeds the allowed maximum of ≈ 4.28 MB (4.394 KB, 4.500.000 B)!",
                     color: "red",
                     icon: <IconFileAlert />,
                     loading: false,
@@ -277,7 +277,8 @@ function Form({ user }: AddFormProps) {
                 <Text ta="center" fw={700} fz="lg" mt="xl">
                   <Dropzone.Accept>Drop files here</Dropzone.Accept>
                   <Dropzone.Reject>
-                    Only one Image with a size of less than 4.2 MB
+                    Only one Image with a size of less than 4.28 MB
+                    (4.394 KB, 4.500.000 B)!
                   </Dropzone.Reject>
                   <Dropzone.Idle>
                     Drag&apos;n&apos;drop your Grow Header Image here to
@@ -285,8 +286,9 @@ function Form({ user }: AddFormProps) {
                   </Dropzone.Idle>
                 </Text>
                 <Text ta="center" fz="sm" my="xs" c="dimmed">
-                  For now we only can accept one <i>.jpg/.png/.gif</i>{" "}
-                  image file, that is less than 4.2 MB in size.
+                  For now we only can accept one <i>.jpg/.png/.gif</i>
+                  image file, that is less than 4.28 MB (4.394 KB,
+                  4.500.000 B)! in size.
                 </Text>
               </Box>
             </Dropzone>
@@ -313,7 +315,7 @@ function Form({ user }: AddFormProps) {
             label="Bockquote cite:"
             description="This appears at the top of your Grow's main header image"
             withAsterisk
-            placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
+            placeholder="A journey through the wonderful world of cannabis cultivation!"
             mt="sm"
             autosize
             minRows={3}
