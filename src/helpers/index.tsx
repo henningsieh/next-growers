@@ -63,14 +63,14 @@ export const handleSearchChange = (
   setSearchString(event.target.value);
 };
 
-export function formatLabel(key: string): string {
-  // Convert snake case to title case
-  const words = key.split("_");
-  const formattedWords = words.map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-  );
-  return formattedWords.join(" ");
-}
+// export function formatLabel(key: string): string {
+//   // Convert snake case to title case
+//   const words = key.split("_");
+//   const formattedWords = words.map(
+//     (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+//   );
+//   return formattedWords.join(" ");
+// }
 
 export function getUsername(): string {
   const usernames: string[] = [

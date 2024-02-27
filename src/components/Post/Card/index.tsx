@@ -20,7 +20,7 @@ import {
   IconEye,
   IconHome,
 } from "@tabler/icons-react";
-import { formatLabel, sanatizeDateString } from "~/helpers";
+import { sanatizeDateString } from "~/helpers";
 
 import { useEffect, useState } from "react";
 
@@ -31,7 +31,11 @@ import LikeHeart from "~/components/Atom/LikeHeart";
 import ImagesSlider from "~/components/ImagesSlider";
 
 import type { Post } from "~/types";
-import { Environment, type IsoReportWithPostsFromDb } from "~/types";
+import {
+  Environment,
+  GrowStage,
+  type IsoReportWithPostsFromDb,
+} from "~/types";
 import { Locale } from "~/types";
 
 const useStyles = createStyles((theme) => ({
@@ -235,7 +239,7 @@ export function PostCard(props: PostCardProps) {
         },
         {
           title: "Grow Stage",
-          value: formatLabel(post?.growStage as string),
+          value: GrowStage[post?.growStage as keyof typeof GrowStage],
         },
       ],
     };

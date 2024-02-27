@@ -32,7 +32,6 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { formatLabel } from "~/helpers";
 import { InputCreatePost } from "~/helpers/inputValidation";
 
 import React, { useEffect, useState } from "react";
@@ -285,8 +284,8 @@ const AddPost = (props: AddPostProps) => {
                     align="baseline"
                   >
                     <NumberInput
-                      label="Light hours"
-                      description="Light/ day (h)"
+                      label="Light Hours"
+                      description="Hours per day (h/d)"
                       withAsterisk
                       w={142}
                       min={0}
