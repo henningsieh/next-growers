@@ -349,10 +349,10 @@ export default function HeaderMegaMenu({
           />
 
           <Link href="/" className={classes.link}>
-            GrowAGram
+            {t("common:app-headermenu-welcome")}
           </Link>
           <Link href="/grows" className={classes.link}>
-            Explore all Grows
+            {t("common:app-headermenu-explore")}
           </Link>
           <UnstyledButton
             className={classes.link}
@@ -360,7 +360,7 @@ export default function HeaderMegaMenu({
           >
             <Center inline>
               <Box component="span" mr={5}>
-                Community
+                Extern
               </Box>
               <IconChevronDown
                 size={16}
@@ -368,11 +368,8 @@ export default function HeaderMegaMenu({
               />
             </Center>
           </UnstyledButton>
+
           <Collapse in={linksOpened}>{links}</Collapse>
-          {/* 
-          <Link href="/t3-app-info" className={classes.link}>
-            T3 Stack
-          </Link> */}
 
           <Divider
             my="sm"
