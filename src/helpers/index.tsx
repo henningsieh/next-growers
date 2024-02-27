@@ -230,6 +230,7 @@ export const handleDrop = async (
   const formData = new FormData();
   console.debug("src\\helpers\\handleDrop:", files);
   if (files && files[0]) {
+    console.log(files[0].size);
     // files.map((file) => formData.append("image", file));
     formData.append("image", files[0]); // Assuming only one file is uploaded
     try {

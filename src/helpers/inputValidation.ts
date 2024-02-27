@@ -83,7 +83,6 @@ export const InputSaveComment = z.object({
 export const InputCreatePost: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
 ) => {
-  console.log("buh");
   return z.object({
     date: z.date().refine((value) => value >= reportStartDate, {
       message:

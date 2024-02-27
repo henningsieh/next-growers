@@ -1,7 +1,6 @@
 import { Box, Container, Title, useMantineTheme } from "@mantine/core";
 import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconCalendarOff } from "@tabler/icons-react";
 import dayjs from "dayjs";
 
 import { useEffect, useState } from "react";
@@ -15,6 +14,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import { noPostAtThisDay } from "~/components/Notifications/messages";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
@@ -177,7 +177,7 @@ export async function getStaticProps(
 
   console.debug(
     "/pages/grow/[reportId]/update/[postId]",
-    `🧑‍🏭  ...prefetching report ${reportFromDb.id} from db`
+    `🧑‍🏭 ...prefetching report ${reportFromDb.id} from db`
   );
 
   // Fetch translations using next-i18next
@@ -251,7 +251,7 @@ export default function PublicReportPost(
 ) {
   const theme = useMantineTheme();
   const router = useRouter();
-  const { locale: activeLocale } = router;
+  // const { locale: activeLocale } = router;
 
   const { report: staticReportFromProps, postId: postIdfromProps } =
     props;
@@ -262,7 +262,6 @@ export default function PublicReportPost(
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
   const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
-
   const getResponsiveColumnCount = xs
     ? 1
     : sm
@@ -403,11 +402,3 @@ export default function PublicReportPost(
     </>
   );
 }
-
-export const noPostAtThisDay = {
-  title: "Error",
-  message: "Sorry... no update for this day! 😢",
-  color: "red",
-  icon: <IconCalendarOff />,
-  loading: false,
-};

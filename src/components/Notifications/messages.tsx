@@ -1,17 +1,20 @@
 import type { NotificationProps } from "@mantine/core";
 import {
+  IconCalendarOff,
   IconCannabis,
   IconError404,
   IconLogin,
 } from "@tabler/icons-react";
 
-export const createLikeErrorMsg = (msg: string) => ({
-  loading: false,
+export const noPostAtThisDay: NotificationProps & {
+  message: string;
+} = {
   title: "Error",
-  message: msg,
+  message: "Sorry... no update for this day! 😢",
   color: "red",
-  icon: <IconError404 />,
-});
+  icon: <IconCalendarOff />,
+  loading: false,
+};
 export const likeSuccessfulMsg: NotificationProps & {
   message: string;
 } = {
@@ -48,10 +51,18 @@ export const commentDeletedSuccessfulMsg: NotificationProps & {
   icon: <IconCannabis />,
   loading: false,
 };
+
 export const likeErrorMsg = (msg: string) => ({
   loading: false,
   title: "Error",
   message: msg,
   color: "red",
   icon: <IconLogin />,
+});
+export const createLikeErrorMsg = (msg: string) => ({
+  loading: false,
+  title: "Error",
+  message: msg,
+  color: "red",
+  icon: <IconError404 />,
 });

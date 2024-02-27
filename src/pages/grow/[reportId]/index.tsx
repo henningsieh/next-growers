@@ -1,4 +1,3 @@
-import { noPostAtThisDay } from "./update/[postId]";
 import { Box, Container, Title, useMantineTheme } from "@mantine/core";
 import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -15,6 +14,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import { noPostAtThisDay } from "~/components/Notifications/messages";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
@@ -175,7 +175,7 @@ export async function getStaticProps(
 
   console.debug(
     "/pages/grow/[reportId]",
-    `🧑‍🏭  ...prefetching report ${reportFromDb.id} from db`
+    `🧑‍🏭 ...prefetching report ${reportFromDb.id} from db`
   );
 
   // Fetch translations using next-i18next
@@ -243,9 +243,7 @@ export default function PublicReport(
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
   const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
-
   const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
-
   const getResponsiveColumnCount = xs
     ? 1
     : sm
@@ -285,7 +283,7 @@ export default function PublicReport(
       : defaultRelDate;
 
   const router = useRouter();
-  const { locale: activeLocale } = router;
+  // const { locale: activeLocale } = router;
 
   const { scrollIntoView, targetRef } =
     useScrollIntoView<HTMLDivElement>({

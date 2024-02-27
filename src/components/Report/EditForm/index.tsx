@@ -17,10 +17,12 @@ import {
 import { DateInput } from "@mantine/dates";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import {
   IconCalendar,
   IconCloudUpload,
   IconDownload,
+  IconFileAlert,
   IconHome,
   IconTrashXFilled,
   IconX,
@@ -236,21 +238,39 @@ export function ProtectedEditForm(props: EditFormProps) {
                 overlayBlur={2}
               />
               <Dropzone
+                className={classes.dropzone}
                 h={rem(280)}
                 multiple={false} // only one header image!
                 openRef={openReference}
                 onDrop={handleDropWrapper}
-                onChange={(e) => {
-                  console.debug(e.currentTarget);
-                }}
-                className={classes.dropzone}
-                // radius="md"
+                maxSize={4500000} // Vercel production environment post size limit which is 4.500.000 byte
                 accept={[
                   MIME_TYPES.jpeg,
                   MIME_TYPES.png,
                   MIME_TYPES.gif,
                 ]}
-                maxSize={10 * 1024 ** 2}
+                onReject={(files) => {
+                  if (files[0]) {
+                    const fileSizeInBytes = files[0].file.size;
+                    const fileSizeInMB = (
+                      fileSizeInBytes /
+                      1024 ** 2
+                    ).toFixed(2);
+                    notifications.show({
+                      title: "Error",
+                      message:
+                        "File size of " +
+                        fileSizeInMB +
+                        " MB exceeds the allowed maximum of ≈ 4.2 MB!",
+                      color: "red",
+                      icon: <IconFileAlert />,
+                      loading: false,
+                    });
+                  }
+                }}
+                // onChange={(e) => {
+                //   console.debug(e.currentTarget);
+                // }}
               >
                 <Box style={{ pointerEvents: "none" }}>
                   <Group position="center">
@@ -288,18 +308,18 @@ export function ProtectedEditForm(props: EditFormProps) {
                   </Group>
 
                   <Text ta="center" fw={700} fz="lg" mt="xl">
-                    <Dropzone.Accept>Drop files here </Dropzone.Accept>
+                    <Dropzone.Accept>Drop files here</Dropzone.Accept>
                     <Dropzone.Reject>
-                      Only one Images, less than 10mb
+                      Only one Image with a size of less than 4.2 MB
                     </Dropzone.Reject>
-                    <Dropzone.Idle> Upload Header Image </Dropzone.Idle>
+                    <Dropzone.Idle>
+                      Drag&apos;n&apos;drop your Grow Header Image here
+                      to upload!
+                    </Dropzone.Idle>
                   </Text>
                   <Text ta="center" fz="sm" my="xs" c="dimmed">
-                    Drag & apos; n & apos;drop your image here to
-                    upload!
-                    <br />
-                    We only can accept one <i>.jpg/.png/.gif </i> file
-                    that is less than 4.5 MB in size.
+                    For now we only can accept one <i>.jpg/.png/.gif</i>{" "}
+                    image file, that is less than 4.2 MB in size.
                   </Text>
                 </Box>
               </Dropzone>
@@ -314,7 +334,7 @@ export function ProtectedEditForm(props: EditFormProps) {
             <Textarea
               label="Bockquote cite:"
               description="This appears at the top of your Grow's main header image"
-              placeholder="So sit back, relax, and enjoy the ride as we take you on a journey through the wonderful world of cannabis cultivation!"
+              placeholder="A journey through the wonderful world of cannabis cultivation!"
               withAsterisk
               mt="sm"
               autosize

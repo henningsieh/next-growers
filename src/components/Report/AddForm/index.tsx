@@ -14,9 +14,11 @@ import {
 } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import {
   IconCloudUpload,
   IconDownload,
+  IconFileAlert,
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
@@ -172,16 +174,7 @@ function Form({ user }: AddFormProps) {
           <>
             {/* // Image Preview */}
             <Box className="relative" px={0}>
-              <Box
-                className="
-              absolute
-              right-2
-              top-2
-              z-50
-                flex                
-                justify-end  
-              "
-              >
+              <Box className="absolute right-2 top-2 z-50 flex justify-end">
                 <ActionIcon
                   title="delete this image"
                   onClick={() => {
@@ -215,17 +208,36 @@ function Form({ user }: AddFormProps) {
               overlayBlur={2}
             />
             <Dropzone
+              className={classes.dropzone}
               h={rem(280)}
               multiple={false} // only one image for now!
               openRef={openReference}
               onDrop={handleDropWrapper}
-              onChange={(e) => {
-                console.debug(e.currentTarget);
-              }}
-              className={classes.dropzone}
-              // radius="md"
+              maxSize={4500000} // Vercel production environment post size limit which is 4.500.000 byte
               accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
-              maxSize={4.4 * 1024 ** 2} // trying to match the Vercel production environment post size limit which is about 4.5mb
+              onReject={(files) => {
+                if (files[0]) {
+                  const fileSizeInBytes = files[0].file.size;
+                  const fileSizeInMB = (
+                    fileSizeInBytes /
+                    1024 ** 2
+                  ).toFixed(2);
+                  notifications.show({
+                    title: "Error",
+                    message:
+                      "File size of " +
+                      fileSizeInMB +
+                      " MB exceeds the allowed maximum of ≈ 4.2 MB!",
+                    color: "red",
+                    icon: <IconFileAlert />,
+                    loading: false,
+                  });
+                }
+              }}
+              // onChange={(e) => {
+              //   console.debug(e.currentTarget);
+              // }}
+              // radius="md"
             >
               <Box style={{ pointerEvents: "none" }}>
                 <Group position="center">
@@ -265,15 +277,16 @@ function Form({ user }: AddFormProps) {
                 <Text ta="center" fw={700} fz="lg" mt="xl">
                   <Dropzone.Accept>Drop files here</Dropzone.Accept>
                   <Dropzone.Reject>
-                    Only one Images, less than 10mb
+                    Only one Image with a size of less than 4.2 MB
                   </Dropzone.Reject>
-                  <Dropzone.Idle>Upload Header Image</Dropzone.Idle>
+                  <Dropzone.Idle>
+                    Drag&apos;n&apos;drop your Grow Header Image here to
+                    upload!
+                  </Dropzone.Idle>
                 </Text>
                 <Text ta="center" fz="sm" my="xs" c="dimmed">
-                  Drag&apos;n&apos;drop your image here to upload!
-                  <br />
-                  We can accept only one <i>.jpg/.png/.gif</i> file that
-                  is less than 10mb in size.
+                  For now we only can accept one <i>.jpg/.png/.gif</i>{" "}
+                  image file, that is less than 4.2 MB in size.
                 </Text>
               </Box>
             </Dropzone>
