@@ -681,13 +681,15 @@ export const reportRouter = createTRPCRouter({
         throw new Error("You are not authorized to edit this report");
       }
 
-      // Update the report
+      // build report data
       const { strains, createdAt, imageId, ...reportData } = input;
       const data = {
         ...reportData,
         authorId: ctx.session.user.id,
         strains: {
-          set: strains.map((strainId) => ({ id: strainId })),
+          connect: strains.map((strainId) => ({
+            id: strainId,
+          })),
         },
         image: {
           connect: {
@@ -698,7 +700,8 @@ export const reportRouter = createTRPCRouter({
         createdAt: createdAt,
         // updatedAt: createdAt,
       };
-      console.debug(data);
+
+      // safe report
       const report = await ctx.prisma.report.update({
         where: {
           id: input.id,
