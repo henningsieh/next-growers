@@ -85,20 +85,24 @@ export default function LandingCard() {
       <Container size="md" className={classes.container}>
         <Title className={classes.title}>GrowAGram</Title>
         <Title order={2}>🪴 Show Your Grow! 🚀</Title>
+
         <Text className={classes.description} size="xl" mt="xl">
           {t("common:landing-text-top1")}
         </Text>
-        <Link href="/grows">
-          <button
-            className="my-8 h-12 w-96 rounded-md bg-gradient-to-r
-          from-pink-600 via-red-600 to-orange-500 text-white"
-          >
-            EXPLORE ALL GROWS 🔎
-          </button>
-        </Link>
-        <Text className={classes.description} size="xl" mb="sm">
+
+        <Text className={classes.description} size="xl" mt="sm">
           {t("common:landing-text-top2")}
         </Text>
+
+        <Link href="/grows">
+          <button
+            className="uppercase my-8 h-12 w-72 rounded-md bg-gradient-to-r
+          from-orange-600 via-pink-600 to-red-500 text-white"
+          >
+            {t("common:landing-button-text")} 🔎
+          </button>
+        </Link>
+
         <Text className={classes.description} size="md" mt="xl">
           {t("common:landing-text-bottom")}
         </Text>
