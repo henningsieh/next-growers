@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import LightDarkButton from "../components/Atom/LightDarkButton";
 import LoginPanel from "../components/LoginPanel";
 import {
@@ -27,6 +26,8 @@ import {
   IconMapPin,
   IconMessageCircle,
 } from "@tabler/icons-react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { type ReactNode } from "react";
 
@@ -40,6 +41,7 @@ import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
 import Notifications from "~/components/Notifications";
 
 const useStyles = createStyles((theme) => ({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   link: {
     display: "flex",
     alignItems: "center",
@@ -66,6 +68,7 @@ const useStyles = createStyles((theme) => ({
     }),
   },
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   subLink: {
     width: "100%",
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
