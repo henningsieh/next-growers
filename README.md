@@ -1,12 +1,16 @@
-# Create T3 App
+# GrowAGram 🪴 Show Your Grow! 🚀 Cannabis home cultivation community
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+![GrowAGram Header Screenshot](https://growagram.com/en/20240303_Header_GrowAGram%20_%20Show%20your%20Grow_EN.png "GrowAGram Header Screenshot")
 
-## What's next? How do I make an app with this?
+## What is GrowAGram?
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Welcome to our cannabis home cultivation community! Explore helpful tips, guides, and experiences for successful cannabis cultivation. Dive into the world of cannabis cultivation and learn all about strains, growing environments, care tips, and much more.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+If you're passionate about or just getting started with cannabis cultivation, we invite you to explore our community.
+
+As the legalization of cannabis in Germany draws closer, we believe it is important to establish a community that celebrates the plant and its unique growth process. We are currently in the alpha version and appreciate feedback and active participation.
+
+# Technologies
 
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
@@ -14,7 +18,9 @@ If you are not familiar with the different technologies used in this project, pl
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
 
-## Learn More
+## The T3 Stack
+
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
 To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
 
