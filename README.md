@@ -1,4 +1,4 @@
-# GrowAGram 🪴 Show Your Grow! 🚀 Cannabis home cultivation community
+# GrowAGram 🪴 Show Your Grow! 🚀
 
 ![GrowAGram Header Screenshot](https://growagram.com/en/20240303_Header_GrowAGram%20_%20Show%20your%20Grow_EN.png "GrowAGram Header Screenshot")
 
