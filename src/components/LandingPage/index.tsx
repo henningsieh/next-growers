@@ -13,30 +13,51 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
-  hero: {
-    position: "relative",
-    backgroundImage: "url(diyahna-lewis---JxxyIUHnU-unsplash.jpg)",
+  // hero: {
+  //   position: "relative",
+  //   //height: "100vh", // Set the height of the hero section to full viewport height
+  //   overflow: "hidden", // Hide overflow to prevent scrolling of the hero section
+  // },
+
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100vh", // Set the height to cover the entire viewport
+    zIndex: 0,
+    overflow: "hidden", // Hide overflow to prevent scrolling of the overlay
+  },
+
+  backgroundImage: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100vh", // Set the height to cover the entire viewport
+    zIndex: -1, // Set z-index to ensure it's behind the content
+    backgroundImage: "url(diyahna-lewis-JEI-uPbp1Aw-unsplash_2400.jpg)",
+    // backgroundImage: "url(esteban-lopez-t9jQie6cUhg-unsplash_2400.jpg)",
     backgroundSize: "cover",
     backgroundPosition: "top",
   },
 
   container: {
-    // height: rem(800),
-    height: "calc(90vh)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "top",
     alignItems: "center",
-    paddingBottom: `calc(${theme.spacing.xl} * 6)`,
-    zIndex: 99,
+    paddingTop: theme.spacing.md,
+    //paddingBottom: `calc(${theme.spacing.xl} * 6)`,
+    // zIndex: 99,
     position: "relative",
 
-    [theme.fn.smallerThan("sm")]: {
-      height: rem(900),
-      flexDirection: "column",
-      justifyContent: "center",
-      paddingBottom: `calc(${theme.spacing.xl} * 3)`,
-    },
+    // [theme.fn.smallerThan("sm")]: {
+    //   // height: rem(900),
+    //   // flexDirection: "column",
+    //   //justifyContent: "center",
+    //   //paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+    // },
   },
 
   title: {
@@ -66,6 +87,14 @@ const useStyles = createStyles((theme) => ({
       fontSize: theme.fontSizes.md,
     },
   },
+
+  photoCredit: {
+    position: "fixed",
+    bottom: theme.spacing.md,
+    left: theme.spacing.md,
+    color: theme.colors.gray[7],
+    textDecoration: "none",
+  },
 }));
 
 export default function LandingCard() {
@@ -76,12 +105,17 @@ export default function LandingCard() {
   const { t } = useTranslation(activeLocale);
 
   return (
-    <Box className={classes.hero}>
+    <Box>
+      {/* Background image */}
+      <Box className={classes.backgroundImage} />
+
+      {/* Overlay */}
       <Overlay
+        className={classes.overlay} // Apply the overlay style class
         opacity={1}
-        zIndex={0}
         gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
       />
+
       <Container size="md" className={classes.container}>
         <Title className={classes.title}>GrowAGram</Title>
         <Title order={2}>🪴 Show Your Grow! 🚀</Title>
@@ -107,14 +141,17 @@ export default function LandingCard() {
           {t("common:landing-text-bottom")}
         </Text>
       </Container>
-      Foto von{" "}
-      <a href="https://unsplash.com/@diyahna22?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
-        Diyahna Lewis
-      </a>{" "}
-      auf{" "}
-      <a href="https://unsplash.com/de/fotos/--JxxyIUHnU?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">
-        Unsplash
-      </a>
+
+      {/* Photo credit */}
+      <Box className={classes.photoCredit}>
+        <a href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+          Background Image on Unsplash
+        </a>{" "}
+        from{" "}
+        <a href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+          Diyahna Lewis
+        </a>{" "}
+      </Box>
     </Box>
   );
 }
