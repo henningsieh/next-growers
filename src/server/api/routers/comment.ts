@@ -6,7 +6,6 @@ import {
 import { NotificationEvent } from "@prisma/client";
 import { z } from "zod";
 import {
-  InputCreatePostServer,
   InputGetCommentsByPostId,
   InputSaveComment,
 } from "~/helpers/inputValidation";
