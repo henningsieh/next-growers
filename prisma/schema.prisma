@@ -27,6 +27,7 @@ enum CannabisStraintype {
 }
 
 enum GrowStage {
+  PREPARATION
   SEEDLING_STAGE
   VEGETATIVE_STAGE
   FLOWERING_STAGE

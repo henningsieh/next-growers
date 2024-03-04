@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "GrowStage" ADD VALUE 'PREPARATION';
