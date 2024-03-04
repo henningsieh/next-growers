@@ -49,7 +49,7 @@ const LikeHeart = (props: LikeHeartProps) => {
   const [showLikes, setShowLikes] = useState(false);
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
-  const trpc = api.useContext();
+  const trpc = api.useUtils();
   const {
     data: itemLikes,
     isLoading,

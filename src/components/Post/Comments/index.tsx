@@ -53,7 +53,7 @@ interface PostCommentsProps {
 
 const PostComments = ({ reportId, postId }: PostCommentsProps) => {
   const router = useRouter();
-  const trpc = api.useContext();
+  const trpc = api.useUtils();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -153,7 +153,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
       {status === "authenticated" && (
         <>
           <Group pb="xs" position="apart">
-            <Text pb="xs">Comments</Text>
+            <Text pb="xs">Kommantare</Text>
             <ActionIcon
               color="orange"
               variant="outline"

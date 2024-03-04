@@ -93,7 +93,7 @@ const AddPost = (props: AddPostProps) => {
 
   if (report == null) return null;
 
-  const trpc = api.useContext();
+  const trpc = api.useUtils();
 
   const { mutate: tRPCaddPostToReport } =
     api.posts.createPost.useMutation({

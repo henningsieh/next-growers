@@ -50,7 +50,7 @@ const ProtectedNotifications = () => {
   const dark = colorScheme === "dark";
   const clickOutsidePaper = useClickOutside(() => setOpen(false));
   const { data: session, status } = useSession();
-  const trpc = api.useContext();
+  const trpc = api.useUtils();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {

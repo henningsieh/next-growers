@@ -121,7 +121,7 @@ export function UserComment({
   );
 
   const router = useRouter();
-  const trpc = api.useContext();
+  const trpc = api.useUtils();
 
   const { mutate: tRPCdeleteComment } =
     api.comments.deleteCommentById.useMutation({

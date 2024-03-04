@@ -101,7 +101,7 @@ export function ProtectedEditForm(props: EditFormProps) {
     reportfromProps.image?.cloudUrl as string
   );
 
-  const trpc = api.useContext();
+  const trpc = api.useUtils();
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
     {
       onMutate: (savedReport) => {
