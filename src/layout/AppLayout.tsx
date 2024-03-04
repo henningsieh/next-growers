@@ -248,6 +248,12 @@ export default function HeaderMegaMenu({
             <Link href="/" className={classes.link}>
               {t("common:app-headermenu-welcome")}
             </Link>
+            <Link
+              href="/how-to-manual-anleitung-wie-geht-das"
+              className={classes.link}
+            >
+              How to
+            </Link>
             <Link href="/grows" className={classes.link}>
               {t("common:app-headermenu-explore")}
             </Link>
@@ -353,6 +359,12 @@ export default function HeaderMegaMenu({
 
           <Link href="/" className={classes.link}>
             {t("common:app-headermenu-welcome")}
+          </Link>
+          <Link
+            href="/how-to-manual-anleitung-wie-geht-das"
+            className={classes.link}
+          >
+            How to
           </Link>
           <Link href="/grows" className={classes.link}>
             {t("common:app-headermenu-explore")}

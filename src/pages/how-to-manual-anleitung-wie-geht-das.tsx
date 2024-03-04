@@ -2,7 +2,7 @@ import type { GetServerSideProps, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-import LandingPage from "~/components/LandingPage";
+import HowTo from "~/components/HowTo";
 
 /**
  * // PUBLIC PAGE with translations
@@ -18,21 +18,20 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   };
 };
-const Index: NextPage = () => {
+const HowToPage: NextPage = () => {
   return (
     <>
       <Head>
         <title>GrowAGram | Show your Grow 🪴</title>
         <meta
           name="description"
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-          content=""
+          content="Manual: How does this GrowAGram thing work?"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <LandingPage />
+      <HowTo />
     </>
   );
 };
-export default Index;
+export default HowToPage;

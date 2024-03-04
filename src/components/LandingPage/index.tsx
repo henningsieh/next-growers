@@ -13,12 +13,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
-  // hero: {
-  //   position: "relative",
-  //   //height: "100vh", // Set the height of the hero section to full viewport height
-  //   overflow: "hidden", // Hide overflow to prevent scrolling of the hero section
-  // },
-
   overlay: {
     position: "fixed",
     top: 0,
@@ -36,8 +30,7 @@ const useStyles = createStyles((theme) => ({
     width: "100%",
     height: "100vh", // Set the height to cover the entire viewport
     zIndex: -1, // Set z-index to ensure it's behind the content
-    backgroundImage: "url(diyahna-lewis-JEI-uPbp1Aw-unsplash_2400.jpg)",
-    // backgroundImage: "url(esteban-lopez-t9jQie6cUhg-unsplash_2400.jpg)",
+    backgroundImage: "url(diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)",
     backgroundSize: "cover",
     backgroundPosition: "top",
   },
@@ -48,8 +41,6 @@ const useStyles = createStyles((theme) => ({
     justifyContent: "top",
     alignItems: "center",
     paddingTop: theme.spacing.md,
-    //paddingBottom: `calc(${theme.spacing.xl} * 6)`,
-    // zIndex: 99,
     position: "relative",
 
     // [theme.fn.smallerThan("sm")]: {
@@ -97,7 +88,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function LandingCard() {
+export default function LandingPage() {
   const { classes } = useStyles();
 
   const router = useRouter();
@@ -116,7 +107,7 @@ export default function LandingCard() {
         gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
       />
 
-      <Container size="md" className={classes.container}>
+      <Container size="lg" className={classes.container}>
         <Title className={classes.title}>GrowAGram</Title>
         <Title order={2}>🪴 Show Your Grow! 🚀</Title>
 
