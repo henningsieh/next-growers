@@ -120,7 +120,8 @@ export enum Locale {
 }
 
 export enum GrowStage {
-  PREPARATION = "Preparation",
+  PREPARATION_STAGE = "Preparation",
+  GERMINANTION_STAGE = "Germination",
   SEEDLING_STAGE = "Seedling",
   VEGETATIVE_STAGE = "Vegetative ",
   FLOWERING_STAGE = "Flowering",
