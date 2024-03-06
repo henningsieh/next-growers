@@ -1,5 +1,5 @@
 import { Box, Container, Title, useMantineTheme } from "@mantine/core";
-import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
 
@@ -173,15 +173,15 @@ export async function getStaticProps(
     strains: reportFromDb?.strains || [],
   };
 
-  console.debug(
-    "/pages/grow/[reportId]",
-    `🧑‍🏭 ...prefetching report ${reportFromDb.id} from db`
-  );
-
   // Fetch translations using next-i18next
   const translations = await serverSideTranslations(
     context.locale as string,
     ["common"]
+  );
+
+  console.debug(
+    `🏭 (getStaticProps)`,
+    `prefetching Grow ${reportFromDb.id} from db`
   );
 
   return {
@@ -285,10 +285,10 @@ export default function PublicReport(
   const router = useRouter();
   // const { locale: activeLocale } = router;
 
-  const { scrollIntoView, targetRef } =
-    useScrollIntoView<HTMLDivElement>({
-      offset: 1,
-    });
+  // const { scrollIntoView, targetRef } =
+  //   useScrollIntoView<HTMLDivElement>({
+  //     offset: 1,
+  //   });
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
@@ -301,9 +301,9 @@ export default function PublicReport(
     });
 
     if (matchingPost) {
-      scrollIntoView({
-        alignment: "start",
-      });
+      // scrollIntoView({
+      //   alignment: "start",
+      // });
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
       const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
@@ -355,7 +355,8 @@ export default function PublicReport(
             job={staticReportFromProps.description}
           />
           {/* // Posts Date Picker */}
-          <Box ref={targetRef}>
+          {/* <Box ref={targetRef}> */}
+          <Box>
             <PostsDatePicker
               defaultDate={
                 selectedDate ? columnStartMonth : dateOfGermination

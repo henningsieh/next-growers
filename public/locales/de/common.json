@@ -22,8 +22,9 @@
   "post-growday": "Grow Tag",
   "post-updatedate": "Update Datum",
   "post-lighthperday": "Licht (Std.) / Tag",
+  "post-button-safeupdate": "Update speichern",
   "editallpost-headline": "Alle Updates",
-  "addpost-headline": "Update erstellen",
+  "addpost-headline": "Ein neues Update hinzufügen",
   "addpost-growdaydescription": "Start ist Tag 0",
   "addpost-updatedatedescription": "Datum des Updates",
   "editpost-headline": "Update bearbeiten"

@@ -9,9 +9,7 @@ import {
   NumberInput,
   Paper,
   Select,
-  Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
@@ -20,7 +18,6 @@ import { RichTextEditor } from "@mantine/tiptap";
 import {
   IconBulb,
   IconCalendarEvent,
-  IconCalendarOff,
   IconNumber,
   IconPlant,
 } from "@tabler/icons-react";
@@ -41,7 +38,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import ImageUploader from "~/components/ImageUploader";
-import ReportDebugFooter from "~/components/Report/DebugFooter";
+import { onlyOnePostPerDayAllowed } from "~/components/Notifications/messages";
 
 import type {
   IsoReportWithPostsFromDb,
@@ -109,12 +106,17 @@ const AddPost = (props: AddPostProps) => {
       },
       onSuccess: async () => {
         toast.success("The update was saved to your report");
+        setImageIds([]);
+        form.setFieldValue("images", imageIds);
+        console.log("imageIds: ", imageIds);
         await trpc.reports.getIsoReportWithPostsFromDb.refetch();
         // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
+        // void router.push(`/account/grows/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {
+        setImageIds([]);
+        form.setFieldValue("images", imageIds);
         console.log("END posts.createPost.useMutation");
       },
     });
@@ -371,7 +373,7 @@ const AddPost = (props: AddPostProps) => {
 
             <Group position="right" mt="xl">
               <Button w={180} variant="outline" type="submit">
-                Update your Grow 🪴
+                {t("common:post-button-safeupdate")}
               </Button>
             </Group>
           </Box>
@@ -383,11 +385,3 @@ const AddPost = (props: AddPostProps) => {
 };
 
 export default AddPost;
-
-export const onlyOnePostPerDayAllowed = {
-  title: "Failure",
-  message: "You can only post one update per Day! 💁",
-  color: "red",
-  icon: <IconCalendarOff />,
-  loading: false,
-};

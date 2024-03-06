@@ -66,3 +66,11 @@ export const createLikeErrorMsg = (msg: string) => ({
   color: "red",
   icon: <IconError404 />,
 });
+
+export const onlyOnePostPerDayAllowed = {
+  title: "Failure",
+  message: "You can only post one update per Day! 💁",
+  color: "red",
+  icon: <IconCalendarOff />,
+  loading: false,
+};

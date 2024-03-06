@@ -5,10 +5,8 @@ import {
   Card,
   Group,
   Overlay,
-  Paper,
   Tooltip,
   createStyles,
-  useMantineTheme,
 } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import {
@@ -18,7 +16,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // import { useTranslation } from "react-i18next";
 // import { useRouter } from "next/router";
@@ -53,6 +51,18 @@ const ImagesSlider = (props: ImagesSliderProps) => {
     setOverlayUrl(cloudUrl);
     setOverlayOpen(true);
   };
+
+  // handle ESCAPE keyboard event to close Image Overlay
+  useEffect(() => {
+    function handleEscapeKey(event: KeyboardEvent) {
+      if (event.code === "Escape") {
+        setOverlayOpen(false);
+      }
+    }
+    document.addEventListener("keydown", handleEscapeKey);
+    return () =>
+      document.removeEventListener("keydown", handleEscapeKey);
+  }, []);
 
   return (
     <>
@@ -100,7 +110,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
                     />
                   </ActionIcon>
                 </Tooltip>
-                <Tooltip label="close overlay">
+                <Tooltip label="close overlay [or press ESC]">
                   <ActionIcon
                     variant="outline"
                     size={26}

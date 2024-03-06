@@ -1,5 +1,5 @@
 import { Box, Container, Title, useMantineTheme } from "@mantine/core";
-import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
 
@@ -12,12 +12,12 @@ import type {
 } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { noPostAtThisDay } from "~/components/Notifications/messages";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
-import { ReportHeader } from "~/components/Report/Header";
 
 import { prisma } from "~/server/db";
 
@@ -175,15 +175,15 @@ export async function getStaticProps(
     strains: reportFromDb?.strains || [],
   };
 
-  console.debug(
-    "/pages/grow/[reportId]/update/[postId]",
-    `🧑‍🏭 ...prefetching report ${reportFromDb.id} from db`
-  );
-
   // Fetch translations using next-i18next
   const translations = await serverSideTranslations(
     context.locale as string,
     ["common"]
+  );
+
+  console.debug(
+    `🏭 (getStaticProps)`,
+    `prefetching Update ${postId} from db`
   );
 
   return {
@@ -277,10 +277,10 @@ export default function PublicReportPost(
   const dateOfGermination = new Date(staticReportFromProps.createdAt);
   // const [postId, setPostId] = useState<string>(postIdfromProps);
 
-  const post = staticReportFromProps.posts.find(
+  const thisPost = staticReportFromProps.posts.find(
     (post) => post.id === postIdfromProps
   );
-  const postDate = new Date(post?.date as string);
+  const postDate = new Date(thisPost?.date as string);
   const [selectedDate, selectDate] = useState<Date | null>(postDate);
 
   useEffect(() => {
@@ -313,10 +313,10 @@ export default function PublicReportPost(
     new Date(0)
   );
 
-  const { scrollIntoView, targetRef } =
-    useScrollIntoView<HTMLDivElement>({
-      offset: 1,
-    });
+  // const { scrollIntoView, targetRef } =
+  //   useScrollIntoView<HTMLDivElement>({
+  //     offset: 1,
+  //   });
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
@@ -329,9 +329,9 @@ export default function PublicReportPost(
     });
 
     if (matchingPost) {
-      scrollIntoView({
-        alignment: "start",
-      });
+      // scrollIntoView({
+      //   alignment: "start",
+      // });
       selectDate(new Date(matchingPost.date));
       // setPostId(matchingPost.id);
       const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
@@ -359,11 +359,24 @@ export default function PublicReportPost(
         className="mb-8 flex w-full flex-col space-y-1"
       >
         {/* // Header with Title */}
-        <Box className="flex items-center justify-between pt-2">
+        <Box className="flex items-center justify-start pt-2">
           {/* // Title */}
-          <Title order={1} className="inline">
-            {`${pageTitle}`}
+          <Title order={1}>
+            <Link
+              className="text-orange-700"
+              color={theme.primaryColor}
+              href={`/grow/${staticReportFromProps.id}`}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              {`${pageTitle}`}
+            </Link>
           </Title>
+          {/* <Box px={"sm"}>
+            <IconChevronRight size={24} />
+          </Box>
+          <Title order={1}>
+            {`${thisPost?.title as string}`} | DATE
+          </Title> */}
         </Box>
         {/* // Header End */}
         <Container
@@ -373,15 +386,17 @@ export default function PublicReportPost(
           pt="xs"
           className="flex w-full flex-col space-y-4"
         >
-          <ReportHeader
+          {/* Update view without Header brings better UI! */}
+          {/* <ReportHeader
             report={staticReportFromProps}
             image={staticReportFromProps.image?.cloudUrl as string}
             avatar={staticReportFromProps.author.image as string}
             name={staticReportFromProps.author.name as string}
             job={staticReportFromProps.description}
-          />
+          /> */}
           {/* // Posts Date Picker */}
-          <Box ref={targetRef}>
+          {/* <Box ref={targetRef}> */}
+          <Box>
             <PostsDatePicker
               defaultDate={
                 selectedDate ? columnStartMonth : dateOfGermination
@@ -394,7 +409,10 @@ export default function PublicReportPost(
               responsiveColumnCount={getResponsiveColumnCount}
             />
           </Box>
-          <PostCard postId={post?.id} report={staticReportFromProps} />
+          <PostCard
+            postId={thisPost?.id}
+            report={staticReportFromProps}
+          />
         </Container>
 
         {/* <ReportDetailsHead report={staticReportFromProps} /> */}

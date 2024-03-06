@@ -275,13 +275,13 @@ export function PostCard(props: PostCardProps) {
             </Text>
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
-          <Group position="apart" px={2} className={classes.section}>
-            {postData}
-          </Group>
+          <Box my={"sm"}>
+            <ImagesSlider cloudUrls={postImagesPulbicUrls} />
+          </Box>
           <Paper
             fz={16}
             // c="dimmed"
-            withBorder
+            // withBorder
             p={theme.spacing.xs}
             mb={theme.spacing.sm}
             m={0}
@@ -289,7 +289,9 @@ export function PostCard(props: PostCardProps) {
               __html: postHTMLContent as TrustedHTML,
             }}
           />
-          <ImagesSlider cloudUrls={postImagesPulbicUrls} />
+          <Group position="apart" px={2} className={classes.section}>
+            {postData}
+          </Group>
         </Paper>
 
         <PostComments reportId={report.id as string} postId={postId} />

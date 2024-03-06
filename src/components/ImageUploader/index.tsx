@@ -1,24 +1,18 @@
 import ImagesSlider from "../ImagesSlider";
-import { Carousel } from "@mantine/carousel";
 import {
   Box,
   Container,
   Group,
   LoadingOverlay,
   Paper,
-  SimpleGrid,
   Space,
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { Image, Text } from "@mantine/core";
+import { Text } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
-import {
-  IconArrowBigLeft,
-  IconArrowBigRight,
-  IconCamera,
-} from "@tabler/icons-react";
+import { IconCamera } from "@tabler/icons-react";
 import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
 
 import type { Dispatch, SetStateAction } from "react";
@@ -38,38 +32,18 @@ const ImageUploader = (props: ImageUploaderProps) => {
     cloudUrlsFromProps ? cloudUrlsFromProps : []
   );
   const [isUploading, setIsUploading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [files, setFiles] = useState<FileWithPath[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imagePublicIds, setImagePublicIds] = useState<string[]>([]);
+  const [, setFiles] = useState<FileWithPath[]>([]);
+  const [, setImagePublicIds] = useState<string[]>([]);
 
   const theme = useMantineTheme();
 
-  const previews = cloudUrls.map((cloudUrl, index) => {
-    // const imageUrl = URL.createObjectURL(file);
-    return (
-      <Carousel.Slide key={index}>
-        <Image
-          src={cloudUrl}
-          imageProps={{
-            onLoad: () => URL.revokeObjectURL(cloudUrl),
-          }}
-          alt={`upload preview id ${index} `}
-        />
-      </Carousel.Slide>
-    );
-  });
-
-  const handleMultipleDropWrapper = (files: FileWithPath[]) => {
+  const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
     setIsUploading(true);
-    console.debug("handleMultipleDropWrapper", files);
-    setFiles(files);
+    setFiles(fileWithPath);
 
-    // console.debug("handelDropWrapper", files);
-
-    // handleMultipleDrop calls the new /api/multi-upload endpoint
+    // handleMultipleDrop calls the /api/multi-upload endpoint
     handleMultipleDrop(
-      files,
+      fileWithPath,
       report,
       setImageIds,
       setImagePublicIds,
@@ -105,25 +79,8 @@ const ImageUploader = (props: ImageUploaderProps) => {
 
                 <ImagesSlider cloudUrls={cloudUrls} />
               </Box>
-              {/* 
-              <Carousel>
-                <SimpleGrid
-                  cols={4}
-                  breakpoints={[{ maxWidth: "xs", cols: 1 }]}
-                  // mt={previews.length > 0 ? "xl" : 0}
-                >
-                  {previews}
-                </SimpleGrid>
-              </Carousel>
-                 */}
             </Box>
           </Box>
-          {/* 
-          <Group position="right" mt="xl">
-            <Button w={180} variant="outline" type="submit">
-              Upload Images
-            </Button>
-          </Group> */}
         </Box>
       </Paper>
     </Container>
