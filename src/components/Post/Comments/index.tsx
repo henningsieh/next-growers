@@ -3,7 +3,6 @@ import {
   Alert,
   Box,
   Button,
-  Code,
   Flex,
   Group,
   LoadingOverlay,
@@ -15,17 +14,7 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import {
-  IconEditOff,
-  IconInfoCircle,
-  IconMinus,
-  IconNewSection,
-  IconTextPlus,
-  IconTrashX,
-  IconX,
-} from "@tabler/icons-react";
-import { IconNews } from "@tabler/icons-react";
-import { IconTextIncrease } from "@tabler/icons-react";
+import { IconInfoCircle, IconMinus, IconX } from "@tabler/icons-react";
 import { IconPlus } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
 import { InputSaveComment } from "~/helpers/inputValidation";
@@ -33,7 +22,6 @@ import { InputSaveComment } from "~/helpers/inputValidation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -58,11 +46,9 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
 
-  const { data: session, status } = useSession();
-
   const now = new Date();
 
-  // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+  // FETCH COMMENTS
   const {
     data: postComments,
     isLoading,
@@ -71,10 +57,11 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
     postId: postId, // Set the desired order (true for descending, false for ascending)
   });
 
+  const { data: session, status } = useSession();
+
   const { mutate: tRPCsaveComment } =
     api.comments.saveComment.useMutation({
-      onMutate: (newCommentDB) => {
-        console.log("START api.reports.create.useMutation");
+      onMutate: () => {
         setIsSaving(true);
       },
       // If the mutation fails,
@@ -84,11 +71,11 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
         if (!context) return;
         console.log(context);
       },
-      onSuccess: async (newReportDB) => {
+      onSuccess: async (newCommentDB) => {
         notifications.show(commentSuccessfulMsg);
         newForm.reset();
         await trpc.comments.getCommentsByPostId.fetch({
-          postId: newReportDB.postId as string,
+          postId: newCommentDB.postId as string,
         });
         // Navigate to the new report page
         // void router.push(`/account/reports/${newReportDB.id}`);
@@ -97,7 +84,6 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
       onSettled: () => {
         setNewOpen(false);
         setIsSaving(false);
-        console.log("END api.reports.create.useMutation");
       },
     });
 

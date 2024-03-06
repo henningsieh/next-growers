@@ -8,23 +8,15 @@ import {
   Box,
   Flex,
   Paper,
-  Text,
   Transition,
   createStyles,
-  rem,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import {
-  IconCannabis,
-  IconHeart,
-  IconHeartFilled,
-} from "@tabler/icons-react";
+import { IconCannabis } from "@tabler/icons-react";
 
 import React, { useState } from "react";
 
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
 
 import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
 
@@ -42,7 +34,7 @@ interface LikeHeartProps {
 }
 
 const LikeHeart = (props: LikeHeartProps) => {
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const { itemToLike: item, itemType } = props;
   const { classes } = useStyles();
 
@@ -77,7 +69,7 @@ const LikeHeart = (props: LikeHeartProps) => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
-      onSuccess: (res) => {
+      onSuccess: () => {
         notifications.show(dislikeSuccessfulMsg);
       },
       onSettled: async () => {
