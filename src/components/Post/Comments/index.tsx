@@ -78,7 +78,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
           postId: newCommentDB.postId as string,
         });
         // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
+        // void router.push(`/account/grows/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {

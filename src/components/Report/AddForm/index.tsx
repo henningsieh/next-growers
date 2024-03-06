@@ -127,7 +127,7 @@ function Form({ user }: AddFormProps) {
     },
     onSuccess: (newReportDB) => {
       // Navigate to the new report page
-      void router.push(`/account/reports/${newReportDB.id}`);
+      void router.push(`/account/grows/${newReportDB.id}`);
     },
     // Always refetch after error or success:
     onSettled: () => {

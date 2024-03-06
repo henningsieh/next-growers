@@ -103,7 +103,7 @@ export default function LoginModal() {
 
             <Menu.Dropdown>
               <Menu.Label>Grows</Menu.Label>
-              <Link href="/account/reports">
+              <Link href="/account/grows">
                 <Menu.Item icon={<IconPlant size={14} />}>
                   {t("common:usermenu-mygrows")}
                 </Menu.Item>
@@ -121,7 +121,7 @@ export default function LoginModal() {
                 My Images
               </Menu.Item> */}
 
-              <Link href="/account/reports/create">
+              <Link href="/account/grows/create">
                 <Menu.Item
                   color="green"
                   icon={<IconSquarePlus size={14} />}

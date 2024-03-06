@@ -128,7 +128,7 @@ ReportHeaderProps) {
         report.authorId === session.user.id && (
           <Box className="absolute bottom-4 right-3 cursor-pointer">
             <Group className="cursor-pointer" position="right">
-              <Link href={`/account/reports/${report.id as string}`}>
+              <Link href={`/account/grows/${report.id as string}`}>
                 <Button
                   className="cursor-pointer"
                   py={0}

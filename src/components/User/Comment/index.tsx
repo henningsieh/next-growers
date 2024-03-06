@@ -145,7 +145,7 @@ export function UserComment({
           postId: deletedComment.postId as string,
         });
         // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
+        // void router.push(`/account/grows/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {
@@ -174,7 +174,7 @@ export function UserComment({
         });
         setIsEditing(false);
         // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
+        // void router.push(`/account/grows/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {

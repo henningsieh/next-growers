@@ -1,4 +1,3 @@
-import ReportDebugFooter from "../DebugFooter";
 import {
   Badge,
   Box,
@@ -20,9 +19,7 @@ import {
   IconCannabis,
   IconClock,
   IconEdit,
-  IconLogin,
 } from "@tabler/icons-react";
-import { IconCheck } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
 
 import { useSession } from "next-auth/react";
@@ -34,7 +31,7 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
 import { Locale } from "~/types";
-import type { IsoReportCardProps, Posts } from "~/types";
+import type { IsoReportCardProps } from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -307,7 +304,7 @@ export default function IsoReportCard({
                 stroke={1.6}
               />
             </Button>
-            <Link href={`/account/reports/${isoReport.id as string}`}>
+            <Link href={`/account/grows/${isoReport.id as string}`}>
               <Button
                 className=" border-orange-400"
                 size="xs"

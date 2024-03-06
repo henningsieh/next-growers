@@ -212,7 +212,7 @@ const ProtectedAllGrows: NextPage = () => {
                       variant="outline"
                     >
                       You have to{" "}
-                      <Link href="/account/reports/create">
+                      <Link href="/account/grows/create">
                         <u>create your first Grow Report here</u>
                       </Link>
                       .
