@@ -1,5 +1,5 @@
-import deFlag from "../../../public/DE.svg";
-import usFlag from "../../../public/US.svg";
+import deFlag from "../../../public/svg/DE.svg";
+import usFlag from "../../../public/svg/US.svg";
 import { Group, SegmentedControl } from "@mantine/core";
 
 import React from "react";
