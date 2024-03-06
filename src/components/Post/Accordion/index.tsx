@@ -5,9 +5,7 @@ import {
   Card,
   Center,
   Container,
-  Flex,
   Group,
-  Paper,
   Title,
 } from "@mantine/core";
 import { sanatizeDateString } from "~/helpers";
@@ -18,7 +16,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
-import { Locale, Posts } from "~/types";
+import { Locale } from "~/types";
 
 interface PostsAccordionProps {
   report: IsoReportWithPostsFromDb | undefined;

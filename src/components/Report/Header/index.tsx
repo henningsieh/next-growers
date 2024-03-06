@@ -1,12 +1,9 @@
 import {
-  Avatar,
   Blockquote,
   Box,
   Button,
   Card,
-  Center,
   Group,
-  Text,
   createStyles,
   rem,
 } from "@mantine/core";

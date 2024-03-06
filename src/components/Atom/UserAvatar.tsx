@@ -1,4 +1,4 @@
-import { Avatar, Tooltip } from "@mantine/core";
+import { Tooltip } from "@mantine/core";
 
 import Image from "next/image";
 

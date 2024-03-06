@@ -1,18 +1,14 @@
 import UserAvatar from "../../Atom/UserAvatar";
 import {
   ActionIcon,
-  Avatar,
   Box,
   Button,
-  Card,
   Flex,
   Group,
-  List,
   LoadingOverlay,
   Paper,
   Text,
   Textarea,
-  TypographyStylesProvider,
   createStyles,
   rem,
 } from "@mantine/core";
@@ -21,17 +17,13 @@ import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
   IconEdit,
-  IconMessage,
-  IconMessage2,
   IconMessageForward,
-  IconTrash,
   IconTrashX,
 } from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";
 import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
-import { z } from "zod";
 import { sanatizeDateString } from "~/helpers";
 import { InputSaveComment } from "~/helpers/inputValidation";
 
@@ -39,14 +31,10 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
-import {
-  commentDeletedSuccessfulMsg,
-  likeSuccessfulMsg,
-} from "~/components/Notifications/messages";
+import { commentDeletedSuccessfulMsg } from "~/components/Notifications/messages";
 
 import { type Comment, Locale } from "~/types";
 
@@ -145,7 +133,7 @@ export function UserComment({
           postId: deletedComment.postId as string,
         });
         // Navigate to the new report page
-        // void router.push(`/account/grows/${newReportDB.id}`);
+        // void router.push(`/account/reports/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {
@@ -174,7 +162,7 @@ export function UserComment({
         });
         setIsEditing(false);
         // Navigate to the new report page
-        // void router.push(`/account/grows/${newReportDB.id}`);
+        // void router.push(`/account/reports/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {
@@ -218,7 +206,7 @@ export function UserComment({
     }
   };
 
-  const [selectedCommentText, setSelectedCommentText] = useState("");
+  const [, setSelectedCommentText] = useState("");
 
   useEffect(() => {
     const handleSelectionChange = () => {
@@ -235,20 +223,6 @@ export function UserComment({
       );
     };
   }, []);
-
-  const handleQuote = () => {
-    const quotedText = selectedCommentText
-      .split("\n")
-      .map((line) => `> ${line}`)
-      .join("\n");
-
-    newForm.setValues({
-      ...newForm.values,
-      content: `${newForm.values.content}\n\n${quotedText}\n\n`,
-    });
-
-    setNewOpen(true);
-  };
 
   return (
     <Paper

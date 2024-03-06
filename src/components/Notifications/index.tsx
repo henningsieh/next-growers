@@ -6,7 +6,6 @@ import {
   Center,
   Container,
   Flex,
-  Group,
   Indicator,
   createStyles,
   useMantineColorScheme,
@@ -83,7 +82,7 @@ const ProtectedNotifications = () => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
-      onSuccess: (res) => {
+      onSuccess: () => {
         toast.success("markNotificationAsRead!");
       },
       onSettled: async () => {

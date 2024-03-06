@@ -21,7 +21,7 @@ import { ProtectedEditForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
 
-import type { IsoReportWithPostsFromDb, Posts, Strains } from "~/types";
+import type { IsoReportWithPostsFromDb, Strains } from "~/types";
 
 import { api } from "~/utils/api";
 

@@ -5,17 +5,13 @@ import {
   Group,
   Menu,
   Modal,
-  Text,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconLogout,
-  IconPhoto,
   IconPlant,
-  IconPlant2,
-  IconSearch,
   IconSquarePlus,
   IconUser,
 } from "@tabler/icons-react";
