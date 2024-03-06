@@ -100,20 +100,20 @@ const useStyles = createStyles((theme) => ({
     }`,
   },
 
-  hiddenXs: {
+  hiddenIfSmallerThanXs: {
     [theme.fn.smallerThan("xs")]: {
       display: "none",
     },
   },
 
   hiddenMobile: {
-    [theme.fn.smallerThan("md")]: {
+    [theme.fn.smallerThan("lg")]: {
       display: "none",
     },
   },
 
   hiddenDesktop: {
-    [theme.fn.largerThan("md")]: {
+    [theme.fn.largerThan("lg")]: {
       display: "none",
     },
   },
@@ -248,14 +248,14 @@ export default function HeaderMegaMenu({
             <Link href="/" className={classes.link}>
               {t("common:app-headermenu-welcome")}
             </Link>
+            <Link href="/grows" className={classes.link}>
+              {t("common:app-headermenu-explore")}
+            </Link>
             <Link
               href="/how-to-manual-anleitung-wie-geht-das"
               className={classes.link}
             >
-              How to
-            </Link>
-            <Link href="/grows" className={classes.link}>
-              {t("common:app-headermenu-explore")}
+              {t("common:app-headermenu-how-to")}
             </Link>
             <HoverCard
               width={600}
@@ -314,13 +314,11 @@ export default function HeaderMegaMenu({
                 </Box>
               </HoverCard.Dropdown>
             </HoverCard>
-            {/* 
-            <Link href="/t3-app-info" className={classes.link}>
-              T3 Stack
-            </Link> */}
           </Group>
           <Group>
-            <Box className={classes.hiddenXs}>
+            <Box className={classes.hiddenIfSmallerThanXs}>
+              {" "}
+              {/* Does not fit in mobile portrait mode display */}
               <LanguageSwitcher />
             </Box>
             <Box>
@@ -360,14 +358,14 @@ export default function HeaderMegaMenu({
           <Link href="/" className={classes.link}>
             {t("common:app-headermenu-welcome")}
           </Link>
+          <Link href="/grows" className={classes.link}>
+            {t("common:app-headermenu-explore")}
+          </Link>
           <Link
             href="/how-to-manual-anleitung-wie-geht-das"
             className={classes.link}
           >
-            How to
-          </Link>
-          <Link href="/grows" className={classes.link}>
-            {t("common:app-headermenu-explore")}
+            {t("common:app-headermenu-how-to")}
           </Link>
           <UnstyledButton
             className={classes.link}

@@ -10,7 +10,6 @@ import {
 } from "@mantine/core";
 
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
@@ -102,73 +101,66 @@ export default function HowTo() {
       />
 
       <Container size="lg" className={classes.container}>
-        <Title className={classes.title}>How to</Title>
-        <Title order={2}>🤔 How does this work? 💡</Title>
+        <Title className={classes.title}>
+          {t("common:app-headermenu-how-to")}
+        </Title>
+        <Title order={2}>🤔 {t("common:how-does-this-work")} 💡</Title>
         <Space h="xl" />
 
-        <Title order={3} mt={"xl"} mb="xs">
-          Seamless Authentication
+        {/* Create and Manage Grows */}
+        <Title className="text-center" order={3} mt={"xl"} mb="xs">
+          {t("common:CreateandManageGrows")}
         </Title>
-        <Text className={classes.description} size="lg">
-          Experience hassle-free login with Growagram&apos;s magic link
-          feature. No need to remember passwords or go through lengthy
-          registration processes. Just click the link sent to your
-          email, and you&apos;re in!
+        <Text className={classes.description} size="lg" mb="md">
+          {t("common:CreateandManageGrows_content")}
         </Text>
 
-        <Title order={3} mt={"xl"} mb="xs">
-          Effortless Search
+        {/* Detailed Updates */}
+        <Title className="text-center" order={3} mt={"xl"} mb="xs">
+          {t("common:DetailedUpdates")}
         </Title>
-        <Text className={classes.description} size="lg">
-          Easily find what you&apos;re looking for with Growagram&apos;s
-          powerful full-text search functionality. Quickly locate
-          reports based on their headlines and text content, ensuring
-          you always stay informed.
+        <Text className={classes.description} size="lg" mb="md">
+          {t("common:DetailedUpdates_content")}
         </Text>
 
-        <Title order={3} mt={"xl"} mb="xs">
-          Strain Specific Search
+        {/* Seamless Authentication */}
+        <Title className="text-center" order={3} mt={"xl"} mb="xs">
+          {t("common:SeamlessAuthentication")}
         </Title>
-        <Text className={classes.description} size="lg">
-          Explore reports featuring specific cannabis strains with
-          Growagram&apos;s strain search feature. Discover valuable
-          insights and information tailored to your favorite strains.
+        <Text className={classes.description} size="lg" mb="md">
+          {t("common:SeamlessAuthentication_content")}
         </Text>
 
-        <Title order={3} mt={"xl"} mb="xs">
-          Create and Manage Grows
+        {/* Effortless Search */}
+        <Title className="text-center" order={3} mt={"xl"} mb="xs">
+          {t("common:EffortlessSearch")}
         </Title>
-        <Text className={classes.description} size="lg">
-          Showcase your growing journey by creating Grows as detailed
-          reports. Include parameters, header images, and utilize the
-          calendar functionality to track progress effortlessly.
+        <Text className={classes.description} size="lg" mb="md">
+          {t("common:EffortlessSearch_content")}
         </Text>
 
-        <Title order={3} mt={"xl"} mb="xs">
-          Detailed Updates
+        {/* Strain Specific Search */}
+        <Title className="text-center" order={3} mt={"xl"} mb="xs">
+          {t("common:StrainSpecificSearch")}
         </Title>
-        <Text className={classes.description} size="lg">
-          Keep your followers engaged by posting regular updates to your
-          Grows. Add as many updates as needed to document each step of
-          your growing process, from planting to harvesting.
+        <Text className={classes.description} size="lg" mb="md">
+          {t("common:StrainSpecificSearch_content")}
         </Text>
 
-        <Title order={3} mt={"xl"} mb="xs">
-          Show Appreciation
+        {/* Show Appreciation */}
+        <Title className="text-center" order={3} mt={"xl"} mb="xs">
+          {t("common:ShowAppreciation")}
         </Title>
-        <Text className={classes.description} size="lg">
-          Show your support and appreciation for other users&apos;
-          reports and posts by giving them your likes. Spread positivity
-          and encouragement within the Growagram community.
+        <Text className={classes.description} size="lg" mb="md">
+          {t("common:ShowAppreciation_content")}
         </Text>
 
-        <Title order={3} mt={"xl"} mb="xs">
-          Engage with Others
+        {/* Responsive Privacy Data Handling */}
+        <Title className="text-center" order={3} mt={"xl"} mb="xs">
+          {t("common:ResponsivePrivacyDataHandling")}
         </Title>
-        <Text className={classes.description} size="lg">
-          Foster meaningful connections by leaving comments on other
-          users&apos; posts. Share tips, ask questions, and engage in
-          discussions to enhance your growing experience together.
+        <Text className={classes.description} size="lg" mb="md">
+          {t("common:ResponsivePrivacyDataHandling_content")}
         </Text>
       </Container>
 
