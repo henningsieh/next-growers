@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { disconnect } from "process";
 import { z } from "zod";
 import { splitSearchString } from "~/helpers";
 import {
@@ -692,13 +691,13 @@ export const reportRouter = createTRPCRouter({
           ...reportData
         } = input;
 
-        // Extract existing strain IDs from the database
-        const existingStrainIds = existingReport.strains.map(
+        // Extract connected strain IDs from the database
+        const connectedStrainIds = existingReport.strains.map(
           (strain) => strain.id
         );
 
         // Find IDs to disconnect
-        const strainsToDisconnect = existingStrainIds.filter(
+        const strainIdsToDisconnect = connectedStrainIds.filter(
           (id) => !newStrainIds.includes(id)
         );
 
@@ -706,10 +705,10 @@ export const reportRouter = createTRPCRouter({
           ...reportData,
           authorId: ctx.session.user.id,
           strains: {
-            connect: newStrainIds.map((strainId) => ({
+            disconnect: strainIdsToDisconnect.map((strainId) => ({
               id: strainId,
             })),
-            disconnect: strainsToDisconnect.map((strainId) => ({
+            connect: newStrainIds.map((strainId) => ({
               id: strainId,
             })),
           },
