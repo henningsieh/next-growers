@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { disconnect } from "process";
 import { z } from "zod";
 import { splitSearchString } from "~/helpers";
 import {
@@ -671,6 +672,9 @@ export const reportRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          strains: true, // Include related strains
+        },
       });
 
       // Then, check if the user is the author of the report
@@ -679,36 +683,55 @@ export const reportRouter = createTRPCRouter({
         existingReport.authorId !== ctx.session.user.id
       ) {
         throw new Error("You are not authorized to edit this report");
-      }
+      } else if (existingReport != null) {
+        // build report data
+        const {
+          strains: newStrainIds,
+          createdAt,
+          imageId,
+          ...reportData
+        } = input;
 
-      // build report data
-      const { strains, createdAt, imageId, ...reportData } = input;
-      const data = {
-        ...reportData,
-        authorId: ctx.session.user.id,
-        strains: {
-          connect: strains.map((strainId) => ({
-            id: strainId,
-          })),
-        },
-        image: {
-          connect: {
-            id: imageId,
+        // Extract existing strain IDs from the database
+        const existingStrainIds = existingReport.strains.map(
+          (strain) => strain.id
+        );
+
+        // Find IDs to disconnect
+        const strainsToDisconnect = existingStrainIds.filter(
+          (id) => !newStrainIds.includes(id)
+        );
+
+        const data = {
+          ...reportData,
+          authorId: ctx.session.user.id,
+          strains: {
+            connect: newStrainIds.map((strainId) => ({
+              id: strainId,
+            })),
+            disconnect: strainsToDisconnect.map((strainId) => ({
+              id: strainId,
+            })),
           },
-        },
+          image: {
+            connect: {
+              id: imageId,
+            },
+          },
 
-        createdAt: createdAt,
-        // updatedAt: createdAt,
-      };
+          createdAt: createdAt,
+          // updatedAt: createdAt,
+        };
 
-      // safe report
-      const report = await ctx.prisma.report.update({
-        where: {
-          id: input.id,
-        },
-        data,
-      });
+        // safe report
+        const report = await ctx.prisma.report.update({
+          where: {
+            id: input.id,
+          },
+          data,
+        });
 
-      return report;
+        return report;
+      }
     }),
 });
