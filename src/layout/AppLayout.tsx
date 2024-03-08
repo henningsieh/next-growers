@@ -26,6 +26,7 @@ import {
   IconMapPin,
   IconMessageCircle,
 } from "@tabler/icons-react";
+import { Analytics } from "@vercel/analytics/react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -393,6 +394,7 @@ export default function HeaderMegaMenu({
 
       <Box className="relative mt-16 ">
         {children}
+        <Analytics />
         <SpeedInsights />
       </Box>
     </>
