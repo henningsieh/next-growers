@@ -193,7 +193,13 @@ export default function IsoReportCard({
           description={isoReport.description as string}
           publicLink={`/grow/${isoReport.id as string}`}
           authorName={isoReport.author?.name as string}
-          authorImageUrl={isoReport.author?.image as string}
+          authorImageUrl={
+            isoReport.author?.image
+              ? isoReport.author?.image
+              : `https://ui-avatars.com/api/?name=${
+                  isoReport.author?.name as string
+                }`
+          }
           comments={42}
           views={183}
         />

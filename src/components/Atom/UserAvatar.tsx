@@ -30,7 +30,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
         width={avatarRadius}
         height={avatarRadius}
         src={imageUrl}
-        alt={`${userName}'s Proile Image`}
+        alt={`${userName}'s Profile Image`}
       />
     </Tooltip>
   );
