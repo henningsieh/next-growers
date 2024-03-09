@@ -137,7 +137,11 @@ export default function LoginModal() {
               <Menu.Divider />
               <Menu.Label>Logout</Menu.Label>
               <Menu.Item
-                onClick={() => void signOut()}
+                onClick={() =>
+                  void signOut({
+                    callbackUrl: `/${activeLocale as string}/grows`,
+                  })
+                }
                 color="red"
                 icon={<IconLogout size={14} />}
               >

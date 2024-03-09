@@ -6,8 +6,8 @@ import {
 import { NotificationEvent } from "@prisma/client";
 import { z } from "zod";
 import {
+  InputEditCommentForm,
   InputGetCommentsByPostId,
-  InputSaveComment,
 } from "~/helpers/inputValidation";
 
 export const commentRouter = createTRPCRouter({
@@ -108,7 +108,7 @@ export const commentRouter = createTRPCRouter({
     }),
 
   saveComment: protectedProcedure
-    .input(InputSaveComment)
+    .input(InputEditCommentForm)
     .mutation(async ({ ctx, input }) => {
       const { id, postId, content } = input;
 

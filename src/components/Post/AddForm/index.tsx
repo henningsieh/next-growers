@@ -29,7 +29,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { InputCreatePost } from "~/helpers/inputValidation";
+import { InputCreatePostForm } from "~/helpers/inputValidation";
 
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -67,7 +67,7 @@ const AddPost = (props: AddPostProps) => {
 
   // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
-    form.setFieldValue("images", imageIds);
+    createPostForm.setFieldValue("images", imageIds);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageIds]);
 
@@ -107,7 +107,7 @@ const AddPost = (props: AddPostProps) => {
       onSuccess: async () => {
         toast.success("The update was saved to your report");
         setImageIds([]);
-        form.setFieldValue("images", imageIds);
+        createPostForm.setFieldValue("images", imageIds);
         console.log("imageIds: ", imageIds);
         await trpc.reports.getIsoReportWithPostsFromDb.refetch();
         // Navigate to the new report page
@@ -116,7 +116,7 @@ const AddPost = (props: AddPostProps) => {
       // Always refetch after error or success:
       onSettled: () => {
         setImageIds([]);
-        form.setFieldValue("images", imageIds);
+        createPostForm.setFieldValue("images", imageIds);
         console.log("END posts.createPost.useMutation");
       },
     });
@@ -142,8 +142,8 @@ const AddPost = (props: AddPostProps) => {
       );
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const form = useForm({
-    validate: zodResolver(InputCreatePost(reportStartDate)),
+  const createPostForm = useForm({
+    validate: zodResolver(InputCreatePostForm(reportStartDate)),
     initialValues: {
       id: post ? post.id : "",
       date: post ? new Date(post.date) : today,
@@ -180,7 +180,7 @@ const AddPost = (props: AddPostProps) => {
 
     tRPCaddPostToReport(savePost);
   }
-  const handleErrors = (errors: typeof form.errors) => {
+  const handleErrors = (errors: typeof createPostForm.errors) => {
     if (errors.id) {
       toast.error(errors.id as string);
     }
@@ -196,12 +196,12 @@ const AddPost = (props: AddPostProps) => {
     <Container p={0} size="md">
       <Paper p="sm" withBorder>
         <form
-          onSubmit={form.onSubmit((values) => {
+          onSubmit={createPostForm.onSubmit((values) => {
             handleSubmit(values);
           }, handleErrors)}
         >
           <Box className="space-y-2">
-            <TextInput {...form.getInputProps("id")} hidden />
+            <TextInput {...createPostForm.getInputProps("id")} hidden />
             {imageIds.map((imageId, index) => (
               <input
                 key={index}
@@ -228,7 +228,7 @@ const AddPost = (props: AddPostProps) => {
                       icon={<IconNumber size="1.2rem" />}
                       withAsterisk
                       min={0}
-                      {...form.getInputProps("day")}
+                      {...createPostForm.getInputProps("day")}
                       onChange={(value: number) => {
                         const growDayOffSet = parseInt(
                           value.toString(),
@@ -240,8 +240,14 @@ const AddPost = (props: AddPostProps) => {
                         newPostDate.setUTCDate(
                           newPostDate.getUTCDate() + growDayOffSet
                         );
-                        form.setFieldValue("date", newPostDate);
-                        form.setFieldValue("day", growDayOffSet);
+                        createPostForm.setFieldValue(
+                          "date",
+                          newPostDate
+                        );
+                        createPostForm.setFieldValue(
+                          "day",
+                          growDayOffSet
+                        );
                       }}
                     />
                     <DateInput
@@ -254,7 +260,7 @@ const AddPost = (props: AddPostProps) => {
                       className="w-full"
                       icon={<IconCalendarEvent size="1.2rem" />}
                       withAsterisk
-                      {...form.getInputProps("date")}
+                      {...createPostForm.getInputProps("date")}
                       onChange={(selectedDate: Date) => {
                         const newDate = new Date(selectedDate);
                         /* 
@@ -264,7 +270,7 @@ const AddPost = (props: AddPostProps) => {
   newDate.setMilliseconds(reportStartDate.getMilliseconds()); 
   */
 
-                        form.setFieldValue("date", newDate);
+                        createPostForm.setFieldValue("date", newDate);
 
                         /* const timeDifferenceMs =
     selectedDate.getTime() - reportStartDate.getTime(); */
@@ -275,7 +281,10 @@ const AddPost = (props: AddPostProps) => {
                             (1000 * 60 * 60 * 24)
                         );
 
-                        form.setFieldValue("day", timeDifferenceDays);
+                        createPostForm.setFieldValue(
+                          "day",
+                          timeDifferenceDays
+                        );
                       }}
                     />
                   </Flex>
@@ -292,7 +301,9 @@ const AddPost = (props: AddPostProps) => {
                       w={142}
                       min={0}
                       max={24}
-                      {...form.getInputProps("lightHoursPerDay")}
+                      {...createPostForm.getInputProps(
+                        "lightHoursPerDay"
+                      )}
                       icon={<IconBulb size="1.2rem" />}
                     />
                     <Select
@@ -303,7 +314,7 @@ const AddPost = (props: AddPostProps) => {
                         label: GrowStage[key as keyof typeof GrowStage],
                       }))}
                       withAsterisk
-                      {...form.getInputProps("growStage")}
+                      {...createPostForm.getInputProps("growStage")}
                       className="w-full"
                       icon={<IconPlant size="1.2rem" />}
                     />
@@ -315,9 +326,12 @@ const AddPost = (props: AddPostProps) => {
               withAsterisk
               label="Titel for this update"
               placeholder="Titel of this Update"
-              {...form.getInputProps("title")}
+              {...createPostForm.getInputProps("title")}
             />
-            <Input hidden {...form.getInputProps("content")} />
+            <Input
+              hidden
+              {...createPostForm.getInputProps("content")}
+            />
             <Box fz={"sm"}>
               Text<sup className="ml-1 text-red-600">*</sup>
             </Box>

@@ -28,7 +28,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { handleDrop } from "~/helpers";
-import { InputEditReport } from "~/helpers/inputValidation";
+import { InputEditReportForm } from "~/helpers/inputValidation";
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -130,8 +130,8 @@ export function ProtectedEditForm(props: EditFormProps) {
     }
   );
 
-  const form = useForm({
-    validate: zodResolver(InputEditReport),
+  const editReportForm = useForm({
+    validate: zodResolver(InputEditReportForm),
     initialValues: {
       id: report?.id as string,
       title: report?.title as string,
@@ -155,7 +155,7 @@ export function ProtectedEditForm(props: EditFormProps) {
     tRPCsaveReport(values);
   };
 
-  const handleErrors = (errors: typeof form.errors) => {
+  const handleErrors = (errors: typeof editReportForm.errors) => {
     if (errors.id) {
       toast.error(errors.id as string);
     }
@@ -172,7 +172,7 @@ export function ProtectedEditForm(props: EditFormProps) {
 
   // Update "imageId" state, if "imageId" form field value changes
   useEffect(() => {
-    form.setFieldValue("imageId", imageId);
+    editReportForm.setFieldValue("imageId", imageId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageId]);
 
@@ -219,8 +219,8 @@ export function ProtectedEditForm(props: EditFormProps) {
                 </Box>
                 <ImagePreview
                   imageUrl={cloudUrl}
-                  title={form.values.title}
-                  description={form.values.description}
+                  title={editReportForm.values.title}
+                  description={editReportForm.values.description}
                   publicLink={`/grow/${report.id as string}`}
                   authorName={user.name as string}
                   authorImageUrl={user.image as string}
@@ -329,7 +329,7 @@ export function ProtectedEditForm(props: EditFormProps) {
           )}
           {Environment[report.environment as keyof typeof Environment]}
           <form
-            onSubmit={form.onSubmit((values) => {
+            onSubmit={editReportForm.onSubmit((values) => {
               submitEditReportForm(values);
             }, handleErrors)}
           >
@@ -341,13 +341,13 @@ export function ProtectedEditForm(props: EditFormProps) {
               mt="sm"
               autosize
               minRows={3}
-              {...form.getInputProps("description")}
+              {...editReportForm.getInputProps("description")}
             />
             <TextInput
               label="Title:"
               description="This appears as headline on your Grow's main details page"
               withAsterisk
-              {...form.getInputProps("title")}
+              {...editReportForm.getInputProps("title")}
             />
             <Select
               label="Environment"
@@ -357,7 +357,7 @@ export function ProtectedEditForm(props: EditFormProps) {
                 label: Environment[key as keyof typeof Environment],
               }))}
               withAsterisk
-              {...form.getInputProps("environment")}
+              {...editReportForm.getInputProps("environment")}
               className="w-full"
               icon={<IconHome size="1.2rem" />}
             />
@@ -372,9 +372,12 @@ export function ProtectedEditForm(props: EditFormProps) {
                   // className="w-full"
                   icon={<IconCalendar size="1.2rem" />}
                   withAsterisk
-                  {...form.getInputProps("createdAt")}
+                  {...editReportForm.getInputProps("createdAt")}
                   onChange={(selectedDate: Date) => {
-                    form.setFieldValue("createdAt", selectedDate);
+                    editReportForm.setFieldValue(
+                      "createdAt",
+                      selectedDate
+                    );
                   }}
                 />
               </Grid.Col>
@@ -383,7 +386,7 @@ export function ProtectedEditForm(props: EditFormProps) {
                   label="Strain(s):"
                   description="Select all strain(s) of your Grow"
                   placeholder="Pick strains of your Grow"
-                  {...form.getInputProps("strains")}
+                  {...editReportForm.getInputProps("strains")}
                   data={allStrains.map((strain) => ({
                     value: strain.id,
                     label: strain.name,

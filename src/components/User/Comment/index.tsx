@@ -25,7 +25,7 @@ import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
 import { sanatizeDateString } from "~/helpers";
-import { InputSaveComment } from "~/helpers/inputValidation";
+import { InputEditCommentForm } from "~/helpers/inputValidation";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -171,8 +171,8 @@ export function UserComment({
       },
     });
 
-  const editForm = useForm({
-    validate: zodResolver(InputSaveComment),
+  const editCommentForm = useForm({
+    validate: zodResolver(InputEditCommentForm),
     validateInputOnChange: true,
     initialValues: {
       id: comment.id,
@@ -194,7 +194,7 @@ export function UserComment({
     void fetchHtml();
   }, [comment.content]);
 
-  const handleErrors = (errors: typeof editForm.errors) => {
+  const handleErrors = (errors: typeof editCommentForm.errors) => {
     if (errors.id) {
       toast.error(errors.id as string);
     }
@@ -329,7 +329,7 @@ export function UserComment({
         </Paper>
       ) : (
         <form
-          onSubmit={editForm.onSubmit((values) => {
+          onSubmit={editCommentForm.onSubmit((values) => {
             tRPCsaveComment(values);
           }, handleErrors)}
         >
@@ -353,7 +353,7 @@ export function UserComment({
               pt={12}
               withAsterisk
               placeholder={comment.content}
-              {...editForm.getInputProps("content")}
+              {...editCommentForm.getInputProps("content")}
             />
           </Box>
           <Flex justify="flex-end" align="center">

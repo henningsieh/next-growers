@@ -79,8 +79,8 @@ const ProtectedEditReport: NextPage = () => {
   const form = useForm({
     validate: zodResolver(InputEditProfile),
     initialValues: {
-      email: session?.user.email,
       name: !!session?.user.name ? session.user.name : "",
+      email: session?.user.email,
     },
   });
 

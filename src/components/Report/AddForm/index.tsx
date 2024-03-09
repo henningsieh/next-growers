@@ -23,7 +23,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { handleDrop } from "~/helpers";
-import { InputCreateReport } from "~/helpers/inputValidation";
+import { InputCreateReportForm } from "~/helpers/inputValidation";
 
 import { useEffect, useRef } from "react";
 import { useState } from "react";
@@ -94,7 +94,7 @@ function Form({ user }: AddFormProps) {
 
   // Update "imageId" state, if "imageId" form field value changes
   useEffect(() => {
-    form.setFieldValue("imageId", imageId);
+    createReportForm.setFieldValue("imageId", imageId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageId]);
 
@@ -135,7 +135,7 @@ function Form({ user }: AddFormProps) {
     },
   });
 
-  const handleErrors = (errors: typeof form.errors) => {
+  const handleErrors = (errors: typeof createReportForm.errors) => {
     console.log(errors);
     if (errors.description) {
       toast.error(errors.description as string);
@@ -148,8 +148,8 @@ function Form({ user }: AddFormProps) {
     }
   };
 
-  const form = useForm({
-    validate: zodResolver(InputCreateReport),
+  const createReportForm = useForm({
+    validate: zodResolver(InputCreateReportForm),
     validateInputOnChange: true,
     initialValues: {
       title: "",
@@ -189,8 +189,8 @@ function Form({ user }: AddFormProps) {
               </Box>
               <ImagePreview
                 imageUrl={cloudUrl}
-                title={form.values.title}
-                description={form.values.description}
+                title={createReportForm.values.title}
+                description={createReportForm.values.description}
                 publicLink="#"
                 authorName={user.name as string}
                 authorImageUrl={user.image as string}
@@ -297,9 +297,9 @@ function Form({ user }: AddFormProps) {
 
         {/* // Report form */}
         <form
-          onSubmit={form.onSubmit((values) => {
+          onSubmit={createReportForm.onSubmit((values) => {
             // send imageId as formField so that the report can be related
-            form.setValues({ imageId: imageId });
+            createReportForm.setValues({ imageId: imageId });
             tRPCcreateReport(values);
           }, handleErrors)}
         >
@@ -308,7 +308,7 @@ function Form({ user }: AddFormProps) {
           <Input
             hidden
             type="text"
-            {...form.getInputProps("imageId")}
+            {...createReportForm.getInputProps("imageId")}
             value={imageId}
           />
           <Textarea
@@ -319,14 +319,14 @@ function Form({ user }: AddFormProps) {
             mt="sm"
             autosize
             minRows={3}
-            {...form.getInputProps("description")}
+            {...createReportForm.getInputProps("description")}
           />
           <TextInput
             label="Title:"
             description="This appears as headline on your Grow's main details page"
             withAsterisk
             mt="sm"
-            {...form.getInputProps("title")}
+            {...createReportForm.getInputProps("title")}
           />
 
           <Group position="right" mt="xl">
@@ -334,7 +334,7 @@ function Form({ user }: AddFormProps) {
               type="submit"
               w={140}
               variant="outline"
-              disabled={!form.isValid()}
+              disabled={!createReportForm.isValid()}
             >
               Continue
             </Button>

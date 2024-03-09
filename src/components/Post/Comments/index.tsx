@@ -17,7 +17,7 @@ import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconMinus, IconX } from "@tabler/icons-react";
 import { IconPlus } from "@tabler/icons-react";
 import { sanatizeDateString } from "~/helpers";
-import { InputSaveComment } from "~/helpers/inputValidation";
+import { InputEditCommentForm } from "~/helpers/inputValidation";
 
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -73,7 +73,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
       },
       onSuccess: async (newCommentDB) => {
         notifications.show(commentSuccessfulMsg);
-        newForm.reset();
+        editCommentForm.reset();
         await trpc.comments.getCommentsByPostId.fetch({
           postId: newCommentDB.postId as string,
         });
@@ -89,8 +89,8 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
 
   const commentsRef = useRef<HTMLElement[]>([]);
 
-  const newForm = useForm({
-    validate: zodResolver(InputSaveComment),
+  const editCommentForm = useForm({
+    validate: zodResolver(InputEditCommentForm),
     validateInputOnChange: false,
     initialValues: {
       id: undefined,
@@ -110,13 +110,13 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
           reportId={reportId}
           comment={postComment}
           setNewOpen={setNewOpen}
-          newForm={newForm}
+          newForm={editCommentForm}
         />
       </div>
     );
   });
 
-  const handleErrors = (errors: typeof newForm.errors) => {
+  const handleErrors = (errors: typeof editCommentForm.errors) => {
     if (errors.id) {
       toast.error(errors.id as string);
     }
@@ -129,7 +129,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
   };
 
   useEffect(() => {
-    newForm.setFieldValue("postId", postId);
+    editCommentForm.setFieldValue("postId", postId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
@@ -203,7 +203,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
                         title="reset form and close"
                         onClick={() => {
                           setNewOpen(false);
-                          newForm.reset();
+                          editCommentForm.reset();
                         }}
                         m={0}
                         p={0}
@@ -243,7 +243,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
                   </TypographyStylesProvider>
                 </Box>
                 <form
-                  onSubmit={newForm.onSubmit((values) => {
+                  onSubmit={editCommentForm.onSubmit((values) => {
                     tRPCsaveComment(values);
                   }, handleErrors)}
                 >
@@ -267,7 +267,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
                       pt={12}
                       withAsterisk
                       // placeholder={`be nice and friendly :-)`}
-                      {...newForm.getInputProps("content")}
+                      {...editCommentForm.getInputProps("content")}
                     />
                   </Box>
                   <Flex justify="flex-end" align="center">

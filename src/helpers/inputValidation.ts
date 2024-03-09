@@ -5,9 +5,16 @@ import { Environment, GrowStage } from "~/types";
 
 export const InputLogin = z.string().email("Invalid email address");
 
+export const InputSetUserName = z.object({
+  id: z.string().min(1),
+  name: z.string().min(5, {
+    message: "Username must have at least 5 letters",
+  }),
+});
+
 export const InputEditProfile = z.object({
-  name: z.string().min(6, {
-    message: "Username must have at least 6 letters",
+  name: z.string().min(5, {
+    message: "Username must have at least 5 letters",
   }),
   /*       .refine((value) => !/\s/.test(value), {
       message: "Userame must not contain whitespace characters",
@@ -16,7 +23,7 @@ export const InputEditProfile = z.object({
   email: z.string().email({ message: "Invalid email address" }),
 });
 
-export const InputCreateReport = z.object({
+export const InputCreateReportForm = z.object({
   title: z
     .string()
     .min(8, { message: "Title should have at least 8 letters" })
@@ -30,7 +37,7 @@ export const InputCreateReport = z.object({
   imageId: z.string().min(1, { message: "Header image is missing" }),
 });
 
-export const InputEditReport = z.object({
+export const InputEditReportForm = z.object({
   id: z.string().min(1),
   title: z
     .string()
@@ -58,11 +65,6 @@ export const InputGetReports = z.object({
   search: z.string(),
 });
 
-export const InputSetUserName = z.object({
-  id: z.string().min(1),
-  name: z.string().min(6).max(100),
-});
-
 export const InputLike = z.object({
   id: z.string(),
 });
@@ -71,7 +73,7 @@ export const InputGetCommentsByPostId = z.object({
   postId: z.string().min(1),
 });
 
-export const InputSaveComment = z.object({
+export const InputEditCommentForm = z.object({
   id: z.string().optional(),
   postId: z.string(),
   content: z
@@ -80,7 +82,7 @@ export const InputSaveComment = z.object({
     .max(1000),
 });
 
-export const InputCreatePost: (reportStartDate: Date) => ZodType = (
+export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
 ) => {
   return z.object({

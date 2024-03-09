@@ -2,8 +2,8 @@
 import { z } from "zod";
 import { splitSearchString } from "~/helpers";
 import {
-  InputCreateReport,
-  InputEditReport,
+  InputCreateReportForm,
+  InputEditReportForm,
   InputGetReports,
 } from "~/helpers/inputValidation";
 
@@ -643,7 +643,7 @@ export const reportRouter = createTRPCRouter({
     }),
 
   create: protectedProcedure
-    .input(InputCreateReport)
+    .input(InputCreateReportForm)
     .mutation(async ({ ctx, input }) => {
       return await ctx.prisma.report.create({
         data: {
@@ -664,7 +664,7 @@ export const reportRouter = createTRPCRouter({
     }),
 
   saveReport: protectedProcedure
-    .input(InputEditReport)
+    .input(InputEditReportForm)
     .mutation(async ({ ctx, input }) => {
       // First, check if the report exists
       const existingReport = await ctx.prisma.report.findUnique({
