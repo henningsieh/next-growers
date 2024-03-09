@@ -1,5 +1,5 @@
 import LightDarkButton from "../components/Atom/LightDarkButton";
-import LoginPanel from "../components/LoginPanel";
+import LoginPanel from "../components/SessionPanel";
 import {
   Anchor,
   Box,

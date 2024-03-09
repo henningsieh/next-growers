@@ -1,5 +1,5 @@
-import { GoogleButtonWithText } from "../Atom/GoogleButton";
 import EmailForm from "./EmailForm";
+import { GoogleButtonWithText } from "./GoogleButton";
 import { Box } from "@mantine/core";
 import { InputLogin } from "~/helpers/inputValidation";
 

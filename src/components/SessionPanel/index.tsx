@@ -1,4 +1,4 @@
-import LoginForm from "./LoginForm";
+import LoginForm from "../Atom/LoginForm";
 import {
   ActionIcon,
   Button,
@@ -24,13 +24,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-export default function LoginModal() {
+export default function SessionPanel() {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { data: session, status } = useSession();
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     async function redirectToEditAccount() {
@@ -46,19 +46,8 @@ export default function LoginModal() {
     void redirectToEditAccount();
   }, [session, router, status]);
 
-  /*   const form = useForm({
-    initialValues: {
-      email: '',
-      termsOfService: false,
-    },
-
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      termsOfService: (value) => (value!==false ? null : 'You have to accept our terms of service!')
-    },
-  }); */
-  const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
   const dark = colorScheme === "dark";
 
   return (
@@ -66,11 +55,9 @@ export default function LoginModal() {
       <Modal
         opened={opened}
         onClose={close}
-        title="Sign in to GrowAGram.com 🔒"
         centered
+        title="Sign in to GrowAGram.com 🔒"
       >
-        {/* Modal content */}
-
         <LoginForm />
       </Modal>
 
@@ -150,16 +137,14 @@ export default function LoginModal() {
             </Menu.Dropdown>
           </Menu>
         ) : (
-          <>
-            <Button
-              className="cursor-default"
-              variant="default"
-              size={"sm"}
-              onClick={open}
-            >
-              Sign in 🔒
-            </Button>
-          </>
+          <Button
+            onClick={open}
+            className="cursor-default w-28 text-sm px-0"
+            variant="default"
+            size={"sm"}
+          >
+            🔒&nbsp;{t("common:app-headermenu-signin")}
+          </Button>
         )}
       </Group>
     </>

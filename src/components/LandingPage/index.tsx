@@ -119,12 +119,20 @@ export default function LandingPage() {
           {t("common:landing-text-top2")}
         </Text>
 
+        <Link href="/account/grows/create">
+          <button
+            className="uppercase my-8 h-12 w-72 rounded-md bg-gradient-to-r 
+          from-green-700  via-teal-900  to-emerald-700 text-white"
+          >
+            {t("common:usermenu-addnewgrow")} ⛏️
+          </button>
+        </Link>
         <Link href="/grows">
           <button
             className="uppercase my-8 h-12 w-72 rounded-md bg-gradient-to-r
           from-orange-600 via-pink-600 to-red-500 text-white"
           >
-            {t("common:landing-button-text")} 🔎
+            {t("common:landing-button-allgrows")} 🔎
           </button>
         </Link>
 
