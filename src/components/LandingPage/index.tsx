@@ -1,5 +1,7 @@
+import { LoginModal } from "../Atom/LoginModal";
 import {
   Box,
+  Button,
   Container,
   Overlay,
   Text,
@@ -7,9 +9,10 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
@@ -19,7 +22,7 @@ const useStyles = createStyles((theme) => ({
     left: 0,
     width: "100%",
     height: "100vh", // Set the height to cover the entire viewport
-    zIndex: 0,
+    zIndex: -15,
     overflow: "hidden", // Hide overflow to prevent scrolling of the overlay
   },
 
@@ -29,7 +32,7 @@ const useStyles = createStyles((theme) => ({
     left: 0,
     width: "100%",
     height: "100vh", // Set the height to cover the entire viewport
-    zIndex: -1, // Set z-index to ensure it's behind the content
+    zIndex: -20, // Set z-index to ensure it's behind the content
     backgroundImage: "url(diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)",
     backgroundSize: "cover",
     backgroundPosition: "top",
@@ -81,10 +84,12 @@ const useStyles = createStyles((theme) => ({
 
   photoCredit: {
     position: "fixed",
-    bottom: theme.spacing.md,
+    bottom: theme.spacing.xs,
     left: theme.spacing.md,
     color: theme.colors.gray[7],
     textDecoration: "none",
+    fontSize: 14,
+    zIndex: -10,
   },
 }));
 
@@ -94,63 +99,88 @@ export default function LandingPage() {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
+  const { data: session, status } = useSession();
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   return (
-    <Box>
-      {/* Background image */}
-      <Box className={classes.backgroundImage} />
+    <>
+      <LoginModal opened={opened} close={close} />
 
-      {/* Overlay */}
-      <Overlay
-        className={classes.overlay} // Apply the overlay style class
-        opacity={1}
-        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-      />
+      <Box>
+        {/* Background image */}
+        <Box className={classes.backgroundImage} />
 
-      <Container size="lg" className={classes.container}>
-        <Title className={classes.title}>GrowAGram</Title>
-        <Title order={2}>🪴 Show Your Grow! 🚀</Title>
+        {/* Overlay */}
+        <Overlay
+          className={classes.overlay} // Apply the overlay style class
+          opacity={1}
+          gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
+        />
 
-        <Text className={classes.description} size="xl" mt="xl">
-          {t("common:landing-text-top1")}
-        </Text>
+        <Container
+          mb={"xl"}
+          pb={"xl"}
+          size="lg"
+          className={classes.container}
+        >
+          <Title className={classes.title}>GrowAGram</Title>
+          <Title order={2}>🪴 Show Your Grow! 🚀</Title>
 
-        <Text className={classes.description} size="xl" mt="sm">
-          {t("common:landing-text-top2")}
-        </Text>
+          <Text className={classes.description} size="xl" mt="xl">
+            {t("common:landing-text-top1")}
+          </Text>
 
-        <Link href="/account/grows/create">
-          <button
-            className="uppercase my-8 h-12 w-72 rounded-md bg-gradient-to-r 
-          from-green-700  via-teal-900  to-emerald-700 text-white"
-          >
-            {t("common:usermenu-addnewgrow")} ⛏️
-          </button>
-        </Link>
-        <Link href="/grows">
-          <button
-            className="uppercase my-8 h-12 w-72 rounded-md bg-gradient-to-r
-          from-orange-600 via-pink-600 to-red-500 text-white"
+          <Text className={classes.description} size="xl" mt="sm">
+            {t("common:landing-text-top3")}
+          </Text>
+
+          <Button
+            onClick={() => {
+              void router.push("/grows");
+            }}
+            className="
+            text-lg uppercase 
+            my-4 h-12 w-72 rounded-md 
+            bg-gradient-to-r from-orange-600 via-pink-600 to-red-500 text-white"
           >
             {t("common:landing-button-allgrows")} 🔎
-          </button>
-        </Link>
+          </Button>
 
-        <Text className={classes.description} size="md" mt="xl">
-          {t("common:landing-text-bottom")}
-        </Text>
-      </Container>
+          <Text className={classes.description} size="xl" mt="xl">
+            {t("common:landing-text-top2")}
+          </Text>
 
-      {/* Photo credit */}
-      <Box className={classes.photoCredit}>
-        <a href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
-          Background Image on Unsplash
-        </a>{" "}
-        from{" "}
-        <a href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
-          Diyahna Lewis
-        </a>{" "}
+          <Button
+            onClick={() => {
+              status === "authenticated"
+                ? void router.push("/account/grows/create")
+                : open();
+            }}
+            className="
+              text-lg uppercase 
+              my-4 h-12 w-72 rounded-md 
+              bg-gradient-to-r from-teal-700  via-green-600  to-emerald-800 text-white"
+          >
+            {t("common:usermenu-addnewgrow")} ⛏️
+          </Button>
+
+          <Text className={classes.description} size="md" mt="xl">
+            {t("common:landing-text-bottom")}
+          </Text>
+        </Container>
+
+        {/* Photo credit */}
+        <Box className={classes.photoCredit}>
+          <a href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+            Background Image on Unsplash
+          </a>{" "}
+          from{" "}
+          <a href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
+            Diyahna Lewis
+          </a>{" "}
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }

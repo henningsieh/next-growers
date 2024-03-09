@@ -13,6 +13,9 @@ const AccessDenied = () => {
       >
         <Box className="">
           You aren&apos;t authenticated to visit this page.
+          <br />
+          <br />
+          <b>You have to be logged in!</b>
         </Box>
       </Alert>
     </Container>

@@ -1,4 +1,5 @@
 import LoginForm from "../Atom/LoginForm";
+import { LoginModal } from "../Atom/LoginModal";
 import {
   ActionIcon,
   Button,
@@ -25,8 +26,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function SessionPanel() {
-  const [opened, { open, close }] = useDisclosure(false);
-
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
@@ -50,16 +49,11 @@ export default function SessionPanel() {
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
 
+  const [opened, { open, close }] = useDisclosure(false);
+
   return (
     <>
-      <Modal
-        opened={opened}
-        onClose={close}
-        centered
-        title="Sign in to GrowAGram.com 🔒"
-      >
-        <LoginForm />
-      </Modal>
+      <LoginModal opened={opened} close={close} />
 
       <Group position="center">
         {status === "authenticated" ? (

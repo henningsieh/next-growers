@@ -19,7 +19,7 @@ const useStyles = createStyles((theme) => ({
     left: 0,
     width: "100%",
     height: "100vh", // Set the height to cover the entire viewport
-    zIndex: 0,
+    zIndex: -15,
     overflow: "hidden", // Hide overflow to prevent scrolling of the overlay
   },
 
@@ -29,7 +29,7 @@ const useStyles = createStyles((theme) => ({
     left: 0,
     width: "100%",
     height: "100vh", // Set the height to cover the entire viewport
-    zIndex: -1, // Set z-index to ensure it&apos;s behind the content
+    zIndex: -20, // Set z-index to ensure it&apos;s behind the content
     backgroundImage: "url(diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)",
     backgroundSize: "cover",
     backgroundPosition: "top",
@@ -78,6 +78,8 @@ const useStyles = createStyles((theme) => ({
     left: theme.spacing.md,
     color: theme.colors.gray[7],
     textDecoration: "none",
+    fontSize: 14,
+    zIndex: -10,
   },
 }));
 
@@ -100,7 +102,12 @@ export default function HowTo() {
         gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
       />
 
-      <Container size="lg" className={classes.container}>
+      <Container
+        mb={"xl"}
+        pb={"xl"}
+        size="lg"
+        className={classes.container}
+      >
         <Title className={classes.title}>
           {t("common:app-headermenu-how-to")}
         </Title>
