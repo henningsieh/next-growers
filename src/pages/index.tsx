@@ -22,7 +22,7 @@ const Index: NextPage = () => {
   return (
     <>
       <Head>
-        <title>GrowAGram | Show your Grow 🪴</title>
+        <title>GrowAGram | 🪴 Show Your Grow! 🚀</title>
         <meta
           name="description"
           // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion

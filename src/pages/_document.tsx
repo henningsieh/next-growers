@@ -21,6 +21,7 @@ export default class _Document extends Document {
             rel="stylesheet"
           />
           <script // plausible analytics script
+            rel="canonical"
             defer
             data-domain="growagram.com"
             src="https://cdn.growagram.com/js/script.js"

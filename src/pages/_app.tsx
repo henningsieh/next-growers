@@ -17,7 +17,7 @@ import Loading from "~/components/Atom/Loading";
 import { api } from "~/utils/api";
 import { useRouteLoader } from "~/utils/routeLoader";
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const GrowAGram: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
@@ -44,7 +44,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         withGlobalStyles
         withNormalizeCSS
         theme={{
-          loader: "dots",
+          loader: "oval",
           colorScheme,
           fontFamily: `'Lato', sans-serif`,
           headings: {
@@ -96,7 +96,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                       ? theme.colors.gray[5]
                       : theme.colors.dark[5],
                   "&:hover": {
-                    cursor: "default",
+                    // cursor: "default",
                     backgroundColor:
                       theme.colorScheme === "dark"
                         ? theme.colors.orange[8]
@@ -189,8 +189,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
           {/* // FUTURE BANNERS GO HERE!! */}
           <Notifications limit={5} position="bottom-right" />
           <Toaster />
+          <Loading isLoading={isLoading} />
           <AppLayout>
-            <Loading isLoading={isLoading} />
             <Component {...pageProps} />
           </AppLayout>
         </SessionProvider>
@@ -199,4 +199,4 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-export default api.withTRPC(appWithTranslation(MyApp));
+export default api.withTRPC(appWithTranslation(GrowAGram));

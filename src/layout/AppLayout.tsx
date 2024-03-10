@@ -12,8 +12,10 @@ import {
   Group,
   Header,
   HoverCard,
+  Overlay,
   ScrollArea,
   SimpleGrid,
+  Space,
   Text,
   ThemeIcon,
   UnstyledButton,
@@ -42,6 +44,44 @@ import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
 import Notifications from "~/components/Notifications";
 
 const useStyles = createStyles((theme) => ({
+  photoCredit: {
+    position: "fixed",
+    bottom: theme.spacing.xs,
+    left: theme.spacing.md,
+    color: theme.colors.gray[7],
+    textDecoration: "none",
+    fontSize: 14,
+    zIndex: +1,
+  },
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100vh", // Set the height to cover the entire viewport
+    zIndex: -15,
+    overflow: "hidden", // Hide overflow to prevent scrolling of the overlay
+    // Conditional gradient based on theme
+    background:
+      theme.colorScheme === "dark"
+        ? "linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 90%)"
+        : "linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.75) 90%)",
+  },
+  appBackground: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100vh", // Set the height to cover the entire viewport
+    zIndex: -20, // Set z-index to ensure it's behind the content
+    backgroundImage:
+      theme.colorScheme === "dark"
+        ? "url(/diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)"
+        : "url(/2h-media-h9ue_EmlM7s-unsplash.jpg)",
+    backgroundSize: "cover",
+    backgroundPosition: "left",
+  },
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   link: {
     display: "flex",
@@ -120,7 +160,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const mockdata = [
+const externLinksMockdata = [
   {
     icon: IconMessageCircle,
     title: "CannabisAnbauen.net",
@@ -162,17 +202,18 @@ function openUrlInNewTab(url: string) {
   window.open(url, "_blank");
 }
 
-export default function HeaderMegaMenu({
+export default function AppLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
+  const [drawerIsOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
-  const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
+  const [externLinksOpen, { toggle: toggleLinks }] =
+    useDisclosure(false);
   const { classes, theme } = useStyles();
 
-  const links = mockdata.map((item) => (
+  const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
       onClick={() => openUrlInNewTab(item.url)}
       className={classes.subLink}
@@ -207,6 +248,7 @@ export default function HeaderMegaMenu({
   const { t } = useTranslation(activeLocale);
 
   const { data: session, status } = useSession();
+
   return (
     <>
       <Header
@@ -227,15 +269,15 @@ export default function HeaderMegaMenu({
                 p={0}
                 m={0}
                 size={36}
-                opened={drawerOpened}
+                opened={drawerIsOpened}
                 onClick={toggleDrawer}
               />
             </Box>
             <Link href="/grows">
               <Image
                 className="rounded-sm"
-                height={40}
                 width={86}
+                height={44}
                 alt="GrowAGram Logo"
                 src="/growagram-logo-wide-magenta-gradient.png"
               />
@@ -296,7 +338,7 @@ export default function HeaderMegaMenu({
                 />
 
                 <SimpleGrid cols={2} spacing={0}>
-                  {links}
+                  {externLinks}
                 </SimpleGrid>
 
                 <Box className={classes.dropdownFooter}>
@@ -335,9 +377,8 @@ export default function HeaderMegaMenu({
           {/* <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} /> */}
         </Group>
       </Header>
-
       <Drawer
-        opened={drawerOpened}
+        opened={drawerIsOpened}
         onClose={closeDrawer}
         size="100%"
         // padding="md"
@@ -383,7 +424,7 @@ export default function HeaderMegaMenu({
             </Center>
           </UnstyledButton>
 
-          <Collapse in={linksOpened}>{links}</Collapse>
+          <Collapse in={externLinksOpen}>{externLinks}</Collapse>
 
           <Divider
             my="sm"
@@ -392,10 +433,49 @@ export default function HeaderMegaMenu({
         </ScrollArea>
       </Drawer>
 
-      <Box className="relative mt-16 ">
+      {/* Background image */}
+      <Box className={classes.appBackground} />
+
+      {/* Overlay */}
+      <Overlay
+        className={classes.overlay}
+        opacity={1}
+        // gradient={
+        //   theme.colorScheme === "dark"
+        //     ? "linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
+        //     : "linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.65) 40%)"
+        // }
+      />
+
+      {/* Content */}
+      <Box className="relative mt-16">
         {children}
         <Analytics />
         <SpeedInsights />
+      </Box>
+      <Space h="xl" />
+      <Space h="xl" />
+      <Space h="xl" />
+
+      {/* Photo credit */}
+      <Box className={classes.photoCredit}>
+        <u>
+          <a
+            target="_blank"
+            href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+          >
+            Background Image on Unsplash
+          </a>
+        </u>{" "}
+        from{" "}
+        <u>
+          <a
+            target="_blank"
+            href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+          >
+            Diyahna Lewis
+          </a>
+        </u>{" "}
       </Box>
     </>
   );

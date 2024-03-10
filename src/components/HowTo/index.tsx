@@ -1,7 +1,6 @@
 import {
   Box,
   Container,
-  Overlay,
   Space,
   Text,
   Title,
@@ -13,28 +12,6 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
-  overlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100vh", // Set the height to cover the entire viewport
-    zIndex: -15,
-    overflow: "hidden", // Hide overflow to prevent scrolling of the overlay
-  },
-
-  backgroundImage: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100vh", // Set the height to cover the entire viewport
-    zIndex: -20, // Set z-index to ensure it&apos;s behind the content
-    backgroundImage: "url(diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)",
-    backgroundSize: "cover",
-    backgroundPosition: "top",
-  },
-
   container: {
     position: "relative",
     display: "flex",
@@ -92,16 +69,6 @@ export default function HowTo() {
 
   return (
     <Box>
-      {/* Background image */}
-      <Box className={classes.backgroundImage} />
-
-      {/* Overlay */}
-      <Overlay
-        className={classes.overlay} // Apply the overlay style class
-        opacity={1}
-        gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-      />
-
       <Container
         mb={"xl"}
         pb={"xl"}

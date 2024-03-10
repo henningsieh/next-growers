@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Container,
-  Overlay,
   Text,
   Title,
   createStyles,
@@ -16,28 +15,6 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
-  overlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100vh", // Set the height to cover the entire viewport
-    zIndex: -15,
-    overflow: "hidden", // Hide overflow to prevent scrolling of the overlay
-  },
-
-  backgroundImage: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100vh", // Set the height to cover the entire viewport
-    zIndex: -20, // Set z-index to ensure it's behind the content
-    backgroundImage: "url(diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)",
-    backgroundSize: "cover",
-    backgroundPosition: "top",
-  },
-
   container: {
     display: "flex",
     flexDirection: "column",
@@ -55,7 +32,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    color: theme.white,
+    // color: theme.white,
     fontSize: rem(48),
     fontWeight: 900,
     lineHeight: 1.1,
@@ -74,22 +51,12 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    color: theme.white,
+    // color: theme.white,
     textAlign: "center",
 
     [theme.fn.smallerThan("sm")]: {
       fontSize: theme.fontSizes.md,
     },
-  },
-
-  photoCredit: {
-    position: "fixed",
-    bottom: theme.spacing.xs,
-    left: theme.spacing.md,
-    color: theme.colors.gray[7],
-    textDecoration: "none",
-    fontSize: 14,
-    zIndex: -10,
   },
 }));
 
@@ -99,7 +66,7 @@ export default function LandingPage() {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
-  const { data: session, status } = useSession();
+  const { status: status } = useSession();
 
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -108,16 +75,6 @@ export default function LandingPage() {
       <LoginModal opened={opened} close={close} />
 
       <Box>
-        {/* Background image */}
-        <Box className={classes.backgroundImage} />
-
-        {/* Overlay */}
-        <Overlay
-          className={classes.overlay} // Apply the overlay style class
-          opacity={1}
-          gradient="linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-        />
-
         <Container
           mb={"xl"}
           pb={"xl"}
@@ -140,9 +97,9 @@ export default function LandingPage() {
               void router.push("/grows");
             }}
             className="
-            text-lg uppercase 
-            my-4 h-12 w-72 rounded-md 
-            bg-gradient-to-r from-orange-600 via-pink-600 to-red-500 text-white"
+              text-lg uppercase 
+              my-4 h-12 w-72 rounded-md 
+              bg-gradient-to-r from-orange-600 via-pink-600 to-red-500 text-white"
           >
             {t("common:landing-button-allgrows")} 🔎
           </Button>
@@ -158,7 +115,7 @@ export default function LandingPage() {
                 : open();
             }}
             className="
-              text-lg uppercase 
+              text-lg uppercase cursor-default
               my-4 h-12 w-72 rounded-md 
               bg-gradient-to-r from-teal-700  via-green-600  to-emerald-800 text-white"
           >
@@ -169,17 +126,6 @@ export default function LandingPage() {
             {t("common:landing-text-bottom")}
           </Text>
         </Container>
-
-        {/* Photo credit */}
-        <Box className={classes.photoCredit}>
-          <a href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
-            Background Image on Unsplash
-          </a>{" "}
-          from{" "}
-          <a href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
-            Diyahna Lewis
-          </a>{" "}
-        </Box>
       </Box>
     </>
   );
