@@ -21,10 +21,9 @@ import PostsDatePicker from "~/components/Post/Datepicker";
 
 import { prisma } from "~/server/db";
 
-/**
- * getStaticProps
- * @param context : GetStaticPropsContext<{ reportId: string }>
- * @returns : Promise<{props{ report: Report }}>
+/** getStaticProps
+ *  @param context : GetStaticPropsContext<{ reportId: string }>
+ *  @returns : Promise<{props{ report: Report }}>
  */
 export async function getStaticProps(
   context: GetStaticPropsContext<{
@@ -197,8 +196,8 @@ export async function getStaticProps(
 }
 
 /** getStaticPaths
- * @param reports: { id: string; }[]
- * @returns { paths[] }
+ *  @param reports: { id: string; }[]
+ *  @returns { paths[] }
  */
 export const getStaticPaths: GetStaticPaths = async () => {
   const reports = await prisma.report.findMany({
@@ -241,20 +240,21 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-/**
- * @Page ReportDetails
- * @param props: { report: Report }
- * @returns React Functional Component
+/** ReportDetails
+ *  @param props: { report: Report }
+ *  @returns React Functional Component
  */
 export default function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
+  const { report: staticReportFromProps, postId: postIdfromProps } =
+    props;
+
   const theme = useMantineTheme();
   const router = useRouter();
   // const { locale: activeLocale } = router;
+  // const { t } = useTranslation(activeLocale);
 
-  const { report: staticReportFromProps, postId: postIdfromProps } =
-    props;
   const pageTitle = `${staticReportFromProps.title}`;
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
@@ -275,14 +275,23 @@ export default function PublicReportPost(
     : 5;
 
   const dateOfGermination = new Date(staticReportFromProps.createdAt);
-  // const [postId, setPostId] = useState<string>(postIdfromProps);
 
   const thisPost = staticReportFromProps.posts.find(
     (post) => post.id === postIdfromProps
   );
-  const postDate = new Date(thisPost?.date as string);
+
+  const postDate = new Date(thisPost ? thisPost.date : "");
   const [selectedDate, selectDate] = useState<Date | null>(postDate);
 
+  // If the post is not found, redirect to the 404 page
+  if (!thisPost) {
+    // Redirect to the 404 page
+    // void router.push("/404");
+    // Return null to prevent rendering anything else
+    return null;
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const post = staticReportFromProps.posts.find(
       (post) => post.id === postIdfromProps
@@ -361,12 +370,21 @@ export default function PublicReportPost(
         {/* // Header with Title */}
         <Box className="flex items-center justify-start pt-2">
           {/* // Title */}
+          {/* <Title order={1}>
+            <Link
+              // className="text-orange-600"
+              href={`/grows`}
+            >
+              {t("common:reports-headline")}
+            </Link>
+          </Title>
+          <Box px={"sm"}>
+            <IconChevronRight size={24} />
+          </Box> */}
           <Title order={1}>
             <Link
-              className="text-orange-700"
-              color={theme.primaryColor}
+              // className="text-orange-600"
               href={`/grow/${staticReportFromProps.id}`}
-              style={{ display: "flex", alignItems: "center" }}
             >
               {`${pageTitle}`}
             </Link>
@@ -414,8 +432,6 @@ export default function PublicReportPost(
             report={staticReportFromProps}
           />
         </Container>
-
-        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
       </Container>
     </>
   );
