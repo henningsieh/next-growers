@@ -21,7 +21,7 @@ import Head from "next/head";
 import LoadingError from "~/components/Atom/LoadingError";
 import SearchInput from "~/components/Atom/SearchInput";
 import SortingPanel from "~/components/Atom/SortingPanel";
-import IsoReportCard from "~/components/Report/IsoCard";
+import ReportCard from "~/components/Report/Card";
 
 import type { SortingPanelProps } from "~/types";
 
@@ -166,7 +166,7 @@ const PublicAllGrows: NextPage = () => {
                       lg={3}
                       xl={3}
                     >
-                      <IsoReportCard
+                      <ReportCard
                         procedure="all"
                         {...cardProps}
                         report={isoReport}

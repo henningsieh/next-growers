@@ -82,7 +82,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function IsoReportCard({
+export default function ReportCard({
   report: isoReport,
   procedure,
   setSearchString,
@@ -324,7 +324,6 @@ export default function IsoReportCard({
             </Link>
           </Group>
         )}
-      {/* <ReportDetailsHead report={isoReport} /> */}
     </Paper>
   );
 }
