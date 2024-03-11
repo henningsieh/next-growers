@@ -75,7 +75,7 @@
     "remark-html": "=15.0.2",
     "sharp": "^0.33.2",
     "superjson": "^2.2.1",
-    "vercel": "^33.5.3",
+    "vercel": "^32.3.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
