@@ -22,7 +22,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    color: theme.white,
+    // color: theme.white,
     fontSize: rem(48),
     fontWeight: 900,
     lineHeight: 1.1,
@@ -41,22 +41,12 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    color: theme.white,
+    // color: theme.white,
     textAlign: "center",
 
     [theme.fn.smallerThan("sm")]: {
       fontSize: theme.fontSizes.md,
     },
-  },
-
-  photoCredit: {
-    position: "fixed",
-    bottom: theme.spacing.md,
-    left: theme.spacing.md,
-    color: theme.colors.gray[7],
-    textDecoration: "none",
-    fontSize: 14,
-    zIndex: -10,
   },
 }));
 
@@ -78,7 +68,7 @@ export default function HowTo() {
         <Title className={classes.title}>
           {t("common:app-headermenu-how-to")}
         </Title>
-        <Title order={2}>🤔 {t("common:how-does-this-work")} 💡</Title>
+        <Title order={2}>💡 {t("common:how-does-this-work")} 🤔</Title>
         <Space h="xl" />
 
         {/* Create and Manage Grows */}
@@ -137,17 +127,6 @@ export default function HowTo() {
           {t("common:ResponsivePrivacyDataHandling_content")}
         </Text>
       </Container>
-
-      {/* Photo credit */}
-      <Box className={classes.photoCredit}>
-        <a href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
-          Background Image on Unsplash
-        </a>
-        from
-        <a href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">
-          Diyahna Lewis
-        </a>
-      </Box>
     </Box>
   );
 }

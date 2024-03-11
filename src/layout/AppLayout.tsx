@@ -51,7 +51,7 @@ const useStyles = createStyles((theme) => ({
     color: theme.colors.gray[7],
     textDecoration: "none",
     fontSize: 14,
-    zIndex: +1,
+    zIndex: -10,
   },
   overlay: {
     position: "fixed",
@@ -64,8 +64,14 @@ const useStyles = createStyles((theme) => ({
     // Conditional gradient based on theme
     background:
       theme.colorScheme === "dark"
-        ? "linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 90%)"
-        : "linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.75) 90%)",
+        ? "linear-gradient(                           \
+            45deg,                                    \
+            rgba(0, 0, 0, 0.75) 50%,                  \
+            rgba(0, 0, 0, 0.25) 90%)"
+        : "linear-gradient(                           \
+            225deg,                                   \
+            rgba(255, 255, 255, 0.25) 0%,             \
+            rgba(255, 255, 255, 0.75) 90%)",
   },
   appBackground: {
     position: "fixed",
@@ -448,35 +454,45 @@ export default function AppLayout({
       />
 
       {/* Content */}
-      <Box className="relative mt-16">
+      <Box className="relative mt-16 mb-16">
         {children}
         <Analytics />
         <SpeedInsights />
       </Box>
-      <Space h="xl" />
-      <Space h="xl" />
-      <Space h="xl" />
-
-      {/* Photo credit */}
-      <Box className={classes.photoCredit}>
-        <u>
-          <a
-            target="_blank"
-            href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
-          >
-            Background Image on Unsplash
-          </a>
-        </u>{" "}
-        from{" "}
-        <u>
-          <a
-            target="_blank"
-            href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
-          >
-            Diyahna Lewis
-          </a>
-        </u>{" "}
-      </Box>
+      {theme.colorScheme === "dark" && (
+        <Box className={classes.photoCredit}>
+          <u>
+            <a
+              target="_blank"
+              href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+            >
+              Background Image on Unsplash
+            </a>
+          </u>{" "}
+          from{" "}
+          <u>
+            <a
+              target="_blank"
+              href="https://unsplash.com/de/@diyahna22?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+            >
+              Diyahna Lewis
+            </a>
+          </u>
+        </Box>
+      )}
+      {theme.colorScheme !== "dark" && (
+        <Box className={classes.photoCredit}>
+          Background Image by{" "}
+          <u>
+            <a
+              target="_blank"
+              href="https://www.freepik.com/free-vector/watercolor-cannabis-leaf-background_11519298.htm"
+            >
+              Freepik
+            </a>
+          </u>
+        </Box>
+      )}
     </>
   );
 }

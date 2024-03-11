@@ -1,11 +1,9 @@
-import LoginForm from "../Atom/LoginForm";
 import { LoginModal } from "../Atom/LoginModal";
 import {
   ActionIcon,
   Button,
   Group,
   Menu,
-  Modal,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
