@@ -33,6 +33,10 @@ import { InputEditReportForm } from "~/helpers/inputValidation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
+import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import type { EditFormProps } from "~/types";
@@ -77,6 +81,11 @@ export function ProtectedEditForm(props: EditFormProps) {
     strains: allStrains,
     user: user,
   } = props;
+
+  const router = useRouter();
+
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   const { classes, theme } = useStyles();
@@ -401,7 +410,7 @@ export function ProtectedEditForm(props: EditFormProps) {
 
             <Group position="right" mt="xl">
               <Button w={140} variant="outline" type="submit">
-                Save Grow
+                {t("common:report-save-button")}
                 <Box ml={12} mt={2}>
                   <IconCloudUpload size={20} />
                 </Box>

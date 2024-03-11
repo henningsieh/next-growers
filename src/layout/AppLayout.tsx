@@ -443,15 +443,7 @@ export default function AppLayout({
       <Box className={classes.appBackground} />
 
       {/* Overlay */}
-      <Overlay
-        className={classes.overlay}
-        opacity={1}
-        // gradient={
-        //   theme.colorScheme === "dark"
-        //     ? "linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, .65) 40%)"
-        //     : "linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.65) 40%)"
-        // }
-      />
+      <Overlay className={classes.overlay} opacity={1} />
 
       {/* Content */}
       <Box className="relative mt-16 mb-16">

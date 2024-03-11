@@ -57,7 +57,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               h5: { fontSize: "0.94rem" },
             },
           },
-          white: "#F6F6F6",
+          white: "#F1F1F1",
           black: "#333333",
           primaryColor: "orange",
           breakpoints: {
@@ -93,8 +93,8 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 root: {
                   color:
                     theme.colorScheme === "dark"
-                      ? theme.colors.gray[5]
-                      : theme.colors.dark[5],
+                      ? theme.white
+                      : theme.black,
                   "&:hover": {
                     // cursor: "default",
                     backgroundColor:

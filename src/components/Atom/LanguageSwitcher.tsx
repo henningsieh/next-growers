@@ -52,26 +52,6 @@ const LanguageSwitcher: NextPage = () => {
           ]}
         />
       </Group>
-      {/* 
-      <ActionIcon
-        title="Toggle Language (en/de)"
-        className="cursor-default"
-        size={32}
-        variant="transparent"
-        color={dark ? theme.primaryColor : "grape"}
-        onClick={() =>
-          void router.push(router.pathname, router.asPath, {
-            locale: i18n.language === "de" ? "en" : "de",
-          })
-        }
-      >
-        <Image
-          height={12}
-          width={28}
-          alt="German language icon"
-          src={(i18n.language === "de" ? usFlag : deFlag) as string}
-        />
-      </ActionIcon> */}
     </>
   );
 };

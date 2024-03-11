@@ -84,6 +84,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
             >
               <Box>
                 <Image
+                  priority={true}
                   rel="preload"
                   fill
                   className="object-contain px-4"

@@ -10,6 +10,7 @@ import type {
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
+// import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -234,10 +235,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export default function PublicReport(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
+  const theme = useMantineTheme();
+  const router = useRouter();
+  // const { locale: activeLocale } = router;
+  // const { t } = useTranslation(activeLocale);
+
   const { report: staticReportFromProps } = props;
   const pageTitle = `${staticReportFromProps.title}`;
-
-  const theme = useMantineTheme();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -281,9 +285,6 @@ export default function PublicReport(
     defaultRelDate < dateOfGermination
       ? dateOfGermination
       : defaultRelDate;
-
-  const router = useRouter();
-  // const { locale: activeLocale } = router;
 
   // const { scrollIntoView, targetRef } =
   //   useScrollIntoView<HTMLDivElement>({
@@ -335,6 +336,17 @@ export default function PublicReport(
         {/* // Header with Title */}
         <Box className="flex items-center justify-between pt-2">
           {/* // Title */}
+          {/* <Title order={1}>
+            <Link
+              // className="text-orange-600"
+              href={`/grows`}
+            >
+              {t("common:reports-headline")}
+            </Link>
+          </Title>
+          <Box px={"sm"}>
+            <IconChevronRight size={24} />
+          </Box> */}
           <Title order={1} className="inline">
             {`${pageTitle}`}
           </Title>
@@ -371,8 +383,6 @@ export default function PublicReport(
           </Box>
           <PostCard postId={postId} report={staticReportFromProps} />
         </Container>
-
-        {/* <ReportDetailsHead report={staticReportFromProps} /> */}
       </Container>
     </>
   );

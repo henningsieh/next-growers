@@ -127,10 +127,6 @@ const EditReportDetails: NextPage = () => {
 
               <Space h="xl" />
 
-              <PostsAccordion report={report && report} />
-
-              <Space h="xl" />
-
               {/* // AddPost Component */}
               <Container p={0}>
                 <Title order={2}>{t("common:addpost-headline")}</Title>
@@ -141,6 +137,10 @@ const EditReportDetails: NextPage = () => {
                 isoReport={report as IsoReportWithPostsFromDb}
                 post={null}
               />
+
+              <Space h="xl" />
+
+              <PostsAccordion report={report && report} />
             </>
           )}
         </Box>

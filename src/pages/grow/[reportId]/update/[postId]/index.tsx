@@ -1,6 +1,14 @@
-import { Box, Container, Title, useMantineTheme } from "@mantine/core";
+import {
+  Box,
+  Container,
+  Title,
+  createStyles,
+  rem,
+  useMantineTheme,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { IconChevronLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
 
 import { useEffect, useState } from "react";
@@ -250,6 +258,14 @@ export default function PublicReportPost(
   const { report: staticReportFromProps, postId: postIdfromProps } =
     props;
 
+  const useStyles = createStyles((theme) => ({
+    titleLink: {
+      display: "inline-flex",
+      color: theme.colors.orange[7],
+    },
+  }));
+
+  const { classes } = useStyles();
   const theme = useMantineTheme();
   const router = useRouter();
   // const { locale: activeLocale } = router;
@@ -377,15 +393,15 @@ export default function PublicReportPost(
             >
               {t("common:reports-headline")}
             </Link>
-          </Title>
-          <Box px={"sm"}>
-            <IconChevronRight size={24} />
-          </Box> */}
+          </Title> */}
           <Title order={1}>
             <Link
-              // className="text-orange-600"
+              className={classes.titleLink}
               href={`/grow/${staticReportFromProps.id}`}
             >
+              <Box pr={"sm"}>
+                <IconChevronLeft size={32} />
+              </Box>
               {`${pageTitle}`}
             </Link>
           </Title>

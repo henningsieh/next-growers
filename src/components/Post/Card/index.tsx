@@ -211,7 +211,6 @@ export function PostCard(props: PostCardProps) {
     );
   } else {
     const post = report.posts.find((post) => post.id === postId);
-    // FIXME: if (!post)...
 
     const postImages = post?.images;
 
@@ -238,7 +237,7 @@ export function PostCard(props: PostCardProps) {
           value: post?.lightHoursPerDay,
         },
         {
-          title: "Grow Stage",
+          title: "Growth Stage",
           value: GrowStage[post?.growStage as keyof typeof GrowStage],
         },
       ],
