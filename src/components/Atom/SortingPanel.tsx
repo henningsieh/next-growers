@@ -49,7 +49,6 @@ export default function SortingPanel({
         value={sortBy}
         onChange={(event) => setSortBy(event.currentTarget.value)}
         size="xs"
-        placeholder="Sort by..."
         fz="xs"
         data={[
           { value: "createdAt", label: createdAtLabel },
