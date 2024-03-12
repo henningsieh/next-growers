@@ -37,21 +37,22 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const ImagesSlider = (props: ImagesSliderProps) => {
-  const { cloudUrls } = props;
-  const [overlayOpen, setOverlayOpen] = useState(false);
-  // const [overlayUrl, setOverlayUrl] = useState("");
-  const clickOutsideImage = useClickOutside(() =>
-    setOverlayOpen(false)
-  );
-  const { classes, theme } = useStyles();
   // const router = useRouter();
   // const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
 
+  const [overlayOpen, setOverlayOpen] = useState(false);
+
+  const { cloudUrls } = props;
+  const { classes, theme } = useStyles();
+
   const openOverlay = () => {
-    // setOverlayUrl(cloudUrl);
+    console.debug(cloudUrls.length);
     setOverlayOpen(true);
   };
+  const clickOutsideImage = useClickOutside(() =>
+    setOverlayOpen(false)
+  );
 
   // handle ESCAPE keyboard event to close Image Overlay
   useEffect(() => {
@@ -68,44 +69,31 @@ const ImagesSlider = (props: ImagesSliderProps) => {
   return (
     <Card className={classes.card} radius="sm" p={0} m={0} withBorder>
       {overlayOpen && (
-        <Overlay opacity={1}>
-          <Overlay
-            className="flex justify-center items-center relative"
-            style={{
-              position: "fixed",
-              width: "100vw",
-              height: "100vh",
-              maxHeight: "100vh",
-            }}
-          >
-            <Box ref={clickOutsideImage}>
-              <Box className="z-50 fixed left-4 bottom-4">
-                <Tooltip label="close image [or press ESC]">
-                  <ActionIcon
-                    variant="outline"
-                    size={32}
-                    className="cursor-default"
-                    onMouseUp={() => setOverlayOpen(false)}
-                  >
-                    <IconX size={32} stroke={2.4} color="orange" />
-                  </ActionIcon>
-                </Tooltip>
-              </Box>
-              <Box className="z-50 fixed right-4 bottom-4">
-                <Tooltip label="close image [or press ESC]">
-                  <ActionIcon
-                    variant="outline"
-                    size={32}
-                    className="cursor-default"
-                    onMouseUp={() => setOverlayOpen(false)}
-                  >
-                    <IconX size={32} stroke={2.4} color="orange" />
-                  </ActionIcon>
-                </Tooltip>
-              </Box>
-              <PostImagesCarousel images={cloudUrls} />
+        <Overlay
+          opacity={0.66}
+          className="flex justify-center items-center relative"
+          style={{
+            position: "fixed",
+            width: "100vw",
+            height: "100vh",
+            maxHeight: "100vh",
+          }}
+        >
+          <Box ref={clickOutsideImage}>
+            <Box className="z-50 fixed left-4 bottom-4">
+              <Tooltip label="close image [or press ESC]">
+                <ActionIcon
+                  variant="outline"
+                  size={32}
+                  className="cursor-default"
+                  onMouseUp={() => setOverlayOpen(false)}
+                >
+                  <IconX size={32} stroke={2.4} color="orange" />
+                </ActionIcon>
+              </Tooltip>
             </Box>
-          </Overlay>
+            <PostImagesCarousel images={cloudUrls} />
+          </Box>
         </Overlay>
       )}
 
