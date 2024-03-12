@@ -161,25 +161,24 @@ export default function ReportCard({
       },
     });
 
-  const reportStrains = isoReport.strains.map((badge) => (
-    <Box key={badge.id}>
+  const reportStrains = isoReport.strains.map((strainBadge) => (
+    <Box key={strainBadge.id}>
       <Badge
         className="badgecontainer cursor-pointer"
         onClick={() => {
-          setSearchString(`strain:"${badge.name}"`);
+          setSearchString(`strain:"${strainBadge.name}"`);
         }}
+        // color={theme.colorScheme === "dark" ? "yellow" : "blue"}
         variant="gradient"
-        gradient={{ from: "orange", to: "grape" }}
-        fz="0.6rem"
-        fw="bolder"
-        px={2}
-        color={
-          theme.colorScheme === "dark" ? theme.colors.lime[9] : "green"
-        }
-        leftSection={<IconCannabis size={rem(14)} />}
-        // leftSection={badge.emoji}
+        gradient={{
+          from: theme.colors.dark[4],
+          to: theme.colors.green[9],
+        }}
+        fz={"0.66rem"}
+        px={"0.4rem"}
+        leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
       >
-        {badge.name}
+        {strainBadge.name}
       </Badge>
     </Box>
   ));
@@ -207,13 +206,14 @@ export default function ReportCard({
 
       <Card.Section className={classes.section} mt={6}>
         <Flex
-          className="space-y-0"
+          mih={64}
+          // mah={64}
           align="flex-start"
           justify="space-between"
         >
           <Group
             position="left"
-            className="bottom-0 inline-flex space-y-0"
+            className="overflow-hidden bottom-0 inline-flex space-y-0"
           >
             {/* Strains */}
             {reportStrains}
@@ -232,7 +232,7 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-createdAt")}
-              color="green"
+              color={theme.colors.orange[7]}
               withArrow
               arrowPosition="side"
             >
@@ -258,7 +258,7 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-updatedAt")}
-              color="green"
+              color={theme.colors.orange[7]}
               withArrow
               arrowPosition="side"
             >
@@ -312,7 +312,6 @@ export default function ReportCard({
             </Button>
             <Link href={`/account/grows/${isoReport.id as string}`}>
               <Button
-                className=" border-orange-400"
                 size="xs"
                 variant="filled"
                 radius="sm"
