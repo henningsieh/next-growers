@@ -46,7 +46,6 @@ export default function EmailForm() {
           loading={isLoading}
           fullWidth
           leftIcon={<IconMail size="1.3rem" />}
-          className="bg-orange-900/90"
           variant="outline"
           type="submit"
           mt="sm"

@@ -12,7 +12,8 @@ import {
   createStyles,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCannabis } from "@tabler/icons-react";
+import { IconCannabis, IconHeart } from "@tabler/icons-react";
+import { IconHeartFilled } from "@tabler/icons-react";
 
 import React, { useState } from "react";
 
@@ -24,7 +25,7 @@ import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
   like: {
-    color: theme.colors.green[6],
+    color: theme.colors.red[6],
   },
 }));
 
@@ -199,14 +200,14 @@ const LikeHeart = (props: LikeHeartProps) => {
           {itemLikes?.find(
             (like) => like.userId === session?.user.id
           ) ? (
-            <IconCannabis
+            <IconHeartFilled
               onClick={handleDisLikeItem}
               size="1.3rem"
               className={`${classes.like}`}
               stroke={1.8}
             />
           ) : (
-            <IconCannabis
+            <IconHeart
               onClick={handleLikeItem}
               size="1.3rem"
               // className={`${classes.like}`}

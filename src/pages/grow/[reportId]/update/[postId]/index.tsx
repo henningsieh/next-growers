@@ -3,7 +3,6 @@ import {
   Container,
   Title,
   createStyles,
-  rem,
   useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
@@ -261,7 +260,7 @@ export default function PublicReportPost(
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
-      color: theme.colors.orange[7],
+      color: theme.colors.orange[6],
     },
   }));
 

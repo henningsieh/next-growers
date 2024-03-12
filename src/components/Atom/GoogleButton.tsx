@@ -17,5 +17,5 @@ export function GoogleButton(props: ButtonProps) {
 }
 
 export function GoogleButtonWithText() {
-  return <GoogleButton>Continue with Google</GoogleButton>;
+  return <GoogleButton>Sign In with Google</GoogleButton>;
 }
