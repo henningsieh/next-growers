@@ -294,7 +294,8 @@ export default function ReportCard({
       {status === "authenticated" &&
         session.user.id == isoReport.authorId && (
           <Group m="xs" position="apart">
-            <Button
+            {/** NO DANGEROUS DELETE BUTTON AT THE MOMENT */}
+            {/* <Button
               size="xs"
               radius="sm"
               style={{ flex: 0 }}
@@ -309,13 +310,13 @@ export default function ReportCard({
                 height={20}
                 stroke={1.6}
               />
-            </Button>
+            </Button> */}
             <Link href={`/account/grows/${isoReport.id as string}`}>
               <Button
                 size="xs"
-                variant="filled"
                 radius="sm"
                 style={{ flex: 1 }}
+                variant="outline"
               >
                 {t("common:report-edit-button")}
                 <IconEdit className="ml-2" height={22} stroke={1.4} />
