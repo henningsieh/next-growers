@@ -1,72 +1,117 @@
 import { Carousel } from "@mantine/carousel";
-import { Box, Image, useMantineTheme } from "@mantine/core";
+import {
+  Box,
+  Image,
+  createStyles,
+  getStylesRef,
+  useMantineTheme,
+} from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import type { EmblaCarouselType } from "embla-carousel-react";
 
-import { useEffect, useState } from "react";
-
 interface CardProps {
   images: string[];
+  initialSlide: number;
+  largeScreen: boolean;
+  setEmbla: React.Dispatch<
+    React.SetStateAction<EmblaCarouselType | null>
+  >;
 }
-export function PostImagesCarousel({ images }: CardProps) {
-  const theme = useMantineTheme();
 
-  /*****************************************************************************
-   * ISSUE: embla carousel is init before the animation ends
-   * which causes embla to calculate slides offset incorrectly.
-   * - https://github.com/mantinedev/mantine/issues/2041#issuecomment-1207486779
-   *
-   * FIX is here:
-   *****************************************************************************/
-  const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
-  useEffect(() => {
-    setTimeout(() => embla && embla.reInit(), 200);
-  }, [embla]);
-  /*****************************************************************************/
+const useStyles = createStyles(() => ({
+  controls: {
+    ref: getStylesRef("controls"),
+    transition: "opacity 150ms ease",
+    opacity: 0,
+  },
 
+  root: {
+    "&:hover": {
+      [`& .${getStylesRef("controls")}`]: {
+        opacity: 1,
+      },
+    },
+  },
+}));
+
+export function PostImagesCarousel({
+  images,
+  largeScreen,
+  initialSlide,
+  setEmbla,
+}: CardProps) {
   const slides = images.map((url, index) => (
     <Carousel.Slide key={index}>
       <Box
         style={{
           display: "flex",
           alignItems: "center",
-          height: "89vh",
+          height: "86vh",
         }}
       >
-        <Image fit="contain" height="88vh" alt="alt" src={url} />
+        <Image fit="contain" height="86vh" alt="alt" src={url} />
       </Box>
     </Carousel.Slide>
   ));
-
+  const theme = useMantineTheme();
+  const { classes } = useStyles();
   return (
-    <Carousel
-      /***********************************
-       * part of embla carousel ISSUE fix:
-       */
-      getEmblaApi={setEmbla}
-      /**********************************/
-      slideGap="md"
-      align="center"
-      slideSize="100%"
-      initialSlide={0}
-      previousControlIcon={
-        <IconChevronLeft
-          className="cursor-default"
-          color={theme.colors.orange[7]}
-          size={44}
-          stroke={4}
-        />
-      }
-      nextControlIcon={
-        <IconChevronRight
-          className="cursor-default"
-          color={theme.colors.orange[7]}
-          size={48}
-          stroke={4}
-        />
-      }
-    >
-      {slides}
-    </Carousel>
+    <>
+      {!largeScreen && (
+        <Box
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            marginBottom: "10px", // Add some spacing
+          }}
+        >
+          <IconChevronLeft
+            className="cursor-default"
+            color={theme.colors.gray[6]}
+            size={54}
+            stroke={2.6}
+          />
+          <Box mx={"xl"}>SWIPE</Box>
+          <IconChevronRight
+            className="cursor-default"
+            color={theme.colors.gray[6]}
+            size={54}
+            stroke={2.6}
+          />
+        </Box>
+      )}
+      <Carousel
+        classNames={classes}
+        getEmblaApi={setEmbla}
+        slideGap="md"
+        align="center"
+        slideSize="100%"
+        initialSlide={initialSlide}
+        previousControlIcon={
+          <IconChevronLeft
+            className="cursor-default"
+            color={theme.colors.orange[6]}
+            size={54}
+            stroke={2.6}
+          />
+        }
+        nextControlIcon={
+          <IconChevronRight
+            className="cursor-default"
+            color={theme.colors.orange[6]}
+            size={54}
+            stroke={2.6}
+          />
+        }
+      >
+        {slides}
+      </Carousel>
+    </>
   );
 }
