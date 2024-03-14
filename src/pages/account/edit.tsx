@@ -28,7 +28,7 @@ import Head from "next/head";
 import Image from "next/image";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import AppNotification from "~/components/Atom/Notification";
+import AppNotification from "~/components/Atom/AppNotification";
 
 import { authOptions } from "~/server/auth";
 

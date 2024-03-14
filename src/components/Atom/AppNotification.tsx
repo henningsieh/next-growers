@@ -20,8 +20,6 @@ export default function AppNotification({
         className={`
         fixed        
         right-1
-        top-16
-        z-50 
         min-w-min ${
           opened
             ? "translate-x-0 opacity-100"
