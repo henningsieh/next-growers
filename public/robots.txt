@@ -1,7 +1,9 @@
-# Block all crawlers for /accounts
-User-agent: *
-Disallow: /account
-
-# Allow all crawlers
+# *
 User-agent: *
 Allow: /
+
+# Host
+Host: https://growagram.com
+
+# Sitemaps
+Sitemap: https://growagram.com/sitemap.xml

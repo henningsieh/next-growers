@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "postbuild": "next-sitemap",
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
@@ -63,6 +64,7 @@
     "next-auth": "^4.24.6",
     "next-connect": "^1.0.0",
     "next-i18next": "^13.3.0",
+    "next-sitemap": "^4.2.3",
     "nodemailer": "^6.9.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
