@@ -18,6 +18,22 @@ interface CardProps {
   >;
 }
 
+const useStyles = createStyles(() => ({
+  controls: {
+    ref: getStylesRef("controls"),
+    transition: "opacity 150ms ease",
+    opacity: 0,
+  },
+
+  root: {
+    "&:hover": {
+      [`& .${getStylesRef("controls")}`]: {
+        opacity: 1,
+      },
+    },
+  },
+}));
+
 export function PostImagesCarousel({
   images,
   largeScreen,
@@ -37,27 +53,8 @@ export function PostImagesCarousel({
       </Box>
     </Carousel.Slide>
   ));
-
   const theme = useMantineTheme();
-
-  const useStyles = createStyles(() => ({
-    controls: {
-      ref: getStylesRef("controls"),
-      transition: "opacity 150ms ease",
-      opacity: 0,
-    },
-
-    root: {
-      "&:hover": {
-        [`& .${getStylesRef("controls")}`]: {
-          opacity: 1,
-        },
-      },
-    },
-  }));
-
   const { classes } = useStyles();
-
   return (
     <>
       {!largeScreen && (
