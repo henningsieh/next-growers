@@ -24,9 +24,9 @@ module.exports = {
       alternateRefs: config.alternateRefs ?? [],
     };
   },
-  additionalPaths: async (config) => [
-    await config.transform(config, "/additional-page"),
-  ],
+  // additionalPaths: async (config) => [
+  //   await config.transform(config, "/additional-page"),
+  // ],
   robotsTxtOptions: {
     policies: [
       {
