@@ -14,7 +14,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import {
-  IconAlertTriangle,
+  // IconAlertTriangle,
   IconCalendar,
   IconCannabis,
   IconClock,
@@ -33,149 +33,139 @@ import LikeHeart from "~/components/Atom/LikeHeart";
 import { Locale } from "~/types";
 import type { IsoReportCardProps } from "~/types";
 
-import { api } from "~/utils/api";
-
-const useStyles = createStyles((theme) => ({
-  card: {
-    transition: "transform 150ms ease, box-shadow 150ms ease",
-
-    "&:hover": {
-      // transform: "scale(1.004)",
-      // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-
-      // Add the desired box-shadow color and theme's md shadow here
-      boxShadow:
-        theme.colorScheme !== "dark"
-          ? `0 0 4px ${theme.colors.grape[7]}`
-          : `0 0 8px ${theme.colors.orange[7]}`,
-    },
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[6]
-        : theme.colors.gray[2],
-  },
-
-  section: {
-    borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[5]
-        : theme.colors.gray[2]
-    }`,
-    paddingLeft: theme.spacing.sm,
-    paddingRight: theme.spacing.sm,
-    paddingBottom: theme.spacing.sm,
-  },
-
-  like: {
-    color: theme.colors.red[6],
-    transition: "transform 2.3s ease-in-out",
-  },
-
-  label: {
-    textTransform: "uppercase",
-    fontSize: theme.fontSizes.xs,
-    fontWeight: 700,
-  },
-
-  badgecontainer: {
-    marginBottom: "-0.5rem",
-  },
-}));
+// import { api } from "~/utils/api";
 
 export default function ReportCard({
   report: isoReport,
-  procedure,
+  // procedure,
   setSearchString,
 }: IsoReportCardProps) {
-  const trpc = api.useUtils();
+  // const trpc = api.useUtils();
   const router = useRouter();
+  const theme = useMantineTheme();
 
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const theme = useMantineTheme();
+  const useStyles = createStyles((theme) => ({
+    card: {
+      transition: "transform 150ms ease, box-shadow 150ms ease",
+
+      "&:hover": {
+        // transform: "scale(1.004)",
+        // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+
+        // Add the desired box-shadow color and theme's md shadow here
+        boxShadow:
+          theme.colorScheme === "dark"
+            ? `0 0 8px ${theme.colors.green[8]}`
+            : `0 0 8px ${theme.colors.green[9]}`,
+      },
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[5]
+          : theme.colors.gray[2],
+    },
+
+    section: {
+      borderBottom: `${rem(1)} solid ${
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[4]
+          : theme.colors.gray[2]
+      }`,
+      paddingLeft: theme.spacing.xs,
+      paddingRight: theme.spacing.xs,
+      // paddingBottom: theme.spacing.xs,
+    },
+
+    label: {
+      textTransform: "uppercase",
+      fontSize: theme.fontSizes.xs,
+      fontWeight: 700,
+    },
+  }));
+
   const { classes } = useStyles();
   const { data: session, status } = useSession();
 
-  const { mutate: deleteMutation } =
-    api.reports.deleteOwnReport.useMutation({
-      onMutate: async (deletedReportId: string) => {
-        if (procedure == "own") {
-          // Cancel any outgoing refetches so they don't overwrite optimistic update
-          await trpc.reports.getOwnIsoReportsWithPostsFromDb.cancel();
-          // Snapshot the previous value
-          const previousReports =
-            trpc.reports.getOwnIsoReportsWithPostsFromDb.getData();
-          // Optimistically update to the new value
-          trpc.reports.getOwnIsoReportsWithPostsFromDb.setData(
-            { search: "", orderBy: "createdAt", desc: true },
-            (prev) => {
-              if (!prev) return previousReports;
-              return prev.filter(
-                (report) => report.id !== deletedReportId
-              );
-            }
-          );
-          // Return a context object with the snapshotted value
-          return { previousReports };
-        } else {
-          // Cancel any outgoing refetches so they don't overwrite optimistic update
-          await trpc.reports.getIsoReportsWithPostsFromDb.cancel();
-          // Snapshot the previous value
-          const previousReports =
-            trpc.reports.getIsoReportsWithPostsFromDb.getData();
-          // Optimistically update to the new value
-          trpc.reports.getIsoReportsWithPostsFromDb.setData(
-            { search: "", orderBy: "createdAt", desc: true },
-            (prev) => {
-              if (!prev) return previousReports;
-              return prev.filter(
-                (report) => report.id !== deletedReportId
-              );
-            }
-          );
-          // Return a context object with the snapshotted value
-          return { previousReports };
-        }
-      },
-      // If the mutation fails, use the context returned from onMutate to roll back
-      onError: (_err, _variables, context) => {
-        if (!!context) {
-          if (procedure == "own") {
-            trpc.reports.getOwnIsoReportsWithPostsFromDb.setData(
-              { search: "", orderBy: "createdAt", desc: true },
-              () => context.previousReports
-            );
-          } else {
-            trpc.reports.getIsoReportsWithPostsFromDb.setData(
-              { search: "", orderBy: "createdAt", desc: true },
-              () => context.previousReports
-            );
-          }
-        }
-      },
-      // Always refetch after error or success:
-      onSettled: async () => {
-        await trpc.reports.getOwnIsoReportsWithPostsFromDb.invalidate();
-        await trpc.reports.getIsoReportsWithPostsFromDb.invalidate();
-      },
-    });
+  // const { mutate: deleteMutation } =
+  //   api.reports.deleteOwnReport.useMutation({
+  //     onMutate: async (deletedReportId: string) => {
+  //       if (procedure == "own") {
+  //         // Cancel any outgoing refetches so they don't overwrite optimistic update
+  //         await trpc.reports.getOwnIsoReportsWithPostsFromDb.cancel();
+  //         // Snapshot the previous value
+  //         const previousReports =
+  //           trpc.reports.getOwnIsoReportsWithPostsFromDb.getData();
+  //         // Optimistically update to the new value
+  //         trpc.reports.getOwnIsoReportsWithPostsFromDb.setData(
+  //           { search: "", orderBy: "createdAt", desc: true },
+  //           (prev) => {
+  //             if (!prev) return previousReports;
+  //             return prev.filter(
+  //               (report) => report.id !== deletedReportId
+  //             );
+  //           }
+  //         );
+  //         // Return a context object with the snapshotted value
+  //         return { previousReports };
+  //       } else {
+  //         // Cancel any outgoing refetches so they don't overwrite optimistic update
+  //         await trpc.reports.getIsoReportsWithPostsFromDb.cancel();
+  //         // Snapshot the previous value
+  //         const previousReports =
+  //           trpc.reports.getIsoReportsWithPostsFromDb.getData();
+  //         // Optimistically update to the new value
+  //         trpc.reports.getIsoReportsWithPostsFromDb.setData(
+  //           { search: "", orderBy: "createdAt", desc: true },
+  //           (prev) => {
+  //             if (!prev) return previousReports;
+  //             return prev.filter(
+  //               (report) => report.id !== deletedReportId
+  //             );
+  //           }
+  //         );
+  //         // Return a context object with the snapshotted value
+  //         return { previousReports };
+  //       }
+  //     },
+  //     // If the mutation fails, use the context returned from onMutate to roll back
+  //     onError: (_err, _variables, context) => {
+  //       if (!!context) {
+  //         if (procedure == "own") {
+  //           trpc.reports.getOwnIsoReportsWithPostsFromDb.setData(
+  //             { search: "", orderBy: "createdAt", desc: true },
+  //             () => context.previousReports
+  //           );
+  //         } else {
+  //           trpc.reports.getIsoReportsWithPostsFromDb.setData(
+  //             { search: "", orderBy: "createdAt", desc: true },
+  //             () => context.previousReports
+  //           );
+  //         }
+  //       }
+  //     },
+  //     // Always refetch after error or success:
+  //     onSettled: async () => {
+  //       await trpc.reports.getOwnIsoReportsWithPostsFromDb.invalidate();
+  //       await trpc.reports.getIsoReportsWithPostsFromDb.invalidate();
+  //     },
+  //   });
 
   const reportStrains = isoReport.strains.map((strainBadge) => (
     <Box key={strainBadge.id}>
       <Badge
-        className="badgecontainer cursor-pointer"
         onClick={() => {
           setSearchString(`strain:"${strainBadge.name}"`);
         }}
-        // color={theme.colorScheme === "dark" ? "yellow" : "blue"}
         variant="gradient"
         gradient={{
           from: theme.colors.dark[4],
           to: theme.colors.green[9],
         }}
         fz={"0.66rem"}
-        px={"0.4rem"}
+        px={3}
+        mx={0}
         leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
       >
         {strainBadge.name}
@@ -185,6 +175,7 @@ export default function ReportCard({
 
   return (
     <Paper m={0} withBorder radius="sm" p={0} className={classes.card}>
+      {/* HEADER IMAGE */}
       <Card.Section>
         <ImagePreview
           imageUrl={isoReport.image?.cloudUrl as string}
@@ -204,25 +195,24 @@ export default function ReportCard({
         />
       </Card.Section>
 
-      <Card.Section className={classes.section} mt={6}>
-        <Flex
-          mih={64}
-          // mah={64}
-          align="flex-start"
-          justify="space-between"
-        >
+      {/* Strains and LikeHeart */}
+      <Card.Section className={`${classes.section}`}>
+        <Flex align="center" justify="space-between">
+          {/* Strains */}
           <Group
-            position="left"
-            className="overflow-hidden bottom-0 inline-flex space-y-0"
+            pb={theme.spacing.md}
+            className={`overflow-scroll flex-nowrap inline-flex`}
           >
-            {/* Strains */}
             {reportStrains}
           </Group>
+
+          {/* LikeHeart */}
           <LikeHeart itemToLike={isoReport} itemType={"Report"} />
         </Flex>
       </Card.Section>
 
-      <Card.Section className={classes.section} mt={4}>
+      {/* GROW DATES */}
+      <Card.Section p={theme.spacing.xs} className={classes.section}>
         <Group position="apart" c="dimmed">
           {/*// Stage/ Date */}
           <Group position="left">
@@ -278,17 +268,6 @@ export default function ReportCard({
           </Group>
         </Group>
       </Card.Section>
-
-      {/*// Strains */}
-      {/*
-      <Card.Section className={classes.section} mt={0}>
-        <Text mt="xs" className={classes.label} c="dimmed">
-          Strains in this Grow:
-        </Text>
-        <Group spacing={7} mt={4}>
-          {reportStrains}
-        </Group>
-      </Card.Section> */}
 
       {/*// Session buttons */}
       {status === "authenticated" &&

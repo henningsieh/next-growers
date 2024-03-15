@@ -76,9 +76,9 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             Container: {
               defaultProps: {
                 sizes: {
-                  xs: 515, //  32em x 16px
-                  sm: 720, //  45em x 16px
-                  md: 960, //  60em x 16px
+                  xs: 515, //   32em x 16px
+                  sm: 720, //   45em x 16px
+                  md: 960, //   60em x 16px
                   lg: 1024, //  90em x 16px
                   xl: 1440, // 116em x 16px
                 },

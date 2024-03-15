@@ -6,13 +6,13 @@ import {
 import {
   ActionIcon,
   Box,
-  Flex,
+  Center,
   Paper,
   Transition,
   createStyles,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCannabis, IconHeart } from "@tabler/icons-react";
+import { IconHeart } from "@tabler/icons-react";
 import { IconHeartFilled } from "@tabler/icons-react";
 
 import React, { useState } from "react";
@@ -24,7 +24,7 @@ import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
 import { api } from "~/utils/api";
 
 const useStyles = createStyles((theme) => ({
-  like: {
+  red: {
     color: theme.colors.red[6],
   },
 }));
@@ -79,21 +79,6 @@ const LikeHeart = (props: LikeHeartProps) => {
         await trpc.notifications.getNotificationsByUserId.invalidate();
       },
     });
-  const { mutate: likeCommentMutation } =
-    api.like.likeComment.useMutation({
-      onError: (error) => {
-        notifications.show(createLikeErrorMsg(error.message));
-      },
-      onSuccess: (likedComment) => {
-        notifications.show(likeSuccessfulMsg);
-        console.debug("likedReport", likedComment);
-      },
-      // Always refetch after error or success:
-      onSettled: async () => {
-        await trpc.like.getLikesByItemId.invalidate();
-        await trpc.notifications.invalidate();
-      },
-    });
 
   const { mutate: likePostMutation } = api.like.likePost.useMutation({
     onError: (error) => {
@@ -109,7 +94,6 @@ const LikeHeart = (props: LikeHeartProps) => {
       await trpc.notifications.invalidate();
     },
   });
-
   const { mutate: dislikePostMutation } =
     api.like.dislikePost.useMutation({
       onError: (error) => {
@@ -127,6 +111,21 @@ const LikeHeart = (props: LikeHeartProps) => {
       },
     });
 
+  const { mutate: likeCommentMutation } =
+    api.like.likeComment.useMutation({
+      onError: (error) => {
+        notifications.show(createLikeErrorMsg(error.message));
+      },
+      onSuccess: (likedComment) => {
+        notifications.show(likeSuccessfulMsg);
+        console.debug("likedReport", likedComment);
+      },
+      // Always refetch after error or success:
+      onSettled: async () => {
+        await trpc.like.getLikesByItemId.invalidate();
+        await trpc.notifications.invalidate();
+      },
+    });
   const { mutate: dislikeCommentMutation } =
     api.like.dislikeComment.useMutation({
       onError: (error) => {
@@ -182,12 +181,8 @@ const LikeHeart = (props: LikeHeartProps) => {
   };
 
   return (
-    <Flex align="flex-start">
-      {/* // ❤️ */}
-      <Box fz="sm" p={1} m={1}>
-        {itemLikes?.length}
-      </Box>
-      <Box className="relative">
+    <Box>
+      <Box mt={2} ml={2} className="relative">
         <ActionIcon
           // title="Give props to the Grower"
           variant="default"
@@ -203,14 +198,13 @@ const LikeHeart = (props: LikeHeartProps) => {
             <IconHeartFilled
               onClick={handleDisLikeItem}
               size="1.3rem"
-              className={`${classes.like}`}
+              className={`${classes.red}`}
               stroke={1.8}
             />
           ) : (
             <IconHeart
               onClick={handleLikeItem}
               size="1.3rem"
-              // className={`${classes.like}`}
               stroke={1.2}
             />
           )}
@@ -227,7 +221,7 @@ const LikeHeart = (props: LikeHeartProps) => {
             {(transitionStyles) => (
               <Paper
                 withBorder
-                className={`absolute bottom-full right-0 z-50 m-0 -mr-1 mt-2 w-max rounded p-0 text-right`}
+                className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
                 style={{ ...transitionStyles }}
               >
                 {itemLikes &&
@@ -246,7 +240,10 @@ const LikeHeart = (props: LikeHeartProps) => {
           </Transition>
         )}
       </Box>
-    </Flex>
+      <Center fz="sm" p={0} m={0}>
+        {itemLikes?.length}
+      </Center>
+    </Box>
   );
 };
 
