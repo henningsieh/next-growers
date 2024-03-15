@@ -76,16 +76,16 @@ const useStyles = createStyles((theme) => ({
   appBackground: {
     position: "fixed",
     top: 0,
-    left: 0,
+    // left: 0,
+    backgroundSize: "cover",
+    backgroundPosition: "left",
     width: "100%",
-    height: "100vh", // Set the height to cover the entire viewport
-    zIndex: -20, // Set z-index to ensure it's behind the content
+    height: "100vh",
+    zIndex: -20,
     backgroundImage:
       theme.colorScheme === "dark"
         ? "url(/diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)"
         : "url(/2h-media-h9ue_EmlM7s-unsplash.jpg)",
-    backgroundSize: "cover",
-    backgroundPosition: "left",
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -285,7 +285,7 @@ export default function AppLayout({
                 width={86}
                 height={44}
                 alt="GrowAGram Logo"
-                src="/growagram-logo-wide-magenta-gradient.png"
+                src="/grow-a-gram-high-resolution-logo-transparent.webp"
               />
             </Link>
           </Group>
@@ -451,12 +451,14 @@ export default function AppLayout({
         <Analytics />
         <SpeedInsights />
       </Box>
+
+      {/* Photo Credit */}
       {theme.colorScheme === "dark" && (
         <Box className={classes.photoCredit}>
           <u>
             <a
               target="_blank"
-              href="https://unsplash.com/de/fotos/gruner-und-brauner-tannenzapfen-JEI-uPbp1Aw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+              href="https://unsplash.com/de/fotos/fv2IDVHFgl4?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
             >
               Background Image on Unsplash
             </a>
@@ -474,13 +476,21 @@ export default function AppLayout({
       )}
       {theme.colorScheme !== "dark" && (
         <Box className={classes.photoCredit}>
-          Background Image by{" "}
           <u>
             <a
               target="_blank"
-              href="https://www.freepik.com/free-vector/watercolor-cannabis-leaf-background_11519298.htm"
+              href="https://unsplash.com/de/fotos/eine-topfpflanze-mit-grunen-blattern-auf-weissem-hintergrund-h9ue_EmlM7s?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
             >
-              Freepik
+              Background Image on Unsplash
+            </a>
+          </u>{" "}
+          from{" "}
+          <u>
+            <a
+              target="_blank"
+              href="https://unsplash.com/de/@2hmedia?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash"
+            >
+              2H Media
             </a>
           </u>
         </Box>
