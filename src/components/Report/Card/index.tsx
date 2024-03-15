@@ -155,6 +155,7 @@ export default function ReportCard({
   const reportStrains = isoReport.strains.map((strainBadge) => (
     <Box key={strainBadge.id}>
       <Badge
+        className="cursor-pointer"
         onClick={() => {
           setSearchString(`strain:"${strainBadge.name}"`);
         }}
@@ -200,8 +201,7 @@ export default function ReportCard({
         <Flex align="center" justify="space-between">
           {/* Strains */}
           <Group
-            pb={theme.spacing.md}
-            className={`overflow-scroll flex-nowrap inline-flex`}
+            className={`pb-1 overflow-y-hidden overflow-x-auto flex-nowrap inline-flex`}
           >
             {reportStrains}
           </Group>
