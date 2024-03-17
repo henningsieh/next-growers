@@ -57,6 +57,7 @@
     "country-flag-icons": "^1.5.9",
     "dayjs": "^1.11.10",
     "embla-carousel-react": "=7.1.0",
+    "emoji-picker-element": "^1.21.1",
     "formidable": "^2.1.2",
     "framer-motion": "=7.8.0",
     "i18next": "^22.5.1",
