@@ -129,7 +129,7 @@ const ProtectedNotifications = () => {
         style={{ position: "relative" }}
         size={32}
         variant="outline"
-        color={dark ? theme.primaryColor : "grape"}
+        color={dark ? "orange" : "growgreen"}
       >
         {hasUnreadNotifications(
           notificationsFromDb as Notifications
@@ -141,10 +141,10 @@ const ProtectedNotifications = () => {
             withBorder
             processing
           >
-            <IconBell size="1.5rem" stroke={1.5} />
+            <IconBell size="1.5rem" stroke={2.2} />
           </Indicator>
         ) : (
-          <IconBell size="1.5rem" stroke={1.5} />
+          <IconBell size="1.5rem" stroke={2.2} />
         )}
       </ActionIcon>
 

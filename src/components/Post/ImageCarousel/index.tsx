@@ -75,14 +75,14 @@ export function PostImagesCarousel({
             className="cursor-default"
             color={theme.colors.gray[6]}
             size={54}
-            stroke={2.6}
+            stroke={2.2}
           />
           <Box mx={"xl"}>SWIPE</Box>
           <IconChevronRight
             className="cursor-default"
             color={theme.colors.gray[6]}
             size={54}
-            stroke={2.6}
+            stroke={2.2}
           />
         </Box>
       )}
@@ -96,17 +96,17 @@ export function PostImagesCarousel({
         previousControlIcon={
           <IconChevronLeft
             className="cursor-default"
-            color={theme.colors.orange[6]}
+            color={theme.colors.orange?.[7]}
             size={54}
-            stroke={2.6}
+            stroke={2.2}
           />
         }
         nextControlIcon={
           <IconChevronRight
             className="cursor-default"
-            color={theme.colors.orange[6]}
+            color={theme.colors.orange?.[7]}
             size={54}
-            stroke={2.6}
+            stroke={2.2}
           />
         }
       >

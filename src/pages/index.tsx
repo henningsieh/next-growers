@@ -1,3 +1,7 @@
+import { appTitle } from "./_document";
+
+import { useTranslation } from "react-i18next";
+
 import type { GetServerSideProps, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -19,14 +23,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 const Index: NextPage = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <Head>
-        <title>GrowAGram | 🪴 Show Your Grow! 🚀</title>
+        <title>{`Welcome | ${appTitle}`}</title>
         <meta
           name="description"
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-          content=""
+          content="GrowAGram is a cannabis home cultivation community for sharing and discovering tips, techniques, and insights for successful cannabis cultivation. Welcome! Join our image community, share your weed images and upload your own reports to share your successes and learn from others. We are in alpha version - your feedback is very appreciated!"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -184,7 +184,7 @@ export function ImagePreview({
                 </Text>
                 <IconEye
                   size="1.2rem"
-                  stroke={2.5}
+                  stroke={2.2}
                   color={theme.colors.dark[5]}
                 />
               </Center>
@@ -194,7 +194,7 @@ export function ImagePreview({
                 </Text>
                 <IconMessageCircle
                   size="1rem"
-                  stroke={2.5}
+                  stroke={2.2}
                   color={theme.colors.dark[6]}
                 />
               </Center>

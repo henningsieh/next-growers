@@ -26,6 +26,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { userAgentFromString } from "next/server";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
@@ -201,7 +202,7 @@ export default function ReportCard({
         <Flex align="center" justify="space-between">
           {/* Strains */}
           <Group
-            className={`pb-1 overflow-y-hidden overflow-x-auto flex-nowrap inline-flex`}
+            className={`pb-2 mr-2 overflow-y-hidden overflow-x-auto flex-nowrap inline-flex`}
           >
             {reportStrains}
           </Group>

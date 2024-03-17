@@ -86,7 +86,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
             className="cursor-default"
             color={theme.colors.orange[7]}
             size={36}
-            stroke={2.4}
+            stroke={2.2}
           />
         }
         nextControlIcon={
@@ -94,7 +94,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
             className="cursor-default"
             color={theme.colors.orange[7]}
             size={36}
-            stroke={2.4}
+            stroke={2.2}
           />
         }
         breakpoints={[

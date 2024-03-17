@@ -1,3 +1,5 @@
+import { appTitle } from "./_document";
+
 import type { GetServerSideProps, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -22,10 +24,10 @@ const HowToPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>GrowAGram | Show your Grow 🪴</title>
+        <title>{`Howto / Manual | ${appTitle}`}</title>
         <meta
           name="description"
-          content="Manual: How does this GrowAGram thing work?"
+          content="Manual: How does this GrowAGram thing work? Learn everything about authentication, fulltext and strain search, security and your privacy."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

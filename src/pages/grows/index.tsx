@@ -1,3 +1,4 @@
+import { appTitle } from "../_document";
 import {
   Alert,
   Box,
@@ -83,7 +84,7 @@ const PublicAllGrows: NextPage = () => {
     handleToggleDesc: () => setDesc((prev) => !prev),
   };
 
-  // Fake Data for Fake Card
+  /* // Fake Data for Fake Card */
   const cardProps = {
     country: "Sativa",
     badges: [
@@ -111,13 +112,9 @@ const PublicAllGrows: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{`${pageTitle} | GrowAGram`}</title>
-        <meta
-          name="description"
-          content="GrowAGram is a community for sharing and discovering tips, techniques, and insights on growing plants. Join our community and upload your own reports to share your successes and learn from others."
-        />
+        <title>{`${pageTitle} | ${appTitle}`}</title>
+        <meta name="description" content="" />
       </Head>
-      {/* <Loading isLoading={isLoading} /> */}
 
       {/* // Main Content Container */}
       <Container size="xl" className="flex w-full flex-col space-y-2">

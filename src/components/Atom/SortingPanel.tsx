@@ -32,8 +32,9 @@ export default function SortingPanel({
   return (
     <Box pt={3} m={0} className="inline-flex space-x-1">
       <Button
+        className="cursor-default"
         c="dimmed"
-        variant="default"
+        variant="filled"
         px={4}
         size="xs"
         onClick={handleToggleDesc}
@@ -45,7 +46,8 @@ export default function SortingPanel({
         )}
       </Button>
       <NativeSelect
-        variant="default"
+        variant="filled"
+        className="cursor-pointer"
         value={sortBy}
         onChange={(event) => setSortBy(event.currentTarget.value)}
         size="xs"

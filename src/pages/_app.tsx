@@ -44,6 +44,21 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
         withGlobalStyles
         withNormalizeCSS
         theme={{
+          colors: {
+            growgreen: [
+              "#8DDD83",
+              "#5BCE4E",
+              "#3FB431",
+              "#339128",
+              "#297520",
+              "#1F5918",
+              "#184412",
+              "#12330E",
+              "#0E270B",
+              "#0A1E08",
+            ],
+          },
+          primaryColor: "orange",
           loader: "oval",
           colorScheme,
           fontFamily: `'Lato', sans-serif`,
@@ -59,7 +74,6 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           },
           white: "#F1F1F1",
           black: "#333333",
-          primaryColor: "orange",
           breakpoints: {
             xs: "30em",
             // 1 Spalte
@@ -85,26 +99,26 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               },
             },
 
-            Button: {
-              defaultProps: {
-                variant: "default",
-              },
-              styles: (theme) => ({
-                root: {
-                  color:
-                    theme.colorScheme === "dark"
-                      ? theme.white
-                      : theme.black,
-                  "&:hover": {
-                    // cursor: "default",
-                    backgroundColor:
-                      theme.colorScheme === "dark"
-                        ? theme.colors.orange[8]
-                        : theme.colors.orange[5],
-                  },
-                },
-              }),
-            },
+            // Button: {
+            //   defaultProps: {
+            //     variant: "default",
+            //   },
+            //   styles: (theme) => ({
+            //     root: {
+            //       color:
+            //         theme.colorScheme === "dark"
+            //           ? theme.white
+            //           : theme.black,
+            //       "&:hover": {
+            //         // cursor: "default",
+            //         backgroundColor:
+            //           theme.colorScheme === "dark"
+            //             ? theme.colors.orange[8]
+            //             : theme.colors.orange[5],
+            //       },
+            //     },
+            //   }),
+            // },
           },
           globalStyles: (theme) => ({
             blockquote: {
@@ -116,7 +130,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             },
             "blockquote a": {
               textDecoration: "underline",
-              color: theme.colors.orange[6],
+              color: theme.colors.orange?.[7],
             },
             ul: {
               paddingLeft: "1.5em",
@@ -172,13 +186,6 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             },
           }),
 
-          // colors: {
-          //   white: ["#C1CCF6"],
-          //   // Add your color
-          //   deepBlue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
-          //   // or replace default theme color
-          //   blue: ["#E9EDFC", "#C1CCF6", "#99ABF0" /* ... */],
-          // },
           // shadows: {
           //   md: "1px 1px 3px rgba(0, 0, 0, .25)",
           //   xl: "5px 5px 3px rgba(0, 0, 0, .25)",
@@ -186,10 +193,10 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
         }}
       >
         <SessionProvider session={session}>
-          {/* // FUTURE BANNERS GO HERE!! */}
+          <Loading isLoading={isLoading} />
           <Notifications limit={5} position="bottom-right" />
           <Toaster />
-          <Loading isLoading={isLoading} />
+
           <AppLayout>
             <Component {...pageProps} />
           </AppLayout>

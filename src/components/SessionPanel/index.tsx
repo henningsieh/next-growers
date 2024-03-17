@@ -5,7 +5,6 @@ import {
   Group,
   Menu,
   useMantineColorScheme,
-  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -29,6 +28,8 @@ export default function SessionPanel() {
   const { t } = useTranslation(activeLocale);
   const { data: session, status } = useSession();
 
+  const [opened, { open, close }] = useDisclosure(false);
+
   useEffect(() => {
     async function redirectToEditAccount() {
       const editProfilePath = "/account/edit";
@@ -44,10 +45,7 @@ export default function SessionPanel() {
   }, [session, router, status]);
 
   const { colorScheme } = useMantineColorScheme();
-  const theme = useMantineTheme();
   const dark = colorScheme === "dark";
-
-  const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <>
@@ -61,7 +59,7 @@ export default function SessionPanel() {
                 className="cursor-default"
                 radius={3}
                 variant="outline"
-                color={dark ? theme.primaryColor : "grape"}
+                color={dark ? "orange" : "growgreen"}
                 size={32}
                 m={0}
                 p={0}

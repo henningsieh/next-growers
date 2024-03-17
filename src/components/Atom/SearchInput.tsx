@@ -30,15 +30,15 @@ const SearchInput = ({
       placeholder="Full text search"
       rightSection={
         <ActionIcon
-          size={18}
+          size={22}
           variant="outline"
           className="cursor-default"
         >
           <IconX
             color="orange"
             onClick={clearValue}
-            size={16}
-            stroke={2}
+            size={22}
+            stroke={2.2}
           />
         </ActionIcon>
       }

@@ -21,6 +21,7 @@ import {
   UnstyledButton,
   createStyles,
   rem,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -255,6 +256,9 @@ export default function AppLayout({
 
   const { data: session, status } = useSession();
 
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
   return (
     <>
       <Header
@@ -274,18 +278,23 @@ export default function AppLayout({
               <Burger
                 p={0}
                 m={0}
-                size={36}
+                size={34}
                 opened={drawerIsOpened}
                 onClick={toggleDrawer}
+                color={
+                  dark
+                    ? theme.colors.orange?.[7]
+                    : theme.colors.growgreen?.[4]
+                }
               />
             </Box>
             <Link href="/grows">
               <Image
-                className="rounded-sm"
                 width={86}
                 height={44}
+                quality={95}
                 alt="GrowAGram Logo"
-                src="/grow-a-gram-high-resolution-logo-transparent.webp"
+                src="/grow-a-gram-high-resolution-logo.webp"
               />
             </Link>
           </Group>

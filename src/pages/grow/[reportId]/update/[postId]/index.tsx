@@ -260,7 +260,7 @@ export default function PublicReportPost(
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
-      color: theme.colors.orange[6],
+      color: theme.colors.orange?.[7],
     },
   }));
 

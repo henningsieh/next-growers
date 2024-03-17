@@ -2,7 +2,6 @@ import {
   ActionIcon,
   Group,
   useMantineColorScheme,
-  useMantineTheme,
 } from "@mantine/core";
 import { IconMoonStars, IconSun } from "@tabler/icons-react";
 
@@ -12,7 +11,6 @@ import { useRouter } from "next/router";
 export default function LightDarkButton() {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const theme = useMantineTheme();
   const dark = colorScheme === "dark";
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -24,14 +22,14 @@ export default function LightDarkButton() {
         className="cursor-default"
         size={32}
         variant="outline"
-        color={dark ? theme.primaryColor : "grape"}
+        color={dark ? "orange" : "growgreen"}
         onClick={() => toggleColorScheme()}
         title={t("common:app-themetoggle")}
       >
         {dark ? (
-          <IconSun size="1.4rem" />
+          <IconSun size="1.5rem" stroke={2.2} />
         ) : (
-          <IconMoonStars size="1.4rem" />
+          <IconMoonStars size="1.5rem" stroke={1.8} />
         )}
       </ActionIcon>
     </Group>
