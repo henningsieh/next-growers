@@ -17,8 +17,9 @@
 /.next/
 /out/
 next-env.d.ts
-# sitemaps are generated on build
-sitemap*.xml 
+# robots.txt and sitemaps are generated on build
+robots.txt 
+sitemap*.xml
 
 # production
 /build
