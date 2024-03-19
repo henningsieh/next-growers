@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Allow: /
-
-# Host
-Host: https://growagram.com
-
-# Sitemaps
-Sitemap: https://growagram.com/sitemap.xml
