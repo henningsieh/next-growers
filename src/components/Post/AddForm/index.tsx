@@ -10,6 +10,7 @@ import {
   Paper,
   Select,
   TextInput,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
@@ -27,6 +28,7 @@ import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
+import type { Editor } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { InputCreatePostForm } from "~/helpers/inputValidation";
@@ -37,6 +39,7 @@ import { toast } from "react-hot-toast";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
+import EmojiPicker from "~/components/Atom/EmojiPicker";
 import ImageUploader from "~/components/ImageUploader";
 import { onlyOnePostPerDayAllowed } from "~/components/Notifications/messages";
 
@@ -55,7 +58,7 @@ interface AddPostProps {
 }
 
 const prefillHTMLContent =
-  "<mark><i>[put your text here and delete further example text below]</i></mark></br><h1>RichTextEditor</h1>is designed to be as simple as possible to bring a familiar editing experience to regular users.";
+  "<h1>Ich bin eine Überschrift</h1><hr/><h2>RichTextEditor</h2>is designed to be as simple as possible to bring a familiar editing experience to regular users.";
 
 const AddPost = (props: AddPostProps) => {
   const { isoReport: report, post } = props;
@@ -64,6 +67,9 @@ const AddPost = (props: AddPostProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
+
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
 
   // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
@@ -85,6 +91,14 @@ const AddPost = (props: AddPostProps) => {
         alignments: ["left", "center", "justify"],
       }),
     ],
+    editorProps: {
+      attributes: {
+        class: dark
+          ? "bg-input-dark-background"
+          : "bg-input-light-background",
+      },
+    },
+
     content: post ? post.content : prefillHTMLContent,
   });
 
@@ -166,14 +180,14 @@ const AddPost = (props: AddPostProps) => {
     images: string[];
   }) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { day, ...restValues } = values; // Omitting the 'day' field
+    const { day, ...postFormValues } = values; // Omitting the 'day' field
     const editorHtml = editor?.getHTML() as string;
-    restValues.content = editorHtml;
+    postFormValues.content = editorHtml;
 
     const savePost: PostDbInput = {
-      ...restValues,
+      ...postFormValues,
       images: imageIds,
-      growStage: restValues.growStage as keyof typeof GrowStage,
+      growStage: postFormValues.growStage as keyof typeof GrowStage,
       reportId: report.id as string,
       authorId: report.authorId as string,
     };
@@ -324,8 +338,8 @@ const AddPost = (props: AddPostProps) => {
             </Box>
             <TextInput
               withAsterisk
-              label="Titel for this update"
-              placeholder="Titel of this Update"
+              label="Title for this update"
+              placeholder="Title of this Update"
               {...createPostForm.getInputProps("title")}
             />
             <Input
@@ -375,10 +389,13 @@ const AddPost = (props: AddPostProps) => {
                 <RichTextEditor.AlignJustify/>
                 <RichTextEditor.AlignRight/> */}
                 </RichTextEditor.ControlsGroup>
+
+                <EmojiPicker editor={editor as Editor} />
               </RichTextEditor.Toolbar>
 
               <RichTextEditor.Content />
             </RichTextEditor>
+
             <ImageUploader
               report={report}
               cloudUrls={post?.images.map((image) => image.cloudUrl)}

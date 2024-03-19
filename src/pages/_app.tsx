@@ -3,6 +3,7 @@ import type { ColorScheme } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import AppLayout from "~/layout/AppLayout";
+import "~/styles/emojiPickerStyles.css";
 import "~/styles/globals.css";
 
 import { Toaster } from "react-hot-toast";
