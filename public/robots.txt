@@ -7,4 +7,3 @@ Host: https://growagram.com
 
 # Sitemaps
 Sitemap: https://growagram.com/sitemap.xml
-Sitemap: https://growagram.com/sitemap-0.xml
