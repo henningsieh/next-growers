@@ -7,6 +7,7 @@ import {
   Paper,
   Space,
   Title,
+  rem,
   useMantineTheme,
 } from "@mantine/core";
 import { Text } from "@mantine/core";
@@ -59,7 +60,7 @@ const ImageUploader = (props: ImageUploaderProps) => {
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
           <Group position="left">
-            <IconCamera color={theme.colors.orange[7]} />
+            <IconCamera color={theme.colors.growgreen[4]} />
             <Title order={4}>Append images</Title>
           </Group>
           <Box>
@@ -69,9 +70,33 @@ const ImageUploader = (props: ImageUploaderProps) => {
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}
                   onDrop={handleMultipleDropWrapper}
+                  sx={(theme) => ({
+                    color: theme.white,
+                    fontSize: theme.fontSizes.lg,
+                    fontWeight: "bolder",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: 0,
+                    minHeight: rem(80),
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[8]
+                        : theme.colors.gray[4],
+
+                    "&[data-accept]": {
+                      color: theme.white,
+                      backgroundColor: theme.colors.growgreen[4],
+                    },
+
+                    "&[data-reject]": {
+                      color: theme.white,
+                      backgroundColor: theme.colors.red[6],
+                    },
+                  })}
                 >
                   <Text align="center">
-                    Drag & Drop images for this update here!
+                    Drop your Update images here!
                   </Text>
                 </Dropzone>
 

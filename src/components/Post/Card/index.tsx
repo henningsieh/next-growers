@@ -39,10 +39,6 @@ import {
 import { Locale } from "~/types";
 
 const useStyles = createStyles((theme) => ({
-  price: {
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-  },
-
   carousel: {
     "&:hover": {
       [`& .${getStylesRef("carouselControls")}`]: {
@@ -185,7 +181,7 @@ export function PostCard(props: PostCardProps) {
       <growBasic.icon
         size="1.05rem"
         className={classes.icon}
-        stroke={1.5}
+        stroke={1.6}
       />
       <Text size="xs"> {growBasic.label} </Text>
     </Center>
@@ -229,7 +225,7 @@ export function PostCard(props: PostCardProps) {
           ),
         },
         {
-          title: t("common:post-growday"),
+          title: t("common:post-addform-growday"),
           value: post?.growDay as number,
         },
         {

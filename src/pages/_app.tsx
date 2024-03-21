@@ -1,5 +1,14 @@
-import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
-import type { ColorScheme } from "@mantine/core";
+import {
+  ColorSchemeProvider,
+  MantineProvider,
+  rem,
+} from "@mantine/core";
+import type {
+  ButtonStylesParams,
+  ColorScheme,
+  Tuple,
+} from "@mantine/core";
+import { NativeSelect } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import AppLayout from "~/layout/AppLayout";
@@ -46,6 +55,18 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
         withNormalizeCSS
         theme={{
           colors: {
+            groworange: [
+              "#FFC4B3",
+              "#FFA48A",
+              "#FF8764",
+              "#FF6C41",
+              "#FF5322",
+              "#FF4411",
+              "#FF2D00",
+              "#E72900",
+              "#D02500",
+              "#BB2100",
+            ],
             growgreen: [
               "#8DDD83",
               "#5BCE4E",
@@ -59,7 +80,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               "#0A1E08",
             ],
           },
-          primaryColor: "orange",
+          primaryColor: "growgreen",
           loader: "oval",
           colorScheme,
           fontFamily: `'Lato', sans-serif`,
@@ -88,6 +109,55 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             // 6 Spalten
           },
           components: {
+            InputWrapper: {
+              styles: (theme) => ({
+                label: {
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.growgreen[4]
+                      : theme.colors.growgreen[6],
+                  fontSize: theme.fontSizes.lg,
+                  fontWeight: "bold",
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? "rgba(0, 0, 0, .3)"
+                      : "rgba(255, 255, 255, .66)",
+                },
+                description: {
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.white
+                      : theme.colors.gray[9],
+                  fontSize: theme.fontSizes.sm,
+                  fontFamily: "monospace",
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? "rgba(0, 0, 0, .3)"
+                      : "rgba(255, 255, 255, .66)",
+                },
+              }),
+            },
+
+            NativeSelect: {},
+
+            Input: {
+              styles: (theme) => ({
+                input: {
+                  color: theme.white,
+                  fontSize: theme.fontSizes.md,
+                  borderColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.growgreen[4]
+                      : theme.colors.growgreen[8],
+
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.growgreen[8]
+                      : theme.colors.growgreen[4],
+                },
+              }),
+            },
+
             Container: {
               defaultProps: {
                 sizes: {
@@ -100,33 +170,64 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               },
             },
 
-            // Button: {
-            //   defaultProps: {
-            //     variant: "default",
-            //   },
-            //   styles: (theme) => ({
-            //     root: {
-            //       color:
-            //         theme.colorScheme === "dark"
-            //           ? theme.white
-            //           : theme.black,
-            //       "&:hover": {
-            //         // cursor: "default",
-            //         backgroundColor:
-            //           theme.colorScheme === "dark"
-            //             ? theme.colors.orange[8]
-            //             : theme.colors.orange[5],
-            //       },
-            //     },
-            //   }),
-            // },
+            Button: {
+              defaultProps: {
+                variant: "outline",
+              },
+              styles: (
+                theme,
+                params: ButtonStylesParams,
+                { variant }
+              ) => ({
+                root: {
+                  backgroundColor:
+                    variant === "filled"
+                      ? theme.colors[
+                          params.color || theme.primaryColor
+                        ][9]
+                      : undefined,
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.white
+                      : theme.black,
+                  "&:hover": {
+                    cursor: "default",
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.growgreen[7]
+                        : theme.colors.growgreen[3],
+                  },
+                },
+              }),
+            },
           },
+          focusRingStyles: {
+            // reset styles are applied to <button /> and <a /> elements
+            // in &:focus:not(:focus-visible) selector to mimic
+            // default browser behavior for native <button /> and <a /> elements
+            resetStyles: () => ({ outline: "none" }),
+
+            // styles applied to all elements except inputs based on Input component
+            // styled are added with &:focus selector
+            styles: (theme) => ({
+              outline: `${rem(2)} solid ${theme.colors.groworange[4]}`,
+            }),
+
+            // focus styles applied to components that are based on Input
+            // styled are added with &:focus selector
+            inputStyles: (theme) => ({
+              // padding: theme.spacing.sm,
+              // boxShadow: theme.shadows.lg,
+              outline: `${rem(2)} solid ${theme.colors.growgreen[3]}`,
+            }),
+          },
+
           globalStyles: (theme) => ({
             blockquote: {
               margin: "0em 0em",
               padding: "0.2em 0em 0.3em 0.5em",
               fontSize: "0.96em",
-              borderLeft: `2px solid ${theme.colors.orange[7]}`,
+              borderLeft: `2px solid ${theme.colors.groworange[4]}`,
               fontStyle: "italic",
             },
             "blockquote a": {
@@ -148,7 +249,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               width: "0.5em",
               height: "0.5em",
               borderRadius: "50%",
-              backgroundColor: theme.colors.orange[7], // Change the color to match your theme
+              backgroundColor: theme.colors.groworange[4], // Change the color to match your theme
             },
             ol: {
               paddingLeft: "1.5em",
@@ -166,22 +267,8 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               top: "0em",
               left: 0,
               fontWeight: "bold",
-              color: theme.colors.orange[7], // Change the color to match your theme
+              color: theme.colors.groworange[4], // Change the color to match your theme
             },
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            body: {
-              ...theme.fn.fontStyles(),
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[7]
-                  : theme.white,
-              color:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[0]
-                  : theme.black,
-              lineHeight: theme.lineHeight,
-            },
-
             "*, *::before, *::after": {
               boxSizing: "border-box",
             },

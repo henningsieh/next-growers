@@ -10,7 +10,7 @@ export const noPostAtThisDay: NotificationProps & {
   message: string;
 } = {
   title: "Error",
-  message: "Sorry... no update for this day! 😢",
+  message: "Sorry... there is no Update for this day! 😢",
   color: "red",
   icon: <IconCalendarOff />,
   loading: false,
@@ -69,7 +69,7 @@ export const createLikeErrorMsg = (msg: string) => ({
 
 export const onlyOnePostPerDayAllowed = {
   title: "Failure",
-  message: "You can only post one update per Day! 💁",
+  message: "You can only post one Update per Grow and Day! 💁",
   color: "red",
   icon: <IconCalendarOff />,
   loading: false,

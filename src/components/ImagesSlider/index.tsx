@@ -84,7 +84,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
         previousControlIcon={
           <IconChevronLeft
             className="cursor-default"
-            color={theme.colors.orange[7]}
+            color={theme.colors.groworange[4]}
             size={36}
             stroke={2.2}
           />
@@ -92,7 +92,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
         nextControlIcon={
           <IconChevronRight
             className="cursor-default"
-            color={theme.colors.orange[7]}
+            color={theme.colors.groworange[4]}
             size={36}
             stroke={2.2}
           />

@@ -192,7 +192,7 @@ const ProtectedEditReport: NextPage = () => {
                     color={theme.primaryColor}
                     variant="outline"
                   >
-                    <IconReload size="1.2rem" stroke={1.5} />
+                    <IconReload size="1.2rem" stroke={1.6} />
                   </ActionIcon>
                 </Tooltip>
               }
