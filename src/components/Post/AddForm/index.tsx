@@ -7,7 +7,6 @@ import {
   Group,
   Input,
   NumberInput,
-  Paper,
   Select,
   TextInput,
   useMantineColorScheme,

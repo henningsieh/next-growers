@@ -33,7 +33,6 @@ import { InputEditReportForm } from "~/helpers/inputValidation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 

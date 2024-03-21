@@ -3,12 +3,7 @@ import {
   MantineProvider,
   rem,
 } from "@mantine/core";
-import type {
-  ButtonStylesParams,
-  ColorScheme,
-  Tuple,
-} from "@mantine/core";
-import { NativeSelect } from "@mantine/core";
+import type { ButtonStylesParams, ColorScheme } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import AppLayout from "~/layout/AppLayout";
