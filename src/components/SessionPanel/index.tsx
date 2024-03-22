@@ -119,7 +119,7 @@ export default function SessionPanel() {
                     callbackUrl: `/${activeLocale as string}/grows`,
                   })
                 }
-                color="red"
+                color="groworange.5"
                 icon={<IconLogout size={14} />}
               >
                 {t("common:usermenu-logout")}

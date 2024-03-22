@@ -305,7 +305,7 @@ function Form({ user }: AddFormProps) {
         >
           {/* <Box>form.values.title: {form.values.title}</Box> */}
 
-          <Input
+          <TextInput
             hidden
             type="text"
             {...createReportForm.getInputProps("imageId")}

@@ -210,7 +210,8 @@ const ProtectedEditReport: NextPage = () => {
             <Space />
             <Group position="right" mt="xl">
               <Button
-                variant="outline"
+                //variant="outline"
+                color="groworange"
                 type="submit"
                 disabled={isLoading}
               >

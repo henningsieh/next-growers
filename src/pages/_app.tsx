@@ -186,7 +186,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                       ? theme.white
                       : theme.black,
                   "&:hover": {
-                    cursor: "default",
+                    //   cursor: "default",
                     backgroundColor:
                       theme.colorScheme === "dark"
                         ? theme.colors.growgreen[7]
@@ -205,7 +205,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             // styles applied to all elements except inputs based on Input component
             // styled are added with &:focus selector
             styles: (theme) => ({
-              outline: `${rem(2)} solid ${theme.colors.groworange[4]}`,
+              outline: `${rem(5)} solid ${theme.colors.groworange[4]}`,
             }),
 
             // focus styles applied to components that are based on Input
@@ -213,7 +213,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             inputStyles: (theme) => ({
               // padding: theme.spacing.sm,
               // boxShadow: theme.shadows.lg,
-              outline: `${rem(2)} solid ${theme.colors.growgreen[3]}`,
+              outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
             }),
           },
 

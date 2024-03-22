@@ -344,7 +344,10 @@ newDate.setMilliseconds(reportStartDate.getMilliseconds());
             placeholder="Title of this Update"
             {...createPostForm.getInputProps("title")}
           />
-          <Input hidden {...createPostForm.getInputProps("content")} />
+          <TextInput
+            hidden
+            {...createPostForm.getInputProps("content")}
+          />
           <Box
             fz={"xl"}
             fw={"bold"}
