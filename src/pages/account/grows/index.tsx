@@ -140,7 +140,7 @@ const ProtectedAllGrows: NextPage = () => {
         <title>{`${pageTitle} | GrowAGram`}</title>
         <meta
           name="description"
-          content="My grow reports on growagram.com"
+          content="My own grow reports on growagram.com"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>

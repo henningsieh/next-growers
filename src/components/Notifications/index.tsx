@@ -309,7 +309,7 @@ const ProtectedNotifications = () => {
                       <IconEyeCheck
                         className="ml-0 mr-0"
                         height={18}
-                        stroke={1.5}
+                        stroke={1.6}
                       />
                       mark all as read
                     </Button>
@@ -317,8 +317,8 @@ const ProtectedNotifications = () => {
                 {/* 
                 <NavLink
                   label="Active filled"
-                  icon={<IconActivity size="1rem" stroke={1.5} />}
-                  rightSection={<IconChevronRight size="0.8rem" stroke={1.5} />}
+                  icon={<IconActivity size="1rem" stroke={1.6} />}
+                  rightSection={<IconChevronRight size="0.8rem" stroke={1.6} />}
                   variant="filled"
                   active
                 /> */}

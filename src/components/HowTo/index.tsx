@@ -22,7 +22,6 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    // color: theme.white,
     fontSize: rem(48),
     fontWeight: 900,
     lineHeight: 1.1,
@@ -41,7 +40,6 @@ const useStyles = createStyles((theme) => ({
   },
 
   description: {
-    // color: theme.white,
     textAlign: "center",
 
     [theme.fn.smallerThan("sm")]: {

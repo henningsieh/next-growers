@@ -33,7 +33,6 @@ import { InputEditReportForm } from "~/helpers/inputValidation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -206,7 +205,7 @@ export function ProtectedEditForm(props: EditFormProps) {
         <Container
           p={0}
           mt={4}
-          className="flex w-full flex-col space-y-4"
+          className="flex w-full flex-col space-y-10"
         >
           {/*// Upload Panel */}
           {cloudUrl ? (
@@ -227,14 +226,14 @@ export function ProtectedEditForm(props: EditFormProps) {
                   </ActionIcon>
                 </Box>
                 <ImagePreview
+                  views={183}
+                  comments={89}
                   imageUrl={cloudUrl}
+                  authorName={user.name as string}
+                  authorImageUrl={user.image as string}
                   title={editReportForm.values.title}
                   description={editReportForm.values.description}
                   publicLink={`/grow/${report.id as string}`}
-                  authorName={user.name as string}
-                  authorImageUrl={user.image as string}
-                  comments={89}
-                  views={183}
                 />
               </Box>
             </>
@@ -292,14 +291,14 @@ export function ProtectedEditForm(props: EditFormProps) {
                             ? theme.colors.blue[0]
                             : theme.white
                         }
-                        stroke={1.5}
+                        stroke={1.6}
                       />
                     </Dropzone.Accept>
                     <Dropzone.Reject>
                       <IconX
                         size={rem(50)}
                         color={theme.colors.red[6]}
-                        stroke={1.5}
+                        stroke={1.6}
                       />
                     </Dropzone.Reject>
                     <Dropzone.Idle>
@@ -310,7 +309,7 @@ export function ProtectedEditForm(props: EditFormProps) {
                             ? theme.colors.dark[0]
                             : theme.black
                         }
-                        stroke={1.5}
+                        stroke={1.6}
                       />
                     </Dropzone.Idle>
                     {/* </Center> */}
@@ -336,86 +335,91 @@ export function ProtectedEditForm(props: EditFormProps) {
               </Dropzone>
             </Box>
           )}
-          {Environment[report.environment as keyof typeof Environment]}
+
           <form
             onSubmit={editReportForm.onSubmit((values) => {
               submitEditReportForm(values);
             }, handleErrors)}
           >
-            <Textarea
-              label="Bockquote cite:"
-              description="This appears at the top of your Grow's main header image"
-              placeholder="A journey through the wonderful world of cannabis cultivation!"
-              withAsterisk
-              mt="sm"
-              autosize
-              minRows={3}
-              {...editReportForm.getInputProps("description")}
-            />
-            <TextInput
-              label="Title:"
-              description="This appears as headline on your Grow's main details page"
-              withAsterisk
-              {...editReportForm.getInputProps("title")}
-            />
-            <Select
-              label="Environment"
-              description="Environment of your Grow"
-              data={Object.keys(Environment).map((key) => ({
-                value: key,
-                label: Environment[key as keyof typeof Environment],
-              }))}
-              withAsterisk
-              {...editReportForm.getInputProps("environment")}
-              className="w-full"
-              icon={<IconHome size="1.2rem" />}
-            />
-            <Grid gutter="sm">
-              <Grid.Col xs={12} sm={4} md={3} lg={3} xl={3}>
-                <DateInput
-                  label="Grow start date:"
-                  description="Sets 'Created at' date of your Grow"
-                  valueFormat="MMM DD, YYYY HH:mm"
-                  maxDate={new Date()}
-                  // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
-                  // className="w-full"
-                  icon={<IconCalendar size="1.2rem" />}
-                  withAsterisk
-                  {...editReportForm.getInputProps("createdAt")}
-                  onChange={(selectedDate: Date) => {
-                    editReportForm.setFieldValue(
-                      "createdAt",
-                      selectedDate
-                    );
-                  }}
-                />
-              </Grid.Col>
-              <Grid.Col xs={12} sm={8} md={9} lg={9} xl={9}>
-                <MultiSelect
-                  label="Strain(s):"
-                  description="Select all strain(s) of your Grow"
-                  placeholder="Pick strains of your Grow"
-                  {...editReportForm.getInputProps("strains")}
-                  data={allStrains.map((strain) => ({
-                    value: strain.id,
-                    label: strain.name,
-                  }))}
-                  searchable
-                  searchValue={strainsSarchValue}
-                  onSearchChange={onSttrinsSearchChange}
-                  nothingFound="Nothing found"
-                />
-              </Grid.Col>
-            </Grid>
+            <Box className="space-y-4">
+              <TextInput
+                label="Title:"
+                description="This appears as headline on your Grow's main details page"
+                withAsterisk
+                {...editReportForm.getInputProps("title")}
+              />
+              <Textarea
+                label="Bockquote cite:"
+                description="This appears at the top of your Grow's main header image"
+                placeholder="My journey through the wonderful world of cannabis cultivation!"
+                withAsterisk
+                mt="sm"
+                autosize
+                minRows={3}
+                {...editReportForm.getInputProps("description")}
+              />
+              <Select
+                label="Environment"
+                description="Environment of your Grow"
+                data={Object.keys(Environment).map((key) => ({
+                  value: key,
+                  label: Environment[key as keyof typeof Environment],
+                }))}
+                withAsterisk
+                {...editReportForm.getInputProps("environment")}
+                className="w-full"
+                icon={<IconHome size="1.2rem" />}
+              />
+              <Grid gutter="sm">
+                <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
+                  <DateInput
+                    label="Grow start date:"
+                    description="'Created at' date of your Grow"
+                    valueFormat="MMM DD, YYYY HH:mm"
+                    maxDate={new Date()}
+                    // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
+                    // className="w-full"
+                    icon={<IconCalendar size="1.2rem" />}
+                    withAsterisk
+                    {...editReportForm.getInputProps("createdAt")}
+                    onChange={(selectedDate: Date) => {
+                      editReportForm.setFieldValue(
+                        "createdAt",
+                        selectedDate
+                      );
+                    }}
+                  />
+                </Grid.Col>
+                <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
+                  <MultiSelect
+                    label="Strain(s):"
+                    description="Select all strain(s) of your Grow"
+                    placeholder="Pick strains of your Grow"
+                    {...editReportForm.getInputProps("strains")}
+                    data={allStrains.map((strain) => ({
+                      value: strain.id,
+                      label: strain.name,
+                    }))}
+                    searchable
+                    searchValue={strainsSarchValue}
+                    onSearchChange={onSttrinsSearchChange}
+                    nothingFound="Nothing found"
+                  />
+                </Grid.Col>
+              </Grid>
 
-            <Group position="right" mt="xl">
-              <Button w={140} variant="outline" type="submit">
-                {t("common:report-save-button")}
-                <Box ml={12} mt={2}>
-                  <IconCloudUpload size={20} />
-                </Box>
-              </Button>
-            </Group>
+              <Group position="right" mt="xl">
+                <Button
+                  w={160}
+                  type="submit"
+                  leftIcon={
+                    <IconCloudUpload stroke={1.6} size="1.2rem" />
+                  }
+                >
+                  {t("common:report-save-button")}
+                </Button>
+              </Group>
+            </Box>
           </form>
         </Container>
       )}

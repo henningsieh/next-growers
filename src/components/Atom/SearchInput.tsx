@@ -1,4 +1,9 @@
-import { ActionIcon, TextInput } from "@mantine/core";
+import {
+  ActionIcon,
+  TextInput,
+  useMantineColorScheme,
+  useMantineTheme,
+} from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
@@ -18,6 +23,10 @@ const SearchInput = ({
     setSearchString("");
   };
 
+  const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
   return (
     <TextInput
       // pr={4}
@@ -34,12 +43,7 @@ const SearchInput = ({
           variant="outline"
           className="cursor-default"
         >
-          <IconX
-            color="orange"
-            onClick={clearValue}
-            size={22}
-            stroke={2.2}
-          />
+          <IconX size={22} stroke={2.2} onClick={clearValue} />
         </ActionIcon>
       }
     />

@@ -1,7 +1,5 @@
 import { appTitle } from "./_document";
 
-import { useTranslation } from "react-i18next";
-
 import type { GetServerSideProps, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
@@ -23,8 +21,6 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 const Index: NextPage = () => {
-  const { t } = useTranslation();
-
   return (
     <>
       <Head>

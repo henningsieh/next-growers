@@ -126,8 +126,10 @@ const EditReportDetails: NextPage = () => {
               />
 
               <Space h="xl" />
+              <Space h="xl" />
 
               {/* // AddPost Component */}
+              {/* Ein neues Update hinzufügen */}
               <Container p={0}>
                 <Title order={2}>{t("common:addpost-headline")}</Title>
               </Container>
@@ -139,7 +141,10 @@ const EditReportDetails: NextPage = () => {
               />
 
               <Space h="xl" />
+              <Space h="xl" />
 
+              {/* // PostsAccordion Component */}
+              {/* Alle Updates bearbeiten*/}
               <PostsAccordion report={report && report} />
             </>
           )}

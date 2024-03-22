@@ -26,7 +26,6 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { userAgentFromString } from "next/server";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
@@ -51,21 +50,16 @@ export default function ReportCard({
   const useStyles = createStyles((theme) => ({
     card: {
       transition: "transform 150ms ease, box-shadow 150ms ease",
-
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[5]
+          : theme.colors.gray[2],
       "&:hover": {
-        // transform: "scale(1.004)",
-        // color: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-
-        // Add the desired box-shadow color and theme's md shadow here
         boxShadow:
           theme.colorScheme === "dark"
             ? `0 0 8px ${theme.colors.green[8]}`
             : `0 0 8px ${theme.colors.green[9]}`,
       },
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[5]
-          : theme.colors.gray[2],
     },
 
     section: {
@@ -223,7 +217,7 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-createdAt")}
-              color={theme.colors.orange[7]}
+              color={theme.colors.groworange[4]}
               withArrow
               arrowPosition="side"
             >
@@ -249,7 +243,7 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-updatedAt")}
-              color={theme.colors.orange[7]}
+              color={theme.colors.groworange[4]}
               withArrow
               arrowPosition="side"
             >
@@ -292,12 +286,7 @@ export default function ReportCard({
               />
             </Button> */}
             <Link href={`/account/grows/${isoReport.id as string}`}>
-              <Button
-                size="xs"
-                radius="sm"
-                style={{ flex: 1 }}
-                variant="outline"
-              >
+              <Button size="xs" radius="sm" style={{ flex: 1 }}>
                 {t("common:report-edit-button")}
                 <IconEdit className="ml-2" height={22} stroke={1.4} />
               </Button>

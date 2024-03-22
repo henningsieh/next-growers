@@ -250,14 +250,14 @@ function Form({ user }: AddFormProps) {
                           ? theme.colors.blue[0]
                           : theme.white
                       }
-                      stroke={1.5}
+                      stroke={1.6}
                     />
                   </Dropzone.Accept>
                   <Dropzone.Reject>
                     <IconX
                       size={rem(50)}
                       color={theme.colors.red[6]}
-                      stroke={1.5}
+                      stroke={1.6}
                     />
                   </Dropzone.Reject>
                   <Dropzone.Idle>
@@ -268,7 +268,7 @@ function Form({ user }: AddFormProps) {
                           ? theme.colors.dark[0]
                           : theme.black
                       }
-                      stroke={1.5}
+                      stroke={1.6}
                     />
                   </Dropzone.Idle>
                   {/* </Center> */}
@@ -305,7 +305,7 @@ function Form({ user }: AddFormProps) {
         >
           {/* <Box>form.values.title: {form.values.title}</Box> */}
 
-          <Input
+          <TextInput
             hidden
             type="text"
             {...createReportForm.getInputProps("imageId")}

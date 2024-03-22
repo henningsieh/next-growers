@@ -189,7 +189,7 @@ export function getUsername(): string {
   ];
 
   const randomIndex = Math.floor(Math.random() * usernames.length);
-  return usernames[randomIndex] as string;
+  return usernames[randomIndex];
 }
 
 export function getEmailaddress(): string {
@@ -217,7 +217,7 @@ export function getEmailaddress(): string {
   ];
 
   const randomIndex = Math.floor(Math.random() * emailAddresses.length);
-  return emailAddresses[randomIndex] as string;
+  return emailAddresses[randomIndex];
 }
 
 export const handleDrop = async (

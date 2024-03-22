@@ -55,7 +55,10 @@ const useStyles = createStyles((theme) => ({
     right: 0,
     bottom: 0,
     backgroundImage:
-      "linear-gradient(180deg, rgba(0,0,0,0.8170868689272583) 20%, rgba(255,255,255,0) 70%, rgba(255,102,0,1) 100%)",
+      "linear-gradient(180deg,      \
+        rgba(0, 0, 0, 0.9) 20%,     \
+        rgba(255, 255, 255, 0) 70%, \
+        rgba(30, 60, 0, .85) 90%        /* Adjusted color */ /* THIS COLOR SHOULD BE LIKE #085000 */ )",
   },
 
   content: {
@@ -67,6 +70,7 @@ const useStyles = createStyles((theme) => ({
     justifyContent: "flex-end",
     zIndex: 12,
   },
+
   deleteButtonWrapper: {
     position: "absolute",
     bottom: 0,
@@ -89,7 +93,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   bodyText: {
-    color: theme.colors.dark[4],
+    color: theme.colors.gray[4],
     marginRight: rem(7),
     fontWeight: "bold",
   },
@@ -126,15 +130,11 @@ export function ImagePreview({
   return (
     <Link href={publicLink}>
       <Card
-        withBorder
         p="lg"
         shadow="lg"
-        className={classes.card}
         radius="sm"
-        // component="a"
-        // href={publicLink}
-        style={{ display: "block", width: "100%" }}
-        // target="_blank"
+        withBorder
+        className={classes.card}
       >
         <Box
           className={classes.image}
@@ -148,7 +148,7 @@ export function ImagePreview({
         <Box className={classes.overlay} />
 
         {/* Avatar */}
-        <Box pos="absolute" className=" z-20 -ml-2 pt-6">
+        <Box pos="absolute" ml={-10} pt={24} className="z-20">
           <UserAvatar
             userName={authorName}
             imageUrl={authorImageUrl}
@@ -158,7 +158,7 @@ export function ImagePreview({
         </Box>
 
         {/* Cite blockquote */}
-        <Box pos="absolute" className="-m-5">
+        <Box pos="absolute" m={-20}>
           {/* Blockquote */}
           <Blockquote className={classes.cite} cite={authorName}>
             {description}
@@ -170,9 +170,17 @@ export function ImagePreview({
           <Text size="lg" className={classes.title} weight={500}>
             {title}
           </Text>
+        </Box>
+      </Card>
+    </Link>
+  );
+}
 
-          {/* Subline */}
-          <Group position="apart" spacing="xs">
+{
+  /* Subline */
+}
+{
+  /* <Group position="apart" spacing="xs">
             <Text size="sm" className={classes.author}>
               {authorName}
             </Text>
@@ -185,7 +193,7 @@ export function ImagePreview({
                 <IconEye
                   size="1.2rem"
                   stroke={2.2}
-                  color={theme.colors.dark[5]}
+                  color={theme.colors.gray[4]}
                 />
               </Center>
               <Center>
@@ -195,14 +203,18 @@ export function ImagePreview({
                 <IconMessageCircle
                   size="1rem"
                   stroke={2.2}
-                  color={theme.colors.dark[6]}
+                  color={theme.colors.gray[4]}
                 />
               </Center>
             </Group>
-          </Group>
+          </Group> */
+}
 
-          {/* Delete Button */}
-          {/*<Box className={classes.deleteButtonWrapper}>
+{
+  /* Delete Button */
+}
+{
+  /*<Box className={classes.deleteButtonWrapper}>
                      <button
             onClick={() => {
               alert("delete");
@@ -211,9 +223,5 @@ export function ImagePreview({
           >
             Delete Image
           </button>
-        </Box> */}
-        </Box>
-      </Card>
-    </Link>
-  );
+        </Box> */
 }
