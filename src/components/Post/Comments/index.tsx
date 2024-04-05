@@ -104,7 +104,11 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
       <div
         key={postComment.id}
         id={postComment.id}
-        ref={(ref) => commentsRef.current.push(ref as HTMLDivElement)}
+        ref={(ref) => {
+          if (ref) {
+            commentsRef.current.push(ref);
+          }
+        }}
       >
         <UserComment
           reportId={reportId}
