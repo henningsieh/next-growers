@@ -143,6 +143,14 @@ async function main() {
       type: CannabisStraintype.Hybrid,
     },
     {
+      name: "Wedding Cake Automatic",
+      description:
+        "Wedding Cake Automatic, a feminized autoflowering strain from Zamnesia Seeds, is the result of a harmonious genetic blend of Triangle Kush, Animal Mints, and Ruderalis. This indica-dominant hybrid boasts a quick and easy cultivation process, with a robust nature that thrives in various conditions. Expect a height of 120–150cm and a flowering time of 56-63 days. With yields of up to 450–500g/m² indoors and 100–150g/plant outdoors, it delivers a satisfying harvest. Its dense buds emanate sweet and fruity aromas with hints of citrus, vanilla, and wood. With a THC content of around 24%, its high offers a cerebral rush followed by a relaxed state of contentment and tranquility, making it perfect for unwinding alone or with friends.",
+      flavors: ["Sweet", "Fruity", "Citrus", "Vanilla", "Woody"],
+      effects: ["Cerebral", "Relaxed", "Euphoric", "Content"],
+      type: CannabisStraintype.Indica,
+    },
+    {
       name: "Green Crack",
       description:
         "Green Crack is a potent sativa strain that delivers an invigorating and energizing high. It has a fruity and tropical aroma with notes of citrus. The effects are known to boost focus, creativity, and productivity.",
