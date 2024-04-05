@@ -9,9 +9,6 @@ import React, { useState } from "react";
 
 import Image from "next/image";
 
-// import { useTranslation } from "react-i18next";
-// import { useRouter } from "next/router";
-
 interface ImagesSliderProps {
   cloudUrls: string[];
 }
