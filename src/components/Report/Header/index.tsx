@@ -73,14 +73,14 @@ ReportHeaderProps) {
   const getResponsiveHeaderImageHeight = xs
     ? 140
     : sm
-    ? 140
-    : md
-    ? 220
-    : lg
-    ? 220
-    : xl
-    ? 220
-    : 220;
+      ? 140
+      : md
+        ? 220
+        : lg
+          ? 220
+          : xl
+            ? 220
+            : 220;
 
   return (
     <Card withBorder pt={0} radius="sm" className={classes.card}>

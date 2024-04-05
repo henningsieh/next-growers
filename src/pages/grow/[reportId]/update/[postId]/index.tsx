@@ -280,14 +280,14 @@ export default function PublicReportPost(
   const getResponsiveColumnCount = xs
     ? 1
     : sm
-    ? 1
-    : md
-    ? 2
-    : lg
-    ? 3
-    : xl
-    ? 4
-    : 5;
+      ? 1
+      : md
+        ? 2
+        : lg
+          ? 3
+          : xl
+            ? 4
+            : 5;
 
   const dateOfGermination = new Date(staticReportFromProps.createdAt);
 

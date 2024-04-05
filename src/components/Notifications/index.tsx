@@ -213,22 +213,23 @@ const ProtectedNotifications = () => {
                                 notification.comment?.postId as string
                               }#${notification.commentId}`
                             : // handle Like hrefs
-                            notification.like?.commentId != null
-                            ? `/grow/${
-                                notification.like.comment?.post
-                                  ?.reportId as string
-                              }/update/${
-                                notification.like.comment
-                                  ?.postId as string
-                              }#${notification.like.commentId}`
-                            : notification.like?.postId == null
-                            ? `/grow/${
-                                notification.like?.reportId as string
-                              }`
-                            : `/grow/${
-                                notification.like?.post
-                                  ?.reportId as string
-                              }/update/${notification.like?.postId}`
+                              notification.like?.commentId != null
+                              ? `/grow/${
+                                  notification.like.comment?.post
+                                    ?.reportId as string
+                                }/update/${
+                                  notification.like.comment
+                                    ?.postId as string
+                                }#${notification.like.commentId}`
+                              : notification.like?.postId == null
+                                ? `/grow/${
+                                    notification.like
+                                      ?.reportId as string
+                                  }`
+                                : `/grow/${
+                                    notification.like?.post
+                                      ?.reportId as string
+                                  }/update/${notification.like?.postId}`
                         }
                       >
                         <Box style={{ display: "flex" }}>
@@ -258,8 +259,8 @@ const ProtectedNotifications = () => {
                                 {notification.like?.commentId != null
                                   ? "Comment"
                                   : notification.like?.postId == null
-                                  ? "Grow"
-                                  : "Update"}
+                                    ? "Grow"
+                                    : "Update"}
                               </>
                             )}
                           </Box>
