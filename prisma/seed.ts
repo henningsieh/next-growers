@@ -11,6 +11,43 @@ async function main() {
   const cannabisStrains = [
     // Add more cannabis strains here
     {
+      name: "Wedding Gelato",
+      description:
+        "Wedding Gelato seeds result from a complex genetic combination of Wedding Cake, Gelato, and Gelato 33 strains, resulting in a potent and flavorsome hybrid. Its buds emit sickly sweet aromas with earthy undertones, accompanied by flavors of lemon, mint, and vanilla. With a nearly balanced hybrid profile leaning slightly towards indica, it offers euphoric effects followed by mild muscle relaxation. Buds are potent and compact, boasting vibrant orange hairs against dark green buds. Outdoor harvest is typically in early October, with indoor flowering lasting about 8-10 weeks. Despite a moderate yield, its high THC concentration and rich flavor compensate for it.",
+      flavors: ["Citrus", "Earthy", "Fruity", "Herbal"],
+      effects: [
+        "Calming",
+        "Euphoric",
+        "Physically Relaxing",
+        "Uplifting",
+      ],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Fast Bud Outdoor",
+      description:
+        "Fast Bud Outdoor is a mostly sativa variety from Spliff Seeds and can be cultivated outdoors. Spliff Seeds' Fast Bud Outdoor is a THC dominant variety and is/was only available as feminized seeds.",
+      flavors: ["floral", "peppery", "sweet", "tangy"],
+      effects: ["soft", "uplifting", "energetic"],
+      type: CannabisStraintype.Sativa,
+    },
+    {
+      name: "Pineapple Express Auto",
+      description:
+        "Pineapple Express Auto is an autoflowering hybrid strain known for its short, compact, fast-blossoming indica-dominant phenotype. Indoors, it has a slightly above-average yield and a general impression of being slightly below average. Outdoors, it has a harvest time in the middle of September, with a very low crop yield, making it not recommendable for outdoor cultivation.",
+      flavors: [
+        "Sweet",
+        "Fruity",
+        "Floral",
+        "Sour",
+        "Citrus",
+        "Spicy",
+        "Orange",
+      ],
+      effects: ["Activating", "Uplifting", "Appetizing", "Energetic"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
       name: "Blue Dream",
       description:
         "Blue Dream is a sativa-dominant hybrid that combines the best traits of its parent strains, Blueberry and Haze. It offers a sweet berry aroma and delivers a balanced high, providing a relaxed body sensation while keeping the mind clear and focused.",
