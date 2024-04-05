@@ -122,7 +122,7 @@ export default function SortingPanel({
       />
       <Button
         variant="outline"
-        bg={"blue"}
+        bg={"growgreen"}
         className={classes.select}
         h={30}
         onClick={handleToggleDesc}
