@@ -15,7 +15,6 @@ import {
   Overlay,
   ScrollArea,
   SimpleGrid,
-  Space,
   Text,
   ThemeIcon,
   UnstyledButton,

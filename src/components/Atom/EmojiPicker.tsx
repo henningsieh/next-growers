@@ -26,7 +26,7 @@ interface EmojiPickerProps {
 }
 
 function EmojiPicker({ editor }: EmojiPickerProps) {
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [, setPickerOpen] = useState(false);
 
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -60,10 +60,7 @@ function EmojiPicker({ editor }: EmojiPickerProps) {
         onClose={close}
         // className="absolute z-50"
       >
-        <Box
-          ref={clickOutsidePicker}
-          // onClick={() => setPickerOpen(false)} // Close picker when clicking outside
-        >
+        <Box ref={clickOutsidePicker}>
           <Picker
             open={opened}
             emojiStyle={EmojiStyle.NATIVE}

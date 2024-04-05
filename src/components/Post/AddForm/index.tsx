@@ -5,7 +5,6 @@ import {
   Flex,
   Grid,
   Group,
-  Input,
   NumberInput,
   Select,
   TextInput,
