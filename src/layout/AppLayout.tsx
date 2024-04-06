@@ -84,8 +84,8 @@ const useStyles = createStyles((theme) => ({
     zIndex: -20,
     backgroundImage:
       theme.colorScheme === "dark"
-        ? "url(/diyahna-lewis-JEI-uPbp1Aw-unsplash.jpg)"
-        : "url(/2h-media-h9ue_EmlM7s-unsplash.jpg)",
+        ? "url(/background-dark.webp)"
+        : "url(/background-light.webp)",
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
