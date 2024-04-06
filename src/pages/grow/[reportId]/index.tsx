@@ -190,7 +190,7 @@ export async function getStaticProps(
       report: isoReportFromDb,
       ...translations,
     },
-    revalidate: 10,
+    revalidate: 1,
   };
 }
 

@@ -198,7 +198,7 @@ export async function getStaticProps(
       postId: postId,
       ...translations,
     },
-    revalidate: 10,
+    revalidate: 1,
   };
 }
 
