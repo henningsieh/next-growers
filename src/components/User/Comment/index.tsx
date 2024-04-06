@@ -235,7 +235,13 @@ export function UserComment({
       <Group position="apart">
         <Group position="left">
           <UserAvatar
-            imageUrl={comment.author.image as string}
+            imageUrl={
+              comment.author.image
+                ? comment.author.image
+                : `https://ui-avatars.com/api/?name=${
+                    comment.author.name as string
+                  }`
+            }
             userName={comment.author.name as string}
             avatarRadius={42}
             tailwindMarginTop={false}
