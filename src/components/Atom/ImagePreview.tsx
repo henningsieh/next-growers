@@ -4,14 +4,11 @@ import {
   Blockquote,
   Box,
   Card,
-  Center,
-  Group,
   Text,
   createStyles,
   getStylesRef,
   rem,
 } from "@mantine/core";
-import { IconEye, IconMessageCircle } from "@tabler/icons-react";
 
 import Link from "next/link";
 
@@ -122,10 +119,12 @@ export function ImagePreview({
   description,
   authorName,
   authorImageUrl,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   views,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   comments,
 }: ImageCardProps) {
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
 
   return (
     <Link href={publicLink}>

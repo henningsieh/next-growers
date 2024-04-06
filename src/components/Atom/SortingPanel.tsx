@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Box,
   Button,
   NativeSelect,
@@ -30,9 +29,6 @@ export default function SortingPanel({
   desc,
   handleToggleDesc,
 }: SortingPanelProps) {
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
-  const theme = useMantineTheme();
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
