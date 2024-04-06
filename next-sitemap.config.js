@@ -5,13 +5,20 @@ module.exports = {
   priority: 0.7,
   sitemapSize: 5000,
   generateRobotsTxt: true,
-  exclude: ["/account", "/de/account"],
-  alternateRefs: [
-    {
-      href: "https://growagram.com/de",
-      hreflang: "de",
-    },
+  exclude: [
+    "/account",
+    "/account/edit",
+    "/account/grows",
+    "/account/grows/create",
   ],
+  // FIXME: alternateRefs do not work this way, because loc: path already contains all paths
+  // alternateRefs: [
+  //   {
+  //     href: "https://growagram.com/de",
+  //     hreflang: "de",
+  //   },
+  // ],
+
   // Default transformation function
   transform: async (config, path) => {
     return {
@@ -24,6 +31,7 @@ module.exports = {
       alternateRefs: config.alternateRefs ?? [],
     };
   },
+
   // additionalPaths: async (config) => [
   //   await config.transform(config, "/additional-page"),
   // ],
@@ -34,6 +42,6 @@ module.exports = {
         allow: "/",
       },
     ],
-    additionalSitemaps: ["https://growagram.com/sitemap-0.xml"],
+    // additionalSitemaps: ["https://growagram.com/sitemap-0.xml"], // doubles the default
   },
 };
