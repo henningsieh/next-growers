@@ -1,16 +1,24 @@
 import { Box, Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconMail } from "@tabler/icons-react";
+import { IconMail, IconMailForward } from "@tabler/icons-react";
 import { getEmailaddress } from "~/helpers";
 
 import { useState } from "react";
 
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+
 import { signIn } from "next-auth/react";
+import { IconAt } from "@tabler/icons-react";
 
 export default function EmailForm() {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const form = useForm({
     clearInputErrorOnChange: true,
-    validateInputOnChange: true,
+    validateInputOnBlur: true,
     initialValues: { email: "" },
 
     // functions will be used to validate value to a valid email address
@@ -34,23 +42,25 @@ export default function EmailForm() {
   };
 
   return (
-    <Box px="md" mx="auto">
+    <Box m={"sm"} p={"xs"}>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <TextInput
-          mt="sm"
-          label="Your email address 📩"
-          placeholder={getEmailaddress()}
+          type="email"
           {...form.getInputProps("email")}
+          placeholder={getEmailaddress()}
+          fz={"xs"}
+          label="Your email address"
+          icon={<IconAt size="0.8rem" />}
         />
         <Button
           loading={isLoading}
           fullWidth
-          leftIcon={<IconMail size="1.3rem" />}
+          leftIcon={<IconMailForward size="1.3rem" />}
           variant="outline"
           type="submit"
           mt="sm"
         >
-          Sign In with Email
+          {`${t("common:app-login-button-loginWithEmail")}`}
         </Button>
       </form>
     </Box>

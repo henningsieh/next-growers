@@ -224,17 +224,19 @@ model Contest {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  id                  String  @id @default(cuid())
+  type                String
+  provider            String
+  providerAccountId   String
+  refresh_token       String? @db.Text
+  access_token        String? @db.Text
+  oauth_token         String? @db.Text  // needed if using the old Twitter OAuth 1.0 provider.
+  oauth_token_secret  String? @db.Text  // needed if using the old Twitter OAuth 1.0 provider.
+  expires_at          Int?
+  token_type          String?
+  scope               String?
+  id_token            String? @db.Text
+  session_state       String?
 
   userId String // One User has many Accounts
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

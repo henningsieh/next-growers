@@ -4,10 +4,12 @@ import {
   Button,
   Group,
   Menu,
+  rem,
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
+  IconLogin,
   IconLogout,
   IconPlant,
   IconSquarePlus,
@@ -21,6 +23,7 @@ import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { IconLogin2 } from "@tabler/icons-react";
 
 export default function SessionPanel() {
   const router = useRouter();
@@ -129,11 +132,18 @@ export default function SessionPanel() {
         ) : (
           <Button
             onClick={open}
-            className="cursor-default w-28 text-sm px-0"
+            className="cursor-default w-28 px-0"
             variant="default"
-            size={"sm"}
+            // size={"xs"}
+            // h={rem(22)}
+            h={rem(32)}
+            fz={rem(18)}
+            fw={500}
           >
-            🔒&nbsp;{t("common:app-headermenu-signin")}
+            <Group position="right">
+              <IconLogin2 size={"22"} />
+              {t("common:app-headermenu-signin")}
+            </Group>
           </Button>
         )}
       </Group>

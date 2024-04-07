@@ -90,13 +90,13 @@ const AddPost = (props: AddPostProps) => {
         alignments: ["left", "center", "justify"],
       }),
     ],
-    editorProps: {
-      attributes: {
-        class: dark
-          ? "bg-input-dark-background"
-          : "bg-input-light-background",
-      },
-    },
+    // editorProps: {
+    //   attributes: {
+    //     class: dark
+    //       ? "bg-input-dark-background"
+    //       : "bg-input-light-background",
+    //   },
+    // },
 
     content: post ? post.content : prefillHTMLContent,
   });
@@ -432,11 +432,12 @@ newDate.setMilliseconds(reportStartDate.getMilliseconds());
                 // subscribe to color scheme changes
                 backgroundColor:
                   theme.colorScheme === "dark"
-                    ? theme.colors.growgreen[8]
-                    : theme.colors.growgreen[4],
-
-                // or use any other static values from theme
-                color: theme.colors.gray[1],
+                    ? theme.colors.dark[6]
+                    : theme.white,
+                color:
+                  theme.colorScheme === "dark"
+                    ? theme.white
+                    : theme.black,
                 fontSize: theme.fontSizes.sm,
                 fontWeight: 500,
               })}

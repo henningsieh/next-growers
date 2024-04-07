@@ -111,11 +111,10 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     theme.colorScheme === "dark"
                       ? theme.colors.growgreen[4]
                       : theme.colors.growgreen[6],
-                  fontSize: theme.fontSizes.lg,
-                  fontWeight: "bold",
+                  fontSize: theme.fontSizes.md,
                   backgroundColor:
                     theme.colorScheme === "dark"
-                      ? "rgba(0, 0, 0, .3)"
+                      ? "rgba(0, 0, 0, 0)" // no label background in dark mode
                       : "rgba(255, 255, 255, .66)",
                 },
                 description: {
@@ -138,17 +137,21 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             Input: {
               styles: (theme) => ({
                 input: {
-                  color: theme.white,
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.white
+                      : theme.black,
+
                   fontSize: theme.fontSizes.md,
                   borderColor:
                     theme.colorScheme === "dark"
                       ? theme.colors.growgreen[4]
                       : theme.colors.growgreen[8],
 
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.growgreen[8]
-                      : theme.colors.growgreen[4],
+                  // backgroundColor:
+                  //   theme.colorScheme === "dark"
+                  //     ? theme.colors.growgreen[8]
+                  //     : theme.colors.growgreen[4],
                 },
               }),
             },

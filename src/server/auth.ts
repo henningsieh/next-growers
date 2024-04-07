@@ -8,6 +8,7 @@ import {
 } from "next-auth";
 import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
+import TwitterProvider from "next-auth/providers/twitter";
 
 // import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
@@ -57,7 +58,19 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET
         ? process.env.GOOGLE_CLIENT_SECRET
         : "",
+      allowDangerousEmailAccountLinking: true,
     }),
+
+    TwitterProvider({
+      clientId: process.env.TWITTER_API_KEY
+        ? process.env.TWITTER_API_KEY
+        : "",
+      clientSecret: process.env.TWITTER_API_KEY_SECRET
+        ? process.env.TWITTER_API_KEY_SECRET
+        : "",
+      allowDangerousEmailAccountLinking: true,
+    }),
+
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,

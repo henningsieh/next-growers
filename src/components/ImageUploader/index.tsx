@@ -71,7 +71,10 @@ const ImageUploader = (props: ImageUploaderProps) => {
                   accept={IMAGE_MIME_TYPE}
                   onDrop={handleMultipleDropWrapper}
                   sx={(theme) => ({
-                    color: theme.white,
+                    color:
+                      theme.colorScheme === "dark"
+                        ? theme.white
+                        : theme.black,
                     fontSize: theme.fontSizes.lg,
                     fontWeight: "bolder",
                     display: "flex",
@@ -81,8 +84,8 @@ const ImageUploader = (props: ImageUploaderProps) => {
                     minHeight: rem(80),
                     backgroundColor:
                       theme.colorScheme === "dark"
-                        ? theme.colors.dark[8]
-                        : theme.colors.gray[4],
+                        ? theme.colors.growgreen[8]
+                        : theme.colors.growgreen[3],
 
                     "&[data-accept]": {
                       color: theme.white,

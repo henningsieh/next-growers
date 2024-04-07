@@ -1,11 +1,12 @@
 import EmailForm from "./EmailForm";
 import { GoogleButtonWithText } from "./GoogleButton";
-import { Box } from "@mantine/core";
+import { Box, Space } from "@mantine/core";
 import { InputLogin } from "~/helpers/inputValidation";
 
 import { useState } from "react";
 
 import { signIn } from "next-auth/react";
+import { TwitterButtonWithText } from "./TwitterButton";
 
 interface LoginFormContent {
   email: string;
@@ -44,6 +45,20 @@ const useLoginForm = () => {
     setErrors(newErrors);
   };
 
+  const handleTwitterSignIn = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    const newErrors: Errors = {};
+    try {
+      void (await signIn("twitter"));
+    } catch (err) {
+      console.log(err);
+    }
+
+    setErrors(newErrors);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validate email field
@@ -63,26 +78,34 @@ const useLoginForm = () => {
     errors,
     handleChange,
     handleSubmit,
+    handleTwitterSignIn,
     handleGoogleSignIn,
   };
 };
 
 export default function LoginForm() {
-  const { handleGoogleSignIn } = useLoginForm();
+  const { handleGoogleSignIn, handleTwitterSignIn } = useLoginForm();
 
   return (
     <>
-      <EmailForm />
+      <Space h={"lg"} />
 
-      <Box className="my-3 flex items-center px-3">
-        <hr className="w-full border-slate-600" />
-        <span className="mx-3 text-slate-500">or</span>
-        <hr className="w-full border-slate-600" />
-      </Box>
-
-      {/* Google In */}
+      {/* Twitter Login */}
       <form
-        className="p-2 md:p-3 lg:p-4"
+        className="px-2 md:px-3 lg:px-4 pt-0"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleTwitterSignIn(e);
+        }}
+      >
+        <Box className="grid gap-y-3">
+          <TwitterButtonWithText />
+        </Box>
+      </form>
+
+      {/* Google Login */}
+      <form
+        className="px-2 md:px-3 lg:px-4 pt-0"
         onSubmit={(e) => {
           e.preventDefault();
           void handleGoogleSignIn(e);
@@ -92,6 +115,15 @@ export default function LoginForm() {
           <GoogleButtonWithText />
         </Box>
       </form>
+
+      <Box className="my-3 flex items-center px-3">
+        <hr className="w-full border-slate-600" />
+        <span className="mx-3 text-slate-500">OR</span>
+        <hr className="w-full border-slate-600" />
+      </Box>
+
+      {/* E-Mail Login */}
+      <EmailForm />
     </>
   );
 }

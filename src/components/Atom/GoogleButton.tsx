@@ -1,7 +1,10 @@
-import { Button } from "@mantine/core";
 import type { ButtonProps } from "@mantine/core";
-
+import { Button } from "@mantine/core";
 import { FcGoogle } from "react-icons/fc";
+
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { t } from "i18next";
 
 export function GoogleButton(props: ButtonProps) {
   return (
@@ -9,13 +12,21 @@ export function GoogleButton(props: ButtonProps) {
       m={6}
       type="submit"
       leftIcon={<FcGoogle />}
-      variant="default"
-      color="gray"
+      variant="outline"
+      color="growgreen"
       {...props}
     />
   );
 }
 
 export function GoogleButtonWithText() {
-  return <GoogleButton>Sign In with Google</GoogleButton>;
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
+  return (
+    <GoogleButton>
+      {t("common:app-login-button-loginWithGoogle")}
+    </GoogleButton>
+  );
 }

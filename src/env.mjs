@@ -22,6 +22,8 @@ export const env = createEnv({
     ),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
+    TWITTER_API_KEY: z.string(),
+    TWITTER_API_KEY_SECRET: z.string(),
     EMAIL_SERVER: z.string(),
     EMAIL_FROM: z.string(),
     // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
@@ -51,6 +53,8 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    TWITTER_API_KEY: process.env.TWITTER_API_KEY,
+    TWITTER_API_KEY_SECRET: process.env.TWITTER_API_KEY_SECRET,
     EMAIL_SERVER: process.env.EMAIL_SERVER,
     EMAIL_FROM: process.env.EMAIL_FROM,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
