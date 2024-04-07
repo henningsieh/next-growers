@@ -20,7 +20,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       transitionProps={{ transition: "pop-bottom-left", duration: 300 }}
       position="top"
       label={userName}
-      color="grape"
+      color="growgreen.4"
       withArrow
     >
       <Image
