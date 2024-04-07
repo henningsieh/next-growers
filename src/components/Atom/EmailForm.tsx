@@ -1,6 +1,6 @@
 import { Box, Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconMail, IconMailForward } from "@tabler/icons-react";
+import { IconMailForward } from "@tabler/icons-react";
 import { getEmailaddress } from "~/helpers";
 
 import { useState } from "react";

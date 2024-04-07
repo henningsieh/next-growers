@@ -4,7 +4,6 @@ import { FcGoogle } from "react-icons/fc";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { t } from "i18next";
 
 export function GoogleButton(props: ButtonProps) {
   return (
