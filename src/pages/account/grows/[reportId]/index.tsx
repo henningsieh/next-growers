@@ -42,6 +42,7 @@ export async function getServerSideProps(
     context.locale as string,
     ["common"]
   );
+
   return {
     props: {
       ...translations,
@@ -55,33 +56,32 @@ export async function getServerSideProps(
 }
 
 /**
- * @Page ReportDetails
- * @param props: { trpcState: DehydratedState, id: string }
+ * @Page EditReportDetails
+ * @param props: { trpcState: DehydratedState, reportId: string }
  * @returns HTML Component
  */
-
 const EditReportDetails: NextPage = () => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
-  const id = router.query.editReport as string;
 
+  const { data: session, status } = useSession();
+
+  const id = router.query.reportId as string;
   const pageTitle = t("common:report-edit-headline");
 
-  // FETCH OWN REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
     data: report,
     isLoading: reportIsLoading,
     isError: reportHasErrors,
   } = api.reports.getIsoReportWithPostsFromDb.useQuery(id);
-  // FETCH ALL STRAINS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
+
   const {
     data: strains,
     isLoading: strainsAreLoading,
     isError: strainsHaveErrors,
   } = api.strains.getAllStrains.useQuery();
 
-  const { data: session, status } = useSession();
   if (
     !reportIsLoading &&
     status !== "loading" &&

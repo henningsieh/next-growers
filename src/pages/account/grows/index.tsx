@@ -75,7 +75,7 @@ export async function getServerSideProps(
   };
 }
 
-const ProtectedAllGrows: NextPage = () => {
+const ProtectedOwnGrows: NextPage = () => {
   const { t } = useTranslation();
   const pageTitle = t("common:myreports-headline");
 
@@ -192,7 +192,7 @@ const ProtectedAllGrows: NextPage = () => {
                       xl={3}
                     >
                       <ReportCard
-                        {...cardProps}
+                        // {...cardProps}
                         procedure="own"
                         report={ownIsoReport}
                         setSearchString={setSearchString}
@@ -225,4 +225,4 @@ const ProtectedAllGrows: NextPage = () => {
     </>
   );
 };
-export default ProtectedAllGrows;
+export default ProtectedOwnGrows;

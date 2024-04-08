@@ -13,7 +13,7 @@ type GetIsoReportWithPostsFromDbOutput =
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
 
-export interface IsoReportCardProps extends FakeCardBadgeProps {
+export interface IsoReportCardProps {
   report: IsoReportWithPostsFromDb;
   procedure: "all" | "own";
 
