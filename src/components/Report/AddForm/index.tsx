@@ -3,13 +3,13 @@ import {
   Box,
   Button,
   Container,
+  createStyles,
   Group,
   LoadingOverlay,
-  Text,
-  TextInput,
-  Textarea,
-  createStyles,
   rem,
+  Text,
+  Textarea,
+  TextInput,
 } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
@@ -21,8 +21,6 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { handleDrop } from "~/helpers";
-import { InputCreateReportForm } from "~/helpers/inputValidation";
 
 import { useEffect, useRef } from "react";
 import { useState } from "react";
@@ -33,6 +31,9 @@ import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
+
+import { handleDrop } from "~/helpers";
+import { InputCreateReportForm } from "~/helpers/inputValidation";
 
 import { api } from "~/utils/api";
 

@@ -1,8 +1,8 @@
 import {
   Box,
   Container,
-  Title,
   createStyles,
+  Title,
   useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";

@@ -4,10 +4,10 @@ import {
   Blockquote,
   Box,
   Card,
-  Text,
   createStyles,
   getStylesRef,
   rem,
+  Text,
 } from "@mantine/core";
 
 import Link from "next/link";

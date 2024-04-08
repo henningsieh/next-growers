@@ -15,8 +15,6 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { IconAt, IconMail, IconReload } from "@tabler/icons-react";
 import { IconAlertCircle } from "@tabler/icons-react";
-import { getUsername } from "~/helpers";
-import { InputEditProfile } from "~/helpers/inputValidation";
 
 import { useState } from "react";
 
@@ -31,6 +29,9 @@ import AccessDenied from "~/components/Atom/AccessDenied";
 import AppNotification from "~/components/Atom/AppNotification";
 
 import { authOptions } from "~/server/auth";
+
+import { getUsername } from "~/helpers";
+import { InputEditProfile } from "~/helpers/inputValidation";
 
 import { api } from "~/utils/api";
 

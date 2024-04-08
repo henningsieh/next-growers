@@ -5,9 +5,9 @@ import {
   Button,
   Center,
   Container,
+  createStyles,
   Flex,
   Indicator,
-  createStyles,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
@@ -21,7 +21,6 @@ import {
   IconHeartFilled,
 } from "@tabler/icons-react";
 import { IconEyeCheck } from "@tabler/icons-react";
-import { hasUnreadNotifications } from "~/helpers";
 
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -31,6 +30,8 @@ import Link from "next/link";
 
 import type { NotificationEventMap } from "~/types";
 import type { Notifications } from "~/types";
+
+import { hasUnreadNotifications } from "~/helpers";
 
 import { api } from "~/utils/api";
 

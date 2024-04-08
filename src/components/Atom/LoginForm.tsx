@@ -1,12 +1,13 @@
 import EmailForm from "./EmailForm";
 import { GoogleButtonWithText } from "./GoogleButton";
+import { TwitterButtonWithText } from "./TwitterButton";
 import { Box, Space } from "@mantine/core";
-import { InputLogin } from "~/helpers/inputValidation";
 
 import { useState } from "react";
 
 import { signIn } from "next-auth/react";
-import { TwitterButtonWithText } from "./TwitterButton";
+
+import { InputLogin } from "~/helpers/inputValidation";
 
 interface LoginFormContent {
   email: string;

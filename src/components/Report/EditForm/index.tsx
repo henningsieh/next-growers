@@ -3,16 +3,16 @@ import {
   Box,
   Button,
   Container,
+  createStyles,
   Grid,
   Group,
   LoadingOverlay,
   MultiSelect,
+  rem,
   Select,
   Text,
-  TextInput,
   Textarea,
-  createStyles,
-  rem,
+  TextInput,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
@@ -27,8 +27,6 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { handleDrop } from "~/helpers";
-import { InputEditReportForm } from "~/helpers/inputValidation";
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -40,6 +38,9 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import type { EditFormProps } from "~/types";
 import { Environment } from "~/types";
+
+import { handleDrop } from "~/helpers";
+import { InputEditReportForm } from "~/helpers/inputValidation";
 
 import { api } from "~/utils/api";
 

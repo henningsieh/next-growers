@@ -1,5 +1,6 @@
 import type { ButtonProps } from "@mantine/core";
 import { Button } from "@mantine/core";
+
 import { FaXTwitter } from "react-icons/fa6";
 
 import { useTranslation } from "next-i18next";

@@ -23,7 +23,7 @@
  * transformer. We also parse ZodErrors so that you get typesafety on the
  * frontend if your procedure fails due to validation errors on the backend.
  */
-import { TRPCError, initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";

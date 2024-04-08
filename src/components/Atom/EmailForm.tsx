@@ -1,15 +1,15 @@
 import { Box, Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconMailForward } from "@tabler/icons-react";
-import { getEmailaddress } from "~/helpers";
+import { IconAt } from "@tabler/icons-react";
 
 import { useState } from "react";
 
+import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
-import { signIn } from "next-auth/react";
-import { IconAt } from "@tabler/icons-react";
+import { getEmailaddress } from "~/helpers";
 
 export default function EmailForm() {
   const router = useRouter();

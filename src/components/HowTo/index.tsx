@@ -1,11 +1,11 @@
 import {
   Box,
   Container,
+  createStyles,
+  rem,
   Space,
   Text,
   Title,
-  createStyles,
-  rem,
 } from "@mantine/core";
 
 import { useTranslation } from "next-i18next";

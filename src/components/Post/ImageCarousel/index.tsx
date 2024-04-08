@@ -1,9 +1,9 @@
 import { Carousel } from "@mantine/carousel";
 import {
   Box,
-  Image,
   createStyles,
   getStylesRef,
+  Image,
   useMantineTheme,
 } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";

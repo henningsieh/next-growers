@@ -30,7 +30,6 @@ import Underline from "@tiptap/extension-underline";
 import type { Editor } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { InputCreatePostForm } from "~/helpers/inputValidation";
 
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -48,6 +47,8 @@ import type {
   PostDbInput,
 } from "~/types";
 import { GrowStage } from "~/types";
+
+import { InputCreatePostForm } from "~/helpers/inputValidation";
 
 import { api } from "~/utils/api";
 
