@@ -210,10 +210,27 @@ export function PostCard(props: PostCardProps) {
 
     const postImages = post?.images;
 
+    // sort postImages ascending by publicId (publicId format: "timespamp_[original_filename]]")
+    if (postImages) {
+      postImages.sort((a, b) => {
+        const publicIdA = a.publicId;
+        const publicIdB = b.publicId;
+
+        if (publicIdA < publicIdB) {
+          return -1;
+        }
+        if (publicIdA > publicIdB) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+
     const postBasicData = {
+      // FIXME: this is fake data
       image:
         "https://images.unsplash.com/photo-1581889470536-467bdbe30cd0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=720&q=80",
-      title: "Running challenge",
+      title: "Running challenge", // FIXME: this is fake data
       content: postHTMLContent,
       details: [
         {
