@@ -32,6 +32,8 @@ enum GrowStage {
   SEEDLING_STAGE
   VEGETATIVE_STAGE
   FLOWERING_STAGE
+  HARVEST_STAGE
+  CURING_STAGE
 }
 
 model Notification {

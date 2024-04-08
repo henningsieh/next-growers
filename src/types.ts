@@ -125,6 +125,8 @@ export enum GrowStage {
   SEEDLING_STAGE = "Seedling",
   VEGETATIVE_STAGE = "Vegetative ",
   FLOWERING_STAGE = "Flowering",
+  HARVEST_STAGE = "Harvest",
+  CURING_STAGE = "Curing",
 }
 
 export enum Environment {
