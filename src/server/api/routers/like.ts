@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NotificationEvent, Prisma } from "@prisma/client";
+import { z } from "zod";
+
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "../trpc";
+} from "~/server/api/trpc";
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { NotificationEvent, Prisma } from "@prisma/client";
-import { z } from "zod";
 import { InputLike } from "~/helpers/inputValidation";
 
 export const likeRouter = createTRPCRouter({

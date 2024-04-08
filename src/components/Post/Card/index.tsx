@@ -1,16 +1,15 @@
-import PostComments from "../Comments";
 import {
   Alert,
   Box,
   Card,
   Center,
-  Group,
-  Paper,
-  Space,
-  Text,
   createStyles,
   getStylesRef,
+  Group,
+  Paper,
   rem,
+  Space,
+  Text,
   useMantineTheme,
 } from "@mantine/core";
 // import { useMediaQuery } from "@mantine/hooks";
@@ -20,7 +19,6 @@ import {
   IconEye,
   IconHome,
 } from "@tabler/icons-react";
-import { sanatizeDateString } from "~/helpers";
 
 import { useEffect, useState } from "react";
 
@@ -29,6 +27,7 @@ import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
 import ImagesSlider from "~/components/ImagesSlider";
+import Comments from "~/components/Post/Comments";
 
 import type { Post } from "~/types";
 import {
@@ -37,6 +36,8 @@ import {
   type IsoReportWithPostsFromDb,
 } from "~/types";
 import { Locale } from "~/types";
+
+import { sanatizeDateString } from "~/helpers";
 
 const useStyles = createStyles((theme) => ({
   carousel: {
@@ -306,7 +307,7 @@ export function PostCard(props: PostCardProps) {
           </Group>
         </Paper>
 
-        <PostComments reportId={report.id as string} postId={postId} />
+        <Comments reportId={report.id as string} postId={postId} />
 
         <Space h="xs" />
         <Group px="sm" position="apart" className={classes.section}>

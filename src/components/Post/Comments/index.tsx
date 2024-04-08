@@ -16,8 +16,6 @@ import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconMinus, IconX } from "@tabler/icons-react";
 import { IconPlus } from "@tabler/icons-react";
-import { sanatizeDateString } from "~/helpers";
-import { InputEditCommentForm } from "~/helpers/inputValidation";
 
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -32,14 +30,17 @@ import { UserComment } from "~/components/User/Comment";
 
 import { Locale } from "~/types";
 
+import { sanatizeDateString } from "~/helpers";
+import { InputEditCommentForm } from "~/helpers/inputValidation";
+
 import { api } from "~/utils/api";
 
-interface PostCommentsProps {
+interface CommentsProps {
   reportId: string;
   postId: string;
 }
 
-const PostComments = ({ reportId, postId }: PostCommentsProps) => {
+const Comments = ({ reportId, postId }: CommentsProps) => {
   const router = useRouter();
   const trpc = api.useUtils();
 
@@ -50,7 +51,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
 
   // FETCH COMMENTS
   const {
-    data: postComments,
+    data: userComments,
     isLoading,
     isError,
   } = api.comments.getCommentsByPostId.useQuery({
@@ -99,7 +100,7 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
     },
   });
 
-  const comments = postComments?.map((postComment) => {
+  const comments = userComments?.map((postComment) => {
     return (
       <div
         key={postComment.id}
@@ -297,4 +298,4 @@ const PostComments = ({ reportId, postId }: PostCommentsProps) => {
   );
 };
 
-export default PostComments;
+export default Comments;

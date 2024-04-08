@@ -1,4 +1,3 @@
-import AddPost from "../AddForm/index";
 import {
   Accordion,
   Box,
@@ -8,15 +7,18 @@ import {
   Group,
   Title,
 } from "@mantine/core";
-import { sanatizeDateString } from "~/helpers";
 
 import { useState } from "react";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
+import AddPost from "~/components/Post/AddForm";
+
 import type { IsoReportWithPostsFromDb } from "~/types";
 import { Locale } from "~/types";
+
+import { sanatizeDateString } from "~/helpers";
 
 interface PostsAccordionProps {
   report: IsoReportWithPostsFromDb | undefined;

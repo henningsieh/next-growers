@@ -1,16 +1,15 @@
-import UserAvatar from "../../Atom/UserAvatar";
 import {
   ActionIcon,
   Box,
   Button,
+  createStyles,
   Flex,
   Group,
   LoadingOverlay,
   Paper,
+  rem,
   Text,
   Textarea,
-  createStyles,
-  rem,
 } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { useForm, zodResolver } from "@mantine/form";
@@ -24,8 +23,6 @@ import { IconEditOff } from "@tabler/icons-react";
 import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
-import { sanatizeDateString } from "~/helpers";
-import { InputEditCommentForm } from "~/helpers/inputValidation";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -34,9 +31,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
+import UserAvatar from "~/components/Atom/UserAvatar";
 import { commentDeletedSuccessfulMsg } from "~/components/Notifications/messages";
 
 import { type Comment, Locale } from "~/types";
+
+import { sanatizeDateString } from "~/helpers";
+import { InputEditCommentForm } from "~/helpers/inputValidation";
 
 import { api } from "~/utils/api";
 

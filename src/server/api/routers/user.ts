@@ -1,4 +1,8 @@
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+} from "~/server/api/trpc";
+
 import { InputSetUserName } from "~/helpers/inputValidation";
 
 export const userRouter = createTRPCRouter({

@@ -1,24 +1,25 @@
-const config = {
+module.exports = {
+  semi: true,
+  useTabs: false,
+  singleQuote: false,
+  jsxSingleQuote: false,
+  tabWidth: 2,
+  printWidth: 72,
+  endOfLine: "lf",
+  arrowParens: "always",
+  trailingComma: "es5",
+  plugins: [require.resolve("@trivago/prettier-plugin-sort-imports")],
   importOrder: [
+    "<THIRD_PARTY_MODULES>",
     "^react(.*)$",
     "^next(.*)$",
     "^~/components/(.*)$",
     "^~/server(.*)$",
     "^~/types(.*)$",
+    "^~/helpers(.*)$",
     "^~/utils(.*)$",
   ],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
-
-  semi: true,
-  tabWidth: 2,
-  printWidth: 72,
-  trailingComma: "es5",
-  singleQuote: false,
-  jsxSingleQuote: false,
-  arrowParens: "always",
-  useTabs: false,
-  endOfLine: "auto",
+  importOrderCaseInsensitive: true,
 };
-
-module.exports = config;

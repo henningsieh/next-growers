@@ -1,13 +1,14 @@
-import { PostImagesCarousel } from "../Post/ImageCarousel";
 import type { Embla } from "@mantine/carousel";
 import { Carousel, useAnimationOffsetEffect } from "@mantine/carousel";
-import { Card, Modal, createStyles } from "@mantine/core";
+import { Card, createStyles, Modal } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
 import React, { useState } from "react";
 
 import Image from "next/image";
+
+import { PostImagesCarousel } from "~/components//Post/ImageCarousel";
 
 interface ImagesSliderProps {
   cloudUrls: string[];

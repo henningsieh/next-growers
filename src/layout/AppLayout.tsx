@@ -1,5 +1,3 @@
-import LightDarkButton from "../components/Atom/LightDarkButton";
-import LoginPanel from "../components/SessionPanel";
 import {
   Anchor,
   Box,
@@ -7,19 +5,19 @@ import {
   Button,
   Center,
   Collapse,
+  createStyles,
   Divider,
   Drawer,
   Group,
   Header,
   HoverCard,
   Overlay,
+  rem,
   ScrollArea,
   SimpleGrid,
   Text,
   ThemeIcon,
   UnstyledButton,
-  createStyles,
-  rem,
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -41,7 +39,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
+import LightDarkButton from "~/components/Atom/LightDarkButton";
 import Notifications from "~/components/Notifications";
+import LoginPanel from "~/components/SessionPanel";
 
 const useStyles = createStyles((theme) => ({
   photoCredit: {

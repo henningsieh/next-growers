@@ -1,10 +1,12 @@
+import { NotificationEvent } from "@prisma/client";
+import { z } from "zod";
+
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "../trpc";
-import { NotificationEvent } from "@prisma/client";
-import { z } from "zod";
+} from "~/server/api/trpc";
+
 import {
   InputEditCommentForm,
   InputGetCommentsByPostId,

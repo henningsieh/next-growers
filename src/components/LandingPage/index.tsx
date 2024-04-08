@@ -1,18 +1,19 @@
-import { LoginModal } from "../Atom/LoginModal";
 import {
   Box,
   Button,
   Container,
-  Text,
-  Title,
   createStyles,
   rem,
+  Text,
+  Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
+
+import { LoginModal } from "~/components/Atom/LoginModal";
 
 const useStyles = createStyles((theme) => ({
   container: {

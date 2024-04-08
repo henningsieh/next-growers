@@ -1,25 +1,27 @@
-import ImagesSlider from "../ImagesSlider";
 import {
   Box,
   Container,
   Group,
   LoadingOverlay,
   Paper,
-  Space,
-  Title,
   rem,
+  Space,
+  Text,
+  Title,
   useMantineTheme,
 } from "@mantine/core";
-import { Text } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
 import { IconCamera } from "@tabler/icons-react";
-import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
 
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 
+import ImagesSlider from "~/components/ImagesSlider";
+
 import type { IsoReportWithPostsFromDb } from "~/types";
+
+import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
 
 interface ImageUploaderProps {
   report: IsoReportWithPostsFromDb;

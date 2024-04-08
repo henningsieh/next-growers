@@ -1,15 +1,10 @@
 import {
-  createLikeErrorMsg,
-  dislikeSuccessfulMsg,
-  likeSuccessfulMsg,
-} from "../Notifications/messages";
-import {
   ActionIcon,
   Box,
   Center,
+  createStyles,
   Paper,
   Transition,
-  createStyles,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconHeart } from "@tabler/icons-react";
@@ -18,6 +13,12 @@ import { IconHeartFilled } from "@tabler/icons-react";
 import React, { useState } from "react";
 
 import { useSession } from "next-auth/react";
+
+import {
+  createLikeErrorMsg,
+  dislikeSuccessfulMsg,
+  likeSuccessfulMsg,
+} from "~/components/Notifications/messages";
 
 import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
 

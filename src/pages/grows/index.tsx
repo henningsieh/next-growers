@@ -1,15 +1,15 @@
-import { appTitle } from "../_document";
 import {
   Alert,
   Box,
   Center,
   Container,
+  createStyles,
   Grid,
   LoadingOverlay,
   Title,
-  createStyles,
 } from "@mantine/core";
 import { IconDatabaseSearch } from "@tabler/icons-react";
+import { appTitle } from "~/pages/_document";
 
 import type { ChangeEvent } from "react";
 import { useState } from "react";

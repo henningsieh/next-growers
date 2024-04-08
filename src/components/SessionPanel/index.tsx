@@ -1,4 +1,3 @@
-import { LoginModal } from "../Atom/LoginModal";
 import {
   ActionIcon,
   Button,
@@ -9,12 +8,12 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
-  IconLogin,
   IconLogout,
   IconPlant,
   IconSquarePlus,
   IconUser,
 } from "@tabler/icons-react";
+import { IconLogin2 } from "@tabler/icons-react";
 
 import { useEffect } from "react";
 
@@ -23,7 +22,8 @@ import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { IconLogin2 } from "@tabler/icons-react";
+
+import { LoginModal } from "~/components/Atom/LoginModal";
 
 export default function SessionPanel() {
   const router = useRouter();
