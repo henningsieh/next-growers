@@ -4,7 +4,7 @@ import { Card, createStyles, Modal } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Image from "next/image";
 

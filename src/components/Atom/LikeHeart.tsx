@@ -10,7 +10,7 @@ import { notifications } from "@mantine/notifications";
 import { IconHeart } from "@tabler/icons-react";
 import { IconHeartFilled } from "@tabler/icons-react";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { useSession } from "next-auth/react";
 

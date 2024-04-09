@@ -2,8 +2,6 @@ import { Group, SegmentedControl } from "@mantine/core";
 import deFlag from "public/svg/DE.svg";
 import usFlag from "public/svg/US.svg";
 
-import React from "react";
-
 import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";

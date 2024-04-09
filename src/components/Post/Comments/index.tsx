@@ -17,7 +17,7 @@ import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconMinus, IconX } from "@tabler/icons-react";
 import { IconPlus } from "@tabler/icons-react";
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";

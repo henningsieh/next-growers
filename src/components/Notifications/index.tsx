@@ -22,7 +22,7 @@ import {
 } from "@tabler/icons-react";
 import { IconEyeCheck } from "@tabler/icons-react";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";

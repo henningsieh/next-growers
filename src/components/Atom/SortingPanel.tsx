@@ -16,8 +16,6 @@ import {
   IconSortDescending2,
 } from "@tabler/icons-react";
 
-import React from "react";
-
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
