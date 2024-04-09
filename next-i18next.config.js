@@ -7,4 +7,5 @@ module.exports = {
     locales: ["de", "en"],
   },
   localePath: path.resolve("./public/locales"),
+  react: { useSuspense: false },
 };

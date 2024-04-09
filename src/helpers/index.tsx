@@ -1,25 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import axios from "axios";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 import type {
   ImageUploadResponse,
+  IsoReportWithPostsFromDb,
   Locale,
+  MultiUploadResponse,
   Notification,
   SplitObject,
 } from "~/types";
 
-export function getKeyByValue<T extends string>(
-  object: Record<string, T>,
-  value: T
-): keyof typeof object | undefined {
-  return Object.keys(object).find(
-    (key) => object[key] === value
-  ) as keyof typeof object;
-}
+// export function getKeyByValue<T extends string>(
+//   object: Record<string, T>,
+//   value: T
+// ): keyof typeof object | undefined {
+//   return Object.keys(object).find(
+//     (key) => object[key] === value
+//   ) as keyof typeof object;
+// }
 
 export function hasUnreadNotifications(
   notifications: Notification[]
@@ -52,7 +51,6 @@ export function splitSearchString(searchString: string): SplitObject {
     splitObject.searchstring = searchString;
   }
 
-  // console.debug("Split Object:", splitObject);
   return splitObject;
 }
 
@@ -62,15 +60,6 @@ export const handleSearchChange = (
 ) => {
   setSearchString(event.target.value);
 };
-
-// export function formatLabel(key: string): string {
-//   // Convert snake case to title case
-//   const words = key.split("_");
-//   const formattedWords = words.map(
-//     (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-//   );
-//   return formattedWords.join(" ");
-// }
 
 export function getUsername(): string {
   const usernames: string[] = [
@@ -220,66 +209,6 @@ export function getEmailaddress(): string {
   return emailAddresses[randomIndex];
 }
 
-export const handleDrop = async (
-  files: File[],
-  setImageId: Dispatch<SetStateAction<string>>,
-  setImagePublicId: Dispatch<SetStateAction<string>>,
-  setCloudUrl: Dispatch<SetStateAction<string>>,
-  setIsUploading: Dispatch<SetStateAction<boolean>>
-): Promise<void> => {
-  const formData = new FormData();
-  console.debug("src\\helpers\\handleDrop:", files);
-  if (files && files[0]) {
-    console.log(files[0].size);
-    // files.map((file) => formData.append("image", file));
-    formData.append("image", files[0]); // Assuming only one file is uploaded
-    try {
-      const { data }: { data: ImageUploadResponse } = await axios.post(
-        "/api/upload",
-        formData
-      );
-
-      if (data.success) {
-        console.log("File uploaded successfully", data);
-        // setting the image informations to the component state
-        setImageId(data.imageId);
-        setImagePublicId(data.imagePublicId);
-        setCloudUrl(data.cloudUrl);
-
-        setIsUploading(false);
-      } else {
-        setIsUploading(false);
-        throw new Error("Server Error 500: upload failed");
-      }
-    } catch (error) {
-      setIsUploading(false);
-      console.debug(error);
-      throw new Error("Error uploading file");
-    }
-  }
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-/* 
-export function stringifyReportData(report: any): IsoReportWithPostsFromDb {
-  return {
-    id: report?.id,
-    imagePublicId: report?.image?.publicId,
-    imageCloudUrl: report?.image?.cloudUrl,
-    title: report?.title,
-    description: report?.description,
-    strains: report?.strains,
-    authorId: report?.author?.id,
-    authorName: report?.author?.name,
-    authorImage: report?.author?.image,
-    likes: report?.likes || [], // set likes to an empty array if undefined
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    createdAt: report?.createdAt?.toISOString(),
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    updatedAt: report?.updatedAt?.toISOString(),
-  };
-} */
-
 export function sanatizeDateString(
   originalDateString: string,
   locale: Locale,
@@ -312,3 +241,87 @@ export function sanatizeDateString(
     return formattedDate;
   }
 }
+
+export const handleDrop = async (
+  files: File[],
+  setImageId: Dispatch<SetStateAction<string>>,
+  setImagePublicId: Dispatch<SetStateAction<string>>,
+  setCloudUrl: Dispatch<SetStateAction<string>>,
+  setIsUploading: Dispatch<SetStateAction<boolean>>
+): Promise<void> => {
+  const formData = new FormData();
+
+  if (files && files[0]) {
+    formData.append("image", files[0]); // Assuming only one file is uploaded
+    try {
+      const { data }: { data: ImageUploadResponse } = await axios.post(
+        "/api/upload",
+        formData
+      );
+
+      if (data.success) {
+        console.debug("File uploaded successfully", data);
+        // setting the image informations to the component state
+        setImageId(data.imageId);
+        setImagePublicId(data.imagePublicId);
+        setCloudUrl(data.cloudUrl);
+
+        setIsUploading(false);
+      } else {
+        setIsUploading(false);
+        throw new Error("Server Error 500: upload failed");
+      }
+    } catch (error) {
+      setIsUploading(false);
+      console.debug(error);
+      throw new Error("Error uploading file");
+    }
+  }
+};
+
+export const handleMultipleDrop = async (
+  files: File[],
+  report: IsoReportWithPostsFromDb,
+  setImageIds: Dispatch<SetStateAction<string[]>>,
+  setImagePublicIds: Dispatch<SetStateAction<string[]>>,
+  setCloudUrls: Dispatch<SetStateAction<string[]>>,
+  setIsUploading: Dispatch<SetStateAction<boolean>>
+): Promise<void> => {
+  try {
+    setIsUploading(true);
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("images", file, `${file.name}`);
+      formData.append("ownerId", report.authorId as string);
+
+      const { data }: { data: MultiUploadResponse } = await axios.post(
+        "/api/multiple-upload",
+        formData
+      );
+
+      if (data.success) {
+        // Add the image information to the component state
+        setImageIds((prevImageIds) => [
+          ...prevImageIds,
+          ...data.imageIds,
+        ]);
+        setImagePublicIds((prevImagePublicIds) => [
+          ...prevImagePublicIds,
+          ...data.imagePublicIds,
+        ]);
+        setCloudUrls((prevCloudUrls) => [
+          ...prevCloudUrls,
+          ...data.cloudUrls,
+        ]);
+      } else {
+        throw new Error("File uploaded NOT successfully");
+      }
+    }
+
+    setIsUploading(false);
+  } catch (error) {
+    console.debug(error);
+    throw new Error("Error uploading file");
+  }
+};

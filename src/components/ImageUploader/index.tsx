@@ -21,7 +21,7 @@ import ImagesSlider from "~/components/ImagesSlider";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 
-import { handleMultipleDrop } from "~/helpers/handleMultipleDrop";
+import { handleMultipleDrop } from "~/helpers";
 
 interface ImageUploaderProps {
   report: IsoReportWithPostsFromDb;
