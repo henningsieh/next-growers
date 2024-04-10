@@ -1,5 +1,5 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import {createEnv} from "@t3-oss/env-nextjs";
+import {z} from "zod";
 
 export const env = createEnv({
   /**
@@ -31,6 +31,7 @@ export const env = createEnv({
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
     CLOUDINARY_NAME: z.string().min(1),
+
   },
 
   /**
@@ -39,7 +40,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE: z.string().min(1).default("3"),
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1).default("3"),
   },
 
   /**
@@ -60,5 +62,7 @@ export const env = createEnv({
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE: process.env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE,
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: process.env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES
   },
 });

@@ -12,7 +12,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { noPostAtThisDay } from "~/components/Notifications/messages";
+import { noPostAtThisDay } from "~/components/MantineNotifications";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";

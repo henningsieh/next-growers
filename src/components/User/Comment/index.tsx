@@ -32,7 +32,7 @@ import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
 import UserAvatar from "~/components/Atom/UserAvatar";
-import { commentDeletedSuccessfulMsg } from "~/components/Notifications/messages";
+import { commentDeletedSuccessfulMsg } from "~/components/MantineNotifications";
 
 import { type Comment, Locale } from "~/types";
 

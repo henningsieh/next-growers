@@ -30,6 +30,7 @@ import Underline from "@tiptap/extension-underline";
 import type { Editor } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { env } from "~/env.mjs";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -39,7 +40,10 @@ import { useRouter } from "next/router";
 
 import EmojiPicker from "~/components/Atom/EmojiPicker";
 import ImageUploader from "~/components/ImageUploader";
-import { onlyOnePostPerDayAllowed } from "~/components/Notifications/messages";
+import {
+  fileUploadErrorMsg,
+  onlyOnePostPerDayAllowed,
+} from "~/components/MantineNotifications";
 
 import type {
   IsoReportWithPostsFromDb,
@@ -51,6 +55,10 @@ import { GrowStage } from "~/types";
 import { InputCreatePostForm } from "~/helpers/inputValidation";
 
 import { api } from "~/utils/api";
+import {
+  getFileMaxSizeInBytes,
+  getFileMaxUpload,
+} from "~/utils/fileUtils";
 
 interface AddPostProps {
   isoReport: IsoReportWithPostsFromDb;
@@ -194,6 +202,7 @@ const AddPost = (props: AddPostProps) => {
 
     tRPCaddPostToReport(savePost);
   }
+
   const handleErrors = (errors: typeof createPostForm.errors) => {
     if (errors.id) {
       toast.error(errors.id as string);
@@ -449,6 +458,23 @@ newDate.setMilliseconds(reportStartDate.getMilliseconds());
             report={report}
             cloudUrls={post?.images.map((image) => image.cloudUrl)}
             setImageIds={setImageIds}
+            maxSize={getFileMaxSizeInBytes()}
+            maxFiles={getFileMaxUpload()}
+            onReject={(files) => {
+              files.forEach((file) => {
+                const fileSizeInMB = (
+                  file.file.size /
+                  1024 ** 2
+                ).toFixed(2);
+                notifications.show(
+                  fileUploadErrorMsg(
+                    file.file.name,
+                    fileSizeInMB,
+                    env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
+                  )
+                );
+              });
+            }}
           />
 
           <Group position="right" mt="xl">
