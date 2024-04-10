@@ -17,11 +17,11 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostsAccordion from "~/components/Post/Accordion";
 import AddPost from "~/components/Post/AddForm";
-import { ProtectedEditForm } from "~/components/Report/EditForm";
+import { ProtectedEditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
 
-import type { IsoReportWithPostsFromDb, Strains } from "~/types";
+import type { Strains } from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -66,6 +66,7 @@ const EditReportDetails: NextPage = () => {
   const { t } = useTranslation(activeLocale);
 
   const { data: session, status } = useSession();
+  const sessionIsLoading = status === "loading";
 
   const id = router.query.reportId as string;
   const pageTitle = t("common:report-edit-headline");
@@ -82,13 +83,19 @@ const EditReportDetails: NextPage = () => {
     isError: strainsHaveErrors,
   } = api.strains.getAllStrains.useQuery();
 
+  if (reportHasErrors || strainsHaveErrors) {
+    return <>Server Error</>;
+  }
+
   if (
+    !sessionIsLoading &&
     !reportIsLoading &&
-    status !== "loading" &&
+    !strainsAreLoading &&
     (status === "unauthenticated" ||
       report?.authorId != session?.user.id)
-  )
+  ) {
     return <AccessDenied />;
+  }
 
   return (
     <>
@@ -119,8 +126,8 @@ const EditReportDetails: NextPage = () => {
 
           {status === "authenticated" && !reportIsLoading && (
             <>
-              <ProtectedEditForm
-                report={report as IsoReportWithPostsFromDb}
+              <ProtectedEditReportForm
+                report={report}
                 strains={strains as Strains}
                 user={session.user}
               />
@@ -135,10 +142,7 @@ const EditReportDetails: NextPage = () => {
               </Container>
               <Space h="xs" />
 
-              <AddPost
-                isoReport={report as IsoReportWithPostsFromDb}
-                post={null}
-              />
+              <AddPost isoReport={report} post={null} />
 
               <Space h="xl" />
               <Space h="xl" />
