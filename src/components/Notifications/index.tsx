@@ -213,7 +213,7 @@ const ProtectedNotifications = () => {
                               }/update/${
                                 notification.comment?.postId as string
                               }#${notification.commentId}`
-                            : // handle Like hrefs
+                            : // TODO: handle Like hrefs
                               notification.like?.commentId != null
                               ? `/grow/${
                                   notification.like.comment?.post

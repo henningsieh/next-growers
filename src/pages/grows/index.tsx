@@ -42,27 +42,48 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-/**
- * // PUBLIC PAGE with translations
+/** PUBLIC DYNAMIC PAGE with translations
+ * getServerSideProps (Server-Side Rendering)
  *
- * getServerSideProps
+ * @param {string} locale - The locale of the request
+ * @returns Promise<GetServerSidePropsResult<Props>>
  */
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-}) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, ["common"])),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (
+  context
+) => ({
+  props: {
+    ...(await serverSideTranslations(context.locale as string, [
+      "common",
+    ])),
+  },
+});
 
+/**
+ * @Page PublicAllGrows
+ * @param props: { trpcState: DehydratedState, reportId: string }
+ * @returns NextPage
+ */
 const PublicAllGrows: NextPage = () => {
   const { t } = useTranslation();
   const pageTitle = t("common:reports-headline");
+
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
+
+  const useStyles = createStyles((theme) => ({
+    hiddenMobile: {
+      [theme.fn.smallerThan("md")]: {
+        display: "none",
+      },
+    },
+
+    hiddenDesktop: {
+      [theme.fn.largerThan("md")]: {
+        display: "none",
+      },
+    },
+  }));
   const { classes } = useStyles();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)

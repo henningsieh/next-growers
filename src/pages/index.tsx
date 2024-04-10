@@ -1,26 +1,37 @@
 import { appTitle } from "./_document";
 
-import type { GetServerSideProps, NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
 import LandingPage from "~/components/LandingPage";
 
-/**
- * // PUBLIC PAGE with translations
+/** PUBLIC DYNAMIC PAGE with translations
+ * getServerSideProps (Server-Side Rendering)
  *
- * getServerSideProps
+ * @param GetServerSidePropsContext<Params extends ParsedUrlQuery = ParsedUrlQuery, Preview extends PreviewData = PreviewData> context - The context object containing information about the request
+ * @returns Promise<GetServerSidePropsResult<Props>> - A promise resolving to an object containing props to be passed to the page component
  */
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-}) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, ["common"])),
-    },
-  };
-};
-const Index: NextPage = () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => ({
+  props: {
+    ...(await serverSideTranslations(context.locale as string, [
+      "common",
+    ])),
+  },
+});
+
+/**
+ * @Page PublicIndex
+ * @param props: { trpcState: DehydratedState, reportId: string }
+ * @returns NextPage
+ */
+const PublicIndex: NextPage = () => {
   return (
     <>
       <Head>
@@ -36,4 +47,4 @@ const Index: NextPage = () => {
     </>
   );
 };
-export default Index;
+export default PublicIndex;

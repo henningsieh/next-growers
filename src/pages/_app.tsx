@@ -6,7 +6,7 @@ import {
 import type { ButtonStylesParams, ColorScheme } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
-import AppLayout from "~/layout/AppLayout";
+import RootLayout from "~/layout/AppLayout";
 import "~/styles/emojiPickerStyles.css";
 import "~/styles/globals.css";
 
@@ -283,9 +283,9 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           <Notifications limit={5} position="bottom-right" />
           <Toaster />
 
-          <AppLayout>
+          <RootLayout>
             <Component {...pageProps} />
-          </AppLayout>
+          </RootLayout>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>

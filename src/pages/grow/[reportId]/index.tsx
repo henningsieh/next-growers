@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import { useState } from "react";
 
 import type { GetServerSideProps, NextPage } from "next";
-// import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -18,20 +17,21 @@ import { ReportHeader } from "~/components/Report/Header";
 
 import { api } from "~/utils/api";
 
-/** PUBLIC PAGE with translations
+/** PUBLIC DYNAMIC PAGE with translations
+ * getServerSideProps (Server-Side Rendering)
  *
- * getStaticProps (Static Site Generation)
- * @returns Promise<GetServerSidePropsResult<Props>>
+ * @param GetServerSidePropsContext<ParsedUrlQuery, Record<string, string | string[]>> context - The context object containing information about the request
+ * @returns Promise<GetServerSidePropsResult<Props>> - A promise resolving to an object containing props to be passed to the page component
  */
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-}) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale as string, ["common"])),
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async (
+  context
+) => ({
+  props: {
+    ...(await serverSideTranslations(context.locale as string, [
+      "common",
+    ])),
+  },
+});
 
 /**
  * @Page ReportDetails
@@ -45,13 +45,13 @@ const PublicReport: NextPage = () => {
   // const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
 
-  const id = router.query.reportId as string;
+  const queryReportId = router.query.reportId as string;
 
   const {
     data: report,
     isLoading: reportIsLoading,
     //isError: reportHasErrors,
-  } = api.reports.getIsoReportWithPostsFromDb.useQuery(id);
+  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
 
   const pageTitle = `${report?.title as string}`;
 
