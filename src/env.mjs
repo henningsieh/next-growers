@@ -20,13 +20,16 @@ export const env = createEnv({
       // VERCEL_URL doesn't include `https` so it cant be validated as a URL
       process.env.VERCEL ? z.string().min(1) : z.string().url()
     ),
-    GOOGLE_CLIENT_ID: z.string(),
-    GOOGLE_CLIENT_SECRET: z.string(),
+    // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
+    GOOGLE_CLIENT_ID: z.string().min(1),
+    GOOGLE_CLIENT_SECRET: z.string().min(1),
     TWITTER_API_KEY: z.string(),
     TWITTER_API_KEY_SECRET: z.string(),
-    EMAIL_SERVER: z.string(),
-    EMAIL_FROM: z.string(),
-    // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
+    EMAIL_SERVER_HOST: z.string().min(1),
+    EMAIL_SERVER_PORT: z.string().min(1),
+    EMAIL_SERVER_USER: z.string().min(1),
+    EMAIL_SERVER_PASSWORD: z.string().min(1),
+    EMAIL_FROM: z.string().min(1),
 
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
@@ -39,7 +42,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE: z.string().min(1),
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1),
   },
 
   /**
@@ -55,10 +59,17 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     TWITTER_API_KEY: process.env.TWITTER_API_KEY,
     TWITTER_API_KEY_SECRET: process.env.TWITTER_API_KEY_SECRET,
-    EMAIL_SERVER: process.env.EMAIL_SERVER,
+    EMAIL_SERVER_HOST: process.env.EMAIL_SERVER_HOST,
+    EMAIL_SERVER_PORT: process.env.EMAIL_SERVER_PORT,
+    EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
+    EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     EMAIL_FROM: process.env.EMAIL_FROM,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE:
+      process.env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE,
+    NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES:
+      process.env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES,
   },
 });

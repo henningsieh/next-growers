@@ -18,7 +18,7 @@ import {
   createLikeErrorMsg,
   dislikeSuccessfulMsg,
   likeSuccessfulMsg,
-} from "~/components/Notifications/messages";
+} from "~/components/MantineNotifications";
 
 import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
 

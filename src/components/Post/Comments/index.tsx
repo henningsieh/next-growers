@@ -25,7 +25,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import UserAvatar from "~/components/Atom/UserAvatar";
-import { commentSuccessfulMsg } from "~/components/Notifications/messages";
+import { commentSuccessfulMsg } from "~/components/MantineNotifications";
 import { UserComment } from "~/components/User/Comment";
 
 import { Locale } from "~/types";
