@@ -313,7 +313,6 @@ export default function AppLayout({
                 {t("common:usermenu-mygrows")}
               </Link>
             )}
-
             <Link
               href="/how-to-manual-anleitung-wie-geht-das"
               className={classes.link}
