@@ -16,7 +16,7 @@ import { IconCamera } from "@tabler/icons-react";
 
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
-import { FileRejection } from "react-dropzone";
+import type { FileRejection } from "react-dropzone";
 
 import ImagesSlider from "~/components/ImagesSlider";
 

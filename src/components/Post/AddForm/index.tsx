@@ -7,8 +7,7 @@ import {
   Group,
   NumberInput,
   Select,
-  TextInput,
-  useMantineColorScheme,
+  TextInput, // useMantineColorScheme,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
@@ -76,8 +75,8 @@ const AddPost = (props: AddPostProps) => {
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
+  // const { colorScheme } = useMantineColorScheme();
+  // const dark = colorScheme === "dark";
 
   // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
