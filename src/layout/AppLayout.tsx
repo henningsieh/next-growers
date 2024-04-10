@@ -308,6 +308,12 @@ export default function AppLayout({
             <Link href="/grows" className={classes.link}>
               {t("common:app-headermenu-explore")}
             </Link>
+            {!!session && status === "authenticated" && (
+              <Link href="/account/grows" className={classes.link}>
+                {t("common:usermenu-mygrows")}
+              </Link>
+            )}
+
             <Link
               href="/how-to-manual-anleitung-wie-geht-das"
               className={classes.link}
