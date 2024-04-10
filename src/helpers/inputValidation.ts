@@ -17,9 +17,9 @@ export const InputEditProfile = z.object({
     message: "Username must have at least 5 letters",
   }),
   /*       .refine((value) => !/\s/.test(value), {
-      message: "Userame must not contain whitespace characters",
-    }),
-    */
+        message: "Userame must not contain whitespace characters",
+      }),
+      */
   email: z.string().email({ message: "Invalid email address" }),
 });
 
@@ -27,13 +27,25 @@ export const InputCreateReportForm = z.object({
   title: z
     .string()
     .min(8, { message: "Title should have at least 8 letters" })
-    .max(32, { message: "Title should have max 32 letters" }),
+    .max(32, { message: "Title should have max 32 letters" })
+    .refine(
+      (val) => val.length < 32,
+      (val) => ({
+        message: `Title should have max 32 letters. ${val.length} letters given.`,
+      })
+    ),
   description: z
     .string()
     .min(12, {
       message: "Content should have at least 12 letters",
     })
-    .max(64, { message: "Content should have max 64 letters" }),
+    .max(64, { message: "Description should have max 64 letters" })
+    .refine(
+      (val) => val.length < 64,
+      (val) => ({
+        message: `Description should have max 64 letters. ${val.length} letters given.`,
+      })
+    ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
 });
 
@@ -42,14 +54,26 @@ export const InputEditReportForm = z.object({
   title: z
     .string()
     .min(8, { message: "Title should have at least 8 letters" })
-    .max(32, { message: "Title should have max 32 letters" }),
+    .max(32, { message: "Title should have max 32 letters" })
+    .refine(
+      (val) => val.length < 32,
+      (val) => ({
+        message: `Title should have max 32 letters. ${val.length} letters given.`,
+      })
+    ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
   description: z
     .string()
     .min(12, {
       message: "Content should have at least 12 letters",
     })
-    .max(64, { message: "Content should have max 64 letters" }),
+    .max(64, { message: "Content should have max 64 letters" })
+    .refine(
+      (val) => val.length < 64,
+      (val) => ({
+        message: `Content should have max 64 letters. ${val.length} letters given.`,
+      })
+    ),
   strains: z.array(z.string()).min(1, {
     message: "Report should have at least 1 strain",
   }),
