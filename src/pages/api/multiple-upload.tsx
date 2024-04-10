@@ -25,45 +25,48 @@ const handler: NextApiHandler = async (req, res) => {
     const data = await readUploadedFile(req, false);
     const ownerId = data.fields["ownerId"] as string;
 
-    if (!!!ownerId)
+    if (!ownerId) {
       res.status(400).json({ error: "ownerId is missing" });
-
-    const imageIds: string[] = [];
-    const imagePublicIds: string[] = [];
-    const cloudUrls: string[] = [];
-
-    const files = data.files["images"];
-
-    if (!files) {
-      res.status(400).json({ error: "no files attachted" });
     } else {
-      if (!Array.isArray(files)) {
-        // Handle the case where a single file is uploaded
-        const file = files;
-        const result = await handleFileUpload(file, ownerId);
-        imageIds.push(result.id);
-        imagePublicIds.push(result.publicId);
-        cloudUrls.push(result.cloudUrl);
-      } else {
-        // await Promise.all(files.map(handleFileUpload));
-        // We have to collect all results
-        await Promise.all(
-          files.map(async (file) => {
-            const result = await handleFileUpload(file, ownerId);
-            imageIds.push(result.id);
-            imagePublicIds.push(result.publicId);
-            cloudUrls.push(result.cloudUrl);
-          })
-        );
-      }
-      const response = {
-        success: true,
-        imageIds,
-        imagePublicIds,
-        cloudUrls,
-      };
+      const imageIds: string[] = [];
+      const imagePublicIds: string[] = [];
+      const cloudUrls: string[] = [];
 
-      res.json(response);
+      const files = data.files["images"];
+
+      if (!files) {
+        res.status(400).json({ error: "no files attachted" });
+      } else {
+        // Handle the case where a single file is uploaded
+        if (!Array.isArray(files)) {
+          const file = files;
+          const result = await handleFileUpload(file, ownerId);
+
+          imageIds.push(result.id);
+          imagePublicIds.push(result.publicId);
+          cloudUrls.push(result.cloudUrl);
+
+          // Handle the case where multiple files are uploaded
+        } else {
+          await Promise.all(
+            files.map(async (file) => {
+              const result = await handleFileUpload(file, ownerId);
+
+              imageIds.push(result.id);
+              imagePublicIds.push(result.publicId);
+              cloudUrls.push(result.cloudUrl);
+            })
+          );
+        }
+        const response = {
+          success: true,
+          imageIds,
+          imagePublicIds,
+          cloudUrls,
+        };
+
+        res.json(response);
+      }
     }
   }
 };

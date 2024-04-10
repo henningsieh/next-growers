@@ -106,25 +106,25 @@ const ProtectedOwnGrows: NextPage = () => {
   };
 
   // Fake Data for Fake Card
-  const cardProps = {
-    image:
-      "https://images.unsplash.com/photo-1503262028195-93c528f03218?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80",
-    country: "Zkittlez",
-    badges: [
-      {
-        emoji: "💡",
-        label: "LED",
-      },
-      {
-        emoji: "🥥",
-        label: "Coco",
-      },
-      {
-        emoji: "💎",
-        label: "mineral",
-      },
-    ],
-  };
+  // const cardProps = {
+  //   image:
+  //     "https://images.unsplash.com/photo-1503262028195-93c528f03218?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80",
+  //   country: "Zkittlez",
+  //   badges: [
+  //     {
+  //       emoji: "💡",
+  //       label: "LED",
+  //     },
+  //     {
+  //       emoji: "🥥",
+  //       label: "Coco",
+  //     },
+  //     {
+  //       emoji: "💎",
+  //       label: "mineral",
+  //     },
+  //   ],
+  // };
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);

@@ -5,51 +5,33 @@ import dayjs from "dayjs";
 
 import { useState } from "react";
 
-import type { GetServerSidePropsContext, NextPage } from "next";
-import { getServerSession } from "next-auth";
+import type { GetServerSideProps, NextPage } from "next";
 // import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { noPostAtThisDay } from "~/components/Notifications/messages";
+import { noPostAtThisDay } from "~/components/MantineNotifications";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
 
-import { authOptions } from "~/server/auth";
-
 import { api } from "~/utils/api";
 
-/**
- * PROTECTED PAGE with session and translations
- * async getServerSideProps()
+/** PUBLIC PAGE with translations
  *
- * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
- * @returns : Promise<{props: { session: Session | null } | undefined;};}>
+ * getStaticProps (Static Site Generation)
+ * @returns Promise<GetServerSidePropsResult<Props>>
  */
-export async function getServerSideProps(
-  context: GetServerSidePropsContext<{
-    translations: string | string[] | undefined;
-  }>
-) {
-  // Fetch translations using next-i18next
-  const translations = await serverSideTranslations(
-    context.locale as string,
-    ["common"]
-  );
-
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+}) => {
   return {
     props: {
-      ...translations,
-      session: await getServerSession(
-        context.req,
-        context.res,
-        authOptions
-      ),
+      ...(await serverSideTranslations(locale as string, ["common"])),
     },
   };
-}
+};
 
 /**
  * @Page ReportDetails

@@ -1,26 +1,29 @@
 import { appTitle } from "./_document";
 
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
 import HowTo from "~/components/HowTo";
 
-/**
- * // PUBLIC PAGE with translations
+/** PUBLIC STATIC PAGE with translations
  *
- * getServerSideProps
+ * getStaticProps (Static Site Generation)
+ * @returns Promise<GetStaticPropsResult<Props>> | GetStaticPropsResult<Props>
  */
-export const getServerSideProps: GetServerSideProps = async ({
-  locale,
-}) => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale as string, ["common"])),
+      ...(await serverSideTranslations(locale ?? "en", ["common"])),
     },
   };
 };
-const HowToPage: NextPage = () => {
+
+/**
+ * @name HowToPage
+ * @returns NextPage
+ */
+const PublicHowToPage: NextPage = () => {
   return (
     <>
       <Head>
@@ -36,4 +39,4 @@ const HowToPage: NextPage = () => {
     </>
   );
 };
-export default HowToPage;
+export default PublicHowToPage;

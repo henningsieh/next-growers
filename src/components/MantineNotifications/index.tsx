@@ -3,6 +3,7 @@ import {
   IconCalendarOff,
   IconCannabis,
   IconError404,
+  IconFileAlert,
   IconLogin,
 } from "@tabler/icons-react";
 
@@ -74,3 +75,15 @@ export const onlyOnePostPerDayAllowed = {
   icon: <IconCalendarOff />,
   loading: false,
 };
+
+export const fileUploadErrorMsg = (
+  filename: string,
+  fileSizeInMB: string,
+  uploadMaxSize: string
+) => ({
+  title: "Error " + filename,
+  message: `File size of ${fileSizeInMB} MB exceeds the allowed maximum of ${uploadMaxSize} MB`,
+  color: "red",
+  icon: <IconFileAlert />,
+  loading: false,
+});

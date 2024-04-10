@@ -72,8 +72,15 @@ export const authOptions: NextAuthOptions = {
     }),
 
     EmailProvider({
-      server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
 
       // LOG VERIFYLINK TO CONSOLE IN DEVELOPMENT MODE ONLY
       ...(process.env.NODE_ENV !== "production"

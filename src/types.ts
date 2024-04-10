@@ -54,44 +54,30 @@ type getLikesByItemIdOutput = RouterOutput["like"]["getLikesByItemId"];
 export type Likes = getLikesByItemIdOutput;
 export type Like = getLikesByItemIdOutput[number];
 
-export interface EditFormProps {
-  report: IsoReportWithPostsFromDb;
-  strains: Strains;
+export interface EditReportFormProps {
   user: User;
-}
-export interface EditFormProps {
   report: IsoReportWithPostsFromDb;
-  strains: Strains;
-  user: User;
+  strains: Strains | undefined;
 }
-/* 
-export interface ReportCardProps extends FakeCardBadgeProps {
-  report: Report;
-  procedure: "all" | "own";
-
-  setSearchString: Dispatch<SetStateAction<string>>;
-} */
 
 export interface ImageUploadResponse {
   success: boolean;
   imageId: string;
-  // reportId: string;
   imagePublicId: string;
   cloudUrl: string;
 }
 
 export interface MultiUploadResponse {
   success: boolean;
-  // reportId: string;
   imageIds: string[];
   imagePublicIds: string[];
   cloudUrls: string[];
 }
 
 export interface SortingPanelProps {
+  desc: boolean;
   sortBy: string;
   setSortBy: Dispatch<SetStateAction<string>>;
-  desc: boolean;
   handleToggleDesc: () => void;
 }
 

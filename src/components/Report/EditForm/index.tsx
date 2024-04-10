@@ -36,7 +36,7 @@ import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
-import type { EditFormProps } from "~/types";
+import type { EditReportFormProps } from "~/types";
 import { Environment } from "~/types";
 
 import { handleDrop } from "~/helpers";
@@ -75,7 +75,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function ProtectedEditForm(props: EditFormProps) {
+export function ProtectedEditReportForm(props: EditReportFormProps) {
   const {
     report: reportfromProps,
     strains: allStrains,
@@ -392,20 +392,22 @@ export function ProtectedEditForm(props: EditFormProps) {
                   />
                 </Grid.Col>
                 <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
-                  <MultiSelect
-                    label="Strain(s):"
-                    description="Select all strain(s) of your Grow"
-                    placeholder="Pick strains of your Grow"
-                    {...editReportForm.getInputProps("strains")}
-                    data={allStrains.map((strain) => ({
-                      value: strain.id,
-                      label: strain.name,
-                    }))}
-                    searchable
-                    searchValue={strainsSarchValue}
-                    onSearchChange={onSttrinsSearchChange}
-                    nothingFound="Nothing found"
-                  />
+                  {allStrains && (
+                    <MultiSelect
+                      label="Strain(s):"
+                      description="Select all strain(s) of your Grow"
+                      placeholder="Pick strains of your Grow"
+                      {...editReportForm.getInputProps("strains")}
+                      data={allStrains.map((strain) => ({
+                        value: strain.id,
+                        label: strain.name,
+                      }))}
+                      searchable
+                      searchValue={strainsSarchValue}
+                      onSearchChange={onSttrinsSearchChange}
+                      nothingFound="Nothing found"
+                    />
+                  )}
                 </Grid.Col>
               </Grid>
 
