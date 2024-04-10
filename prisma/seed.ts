@@ -64,6 +64,14 @@ async function main() {
       type: CannabisStraintype.Hybrid,
     },
     {
+      name: "Diesel Auto",
+      description:
+        "Diesel Automatic bietet die wohlbekannten und beliebten Geschmäcke und Aromen von New York Diesel, während sie dank der autoflowering Genetik von ihrem Lowryder #2-Elternteil schneller die Ernte erreicht. Wie alle neueren autoflowering Hybriden weist sie im Vergleich zu vielen ursprünglichen autoflowering Sorten einen besseren Ertrag und Geschmack auf.",
+      flavors: ["diesel", "fruity", "citrus"],
+      effects: ["relaxing", "clear-headed"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
       name: "Gorilla Glue",
       description:
         "Gorilla Glue, also known as GG4, is an indica-dominant hybrid that is highly regarded for its powerful effects and sticky resinous buds. It has a pungent aroma with notes of earth and diesel. The high is intense and long-lasting, providing a deep relaxation that can glue you to the couch.",
