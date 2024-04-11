@@ -1,9 +1,6 @@
 import { Box, Container, Title } from "@mantine/core";
 
-import {
-  GetServerSideProps,
-  type GetServerSidePropsContext,
-} from "next";
+import type { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
