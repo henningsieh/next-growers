@@ -50,6 +50,7 @@ function EmojiPicker({ editor }: EmojiPickerProps) {
   return (
     <>
       <ActionIcon variant="default" size={24} onClick={open}>
+        {/* heroicons -> face-smile */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

@@ -23,6 +23,7 @@ import { IconEditOff } from "@tabler/icons-react";
 import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
+import { commentDeletedSuccessfulMsg } from "~/messages";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -32,14 +33,12 @@ import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
 import UserAvatar from "~/components/Atom/UserAvatar";
-import { commentDeletedSuccessfulMsg } from "~/components/Notifications/messages";
 
 import { type Comment, Locale } from "~/types";
 
-import { sanatizeDateString } from "~/helpers";
-import { InputEditCommentForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { sanatizeDateString } from "~/utils/helperUtils";
+import { InputEditCommentForm } from "~/utils/inputValidation";
 
 const useStyles = createStyles((theme) => ({
   comment: {

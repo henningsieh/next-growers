@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { InputCreatePostServer } from "~/helpers/inputValidation";
+import { InputCreatePostServer } from "~/utils/inputValidation";
 
 export const postRouter = createTRPCRouter({
   createPost: protectedProcedure

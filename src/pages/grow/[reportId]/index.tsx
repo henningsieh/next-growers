@@ -2,6 +2,7 @@ import { Box, Container, Title, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
+import { noPostAtThisDay } from "~/messages";
 
 import { useState } from "react";
 
@@ -10,7 +11,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { noPostAtThisDay } from "~/components/Notifications/messages";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";

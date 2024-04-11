@@ -34,10 +34,9 @@ import AppNotification from "~/components/Atom/AppNotification";
 
 import { authOptions } from "~/server/auth";
 
-import { getUsername } from "~/helpers";
-import { InputEditProfile } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { getUsername } from "~/utils/helperUtils";
+import { InputEditProfile } from "~/utils/inputValidation";
 
 /** PROTECTED DYNAMIC PAGE with translations
  * getServerSideProps (Server-Side Rendering)

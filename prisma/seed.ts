@@ -1,4 +1,4 @@
-import { CannabisStrain, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 enum CannabisStraintype {
@@ -80,6 +80,20 @@ async function main() {
       type: CannabisStraintype.Indica,
     },
     {
+      name: "Mimosa",
+      description:
+        "Most growers are instantly won over by Mimosa's striking looks. However, she also boasts a bunch of other impressive traits, including high levels of THC and a fragrant mix of terpenes. Plus, her compact stature makes her easy to grow just about anywhere and without much fuss. Despite her small size, Mimosa still pumps out rewarding yields.",
+      flavors: ["Earthy", "Sour", "Sweet", "Mint", "Spicy"],
+      effects: [
+        "Creative",
+        "Laughter",
+        "Euphoria",
+        "Relaxation",
+        "Happiness",
+      ],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
       name: "OG Kush",
       description:
         "OG Kush is a legendary strain with a name that has recognition even outside of the cannabis world. OG Kush is cherished for its ability to crush stress under the weight of its heavy euphoria. It carries an earthy pine and sour lemon scent with woody undertones, an aroma that has become the signature of OG Kush varieties and descendants.",
@@ -124,6 +138,19 @@ async function main() {
         "Jack Herer is a sativa-dominant strain named after the renowned cannabis activist and author. It has a spicy and earthy aroma with hints of pine. The high is uplifting and cerebral, providing a burst of creativity and focus.",
       flavors: ["spicy", "earthy", "pine", "citrus"],
       effects: ["euphoria", "creativity", "focus", "happiness"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Wedding Gelato",
+      description:
+        "Wedding Gelato, aka Ice Cream Cake, is the result of a very balanced love triangle. They don't fight to be the dominant variety, but the Wedding Gelato seeds contain the best characteristics of their parental varieties, offering a potent and tasty effect. Inhale the sugary taste of Gelato and the peppery notes of Wedding Cake.",
+      flavors: ["sweet", "peppery", "fruity", "herbal", "citrusy"],
+      effects: [
+        "uplifting",
+        "relaxing",
+        "euphoric",
+        "physically calming",
+      ],
       type: CannabisStraintype.Hybrid,
     },
     {

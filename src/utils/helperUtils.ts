@@ -221,24 +221,20 @@ export function sanatizeDateString(
     year: "numeric",
     hour: withTime ? "numeric" : undefined,
     minute: withTime ? "numeric" : undefined,
-
-    // hour12: false,
   };
 
   if (locale === "en") {
-    // intl. date
+    // international date
     const intlFormatter = new Intl.DateTimeFormat("en-US", options);
-    const intlDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
-    // console.debug(intlDate);
-    return intlDate;
+    const internationalDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
+    return internationalDate;
   } else {
     // german date
     const germanFormatter = new Intl.DateTimeFormat("de-DE", options);
     const germanDate = germanFormatter.format(reportStartDate); // "11. Mai 2023"
     const germanTime = withTime ? ` Uhr` : "";
-    const formattedDate = `${germanDate}${germanTime}`;
-    // console.debug(formattedDate);
-    return formattedDate;
+    const germanDateTime = `${germanDate}${germanTime}`;
+    return germanDateTime;
   }
 }
 

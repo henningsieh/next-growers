@@ -32,7 +32,7 @@ import LikeHeart from "~/components/Atom/LikeHeart";
 import { Locale } from "~/types";
 import type { IsoReportCardProps } from "~/types";
 
-import { sanatizeDateString } from "~/helpers";
+import { sanatizeDateString } from "~/utils/helperUtils";
 
 // import { api } from "~/utils/api";
 

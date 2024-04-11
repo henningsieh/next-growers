@@ -10,27 +10,38 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconCamera } from "@tabler/icons-react";
 
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
+import type { FileRejection } from "react-dropzone";
 
 import ImagesSlider from "~/components/ImagesSlider";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 
-import { handleMultipleDrop } from "~/helpers";
+import { handleMultipleDrop } from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
   report: IsoReportWithPostsFromDb;
   cloudUrls: string[] | undefined;
   setImageIds: Dispatch<SetStateAction<string[]>>;
+  maxFiles?: number;
+  maxSize?: number;
+
+  onReject?(fileRejections: FileRejection[]): void;
 }
 
-const ImageUploader = (props: ImageUploaderProps) => {
-  const { report, cloudUrls: cloudUrlsFromProps, setImageIds } = props;
+const ImageUploader = ({
+  report,
+  cloudUrls: cloudUrlsFromProps,
+  setImageIds,
+  maxFiles,
+  maxSize,
+  onReject,
+}: ImageUploaderProps) => {
   const [cloudUrls, setCloudUrls] = useState<string[]>(
     cloudUrlsFromProps ? cloudUrlsFromProps : []
   );
@@ -72,6 +83,9 @@ const ImageUploader = (props: ImageUploaderProps) => {
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}
                   onDrop={handleMultipleDropWrapper}
+                  maxFiles={maxFiles}
+                  maxSize={maxSize}
+                  onReject={onReject}
                   sx={(theme) => ({
                     color:
                       theme.colorScheme === "dark"

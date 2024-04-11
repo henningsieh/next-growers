@@ -31,9 +31,8 @@ import Link from "next/link";
 import type { NotificationEventMap } from "~/types";
 import type { Notifications } from "~/types";
 
-import { hasUnreadNotifications } from "~/helpers";
-
 import { api } from "~/utils/api";
+import { hasUnreadNotifications } from "~/utils/helperUtils";
 
 const useStyles = createStyles((theme) => ({
   like: {

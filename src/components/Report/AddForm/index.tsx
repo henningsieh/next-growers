@@ -32,10 +32,9 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
-import { handleDrop } from "~/helpers";
-import { InputCreateReportForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { handleDrop } from "~/utils/helperUtils";
+import { InputCreateReportForm } from "~/utils/inputValidation";
 
 interface AddFormProps {
   user: User;
@@ -77,19 +76,9 @@ function Form({ user }: AddFormProps) {
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploading, setIsUploading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reportId, setReportId] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reportTitle, setReportTitle] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reportDescription, setReportDescription] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [imageId, setImageId] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imagePublicId, setImagePublicId] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [, setImagePublicId] = useState("");
   const [cloudUrl, setCloudUrl] = useState("");
 
   // Update "imageId" state, if "imageId" form field value changes
@@ -234,10 +223,6 @@ function Form({ user }: AddFormProps) {
                   });
                 }
               }}
-              // onChange={(e) => {
-              //   console.debug(e.currentTarget);
-              // }}
-              // radius="md"
             >
               <Box style={{ pointerEvents: "none" }}>
                 <Group position="center">
@@ -265,13 +250,12 @@ function Form({ user }: AddFormProps) {
                       size={rem(50)}
                       color={
                         theme.colorScheme === "dark"
-                          ? theme.colors.dark[0]
-                          : theme.black
+                          ? theme.colors.growgreen[4]
+                          : theme.colors.groworange[4]
                       }
                       stroke={1.6}
                     />
                   </Dropzone.Idle>
-                  {/* </Center> */}
                 </Group>
 
                 <Text ta="center" fw={700} fz="lg" mt="xl">
@@ -281,21 +265,24 @@ function Form({ user }: AddFormProps) {
                     (4.394 KB, 4.500.000 B)!
                   </Dropzone.Reject>
                   <Dropzone.Idle>
-                    Drag&apos;n&apos;drop your Grow Header Image here to
-                    upload!
+                    Drag&apos;n&apos;drop your{" "}
+                    <span style={{ color: "green" }}>
+                      Grow Header Image
+                    </span>{" "}
+                    here to upload!
                   </Dropzone.Idle>
                 </Text>
                 <Text ta="center" fz="sm" my="xs" c="dimmed">
-                  For now we only can accept one <i>.jpg/.png/.gif</i>
-                  image file, that is less than 4.28 MB (4.394 KB,
-                  4.500.000 B)! in size.
+                  <b>
+                    The app accepts one (1) <i>.jpg/.png/.gif</i> image
+                    file, that is less than 4.5 MB in size.
+                  </b>
                 </Text>
               </Box>
             </Dropzone>
           </Box>
         )}
 
-        {/* // Report form */}
         <form
           onSubmit={createReportForm.onSubmit((values) => {
             // send imageId as formField so that the report can be related
@@ -303,42 +290,41 @@ function Form({ user }: AddFormProps) {
             tRPCcreateReport(values);
           }, handleErrors)}
         >
-          {/* <Box>form.values.title: {form.values.title}</Box> */}
-
-          <TextInput
-            hidden
-            type="text"
-            {...createReportForm.getInputProps("imageId")}
-            value={imageId}
-          />
-          <Textarea
-            label="Bockquote cite:"
-            description="This appears at the top of your Grow's main header image"
-            withAsterisk
-            placeholder="A journey through the wonderful world of cannabis cultivation!"
-            mt="sm"
-            autosize
-            minRows={3}
-            {...createReportForm.getInputProps("description")}
-          />
-          <TextInput
-            label="Title:"
-            description="This appears as headline on your Grow's main details page"
-            withAsterisk
-            mt="sm"
-            {...createReportForm.getInputProps("title")}
-          />
-
-          <Group position="right" mt="xl">
-            <Button
-              type="submit"
-              w={140}
-              variant="outline"
-              disabled={!createReportForm.isValid()}
-            >
-              Continue
-            </Button>
-          </Group>
+          <Box className="space-y-4">
+            <TextInput
+              hidden
+              type="text"
+              {...createReportForm.getInputProps("imageId")}
+              value={imageId}
+            />
+            <Textarea
+              label="Bockquote cite:"
+              description="This appears at the top of your Grow's main header image"
+              placeholder="A journey through the wonderful world of cannabis cultivation!"
+              withAsterisk
+              mt="sm"
+              autosize
+              minRows={3}
+              {...createReportForm.getInputProps("description")}
+            />
+            <TextInput
+              label="Title:"
+              description="This appears as headline on your Grow's main details page"
+              withAsterisk
+              mt="sm"
+              {...createReportForm.getInputProps("title")}
+            />
+            <Group position="right" mt="xl">
+              <Button
+                type="submit"
+                w={140}
+                variant="outline"
+                disabled={!createReportForm.isValid()}
+              >
+                Continue
+              </Button>
+            </Group>
+          </Box>
         </form>
       </Container>
     </>

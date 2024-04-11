@@ -7,12 +7,12 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { splitSearchString } from "~/helpers";
+import { splitSearchString } from "~/utils/helperUtils";
 import {
   InputCreateReportForm,
   InputEditReportForm,
   InputGetReports,
-} from "~/helpers/inputValidation";
+} from "~/utils/inputValidation";
 
 export const reportRouter = createTRPCRouter({
   /**

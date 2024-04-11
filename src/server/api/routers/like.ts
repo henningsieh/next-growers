@@ -7,7 +7,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { InputLike } from "~/helpers/inputValidation";
+import { InputLike } from "~/utils/inputValidation";
 
 export const likeRouter = createTRPCRouter({
   getLikesByItemId: publicProcedure

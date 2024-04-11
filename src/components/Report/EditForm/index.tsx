@@ -39,10 +39,9 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 import type { EditReportFormProps } from "~/types";
 import { Environment } from "~/types";
 
-import { handleDrop } from "~/helpers";
-import { InputEditReportForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { handleDrop } from "~/utils/helperUtils";
+import { InputEditReportForm } from "~/utils/inputValidation";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -141,6 +140,7 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
 
   const editReportForm = useForm({
     validate: zodResolver(InputEditReportForm),
+    validateInputOnChange: true,
     initialValues: {
       id: report?.id as string,
       title: report?.title as string,
@@ -343,12 +343,6 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
             }, handleErrors)}
           >
             <Box className="space-y-4">
-              <TextInput
-                label="Title:"
-                description="This appears as headline on your Grow's main details page"
-                withAsterisk
-                {...editReportForm.getInputProps("title")}
-              />
               <Textarea
                 label="Bockquote cite:"
                 description="This appears at the top of your Grow's main header image"
@@ -358,6 +352,12 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
                 autosize
                 minRows={3}
                 {...editReportForm.getInputProps("description")}
+              />
+              <TextInput
+                label="Title:"
+                description="This appears as headline on your Grow's main details page"
+                withAsterisk
+                {...editReportForm.getInputProps("title")}
               />
               <Select
                 label="Environment"
