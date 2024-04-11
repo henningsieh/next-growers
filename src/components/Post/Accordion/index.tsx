@@ -54,15 +54,6 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                         {post.growDay}
                       </Box>
                     </Center>
-                    {/* 
-                        <Box p={4} fz={"xs"}>
-                          {sanatizeDateString(
-                            post.date,
-                            router.locale === Locale.DE
-                              ? Locale.DE
-                              : Locale.EN
-                          )}
-                        </Box> */}
                   </Card>
                   <Box fz={"md"} mb={0} pt={0}>
                     {sanatizeDateString(
@@ -70,18 +61,10 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                       router.locale === Locale.DE
                         ? Locale.DE
                         : Locale.EN,
+                      false,
                       false
                     )}
                   </Box>
-                  {/* 
-                      <Box fz={"xs"} mb={0} pt={0}>
-                        {sanatizeDateString(
-                          post.date,
-                          router.locale === Locale.DE
-                            ? Locale.DE
-                            : Locale.EN
-                        )}
-                      </Box> */}
                 </Group>
               </Accordion.Control>
               <Accordion.Panel mx={-8}>

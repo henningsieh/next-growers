@@ -55,7 +55,7 @@ export default function EmailForm() {
         <Button
           loading={isLoading}
           fullWidth
-          leftIcon={<IconMailForward size="1.3rem" />}
+          leftIcon={<IconMailForward size="1.4rem" />}
           variant="outline"
           type="submit"
           mt="sm"

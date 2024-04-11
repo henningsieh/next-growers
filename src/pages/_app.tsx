@@ -106,6 +106,9 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           components: {
             InputWrapper: {
               styles: (theme) => ({
+                NativeSelect: {
+                  borderRadius: theme.radius.md,
+                },
                 label: {
                   color:
                     theme.colorScheme === "dark"
@@ -132,8 +135,6 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               }),
             },
 
-            NativeSelect: {},
-
             Input: {
               styles: (theme) => ({
                 input: {
@@ -142,7 +143,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                       ? theme.white
                       : theme.black,
 
-                  fontSize: theme.fontSizes.md,
+                  //fontSize: theme.fontSizes.md,
                   borderColor:
                     theme.colorScheme === "dark"
                       ? theme.colors.growgreen[4]
@@ -206,13 +207,13 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             resetStyles: () => ({ outline: "none" }),
 
             // styles applied to all elements except inputs based on Input component
-            // styled are added with &:focus selector
+            // styles are added with &:focus selector
             styles: (theme) => ({
               outline: `${rem(5)} solid ${theme.colors.groworange[4]}`,
             }),
 
             // focus styles applied to components that are based on Input
-            // styled are added with &:focus selector
+            // styles are added with &:focus selector
             inputStyles: (theme) => ({
               // padding: theme.spacing.sm,
               // boxShadow: theme.shadows.lg,
@@ -225,12 +226,12 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               margin: "0em 0em",
               padding: "0.2em 0em 0.3em 0.5em",
               fontSize: "0.96em",
-              borderLeft: `2px solid ${theme.colors.groworange[4]}`,
+              borderLeft: `2px solid ${theme.colors.growgreen[4]}`,
               fontStyle: "italic",
             },
             "blockquote a": {
               textDecoration: "underline",
-              color: theme.colors.orange?.[7],
+              color: theme.colors.growgreen?.[3],
             },
             ul: {
               paddingLeft: "1.5em",

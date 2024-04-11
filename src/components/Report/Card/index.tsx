@@ -230,6 +230,7 @@ export default function ReportCard({
                   {sanatizeDateString(
                     isoReport.createdAt,
                     router.locale === Locale.DE ? Locale.DE : Locale.EN,
+                    false,
                     false
                   )}
                 </Text>
@@ -253,6 +254,7 @@ export default function ReportCard({
                   {sanatizeDateString(
                     isoReport.updatedAt as string,
                     router.locale === Locale.DE ? Locale.DE : Locale.EN,
+                    false,
                     false
                   )}
                 </Text>

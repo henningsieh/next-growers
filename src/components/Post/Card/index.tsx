@@ -27,7 +27,7 @@ import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
 import ImagesSlider from "~/components/ImagesSlider";
-import Comments from "~/components/Post/Comments";
+import PostComments from "~/components/Post/Comments";
 
 import type { Post } from "~/types";
 import {
@@ -154,6 +154,7 @@ export function PostCard(props: PostCardProps) {
       label: sanatizeDateString(
         report?.createdAt,
         router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false,
         false
       ),
       icon: IconCalendar,
@@ -171,6 +172,7 @@ export function PostCard(props: PostCardProps) {
       label: sanatizeDateString(
         report?.updatedAt as string,
         router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false,
         false
       ),
       icon: IconClock,
@@ -239,6 +241,7 @@ export function PostCard(props: PostCardProps) {
           value: sanatizeDateString(
             post?.date as string,
             router.locale === Locale.DE ? Locale.DE : Locale.EN,
+            false,
             false
           ),
         },
@@ -307,7 +310,7 @@ export function PostCard(props: PostCardProps) {
           </Group>
         </Paper>
 
-        <Comments reportId={report.id as string} postId={postId} />
+        <PostComments reportId={report.id as string} postId={postId} />
 
         <Space h="xs" />
         <Group px="sm" position="apart" className={classes.section}>

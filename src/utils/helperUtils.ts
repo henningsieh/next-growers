@@ -212,11 +212,12 @@ export function getEmailaddress(): string {
 export function sanatizeDateString(
   originalDateString: string,
   locale: Locale,
+  shortMonth: boolean,
   withTime: boolean
 ) {
   const reportStartDate = new Date(originalDateString);
   const options: Intl.DateTimeFormatOptions = {
-    month: "long",
+    month: shortMonth ? "long" : "short",
     day: "numeric",
     year: "numeric",
     hour: withTime ? "numeric" : undefined,
@@ -232,7 +233,7 @@ export function sanatizeDateString(
     // german date
     const germanFormatter = new Intl.DateTimeFormat("de-DE", options);
     const germanDate = germanFormatter.format(reportStartDate); // "11. Mai 2023"
-    const germanTime = withTime ? ` Uhr` : "";
+    const germanTime = withTime ? ` Uhr` : ``;
     const germanDateTime = `${germanDate}${germanTime}`;
     return germanDateTime;
   }

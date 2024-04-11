@@ -197,14 +197,14 @@ const LikeHeart = (props: LikeHeartProps) => {
           ) ? (
             <IconHeartFilled
               onClick={handleDisLikeItem}
-              size="1.3rem"
+              size="1.4rem"
               className={`${classes.red}`}
               stroke={1.8}
             />
           ) : (
             <IconHeart
               onClick={handleLikeItem}
-              size="1.3rem"
+              size="1.4rem"
               stroke={1.2}
             />
           )}

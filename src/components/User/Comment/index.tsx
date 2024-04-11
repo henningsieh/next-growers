@@ -10,9 +10,11 @@ import {
   rem,
   Text,
   Textarea,
+  useMantineTheme,
 } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { useForm, zodResolver } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconEdit,
@@ -46,7 +48,9 @@ const useStyles = createStyles((theme) => ({
   },
 
   body: {
-    paddingLeft: rem(58),
+    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.sm})`)
+      ? rem(58)
+      : rem(4),
     paddingTop: theme.spacing.sm,
     fontSize: theme.fontSizes.sm,
   },
@@ -99,6 +103,11 @@ export function UserComment({
   setNewOpen,
   newForm,
 }: CommentHtmlProps) {
+  const theme = useMantineTheme();
+  const largeScreen = useMediaQuery(
+    `(min-width: ${theme.breakpoints.sm})`
+  );
+
   const { classes } = useStyles();
   const { data: session, status } = useSession();
 
@@ -116,7 +125,7 @@ export function UserComment({
       onMutate: (newCommentDB) => {
         console.log("START api.comments.deleteCommentById.useMutation");
         setIsSaving(true);
-        console.log("newReportDB", newCommentDB);
+        console.log("newCommentDB", newCommentDB);
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back
@@ -124,7 +133,7 @@ export function UserComment({
         toast.error("An error occured when deleting the comment");
         console.log("err", err);
         if (!context) return;
-        console.log(context);
+        console.debug(context);
       },
       onSuccess: async (deletedComment) => {
         notifications.show(commentDeletedSuccessfulMsg);
@@ -243,24 +252,40 @@ export function UserComment({
                   }`
             }
             userName={comment.author.name as string}
-            avatarRadius={42}
+            avatarRadius={largeScreen ? 42 : 32}
             tailwindMarginTop={false}
           />
           <Box>
-            <Text fz="sm">{comment.author.name}</Text>
-            <Text fz="xs" c="dimmed">
+            <Text fz={largeScreen ? "sm" : "xs"}>
+              {comment.author.name}
+            </Text>
+            <Text fz={largeScreen ? "xs" : rem(10)} c="dimmed">
               {sanatizeDateString(
                 comment.createdAt.toISOString(),
                 router.locale === Locale.DE ? Locale.DE : Locale.EN,
+                largeScreen,
                 true
               )}
             </Text>
           </Box>
         </Group>
-        <Group position="right">
+        <Flex
+          mt="xs"
+          justify="flex-end"
+          align="flex-start"
+          gap={"xs"}
+          style={{ flexGrow: 1 }}
+        >
           {status === "authenticated" &&
             session.user.id === comment.author.id && (
               <>
+                <ActionIcon
+                  onClick={() => tRPCdeleteComment(comment.id)}
+                  className=" cursor-default"
+                  variant="default"
+                >
+                  <IconTrashX size="1.4rem" stroke={1.2} />
+                </ActionIcon>
                 {!isEditing ? (
                   <ActionIcon
                     title="edit comment"
@@ -268,7 +293,7 @@ export function UserComment({
                     className="cursor-default"
                     variant="default"
                   >
-                    <IconEdit size="1.3rem" stroke={1.2} />
+                    <IconEdit size="1.4rem" stroke={1.2} />
                   </ActionIcon>
                 ) : (
                   <ActionIcon
@@ -277,21 +302,14 @@ export function UserComment({
                     className="cursor-default"
                     variant="default"
                   >
-                    <IconEditOff size="1.3rem" stroke={1.2} />
+                    <IconEditOff size="1.4rem" stroke={1.2} />
                   </ActionIcon>
                 )}
-                <ActionIcon
-                  onClick={() => tRPCdeleteComment(comment.id)}
-                  className=" cursor-default"
-                  variant="default"
-                >
-                  <IconTrashX size="1.3rem" stroke={1.2} />
-                </ActionIcon>
               </>
             )}
 
+          {/* Response Button */}
           <ActionIcon
-            // color="orange"
             className=" cursor-default"
             variant="default"
             onClick={() => {
@@ -314,18 +332,19 @@ export function UserComment({
           >
             <IconMessageForward
               color="orange"
-              size="1.3rem"
+              size="1.4rem"
               stroke={1.2}
             />
           </ActionIcon>
-          <LikeHeart itemToLike={comment} itemType={"Comment"} />
-        </Group>
+
+          {/* Like Button */}
+          <Box mt={-2}>
+            <LikeHeart itemToLike={comment} itemType={"Comment"} />
+          </Box>
+        </Flex>
       </Group>
       {!isEditing ? (
         <Paper className={classes.body}>
-          {/*           {selectedCommentText && (
-            <button onClick={handleQuote}>Quote</button>
-          )} */}
           {transformedHtml ? (
             <Box
               className={classes.content}
@@ -345,7 +364,7 @@ export function UserComment({
               mt={12}
               radius="sm"
               visible={isSaving}
-              transitionDuration={50}
+              transitionDuration={150}
               loaderProps={{
                 size: "sm",
                 variant: "dots",

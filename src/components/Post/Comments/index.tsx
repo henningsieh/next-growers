@@ -7,14 +7,23 @@ import {
   Group,
   LoadingOverlay,
   Paper,
+  Space,
   Text,
   Textarea,
   Transition,
   TypographyStylesProvider,
+  useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconInfoCircle, IconMinus, IconX } from "@tabler/icons-react";
+import {
+  IconAlignLeft,
+  IconInfoCircle,
+  IconMinus,
+  IconTextPlus,
+  IconTextWrap,
+  IconX,
+} from "@tabler/icons-react";
 import { IconPlus } from "@tabler/icons-react";
 import { commentSuccessfulMsg } from "~/messages";
 
@@ -39,9 +48,11 @@ interface CommentsProps {
   postId: string;
 }
 
-const Comments = ({ reportId, postId }: CommentsProps) => {
+const PostComments = ({ reportId, postId }: CommentsProps) => {
   const router = useRouter();
   const trpc = api.useUtils();
+
+  const theme = useMantineTheme();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -54,7 +65,7 @@ const Comments = ({ reportId, postId }: CommentsProps) => {
     isLoading,
     isError,
   } = api.comments.getCommentsByPostId.useQuery({
-    postId: postId, // Set the desired order (true for descending, false for ascending)
+    postId: postId,
   });
 
   const { data: session, status } = useSession();
@@ -142,25 +153,23 @@ const Comments = ({ reportId, postId }: CommentsProps) => {
       {status === "loading" && <p>loading comments...</p>}
       {status === "authenticated" && (
         <>
+          <Space h={"lg"} />
           <Group pb="xs" position="apart">
-            <Text pb="xs">Kommantare</Text>
-            <ActionIcon
-              color="orange"
-              variant="outline"
+            <Text fz="xl">Kommantare</Text>
+
+            <Button
               title={!newOpen ? "add new comment" : "close form"}
-              // onClick={() => setIsEditing((prev) => !prev)}
               onClick={() => {
                 setNewOpen((prev) => !prev);
-                // newForm.reset();
               }}
               className="cursor-default"
+              variant="default"
+              // c={theme.colors.growgreen[8]}
+              // bg={theme.colors.groworange[5]}
+              leftIcon={<IconTextWrap size={22} />}
             >
-              {!newOpen ? (
-                <IconPlus size="1.3rem" stroke={1.6} />
-              ) : (
-                <IconMinus size="1.3rem" stroke={1.6} />
-              )}
-            </ActionIcon>
+              Kommentieren
+            </Button>
           </Group>
 
           <Transition
@@ -194,6 +203,7 @@ const Comments = ({ reportId, postId }: CommentsProps) => {
                           router.locale === Locale.DE
                             ? Locale.DE
                             : Locale.EN,
+                          false,
                           true
                         )}
                       </Text>
@@ -297,4 +307,4 @@ const Comments = ({ reportId, postId }: CommentsProps) => {
   );
 };
 
-export default Comments;
+export default PostComments;

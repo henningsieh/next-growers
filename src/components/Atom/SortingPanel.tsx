@@ -35,67 +35,36 @@ export default function SortingPanel({
   const updatedAtLabel = t("common:reports-updatedAt");
 
   const useStyles = createStyles((theme) => ({
-    cite: {
-      borderLeft: `0px solid`, // no left border for this quote
-      fontFamily: `'Roboto Slab', sans-serif`,
-      fontSize: "1.2rem",
-      color: theme.colors.gray[4],
-      width: "100%",
-    },
-
-    overlay: {
-      position: "absolute",
-      top: "0%",
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundImage:
-        "linear-gradient(180deg, rgba(0,0,0,0.8170868689272583) 20%, rgba(255,255,255,0) 70%, rgba(255,102,0,1) 100%)",
-    },
-
-    content: {
-      width: "100%",
-      height: "105%",
-      position: "relative",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "flex-end",
-      zIndex: 12,
-    },
-
-    title: {
-      color: theme.white,
-      marginBottom: rem(1),
-    },
-
-    bodyText: {
-      color: theme.colors.dark[4],
-      marginRight: rem(7),
-      fontWeight: "bold",
-    },
-
     select: {
-      backgroundColor: "blue",
-      padding: "4px",
-      // marginTop: "1px",
+      cursor: "pointer",
+
       // outlineWidth: "1px",
       // outlineStyle: "solid",
-      // outlineColor: dark
+      // outlineColor: "dark"
       //   ? theme.colors.growgreen[4]
       //   : theme.colors.growgreen[8],
+    },
+
+    sortButton: {
+      cursor: "pointer",
+      marginTop: "1px",
+      outlineWidth: "1px",
+      outlineStyle: "solid",
+      outlineColor: "dark"
+        ? theme.colors.growgreen[4]
+        : theme.colors.growgreen[8],
     },
   }));
 
   const { classes } = useStyles();
 
   return (
-    <Box pt={3} m={0} className="inline-flex space-x-1">
+    <Box className="inline-flex space-x-1">
       <NativeSelect
+        className={classes.select}
         variant="default"
         value={sortBy}
-        className="cursor-pointer"
         onChange={(event) => setSortBy(event.currentTarget.value)}
-        size="xs"
         data={[
           { value: "createdAt", label: createdAtLabel },
           { value: "updatedAt", label: updatedAtLabel },
@@ -103,22 +72,30 @@ export default function SortingPanel({
         icon={
           sortBy === "createdAt" ? (
             desc ? (
-              <IconCalendarDown size="1.2rem" />
+              <IconCalendarDown
+                color="white"
+                size="1.2rem"
+                stroke={1.2}
+              />
             ) : (
-              <IconCalendarUp size="1.2rem" />
+              <IconCalendarUp
+                color="white"
+                size="1.2rem"
+                stroke={1.2}
+              />
             )
           ) : desc ? (
-            <IconClockDown size="1.2rem" />
+            <IconClockDown color="white" size="1.2rem" stroke={1.2} />
           ) : (
-            <IconClockUp size="1.2rem" />
+            <IconClockUp color="white" size="1.2rem" stroke={1.2} />
           )
         }
       />
       <Button
-        variant="outline"
-        bg={"growgreen"}
-        className={classes.select}
-        h={30}
+        className={classes.sortButton}
+        variant="default"
+        h={34}
+        // w={24}
         onClick={handleToggleDesc}
       >
         {desc ? (
