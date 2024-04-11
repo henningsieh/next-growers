@@ -6,8 +6,11 @@ import {
   Grid,
   Group,
   NumberInput,
+  Paper,
   Select,
-  TextInput, // useMantineColorScheme,
+  Space,
+  TextInput,
+  Title,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
@@ -30,6 +33,10 @@ import type { Editor } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { env } from "~/env.mjs";
+import {
+  fileUploadErrorMsg,
+  onlyOnePostPerDayAllowed,
+} from "~/messages";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -39,10 +46,6 @@ import { useRouter } from "next/router";
 
 import EmojiPicker from "~/components/Atom/EmojiPicker";
 import ImageUploader from "~/components/ImageUploader";
-import {
-  fileUploadErrorMsg,
-  onlyOnePostPerDayAllowed,
-} from "~/components/MantineNotifications";
 
 import type {
   IsoReportWithPostsFromDb,
@@ -65,7 +68,7 @@ interface AddPostProps {
 }
 
 const prefillHTMLContent =
-  "<h1>Ich bin eine Überschrift</h1><hr/><h2>RichTextEditor</h2>is designed to be as simple as possible to bring a familiar editing experience to regular users.";
+  "<h1>Ich bin eine Überschrift</h1><hr/><p>RichTextEditor is designed to be as simple as possible to bring a familiar editing experience to regular users.</p>";
 
 const AddPost = (props: AddPostProps) => {
   const { isoReport: report, post } = props;
@@ -186,8 +189,9 @@ const AddPost = (props: AddPostProps) => {
     lightHoursPerDay: number;
     images: string[];
   }) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { day, ...postFormValues } = values; // Omitting the 'day' field
+    // Omitting the 'day' field, will not be saved
+    type PostFormValuesWithoutDay = Omit<typeof values, "day">;
+    const postFormValues: PostFormValuesWithoutDay = values;
     const editorHtml = editor?.getHTML() as string;
     postFormValues.content = editorHtml;
 
@@ -215,280 +219,292 @@ const AddPost = (props: AddPostProps) => {
   };
 
   return (
-    <Container p={0} size="md">
-      {/* <Paper p="sm" withBorder> */}
-      <form
-        onSubmit={createPostForm.onSubmit((values) => {
-          handleSubmit(values);
-        }, handleErrors)}
-      >
-        <Box>
-          <TextInput {...createPostForm.getInputProps("id")} hidden />
-          {imageIds.map((imageId, index) => (
-            <input
-              key={index}
-              type="hidden"
-              name={`images[${index}]`}
-              value={imageId}
-            />
-          ))}
+    <>
+      <Container p={0}>
+        <Title order={2}>{t("common:addpost-headline")}</Title>
+      </Container>
+      <Space h="xs" />
 
-          <Box>
-            <Grid gutter="sm">
-              <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
-                <Flex
-                  className="justify-start space-x-2"
-                  align="baseline"
-                >
-                  <DateInput
-                    label={t("common:post-updatedate")}
-                    description={t(
-                      "common:addpost-updatedatedescription"
-                    )}
-                    valueFormat="MMM DD, YYYY HH:mm"
-                    // valueFormat="DD/MM/YYYY HH:mm:ss"
-                    className="w-full"
-                    icon={
-                      <IconCalendarEvent stroke={1.6} size="1.4rem" />
-                    }
-                    withAsterisk
-                    {...createPostForm.getInputProps("date")}
-                    onChange={(selectedDate: Date) => {
-                      const newDate = new Date(selectedDate);
-                      /* 
-newDate.setHours(reportStartDate.getHours());
-newDate.setMinutes(reportStartDate.getMinutes());
-newDate.setSeconds(reportStartDate.getSeconds());
-newDate.setMilliseconds(reportStartDate.getMilliseconds()); 
-*/
-
-                      createPostForm.setFieldValue("date", newDate);
-
-                      /* const timeDifferenceMs =
-  selectedDate.getTime() - reportStartDate.getTime(); */
-
-                      const timeDifferenceDays = Math.floor(
-                        (selectedDate.getTime() -
-                          reportStartDate.getTime()) /
-                          (1000 * 60 * 60 * 24)
-                      );
-
-                      createPostForm.setFieldValue(
-                        "day",
-                        timeDifferenceDays
-                      );
-                    }}
-                  />
-                  <NumberInput
-                    label={t("common:post-addform-growday")}
-                    description={t(
-                      "common:post-addform-growdaydescription"
-                    )}
-                    w={214}
-                    placeholder="1"
-                    icon={<IconNumber stroke={1.6} size="1.8rem" />}
-                    withAsterisk
-                    min={0}
-                    {...createPostForm.getInputProps("day")}
-                    onChange={(value: number) => {
-                      const growDayOffSet = parseInt(
-                        value.toString(),
-                        10
-                      );
-                      if (!growDayOffSet && growDayOffSet != 0) return; // prevent error if changed to empty string
-                      const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
-                      newPostDate.setUTCDate(
-                        newPostDate.getUTCDate() + growDayOffSet
-                      );
-                      createPostForm.setFieldValue("date", newPostDate);
-                      createPostForm.setFieldValue(
-                        "day",
-                        growDayOffSet
-                      );
-                    }}
-                  />
-                </Flex>
-              </Grid.Col>
-              <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
-                <Flex
-                  className="justify-start space-x-2"
-                  align="baseline"
-                >
-                  <Select
-                    label="Grow stage"
-                    description="Actual grow stage"
-                    data={Object.keys(GrowStage).map((key) => ({
-                      value: key,
-                      label: GrowStage[key as keyof typeof GrowStage],
-                    }))}
-                    withAsterisk
-                    {...createPostForm.getInputProps("growStage")}
-                    className="w-full"
-                    icon={<IconPlant stroke={1.6} size="1.4rem" />}
-                  />
-                  <NumberInput
-                    label={t("common:post-addform-lighthours")}
-                    description={t(
-                      "common:post-addform-lighthoursdescription"
-                    )}
-                    withAsterisk
-                    w={232}
-                    min={0}
-                    max={24}
-                    {...createPostForm.getInputProps(
-                      "lightHoursPerDay"
-                    )}
-                    icon={<IconBulb stroke={1.6} size="1.6rem" />}
-                  />
-                </Flex>
-              </Grid.Col>
-            </Grid>
-          </Box>
-
-          <TextInput
-            withAsterisk
-            label="Title for this update"
-            description="Every must have a text title, which is also used as HTML page title."
-            placeholder="Title of this Update"
-            {...createPostForm.getInputProps("title")}
-          />
-          <TextInput
-            hidden
-            {...createPostForm.getInputProps("content")}
-          />
-          <Box
-            fz={"xl"}
-            fw={"bold"}
-            color="#00ff00"
-            sx={(theme) => ({
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? "rgba(0, 0, 0, .3)"
-                  : "rgba(255, 255, 255, .66)",
-              color:
-                theme.colorScheme === "dark"
-                  ? theme.colors.growgreen[4]
-                  : theme.colors.growgreen[6],
-            })}
+      <Container p={0} size="md">
+        <Paper p="sm" withBorder>
+          <form
+            onSubmit={createPostForm.onSubmit((values) => {
+              handleSubmit(values);
+            }, handleErrors)}
           >
-            Text<sup className="ml-1 text-red-600">*</sup>
-          </Box>
+            <Box>
+              <TextInput
+                {...createPostForm.getInputProps("id")}
+                hidden
+              />
+              {imageIds.map((imageId, index) => (
+                <input
+                  key={index}
+                  type="hidden"
+                  name={`images[${index}]`}
+                  value={imageId}
+                />
+              ))}
 
-          <Box
-            className="mantine-Input-wrapper"
-            fz={"sm"}
-            fw={"normal"}
-            ff={"monospace"}
-            sx={(theme) => ({
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? "rgba(0, 0, 0, .3)"
-                  : "rgba(255, 255, 255, .66)",
-              color:
-                theme.colorScheme === "dark"
-                  ? theme.white
-                  : theme.colors.gray[9],
-            })}
-          >
-            Your main text description for this Update comes here!
-          </Box>
-          <RichTextEditor editor={editor}>
-            <RichTextEditor.Toolbar sticky stickyOffset={60}>
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Underline />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-                <RichTextEditor.Highlight />
-                <RichTextEditor.Code />
-              </RichTextEditor.ControlsGroup>
+              <Box>
+                <Grid gutter="sm">
+                  <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
+                    <Flex
+                      className="justify-start space-x-2"
+                      align="baseline"
+                    >
+                      <DateInput
+                        label={t("common:post-updatedate")}
+                        description={t(
+                          "common:addpost-updatedatedescription"
+                        )}
+                        valueFormat="MMM DD, YYYY HH:mm"
+                        className="w-full"
+                        icon={
+                          <IconCalendarEvent
+                            stroke={1.6}
+                            size="1.4rem"
+                          />
+                        }
+                        withAsterisk
+                        {...createPostForm.getInputProps("date")}
+                        onChange={(selectedDate: Date) => {
+                          const newDate = new Date(selectedDate);
+                          createPostForm.setFieldValue("date", newDate);
+                          const timeDifferenceDays = Math.floor(
+                            (selectedDate.getTime() -
+                              reportStartDate.getTime()) /
+                              (1000 * 60 * 60 * 24)
+                          );
+                          createPostForm.setFieldValue(
+                            "day",
+                            timeDifferenceDays
+                          );
+                        }}
+                      />
+                      <NumberInput
+                        label={t("common:post-addform-growday")}
+                        description={t(
+                          "common:post-addform-growdaydescription"
+                        )}
+                        w={214}
+                        placeholder="1"
+                        icon={<IconNumber stroke={1.6} size="1.8rem" />}
+                        withAsterisk
+                        min={0}
+                        {...createPostForm.getInputProps("day")}
+                        onChange={(value: number) => {
+                          const growDayOffSet = parseInt(
+                            value.toString(),
+                            10
+                          );
+                          if (!growDayOffSet && growDayOffSet != 0)
+                            return; // prevent error if changed to empty string
+                          const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+                          newPostDate.setUTCDate(
+                            newPostDate.getUTCDate() + growDayOffSet
+                          );
+                          createPostForm.setFieldValue(
+                            "date",
+                            newPostDate
+                          );
+                          createPostForm.setFieldValue(
+                            "day",
+                            growDayOffSet
+                          );
+                        }}
+                      />
+                    </Flex>
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
+                    <Flex
+                      className="justify-start space-x-2"
+                      align="baseline"
+                    >
+                      <Select
+                        label="Grow stage"
+                        description="Actual grow stage"
+                        data={Object.keys(GrowStage).map((key) => ({
+                          value: key,
+                          label:
+                            GrowStage[key as keyof typeof GrowStage],
+                        }))}
+                        withAsterisk
+                        {...createPostForm.getInputProps("growStage")}
+                        className="w-full"
+                        icon={<IconPlant stroke={1.6} size="1.4rem" />}
+                      />
+                      <NumberInput
+                        label={t("common:post-addform-lighthours")}
+                        description={t(
+                          "common:post-addform-lighthoursdescription"
+                        )}
+                        withAsterisk
+                        w={232}
+                        min={0}
+                        max={24}
+                        {...createPostForm.getInputProps(
+                          "lightHoursPerDay"
+                        )}
+                        icon={<IconBulb stroke={1.6} size="1.6rem" />}
+                      />
+                    </Flex>
+                  </Grid.Col>
+                </Grid>
+              </Box>
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-              </RichTextEditor.ControlsGroup>
+              <Space h="lg" />
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-                <RichTextEditor.Subscript />
-                <RichTextEditor.Superscript />
-              </RichTextEditor.ControlsGroup>
+              <TextInput
+                label="Title for this update"
+                description="Every must have a text title, which is also used as HTML page title."
+                withAsterisk
+                placeholder="Title of this Update"
+                {...createPostForm.getInputProps("title")}
+              />
+              <TextInput
+                hidden
+                {...createPostForm.getInputProps("content")}
+              />
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
+              <Space h="lg" />
 
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.AlignLeft />
-                <RichTextEditor.AlignCenter />
-                {/* 
+              <Box
+                fz={"md"}
+                fw={"normal"}
+                color="#00ff00"
+                sx={(theme) => ({
+                  // backgroundColor:
+                  //   theme.colorScheme === "dark"
+                  //     ? "rgba(0, 0, 0, 0)"
+                  //     : "rgba(255, 255, 255, .66)",
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.growgreen[4]
+                      : theme.colors.growgreen[6],
+                })}
+              >
+                Description<sup className="ml-1 text-red-600">*</sup>
+              </Box>
+
+              <Box
+                className="mantine-Input-wrapper"
+                fz={"sm"}
+                fw={"normal"}
+                ff={"monospace"}
+                sx={(theme) => ({
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? "rgba(0, 0, 0, .3)"
+                      : "rgba(255, 255, 255, .66)",
+                  color:
+                    theme.colorScheme === "dark"
+                      ? theme.white
+                      : theme.colors.gray[9],
+                })}
+              >
+                Your main text description for this Update comes here!
+              </Box>
+              <RichTextEditor editor={editor}>
+                <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Bold />
+                    <RichTextEditor.Italic />
+                    <RichTextEditor.Underline />
+                    <RichTextEditor.Strikethrough />
+                    <RichTextEditor.ClearFormatting />
+                    <RichTextEditor.Highlight />
+                    <RichTextEditor.Code />
+                  </RichTextEditor.ControlsGroup>
+
+                  <EmojiPicker editor={editor as Editor} />
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.H1 />
+                    <RichTextEditor.H2 />
+                    <RichTextEditor.H3 />
+                    <RichTextEditor.H4 />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Blockquote />
+                    <RichTextEditor.Hr />
+                    <RichTextEditor.BulletList />
+                    <RichTextEditor.OrderedList />
+                    <RichTextEditor.Subscript />
+                    <RichTextEditor.Superscript />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Link />
+                    <RichTextEditor.Unlink />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.AlignLeft />
+                    <RichTextEditor.AlignCenter />
+                    {/* 
                 <RichTextEditor.AlignJustify/>
                 <RichTextEditor.AlignRight/> */}
-              </RichTextEditor.ControlsGroup>
+                  </RichTextEditor.ControlsGroup>
+                </RichTextEditor.Toolbar>
 
-              <EmojiPicker editor={editor as Editor} />
-            </RichTextEditor.Toolbar>
+                <RichTextEditor.Content
+                  sx={(theme) => ({
+                    // subscribe to color scheme changes
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[6]
+                        : theme.white,
+                    color:
+                      theme.colorScheme === "dark"
+                        ? theme.white
+                        : theme.black,
+                    fontSize: theme.fontSizes.sm,
+                    fontWeight: 500,
+                  })}
+                />
+              </RichTextEditor>
 
-            <RichTextEditor.Content
-              sx={(theme) => ({
-                // subscribe to color scheme changes
-                backgroundColor:
-                  theme.colorScheme === "dark"
-                    ? theme.colors.dark[6]
-                    : theme.white,
-                color:
-                  theme.colorScheme === "dark"
-                    ? theme.white
-                    : theme.black,
-                fontSize: theme.fontSizes.sm,
-                fontWeight: 500,
-              })}
-            />
-          </RichTextEditor>
+              <ImageUploader
+                report={report}
+                cloudUrls={post?.images.map((image) => image.cloudUrl)}
+                setImageIds={setImageIds}
+                maxSize={getFileMaxSizeInBytes()}
+                maxFiles={getFileMaxUpload()}
+                onReject={(files) => {
+                  files.forEach((file) => {
+                    const fileSizeInMB = (
+                      file.file.size /
+                      1024 ** 2
+                    ).toFixed(2);
+                    notifications.show(
+                      fileUploadErrorMsg(
+                        file.file.name,
+                        fileSizeInMB,
+                        env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
+                      )
+                    );
+                  });
+                }}
+              />
 
-          <ImageUploader
-            report={report}
-            cloudUrls={post?.images.map((image) => image.cloudUrl)}
-            setImageIds={setImageIds}
-            maxSize={getFileMaxSizeInBytes()}
-            maxFiles={getFileMaxUpload()}
-            onReject={(files) => {
-              files.forEach((file) => {
-                const fileSizeInMB = (
-                  file.file.size /
-                  1024 ** 2
-                ).toFixed(2);
-                notifications.show(
-                  fileUploadErrorMsg(
-                    file.file.name,
-                    fileSizeInMB,
-                    env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                  )
-                );
-              });
-            }}
-          />
-
-          <Group position="right" mt="xl">
-            <Button
-              w={160}
-              type="submit"
-              leftIcon={<IconCloudUpload stroke={1.6} size="1.2rem" />}
-            >
-              {t("common:post-addformn-save-button")}
-            </Button>
-          </Group>
-        </Box>
-      </form>
-      {/* </Paper> */}
-    </Container>
+              <Group position="right" mt="xl">
+                <Button
+                  w={160}
+                  type="submit"
+                  leftIcon={
+                    <IconCloudUpload stroke={1.6} size="1.2rem" />
+                  }
+                >
+                  {t("common:post-addformn-save-button")}
+                </Button>
+              </Group>
+            </Box>
+          </form>
+        </Paper>
+      </Container>
+    </>
   );
 };
 
