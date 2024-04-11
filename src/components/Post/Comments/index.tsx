@@ -30,10 +30,9 @@ import { UserComment } from "~/components/User/Comment";
 
 import { Locale } from "~/types";
 
-import { sanatizeDateString } from "~/helpers";
-import { InputEditCommentForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { sanatizeDateString } from "~/utils/helperUtils";
+import { InputEditCommentForm } from "~/utils/inputValidation";
 
 interface CommentsProps {
   reportId: string;

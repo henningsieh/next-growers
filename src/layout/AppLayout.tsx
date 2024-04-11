@@ -27,10 +27,7 @@ import {
   IconMessageCircle,
 } from "@tabler/icons-react";
 import { Analytics } from "@vercel/analytics/react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SpeedInsights } from "@vercel/speed-insights/next";
-
-import { type ReactNode } from "react";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -208,10 +205,10 @@ function openUrlInNewTab(url: string) {
   window.open(url, "_blank");
 }
 
-export default function AppLayout({
+export default function RootLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   const [drawerIsOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);

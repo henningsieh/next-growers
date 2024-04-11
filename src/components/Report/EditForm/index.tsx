@@ -39,10 +39,9 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 import type { EditReportFormProps } from "~/types";
 import { Environment } from "~/types";
 
-import { handleDrop } from "~/helpers";
-import { InputEditReportForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { handleDrop } from "~/utils/helperUtils";
+import { InputEditReportForm } from "~/utils/inputValidation";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {

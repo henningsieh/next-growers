@@ -54,13 +54,12 @@ import type {
 } from "~/types";
 import { GrowStage } from "~/types";
 
-import { InputCreatePostForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
 import {
   getFileMaxSizeInBytes,
   getFileMaxUpload,
 } from "~/utils/fileUtils";
+import { InputCreatePostForm } from "~/utils/inputValidation";
 
 interface AddPostProps {
   isoReport: IsoReportWithPostsFromDb;

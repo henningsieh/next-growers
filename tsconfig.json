@@ -17,12 +17,14 @@
     "incremental": true,
     "noUncheckedIndexedAccess": false, // otherwise linter will complain about own theme color shades
     "baseUrl": ".",
+    "plugins": [{ "name": "next" }],
     "paths": {
       "~/*": ["./src/*"]
     }
   },
   "include": [
     ".eslintrc.cjs",
+    ".next/types/**/*.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

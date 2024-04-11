@@ -3,7 +3,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
-import { InputSetUserName } from "~/helpers/inputValidation";
+import { InputSetUserName } from "~/utils/inputValidation";
 
 export const userRouter = createTRPCRouter({
   saveOwnUsername: protectedProcedure

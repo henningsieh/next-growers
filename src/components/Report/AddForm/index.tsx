@@ -32,10 +32,9 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
-import { handleDrop } from "~/helpers";
-import { InputCreateReportForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { handleDrop } from "~/utils/helperUtils";
+import { InputCreateReportForm } from "~/utils/inputValidation";
 
 interface AddFormProps {
   user: User;

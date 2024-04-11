@@ -7,7 +7,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { InputLike } from "~/helpers/inputValidation";
+import { InputLike } from "~/utils/inputValidation";
 
 export const likeRouter = createTRPCRouter({
   getLikesByItemId: publicProcedure
@@ -102,6 +102,7 @@ export const likeRouter = createTRPCRouter({
         },
       });
       // Create a notification for the report author
+      //FixMe: Notification for recipient, NOT FOR THE AUTHOR!!
       await ctx.prisma.notification.create({
         data: {
           recipient: {

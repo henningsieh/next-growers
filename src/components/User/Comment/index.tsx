@@ -36,10 +36,9 @@ import UserAvatar from "~/components/Atom/UserAvatar";
 
 import { type Comment, Locale } from "~/types";
 
-import { sanatizeDateString } from "~/helpers";
-import { InputEditCommentForm } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { sanatizeDateString } from "~/utils/helperUtils";
+import { InputEditCommentForm } from "~/utils/inputValidation";
 
 const useStyles = createStyles((theme) => ({
   comment: {

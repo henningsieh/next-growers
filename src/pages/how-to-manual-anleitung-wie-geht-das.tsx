@@ -1,23 +1,30 @@
 import { appTitle } from "./_document";
 
-import type { GetStaticProps, NextPage } from "next";
+import type {
+  GetStaticProps,
+  GetStaticPropsContext,
+  NextPage,
+} from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
 import HowTo from "~/components/HowTo";
 
 /** PUBLIC STATIC PAGE with translations
- *
  * getStaticProps (Static Site Generation)
- * @returns Promise<GetStaticPropsResult<Props>> | GetStaticPropsResult<Props>
+ *
+ * @param GetStaticPropsContext<Params extends ParsedUrlQuery = ParsedUrlQuery, Preview extends PreviewData = PreviewData>
+ * @returns Promise<{ props: { _nextI18Next?: { initialI18nStore: any; initialLocale: string; ns: string[]; userConfig: UserConfig | null; } | undefined; }; }>
  */
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "en", ["common"])),
-    },
-  };
-};
+export const getStaticProps: GetStaticProps = async (
+  context: GetStaticPropsContext
+) => ({
+  props: {
+    ...(await serverSideTranslations(context.locale as string, [
+      "common",
+    ])),
+  },
+});
 
 /**
  * @name HowToPage

@@ -18,7 +18,7 @@ import AddPost from "~/components/Post/AddForm";
 import type { IsoReportWithPostsFromDb } from "~/types";
 import { Locale } from "~/types";
 
-import { sanatizeDateString } from "~/helpers";
+import { sanatizeDateString } from "~/utils/helperUtils";
 
 interface PostsAccordionProps {
   report: IsoReportWithPostsFromDb | undefined;

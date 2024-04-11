@@ -10,7 +10,7 @@ import {
 import {
   InputEditCommentForm,
   InputGetCommentsByPostId,
-} from "~/helpers/inputValidation";
+} from "~/utils/inputValidation";
 
 export const commentRouter = createTRPCRouter({
   /**

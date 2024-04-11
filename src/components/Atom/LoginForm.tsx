@@ -7,7 +7,7 @@ import { useState } from "react";
 
 import { signIn } from "next-auth/react";
 
-import { InputLogin } from "~/helpers/inputValidation";
+import { InputLogin } from "~/utils/inputValidation";
 
 interface LoginFormContent {
   email: string;

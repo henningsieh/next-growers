@@ -18,7 +18,11 @@ import { IconAlertCircle } from "@tabler/icons-react";
 
 import { useState } from "react";
 
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -30,39 +34,30 @@ import AppNotification from "~/components/Atom/AppNotification";
 
 import { authOptions } from "~/server/auth";
 
-import { getUsername } from "~/helpers";
-import { InputEditProfile } from "~/helpers/inputValidation";
-
 import { api } from "~/utils/api";
+import { getUsername } from "~/utils/helperUtils";
+import { InputEditProfile } from "~/utils/inputValidation";
 
-/**
- * PROTECTED PAGE with session and translations
- * async getServerSideProps()
+/** PROTECTED DYNAMIC PAGE with translations
+ * getServerSideProps (Server-Side Rendering)
  *
- * @param context: GetServerSidePropsContext<{translations: string | string[] | undefined;}>
- * @returns : Promise<{props: { session: Session | null } | undefined;};}>
+ * @param GetServerSidePropsContext<{ locale: string; translations: string | string[] | undefined; }> context - The context object containing information about the request
+ * @returns Promise<{ props: { [key: string]: any }; }> - A promise resolving to an object containing props to be passed to the page component
  */
-export async function getServerSideProps(
-  context: GetServerSidePropsContext<{
-    translations: string | string[] | undefined;
-  }>
-) {
-  // Fetch translations using next-i18next
-  const translations = await serverSideTranslations(
-    context.locale as string,
-    ["common"]
-  );
-  return {
-    props: {
-      ...translations,
-      session: await getServerSession(
-        context.req,
-        context.res,
-        authOptions
-      ),
-    },
-  };
-}
+export const getServerSideProps: GetServerSideProps = async (
+  context
+) => ({
+  props: {
+    ...(await serverSideTranslations(context.locale as string, [
+      "common",
+    ])),
+    session: await getServerSession(
+      context.req,
+      context.res,
+      authOptions
+    ),
+  },
+});
 
 const ProtectedEditReport: NextPage = () => {
   const pageTitle = "Edit Profile";

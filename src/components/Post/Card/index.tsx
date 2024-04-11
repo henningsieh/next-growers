@@ -37,7 +37,7 @@ import {
 } from "~/types";
 import { Locale } from "~/types";
 
-import { sanatizeDateString } from "~/helpers";
+import { sanatizeDateString } from "~/utils/helperUtils";
 
 const useStyles = createStyles((theme) => ({
   carousel: {
