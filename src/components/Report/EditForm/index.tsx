@@ -231,7 +231,13 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
                   comments={89}
                   imageUrl={cloudUrl}
                   authorName={user.name as string}
-                  authorImageUrl={user.image as string}
+                  authorImageUrl={
+                    user.image
+                      ? user.image
+                      : `https://ui-avatars.com/api/?name=${
+                          user.name as string
+                        }`
+                  }
                   title={editReportForm.values.title}
                   description={editReportForm.values.description}
                   publicLink={`/grow/${report.id as string}`}

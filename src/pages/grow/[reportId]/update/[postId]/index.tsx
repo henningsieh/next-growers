@@ -423,10 +423,15 @@ export default function PublicReportPost(
           {/* <ReportHeader
             report={staticReportFromProps}
             image={staticReportFromProps.image?.cloudUrl as string}
-            avatar={staticReportFromProps.author.image as string}
+            avatar={staticReportFromProps.author.image 
+                                  ? staticReportFromProps.author.image
+                    : `https://ui-avatars.com/api/?name=${
+                        staticReportFromProps.author.name as string
+                      }`
+            }
             name={staticReportFromProps.author.name as string}
             job={staticReportFromProps.description}
-          /> */}
+          />  */}
           {/* // Posts Date Picker */}
           {/* <Box ref={targetRef}> */}
           <Box>

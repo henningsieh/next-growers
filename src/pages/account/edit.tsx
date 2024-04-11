@@ -18,11 +18,7 @@ import { IconAlertCircle } from "@tabler/icons-react";
 
 import { useState } from "react";
 
-import type {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  NextPage,
-} from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -129,7 +125,13 @@ const ProtectedEditReport: NextPage = () => {
                 className="... rounded-full"
                 height={142}
                 width={142}
-                src={session.user.image as string}
+                src={
+                  session.user.image
+                    ? session.user.image
+                    : `https://ui-avatars.com/api/?name=${
+                        session.user.name as string
+                      }`
+                }
                 alt={`${session.user.name as string}'s Profile Image`}
               />
             </Box>

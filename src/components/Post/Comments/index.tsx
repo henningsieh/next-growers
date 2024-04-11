@@ -11,20 +11,15 @@ import {
   Text,
   Textarea,
   Transition,
-  TypographyStylesProvider,
-  useMantineTheme,
+  TypographyStylesProvider, // useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
-  IconAlignLeft,
   IconInfoCircle,
-  IconMinus,
-  IconTextPlus,
   IconTextWrap,
   IconX,
 } from "@tabler/icons-react";
-import { IconPlus } from "@tabler/icons-react";
 import { commentSuccessfulMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
@@ -52,7 +47,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   const router = useRouter();
   const trpc = api.useUtils();
 
-  const theme = useMantineTheme();
+  //const theme = useMantineTheme();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -63,7 +58,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   const {
     data: userComments,
     isLoading,
-    isError,
+    // isError,
   } = api.comments.getCommentsByPostId.useQuery({
     postId: postId,
   });
@@ -150,7 +145,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   return (
     <Box>
-      {status === "loading" && <p>loading comments...</p>}
+      {status !== "loading" && isLoading && <p>loading comments...</p>}
       {status === "authenticated" && (
         <>
           <Space h={"lg"} />
@@ -188,7 +183,13 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                 <Group position="apart">
                   <Group position="left">
                     <UserAvatar
-                      imageUrl={session?.user.image as string}
+                      imageUrl={
+                        session?.user.image
+                          ? session.user.image
+                          : `https://ui-avatars.com/api/?name=${
+                              session.user.name as string
+                            }`
+                      }
                       userName={session?.user.name as string}
                       avatarRadius={42}
                       tailwindMarginTop={false}

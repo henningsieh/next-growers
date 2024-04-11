@@ -71,7 +71,13 @@ export default function SessionPanel() {
                   className="rounded-sm"
                   height={32}
                   width={32}
-                  src={session.user.image as string}
+                  src={
+                    session.user.image
+                      ? session.user.image
+                      : `https://ui-avatars.com/api/?name=${
+                          session.user.name as string
+                        }`
+                  }
                   alt={`${session.user.name as string}'s Profile Image`}
                 />
               </ActionIcon>

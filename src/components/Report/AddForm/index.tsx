@@ -182,7 +182,13 @@ function Form({ user }: AddFormProps) {
                 description={createReportForm.values.description}
                 publicLink="#"
                 authorName={user.name as string}
-                authorImageUrl={user.image as string}
+                authorImageUrl={
+                  user.image
+                    ? user.image
+                    : `https://ui-avatars.com/api/?name=${
+                        user.name as string
+                      }`
+                }
                 comments={89}
                 views={183}
               />
