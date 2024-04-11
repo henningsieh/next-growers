@@ -16,6 +16,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconMinus, IconX } from "@tabler/icons-react";
 import { IconPlus } from "@tabler/icons-react";
+import { commentSuccessfulMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -25,7 +26,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import UserAvatar from "~/components/Atom/UserAvatar";
-import { commentSuccessfulMsg } from "~/components/MantineNotifications";
 import { UserComment } from "~/components/User/Comment";
 
 import { Locale } from "~/types";

@@ -16,10 +16,6 @@ export const InputEditProfile = z.object({
   name: z.string().min(5, {
     message: "Username must have at least 5 letters",
   }),
-  /*       .refine((value) => !/\s/.test(value), {
-        message: "Userame must not contain whitespace characters",
-      }),
-      */
   email: z.string().email({ message: "Invalid email address" }),
 });
 
@@ -34,6 +30,7 @@ export const InputCreateReportForm = z.object({
         message: `Title should have max 32 letters. ${val.length} letters given.`,
       })
     ),
+  imageId: z.string().min(1, { message: "Header image is missing" }),
   description: z
     .string()
     .min(12, {
@@ -46,7 +43,6 @@ export const InputCreateReportForm = z.object({
         message: `Description should have max 64 letters. ${val.length} letters given.`,
       })
     ),
-  imageId: z.string().min(1, { message: "Header image is missing" }),
 });
 
 export const InputEditReportForm = z.object({

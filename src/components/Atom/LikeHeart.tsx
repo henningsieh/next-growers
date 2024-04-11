@@ -9,16 +9,15 @@ import {
 import { notifications } from "@mantine/notifications";
 import { IconHeart } from "@tabler/icons-react";
 import { IconHeartFilled } from "@tabler/icons-react";
-
-import { useState } from "react";
-
-import { useSession } from "next-auth/react";
-
 import {
   createLikeErrorMsg,
   dislikeSuccessfulMsg,
   likeSuccessfulMsg,
-} from "~/components/MantineNotifications";
+} from "~/messages";
+
+import { useState } from "react";
+
+import { useSession } from "next-auth/react";
 
 import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
 
