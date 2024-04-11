@@ -273,7 +273,7 @@ export function UserComment({
           mt="xs"
           justify="flex-end"
           align="flex-start"
-          gap={"xs"}
+          gap={4}
           style={{ flexGrow: 1 }}
         >
           {status === "authenticated" &&
