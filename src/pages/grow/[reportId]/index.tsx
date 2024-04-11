@@ -184,7 +184,13 @@ const PublicReport: NextPage = () => {
             <ReportHeader
               report={report}
               image={report?.image?.cloudUrl as string}
-              avatar={report?.author?.image as string}
+              avatar={
+                report?.author?.image
+                  ? report?.author?.image
+                  : `https://ui-avatars.com/api/?name=${
+                      report?.author?.name as string
+                    }`
+              }
               name={report?.author?.name as string}
               job={report?.description as string}
             />
