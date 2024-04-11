@@ -21,8 +21,6 @@ import { ProtectedEditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
 
-import type { Strains } from "~/types";
-
 import { api } from "~/utils/api";
 
 /**
@@ -62,14 +60,14 @@ export async function getServerSideProps(
  */
 const EditReportDetails: NextPage = () => {
   const router = useRouter();
+  const id = router.query.reportId as string;
+
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
+  const pageTitle = t("common:report-edit-headline");
 
   const { data: session, status } = useSession();
   const sessionIsLoading = status === "loading";
-
-  const id = router.query.reportId as string;
-  const pageTitle = t("common:report-edit-headline");
 
   const {
     data: report,
@@ -119,39 +117,36 @@ const EditReportDetails: NextPage = () => {
         {/* // Header End */}
         <Box pos="relative">
           <LoadingOverlay
-            visible={status === "loading" || reportIsLoading}
+            visible={sessionIsLoading || reportIsLoading}
             transitionDuration={600}
             overlayBlur={2}
           />
 
-          {status === "authenticated" && !reportIsLoading && (
-            <>
-              <ProtectedEditReportForm
-                report={report}
-                strains={strains as Strains}
-                user={session.user}
-              />
+          {status === "authenticated" &&
+            !reportIsLoading &&
+            !strainsAreLoading && (
+              <>
+                <ProtectedEditReportForm
+                  report={report}
+                  strains={strains}
+                  user={session.user}
+                />
 
-              <Space h="xl" />
-              <Space h="xl" />
+                <Space h="xl" />
+                <Space h="xl" />
 
-              {/* // AddPost Component */}
-              {/* Ein neues Update hinzufügen */}
-              <Container p={0}>
-                <Title order={2}>{t("common:addpost-headline")}</Title>
-              </Container>
-              <Space h="xs" />
+                {/* AddPost Component */}
+                {/* Ein neues Update hinzufügen */}
+                <AddPost isoReport={report} post={null} />
 
-              <AddPost isoReport={report} post={null} />
+                <Space h="xl" />
+                <Space h="xl" />
 
-              <Space h="xl" />
-              <Space h="xl" />
-
-              {/* // PostsAccordion Component */}
-              {/* Alle Updates bearbeiten*/}
-              <PostsAccordion report={report && report} />
-            </>
-          )}
+                {/* PostsAccordion Component */}
+                {/* Alle Updates bearbeiten*/}
+                <PostsAccordion report={report && report} />
+              </>
+            )}
         </Box>
       </Container>
     </>

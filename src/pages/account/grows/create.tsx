@@ -44,9 +44,9 @@ export async function getServerSideProps(
 
 const ProtectedCreateReport: NextPage = () => {
   const router = useRouter();
+
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
-
   const pageTitle = t("common:report-create-headline");
 
   const { data: session } = useSession();
