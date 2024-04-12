@@ -24,11 +24,14 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
+import OpenGraphDescription from "~/components/OpenGraph/Description";
+import OpenGraphImage from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 
 import { prisma } from "~/server/db";
+
+import { getDescription } from "~/utils/description";
 
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
@@ -367,27 +370,22 @@ export default function PublicReportPost(
       notifications.show(noPostAtThisDay);
     }
   };
+  const description = getDescription(thisPost?.title);
   const images = thisPost?.images.map((image) => image.cloudUrl);
-  const imageTags = generateOpenGraphMetaTagsImage(images);
-  const slicedContent = convert(thisPost?.content, { wordwrap: 25 });
   return (
     <>
+      <OpenGraphDescription description={description} />
+      <OpenGraphImage imageUrls={images} />
       <Head>
         <title>{`Grow "${pageTitle}" from ${
           staticReportFromProps.author?.name as string
         } | GrowAGram`}</title>
-        <meta
-          name="description"
-          content="Create your grow report on growagram.com" //FIXME: SEO description
-        />
+        <meta name="description" content={description} />
         <meta
           property="og:url"
           content={`/grow/${staticReportFromProps.id}/update/${thisPost.id}`}
         />
         <meta property="og:title" content={thisPost.title} />
-        <meta property="og:description" content={slicedContent} />
-        {imageTags &&
-          imageTags.map((tag, index) => <meta key={index} {...tag} />)}
       </Head>
       {/* // Main Content Container */}
       <Container

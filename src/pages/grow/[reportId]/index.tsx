@@ -11,12 +11,14 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
+import OpenGraphDescription from "~/components/OpenGraph/Description";
+import OpenGraphImage from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
 
 import { api } from "~/utils/api";
+import { getDescription } from "~/utils/description";
 
 /** PUBLIC DYNAMIC PAGE with translations
  * getServerSideProps (Server-Side Rendering)
@@ -139,16 +141,16 @@ const PublicReport: NextPage = () => {
     }
   };
 
-  const imageTags = generateOpenGraphMetaTagsImage(
-    report?.image?.cloudUrl as string
-  );
-  const description = "Create your grow report on growagram.com"; //@TODO fix me SEO
+  const images = report?.image?.cloudUrl as string;
+  const description = getDescription(report?.description);
   const title = `Grow "${pageTitle}" from ${
     report?.author?.name as string
   } | GrowAGram`;
 
   return (
     <>
+      <OpenGraphDescription description={description} />
+      <OpenGraphImage imageUrls={images} />
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
@@ -157,9 +159,6 @@ const PublicReport: NextPage = () => {
           content={`https://growagram.com/grow/${report?.id || ""}`}
         />
         <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        {imageTags &&
-          imageTags.map((tag, index) => <meta key={index} {...tag} />)}
       </Head>
       {/* // Main Content Container */}
       <Container
