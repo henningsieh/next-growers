@@ -5,10 +5,17 @@ import { Environment, GrowStage } from "~/types";
 
 export const InputLogin = z.string().email("Invalid email address");
 
-export const InputSetUserName = z.object({
+export const InputSaveUserName = z.object({
   id: z.string().min(1),
   name: z.string().min(5, {
     message: "Username must have at least 5 letters",
+  }),
+});
+
+export const InputSaveUserImage = z.object({
+  id: z.string().min(1),
+  imageURL: z.string().url({
+    message: "imageURL must be a valid URL",
   }),
 });
 
