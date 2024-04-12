@@ -61,7 +61,7 @@ export const handleSearchChange = (
   setSearchString(event.target.value);
 };
 
-export function getUsername(): string {
+export function getFakeAIUsername(): string {
   const usernames: string[] = [
     "Green Thumb",
     "Garden Guru",
@@ -245,7 +245,7 @@ export const handleDrop = async (
   setImagePublicId: Dispatch<SetStateAction<string>>,
   setCloudUrl: Dispatch<SetStateAction<string>>,
   setIsUploading: Dispatch<SetStateAction<boolean>>
-): Promise<void> => {
+): Promise<string> => {
   const formData = new FormData();
 
   if (files && files[0]) {
@@ -258,12 +258,15 @@ export const handleDrop = async (
 
       if (data.success) {
         console.debug("File uploaded successfully", data);
-        // setting the image informations to the component state
+        // setting the image information to the component state
         setImageId(data.imageId);
         setImagePublicId(data.imagePublicId);
         setCloudUrl(data.cloudUrl);
 
         setIsUploading(false);
+
+        // Return the cloudUrl when the file is uploaded successfully
+        return data.cloudUrl;
       } else {
         setIsUploading(false);
         throw new Error("Server Error 500: upload failed");
@@ -273,6 +276,8 @@ export const handleDrop = async (
       console.debug(error);
       throw new Error("Error uploading file");
     }
+  } else {
+    throw new Error("No file to upload");
   }
 };
 

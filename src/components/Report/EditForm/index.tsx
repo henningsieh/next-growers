@@ -22,11 +22,12 @@ import {
   IconCalendar,
   IconCloudUpload,
   IconDownload,
-  IconFileAlert,
   IconHome,
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
+import { env } from "~/env.mjs";
+import { fileUploadErrorMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -121,13 +122,9 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
       onError: (err, newReport, context) => {
         toast.error("An error occured when saving your report");
         if (!context) return;
-        console.debug(context);
       },
-      onSuccess: async (savedReport) => {
+      onSuccess: async () => {
         toast.success("Your report was successfully saved");
-        console.debug(savedReport);
-        // Navigate to the new report page
-        // void router.push(`/grow-report/${savedReport.id}`);
         await trpc.reports.getIsoReportWithPostsFromDb.invalidate();
         trpc.reports.getIsoReportWithPostsFromDb.getData();
       },
@@ -271,16 +268,13 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
                       fileSizeInBytes /
                       1024 ** 2
                     ).toFixed(2);
-                    notifications.show({
-                      title: "Error",
-                      message:
-                        "File size of " +
-                        fileSizeInMB +
-                        " MB exceeds the allowed maximum of ≈ 4.28 MB (4.394 KB, 4.500.000 B)!",
-                      color: "red",
-                      icon: <IconFileAlert />,
-                      loading: false,
-                    });
+                    notifications.show(
+                      fileUploadErrorMsg(
+                        files[0].file.name,
+                        fileSizeInMB,
+                        env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
+                      )
+                    );
                   }
                 }}
                 // onChange={(e) => {

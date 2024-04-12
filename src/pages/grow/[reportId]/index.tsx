@@ -1,4 +1,11 @@
-import { Box, Container, Title, useMantineTheme } from "@mantine/core";
+import {
+  Alert,
+  Box,
+  Container,
+  Text,
+  Title,
+  useMantineTheme,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
@@ -16,6 +23,8 @@ import OpenGraphImage from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
+
+import type { IsoReportWithPostsFromDb } from "~/types";
 
 import { api } from "~/utils/api";
 import { getDescription } from "~/utils/description";
@@ -208,6 +217,7 @@ const PublicReport: NextPage = () => {
           )}
           {/* // Posts Date Picker */}
           {/* <Box ref={targetRef}> */}
+
           <Box>
             <PostsDatePicker
               defaultDate={
@@ -221,7 +231,39 @@ const PublicReport: NextPage = () => {
               responsiveColumnCount={getResponsiveColumnCount}
             />
           </Box>
-          {report && <PostCard postId={postId} report={report} />}
+
+          {postDays?.length === 0 ? (
+            <>
+              <Alert
+                p={16}
+                bg={theme.colors.groworange[5]}
+                variant="filled"
+              >
+                <Text mx="auto">
+                  Dieser Grow hat bisher leider noch keine Updates! 😪
+                </Text>
+              </Alert>
+            </>
+          ) : (
+            <>
+              {selectedDate === null ? (
+                <Alert
+                  p={16}
+                  bg={theme.colors.green[9]}
+                  variant="filled"
+                >
+                  <Text mx="auto">
+                    Select an Update (Grow Day) from calendar!☝️
+                  </Text>
+                </Alert>
+              ) : (
+                <PostCard
+                  postId={postId}
+                  report={report as IsoReportWithPostsFromDb}
+                />
+              )}
+            </>
+          )}
         </Container>
       </Container>
     </>
