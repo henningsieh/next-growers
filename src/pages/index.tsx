@@ -13,8 +13,8 @@ import LandingPage from "~/components/LandingPage";
 /** PUBLIC DYNAMIC PAGE with translations
  * getServerSideProps (Server-Side Rendering)
  *
- * @param GetServerSidePropsContext<Params extends ParsedUrlQuery = ParsedUrlQuery, Preview extends PreviewData = PreviewData> context - The context object containing information about the request
  * @returns Promise<GetServerSidePropsResult<Props>> - A promise resolving to an object containing props to be passed to the page component
+ * @param context
  */
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
@@ -28,7 +28,6 @@ export const getServerSideProps: GetServerSideProps = async (
 
 /**
  * @Page PublicIndex
- * @param props: { trpcState: DehydratedState, reportId: string }
  * @returns NextPage
  */
 const PublicIndex: NextPage = () => {
