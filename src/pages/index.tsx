@@ -42,7 +42,7 @@ const PublicIndex: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
         <meta
           property="og:image"
-          content="/grow-a-gram-high-resolution-logo.webp"
+          content="https://growagram.com/grow-a-gram-high-resolution-logo.webp"
         />
         <meta property="og:title" content={appTitle} />
       </Head>
