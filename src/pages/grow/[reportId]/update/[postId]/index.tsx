@@ -250,8 +250,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 /** ReportDetails
- *  @param props: { report: Report }
  *  @returns React Functional Component
+ * @param props
  */
 export default function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
