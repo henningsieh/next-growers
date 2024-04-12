@@ -41,6 +41,11 @@ const PublicIndex: NextPage = () => {
           content="GrowAGram is a cannabis home cultivation community for sharing and discovering tips, techniques, and insights for successful cannabis cultivation. Welcome! Join our image community, share your weed images and upload your own reports to share your successes and learn from others. We are in alpha version - your feedback is very appreciated!"
         />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content="/grow-a-gram-high-resolution-logo.webp"
+        />
+        <meta property="og:title" content={appTitle} />
       </Head>
 
       <LandingPage />
