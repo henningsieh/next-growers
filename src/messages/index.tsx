@@ -1,10 +1,10 @@
 import type { NotificationProps } from "@mantine/core";
 import {
+  IconAlertCircle,
   IconCalendarOff,
   IconCannabis,
-  IconError404,
   IconFileAlert,
-  IconLogin,
+  IconPhoto,
 } from "@tabler/icons-react";
 
 export const noPostAtThisDay: NotificationProps & {
@@ -52,20 +52,33 @@ export const commentDeletedSuccessfulMsg: NotificationProps & {
   icon: <IconCannabis />,
   loading: false,
 };
-
+export const setUserNameSuccessfulMsg = (userName: string) => ({
+  loading: false,
+  title: "Success",
+  message: `Username "${userName}" has been updated successfully.`,
+  color: "green",
+  icon: <IconCannabis />,
+});
+export const setUserimageSuccessfulMsg = {
+  title: "Success",
+  message: "Your user image has been updated successfully! ✅",
+  color: "green",
+  icon: <IconPhoto />,
+  loading: false,
+};
 export const likeErrorMsg = (msg: string) => ({
   loading: false,
   title: "Error",
   message: msg,
   color: "red",
-  icon: <IconLogin />,
+  icon: <IconAlertCircle />,
 });
 export const createLikeErrorMsg = (msg: string) => ({
   loading: false,
   title: "Error",
   message: msg,
   color: "red",
-  icon: <IconError404 />,
+  icon: <IconAlertCircle />,
 });
 
 export const onlyOnePostPerDayAllowed = {
@@ -83,6 +96,14 @@ export const fileUploadErrorMsg = (
 ) => ({
   title: "Error " + filename,
   message: `File size of ${fileSizeInMB} MB exceeds the allowed maximum of ${uploadMaxSize} MB`,
+  color: "red",
+  icon: <IconFileAlert />,
+  loading: false,
+});
+
+export const filesMaxOneErrorMsg = (filesCount: number) => ({
+  title: `File count error: The count ${filesCount} exceeds the permitted files count of 1.`,
+  message: ` You can only upload one image file as a user avatar.`,
   color: "red",
   icon: <IconFileAlert />,
   loading: false,
