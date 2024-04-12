@@ -9,6 +9,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconChevronLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
+import { convert } from "html-to-text";
 import { noPostAtThisDay } from "~/messages";
 
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 
@@ -248,8 +250,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 /** ReportDetails
- *  @param props: { report: Report }
  *  @returns React Functional Component
+ * @param props
  */
 export default function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
@@ -365,7 +367,9 @@ export default function PublicReportPost(
       notifications.show(noPostAtThisDay);
     }
   };
-
+  const images = thisPost?.images.map((image) => image.cloudUrl);
+  const imageTags = generateOpenGraphMetaTagsImage(images);
+  const slicedContent = convert(thisPost?.content, { wordwrap: 25 });
   return (
     <>
       <Head>
@@ -376,6 +380,14 @@ export default function PublicReportPost(
           name="description"
           content="Create your grow report on growagram.com" //FIXME: SEO description
         />
+        <meta
+          property="og:url"
+          content={`/grow/${staticReportFromProps.id}/update/${thisPost.id}`}
+        />
+        <meta property="og:title" content={thisPost.title} />
+        <meta property="og:description" content={slicedContent} />
+        {imageTags &&
+          imageTags.map((tag, index) => <meta key={index} {...tag} />)}
       </Head>
       {/* // Main Content Container */}
       <Container

@@ -44,6 +44,7 @@ export default class _Document extends Document {
             data-domain="growagram.com"
             src="https://cdn.growagram.com/js/script.js"
           ></script>
+          <meta property="og:type" content="website" />
         </Head>
         <body>
           <Main />

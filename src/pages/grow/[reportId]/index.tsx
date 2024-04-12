@@ -18,6 +18,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { ReportHeader } from "~/components/Report/Header";
@@ -147,16 +148,27 @@ const PublicReport: NextPage = () => {
     }
   };
 
+  const imageTags = generateOpenGraphMetaTagsImage(
+    report?.image?.cloudUrl as string
+  );
+  const description = "Create your grow report on growagram.com"; //@TODO fix me SEO
+  const title = `Grow "${pageTitle}" from ${
+    report?.author?.name as string
+  } | GrowAGram`;
+
   return (
     <>
       <Head>
-        <title>{`Grow "${pageTitle}" from ${
-          report?.author?.name as string
-        } | GrowAGram`}</title>
+        <title>{title}</title>
+        <meta name="description" content={description} />
         <meta
-          name="description"
-          content="Create your grow report on growagram.com" //FIXME: SEO description
+          property="og:url"
+          content={`https://growagram.com/grow/${report?.id || ""}`}
         />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        {imageTags &&
+          imageTags.map((tag, index) => <meta key={index} {...tag} />)}
       </Head>
       {/* // Main Content Container */}
       <Container
