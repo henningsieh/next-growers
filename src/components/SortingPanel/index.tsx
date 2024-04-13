@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  createStyles,
-  NativeSelect,
-  rem,
-  useMantineColorScheme,
-  useMantineTheme,
-} from "@mantine/core";
+import { Box, Button, createStyles, NativeSelect } from "@mantine/core";
 import {
   IconCalendarDown,
   IconCalendarUp,
@@ -61,9 +53,10 @@ export default function SortingPanel({
   return (
     <Box className="inline-flex space-x-1">
       <NativeSelect
-        className={classes.select}
-        variant="default"
+        size="xs"
         value={sortBy}
+        variant="default"
+        className={classes.select}
         onChange={(event) => setSortBy(event.currentTarget.value)}
         data={[
           { value: "createdAt", label: createdAtLabel },
@@ -92,16 +85,17 @@ export default function SortingPanel({
         }
       />
       <Button
+        size="xs"
         className={classes.sortButton}
         variant="default"
-        h={34}
+        h={28}
         // w={24}
         onClick={handleToggleDesc}
       >
         {desc ? (
-          <IconSortDescending2 size="1.4rem" />
+          <IconSortDescending2 stroke={1.4} size="1.4rem" />
         ) : (
-          <IconSortAscending2 size="1.4rem" />
+          <IconSortAscending2 stroke={1.4} size="1.4rem" />
         )}
       </Button>
     </Box>

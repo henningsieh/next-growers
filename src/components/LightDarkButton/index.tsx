@@ -22,7 +22,7 @@ export default function LightDarkButton() {
         className="cursor-default"
         size={32}
         variant="outline"
-        color={dark ? "orange" : "growgreen"}
+        color={dark ? "orange.6" : "growgreen.5 "}
         onClick={() => toggleColorScheme()}
         title={t("common:app-themetoggle")}
       >

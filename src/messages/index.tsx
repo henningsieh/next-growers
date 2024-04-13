@@ -3,9 +3,18 @@ import {
   IconAlertCircle,
   IconCalendarOff,
   IconCannabis,
+  IconEyeHeart,
   IconFileAlert,
   IconPhoto,
 } from "@tabler/icons-react";
+
+export const markAllReadMessage = {
+  title: "Success",
+  message: "All notifications have been marked as read",
+  color: "green",
+  icon: <IconEyeHeart />,
+  loading: false,
+};
 
 export const noPostAtThisDay: NotificationProps & {
   message: string;
@@ -16,6 +25,7 @@ export const noPostAtThisDay: NotificationProps & {
   icon: <IconCalendarOff />,
   loading: false,
 };
+
 export const likeSuccessfulMsg: NotificationProps & {
   message: string;
 } = {
@@ -25,6 +35,7 @@ export const likeSuccessfulMsg: NotificationProps & {
   icon: <IconCannabis />,
   loading: false,
 };
+
 export const commentSuccessfulMsg: NotificationProps & {
   message: string;
 } = {
@@ -34,6 +45,7 @@ export const commentSuccessfulMsg: NotificationProps & {
   icon: <IconCannabis />,
   loading: false,
 };
+
 export const dislikeSuccessfulMsg: NotificationProps & {
   message: string;
 } = {
@@ -43,6 +55,7 @@ export const dislikeSuccessfulMsg: NotificationProps & {
   icon: <IconCannabis />,
   loading: false,
 };
+
 export const commentDeletedSuccessfulMsg: NotificationProps & {
   message: string;
 } = {
@@ -52,6 +65,7 @@ export const commentDeletedSuccessfulMsg: NotificationProps & {
   icon: <IconCannabis />,
   loading: false,
 };
+
 export const setUserNameSuccessfulMsg = (userName: string) => ({
   loading: false,
   title: "Success",
@@ -59,6 +73,7 @@ export const setUserNameSuccessfulMsg = (userName: string) => ({
   color: "green",
   icon: <IconCannabis />,
 });
+
 export const setUserimageSuccessfulMsg = {
   title: "Success",
   message: "Your user image has been updated successfully! ✅",
@@ -66,6 +81,7 @@ export const setUserimageSuccessfulMsg = {
   icon: <IconPhoto />,
   loading: false,
 };
+
 export const likeErrorMsg = (msg: string) => ({
   loading: false,
   title: "Error",
@@ -73,6 +89,7 @@ export const likeErrorMsg = (msg: string) => ({
   color: "red",
   icon: <IconAlertCircle />,
 });
+
 export const createLikeErrorMsg = (msg: string) => ({
   loading: false,
   title: "Error",
