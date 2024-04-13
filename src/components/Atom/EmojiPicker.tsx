@@ -5,10 +5,6 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { useClickOutside, useDisclosure } from "@mantine/hooks";
-import {
-  IconMoodHappy,
-  IconMoodHappyFilled,
-} from "@tabler/icons-react";
 import type { Editor } from "@tiptap/react";
 import type { EmojiClickData } from "emoji-picker-react";
 import { EmojiStyle, SkinTones, Theme } from "emoji-picker-react";
