@@ -1,4 +1,10 @@
-import { Box, Button, createStyles, NativeSelect } from "@mantine/core";
+import {
+  Box,
+  Button,
+  createStyles,
+  Select,
+  useMantineTheme,
+} from "@mantine/core";
 import {
   IconCalendarDown,
   IconCalendarUp,
@@ -27,69 +33,120 @@ export default function SortingPanel({
   const updatedAtLabel = t("common:reports-updatedAt");
 
   const useStyles = createStyles((theme) => ({
-    select: {
-      cursor: "pointer",
-
-      // outlineWidth: "1px",
-      // outlineStyle: "solid",
-      // outlineColor: "dark"
-      //   ? theme.colors.growgreen[4]
-      //   : theme.colors.growgreen[8],
-    },
-
     sortButton: {
-      cursor: "pointer",
       marginTop: "1px",
       outlineWidth: "1px",
       outlineStyle: "solid",
-      outlineColor: "dark"
-        ? theme.colors.growgreen[4]
-        : theme.colors.growgreen[8],
+      outlineColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.growgreen[4]
+          : theme.colors.growgreen[8],
     },
   }));
-
   const { classes } = useStyles();
 
+  const theme = useMantineTheme();
   return (
     <Box className="inline-flex space-x-1">
-      <NativeSelect
+      <Select
+        w={140}
+        fz={"md"}
         size="xs"
         value={sortBy}
+        className="text-lg"
         variant="default"
-        className={classes.select}
-        onChange={(event) => setSortBy(event.currentTarget.value)}
+        onChange={(selectedValue) => setSortBy(selectedValue as string)}
         data={[
           { value: "createdAt", label: createdAtLabel },
           { value: "updatedAt", label: updatedAtLabel },
         ]}
+        styles={(theme) => ({
+          item: {
+            paddingLeft: "8px",
+            paddingTop: "0px",
+            paddingBottom: "0px",
+            marginTop: "1px",
+            marginBottom: "0px",
+            // applies styles to selected item
+            "&[data-selected]": {
+              "&": {
+                backgroundColor:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.growgreen[6]
+                    : theme.colors.growgreen[1],
+                color:
+                  theme.colorScheme === "dark"
+                    ? theme.white
+                    : theme.colors.growgreen[9],
+              },
+            },
+
+            // applies styles to hovered item (with mouse or keyboard)
+            "&, &[data-hovered]": {
+              "&:hover": {
+                backgroundColor:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.growgreen[5]
+                    : theme.colors.growgreen[3],
+                color:
+                  theme.colorScheme === "dark"
+                    ? theme.white
+                    : theme.colors.growgreen[9],
+              },
+            },
+          },
+        })}
         icon={
           sortBy === "createdAt" ? (
             desc ? (
               <IconCalendarDown
-                color="white"
+                color={
+                  theme.colorScheme === "dark"
+                    ? theme.white
+                    : theme.black
+                }
                 size="1.2rem"
-                stroke={1.2}
+                stroke={1.8}
               />
             ) : (
               <IconCalendarUp
-                color="white"
+                color={
+                  theme.colorScheme === "dark"
+                    ? theme.white
+                    : theme.black
+                }
                 size="1.2rem"
-                stroke={1.2}
+                stroke={1.8}
               />
             )
           ) : desc ? (
-            <IconClockDown color="white" size="1.2rem" stroke={1.2} />
+            <IconClockDown
+              color={
+                theme.colorScheme === "dark"
+                  ? theme.colors.growgreen[3]
+                  : theme.colors.growgreen[5]
+              }
+              size="1.2rem"
+              stroke={1.8}
+            />
           ) : (
-            <IconClockUp color="white" size="1.2rem" stroke={1.2} />
+            <IconClockUp
+              color={
+                theme.colorScheme === "dark"
+                  ? theme.colors.growgreen[3]
+                  : theme.colors.growgreen[5]
+              }
+              size="1.2rem"
+              stroke={1.8}
+            />
           )
         }
       />
       <Button
-        size="xs"
-        className={classes.sortButton}
-        variant="default"
         h={28}
-        // w={24}
+        size="xs"
+        variant="default"
+        className={classes.sortButton}
         onClick={handleToggleDesc}
       >
         {desc ? (
