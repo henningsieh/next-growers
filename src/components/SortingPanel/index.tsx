@@ -41,6 +41,16 @@ export default function SortingPanel({
         theme.colorScheme === "dark"
           ? theme.colors.growgreen[4]
           : theme.colors.growgreen[8],
+      "&:focus": {
+        // Define styles for the focused state
+        outline: "none", // Remove default focus outline
+        boxShadow: `0 0 0 1px ${theme.colorScheme === "dark" ? theme.colors.growgreen[4] : theme.colors.growgreen[8]}`, // Add custom box shadow to simulate focus outline
+      },
+      "&:active": {
+        // Define styles for the focused state
+        outline: "none", // Remove default focus outline
+        boxShadow: `0 0 0 2px ${theme.colorScheme === "dark" ? theme.colors.growgreen[4] : theme.colors.growgreen[8]}`, // Add custom box shadow to simulate focus outline
+      },
     },
   }));
   const { classes } = useStyles();
