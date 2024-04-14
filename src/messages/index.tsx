@@ -26,11 +26,21 @@ export const noPostAtThisDay: NotificationProps & {
   loading: false,
 };
 
-export const likeSuccessfulMsg: NotificationProps & {
+export const likeGrowSuccessfulMsg: NotificationProps & {
   message: string;
 } = {
   title: "Success",
   message: "Woohoo... you ❤️ this Grow!",
+  color: "green",
+  icon: <IconCannabis />,
+  loading: false,
+};
+
+export const likeUpdateSuccessfulMsg: NotificationProps & {
+  message: string;
+} = {
+  title: "Success",
+  message: "Woohoo... you ❤️ this Update!",
   color: "green",
   icon: <IconCannabis />,
   loading: false,

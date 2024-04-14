@@ -12,7 +12,8 @@ import { IconHeartFilled } from "@tabler/icons-react";
 import {
   createLikeErrorMsg,
   dislikeSuccessfulMsg,
-  likeSuccessfulMsg,
+  likeGrowSuccessfulMsg,
+  likeUpdateSuccessfulMsg,
 } from "~/messages";
 
 import { useState } from "react";
@@ -54,9 +55,8 @@ const LikeHeart = (props: LikeHeartProps) => {
       onError: (error) => {
         notifications.show(createLikeErrorMsg(error.message));
       },
-      onSuccess: (likedReport) => {
-        notifications.show(likeSuccessfulMsg);
-        console.debug("likedReport", likedReport);
+      onSuccess: () => {
+        notifications.show(likeGrowSuccessfulMsg);
       },
       // Always refetch after error or success:
       onSettled: async () => {
@@ -85,8 +85,7 @@ const LikeHeart = (props: LikeHeartProps) => {
       notifications.show(createLikeErrorMsg(error.message));
     },
     onSuccess: (likedPost) => {
-      notifications.show(likeSuccessfulMsg);
-      console.debug("likedReport", likedPost);
+      notifications.show(likeUpdateSuccessfulMsg);
     },
     // Always refetch after error or success:
     onSettled: async () => {
@@ -118,7 +117,7 @@ const LikeHeart = (props: LikeHeartProps) => {
         notifications.show(createLikeErrorMsg(error.message));
       },
       onSuccess: (likedComment) => {
-        notifications.show(likeSuccessfulMsg);
+        notifications.show(likeGrowSuccessfulMsg);
         console.debug("likedReport", likedComment);
       },
       // Always refetch after error or success:
