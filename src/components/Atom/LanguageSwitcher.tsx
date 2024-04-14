@@ -43,7 +43,7 @@ const LanguageSwitcher: NextPage = () => {
                 <Center>
                   <Image
                     height={16}
-                    width={26}
+                    width={28}
                     src={deFlag as string}
                     alt="German Language Flag"
                   />
@@ -56,7 +56,7 @@ const LanguageSwitcher: NextPage = () => {
                 <Center>
                   <Image
                     height={16}
-                    width={26}
+                    width={28}
                     src={usFlag as string}
                     alt="English Language Flag"
                   />
