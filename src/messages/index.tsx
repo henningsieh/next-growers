@@ -9,8 +9,8 @@ import {
 } from "@tabler/icons-react";
 
 export const markAllReadMessage = {
-  title: "Success",
-  message: "All notifications have been marked as read",
+  title: "I have read all",
+  message: "All notifications were marked as read",
   color: "green",
   icon: <IconEyeHeart />,
   loading: false,

@@ -25,7 +25,6 @@ import {
 import { markAllReadMessage } from "~/messages";
 
 import { useState } from "react";
-import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -98,7 +97,7 @@ const ProtectedNotifications = () => {
         // Handle error, e.g., show an error message
       },
       onSuccess: () => {
-        toast.success("markNotificationAsRead!");
+        // toast.success("markNotificationAsRead!");
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
@@ -225,6 +224,7 @@ const ProtectedNotifications = () => {
                     <Box
                       onClick={() => {
                         handleMarkNotificationAsRead(notification.id);
+                        setOpen(false);
                       }}
                       p={2}
                       // my={4}
