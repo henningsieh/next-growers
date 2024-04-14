@@ -60,7 +60,7 @@ export default function SessionPanel() {
           <Menu shadow="xl" width={200}>
             <Menu.Target>
               <ActionIcon
-                className="cursor-default"
+                className="cursor-default overflow-hidden"
                 radius={3}
                 variant="outline"
                 color={dark ? "orange.6" : "growgreen.5 "}
