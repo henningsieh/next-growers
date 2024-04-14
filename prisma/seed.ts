@@ -19,6 +19,14 @@ async function main() {
       type: CannabisStraintype.Hybrid,
     },
     {
+      name: "Lemon Power Haze",
+      description:
+        "Lemon Power Haze by Zamnesia Seeds is a feminized hybrid known for its refreshing sweet and lemony taste, coupled with a potent and enjoyable high. This strain is a delight for Sativa lovers, offering energizing effects that boost creativity and motivation, while uplifting mood. It's a perfect choice for daytime use.",
+      flavors: ["lemon", "citrus", "skunk", "sweet"],
+      effects: ["energizing", "creative", "euphoric", "motivating"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
       name: "Wedding Gelato",
       description:
         "Wedding Gelato seeds result from a complex genetic combination of Wedding Cake, Gelato, and Gelato 33 strains, resulting in a potent and flavorsome hybrid. Its buds emit sickly sweet aromas with earthy undertones, accompanied by flavors of lemon, mint, and vanilla. With a nearly balanced hybrid profile leaning slightly towards indica, it offers euphoric effects followed by mild muscle relaxation. Buds are potent and compact, boasting vibrant orange hairs against dark green buds. Outdoor harvest is typically in early October, with indoor flowering lasting about 8-10 weeks. Despite a moderate yield, its high THC concentration and rich flavor compensate for it.",
