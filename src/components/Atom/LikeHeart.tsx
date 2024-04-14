@@ -12,7 +12,8 @@ import { IconHeartFilled } from "@tabler/icons-react";
 import {
   createLikeErrorMsg,
   dislikeSuccessfulMsg,
-  likeSuccessfulMsg,
+  likeGrowSuccessfulMsg,
+  likeUpdateSuccessfulMsg,
 } from "~/messages";
 
 import { useState } from "react";
@@ -54,9 +55,8 @@ const LikeHeart = (props: LikeHeartProps) => {
       onError: (error) => {
         notifications.show(createLikeErrorMsg(error.message));
       },
-      onSuccess: (likedReport) => {
-        notifications.show(likeSuccessfulMsg);
-        console.debug("likedReport", likedReport);
+      onSuccess: () => {
+        notifications.show(likeGrowSuccessfulMsg);
       },
       // Always refetch after error or success:
       onSettled: async () => {
@@ -85,8 +85,7 @@ const LikeHeart = (props: LikeHeartProps) => {
       notifications.show(createLikeErrorMsg(error.message));
     },
     onSuccess: (likedPost) => {
-      notifications.show(likeSuccessfulMsg);
-      console.debug("likedReport", likedPost);
+      notifications.show(likeUpdateSuccessfulMsg);
     },
     // Always refetch after error or success:
     onSettled: async () => {
@@ -94,6 +93,7 @@ const LikeHeart = (props: LikeHeartProps) => {
       await trpc.notifications.invalidate();
     },
   });
+
   const { mutate: dislikePostMutation } =
     api.like.dislikePost.useMutation({
       onError: (error) => {
@@ -117,7 +117,7 @@ const LikeHeart = (props: LikeHeartProps) => {
         notifications.show(createLikeErrorMsg(error.message));
       },
       onSuccess: (likedComment) => {
-        notifications.show(likeSuccessfulMsg);
+        notifications.show(likeGrowSuccessfulMsg);
         console.debug("likedReport", likedComment);
       },
       // Always refetch after error or success:
@@ -126,6 +126,7 @@ const LikeHeart = (props: LikeHeartProps) => {
         await trpc.notifications.invalidate();
       },
     });
+
   const { mutate: dislikeCommentMutation } =
     api.like.dislikeComment.useMutation({
       onError: (error) => {
@@ -180,70 +181,75 @@ const LikeHeart = (props: LikeHeartProps) => {
     }
   };
 
+  // Conditionally render the component based on isError and isLoading
   return (
-    <Box>
-      <Box mt={2} ml={2} className="relative">
-        <ActionIcon
-          // title="Give props to the Grower"
-          variant="default"
-          className="cursor-default"
-          onMouseEnter={() => void setShowLikes(true)}
-          onMouseLeave={() => void setShowLikes(false)}
-          onBlur={() => setShowLikes(false)}
-          radius="sm"
-        >
-          {itemLikes?.find(
-            (like) => like.userId === session?.user.id
-          ) ? (
-            <IconHeartFilled
-              onClick={handleDisLikeItem}
-              size="1.4rem"
-              className={`${classes.red}`}
-              stroke={1.8}
-            />
-          ) : (
-            <IconHeart
-              onClick={handleLikeItem}
-              size="1.4rem"
-              stroke={1.2}
-            />
-          )}
-        </ActionIcon>
+    <>
+      {!isError && !isLoading && (
+        <Box>
+          <Box mt={2} ml={2} className="relative">
+            <ActionIcon
+              // title="Give props to the Grower"
+              variant="default"
+              className="cursor-default"
+              onMouseEnter={() => void setShowLikes(true)}
+              onMouseLeave={() => void setShowLikes(false)}
+              onBlur={() => setShowLikes(false)}
+              radius="sm"
+            >
+              {itemLikes?.find(
+                (like) => like.userId === session?.user.id
+              ) ? (
+                <IconHeartFilled
+                  onClick={handleDisLikeItem}
+                  size="1.4rem"
+                  className={`${classes.red}`}
+                  stroke={1.8}
+                />
+              ) : (
+                <IconHeart
+                  onClick={handleLikeItem}
+                  size="1.4rem"
+                  stroke={1.2}
+                />
+              )}
+            </ActionIcon>
 
-        {/* // Likes Tooltip */}
-        {!!itemLikes && !!itemLikes?.length && (
-          <Transition
-            mounted={showLikes}
-            transition="pop-bottom-right"
-            duration={100}
-            timingFunction="ease-in-out"
-          >
-            {(transitionStyles) => (
-              <Paper
-                withBorder
-                className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
-                style={{ ...transitionStyles }}
+            {/* // Likes Tooltip */}
+            {!!itemLikes && !!itemLikes?.length && (
+              <Transition
+                mounted={showLikes}
+                transition="pop-bottom-right"
+                duration={100}
+                timingFunction="ease-in-out"
               >
-                {itemLikes &&
-                  itemLikes.map((like) => (
-                    <Box key={like.id} mx={10} fz={"xs"}>
-                      {like.name}
-                    </Box>
-                  ))}
-                {/* 
-                <Text fz="xs" td="overline" pr={4} fs="italic">
-                  {itemLikes && itemLikes.length} Like
-                  {itemLikes && itemLikes.length > 1 ? "s" : ""} 👍
-                </Text> */}
-              </Paper>
+                {(transitionStyles) => (
+                  <Paper
+                    withBorder
+                    className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
+                    style={{ ...transitionStyles }}
+                  >
+                    {itemLikes &&
+                      itemLikes.map((like) => (
+                        <Box key={like.id} mx={10} fz={"xs"}>
+                          {like.name}
+                        </Box>
+                      ))}
+                    {/* 
+                  <Text fz="xs" td="overline" pr={4} fs="italic">
+                    {itemLikes && itemLikes.length} Like
+                    {itemLikes && itemLikes.length > 1 ? "s" : ""} 👍
+                  </Text> */}
+                  </Paper>
+                )}
+              </Transition>
             )}
-          </Transition>
-        )}
-      </Box>
-      <Center fz="sm" p={0} m={0}>
-        {itemLikes?.length}
-      </Center>
-    </Box>
+          </Box>
+          <Center fz="sm" p={0} m={0}>
+            {itemLikes?.length}
+          </Center>
+        </Box>
+      )}
+    </>
   );
 };
 

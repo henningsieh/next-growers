@@ -4,7 +4,7 @@ import {
   Group,
   Menu,
   rem,
-  useMantineColorScheme,
+  useMantineColorScheme, // useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -49,6 +49,7 @@ export default function SessionPanel() {
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
+  // const theme = useMantineTheme();
 
   return (
     <>
@@ -62,7 +63,7 @@ export default function SessionPanel() {
                 className="cursor-default"
                 radius={3}
                 variant="outline"
-                color={dark ? "orange" : "growgreen"}
+                color={dark ? "orange.6" : "growgreen.5 "}
                 size={32}
                 m={0}
                 p={0}

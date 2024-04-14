@@ -1,8 +1,7 @@
 import {
   ActionIcon,
-  TextInput,
-  useMantineColorScheme,
-  useMantineTheme,
+  TextInput, // useMantineColorScheme,
+  // useMantineTheme,
 } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 
@@ -23,14 +22,12 @@ const SearchInput = ({
     setSearchString("");
   };
 
-  const theme = useMantineTheme();
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
+  // const { colorScheme } = useMantineColorScheme();
+  // const dark = colorScheme === "dark";
+  // const theme = useMantineTheme();
 
   return (
     <TextInput
-      // pr={4}
-      pt={3}
       miw={300}
       size="xs"
       type="text"
@@ -39,11 +36,12 @@ const SearchInput = ({
       placeholder="Full text search"
       rightSection={
         <ActionIcon
+          onClick={clearValue}
           size={22}
           variant="outline"
           className="cursor-default"
         >
-          <IconX size={22} stroke={2.2} onClick={clearValue} />
+          <IconX size={22} stroke={2.2} />
         </ActionIcon>
       }
     />

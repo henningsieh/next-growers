@@ -27,8 +27,8 @@ import Link from "next/link";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import LoadingError from "~/components/Atom/LoadingError";
 import SearchInput from "~/components/Atom/SearchInput";
-import SortingPanel from "~/components/Atom/SortingPanel";
 import ReportCard from "~/components/Report/Card";
+import SortingPanel from "~/components/SortingPanel";
 
 import { authOptions } from "~/server/auth";
 
@@ -57,7 +57,7 @@ const useStyles = createStyles((theme) => ({
  * @returns Promise<{ props: { [key: string]: any }; }> - A promise resolving to an object containing props to be passed to the page component
  */
 export const getServerSideProps: GetServerSideProps = async (
-  context
+  context: GetServerSidePropsContext
 ) => ({
   props: {
     ...(await serverSideTranslations(context.locale as string, [

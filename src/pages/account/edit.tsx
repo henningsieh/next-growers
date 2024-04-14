@@ -167,10 +167,7 @@ const ProtectedEditReport: NextPage = () => {
       </Head>
 
       {/* // Main Content Container */}
-      <Container
-        size="xl"
-        className="border-white border-2 flex w-full flex-col h-screen"
-      >
+      <Container size="xl" className="flex w-full flex-col h-screen">
         {/* // Header with Title */}
         <Box className="flex items-center justify-between pt-2">
           {/* // Title */}

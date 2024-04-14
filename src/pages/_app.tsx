@@ -104,6 +104,17 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             // 6 Spalten
           },
           components: {
+            SegmentedControl: {
+              styles: () => ({
+                label: {
+                  paddingTop: rem(2),
+                  paddingBottom: rem(2),
+                  paddingLeft: rem(4),
+                  paddingRight: rem(4),
+                },
+              }),
+            },
+
             InputWrapper: {
               styles: (theme) => ({
                 NativeSelect: {
@@ -179,22 +190,23 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 { variant }
               ) => ({
                 root: {
-                  backgroundColor:
-                    variant === "filled"
-                      ? theme.colors[
-                          params.color || theme.primaryColor
-                        ][9]
-                      : undefined,
                   color:
                     theme.colorScheme === "dark"
                       ? theme.white
                       : theme.black,
+                  backgroundColor:
+                    variant === "filled"
+                      ? theme.colors[
+                          params.color || theme.primaryColor
+                        ][5]
+                      : undefined,
                   "&:hover": {
-                    //   cursor: "default",
                     backgroundColor:
-                      theme.colorScheme === "dark"
-                        ? theme.colors.growgreen[7]
-                        : theme.colors.growgreen[3],
+                      variant === "filled"
+                        ? theme.colorScheme === "dark"
+                          ? theme.colors.growgreen[7]
+                          : theme.colors.growgreen[3]
+                        : undefined,
                   },
                 },
               }),

@@ -36,7 +36,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
-import LightDarkButton from "~/components/Atom/LightDarkButton";
+import LightDarkButton from "~/components/LightDarkButton";
 import Notifications from "~/components/Notifications";
 import LoginPanel from "~/components/SessionPanel";
 
@@ -376,7 +376,6 @@ export default function RootLayout({
           </Group>
           <Group>
             <Box className={classes.hiddenIfSmallerThanXs}>
-              {" "}
               {/* Does not fit in mobile portrait mode display */}
               <LanguageSwitcher />
             </Box>

@@ -4,10 +4,11 @@ import {
   Box,
   Button,
   Center,
-  Container,
   createStyles,
   Flex,
+  Group,
   Indicator,
+  ScrollArea,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
@@ -17,16 +18,18 @@ import { useClickOutside } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconBell,
-  IconCheck,
+  IconBellOff,
+  IconEyeHeart,
   IconHeartFilled,
 } from "@tabler/icons-react";
-import { IconEyeCheck } from "@tabler/icons-react";
+import { markAllReadMessage } from "~/messages";
 
 import { useState } from "react";
-import { toast } from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import type { NotificationEventMap } from "~/types";
 import type { Notifications } from "~/types";
@@ -42,14 +45,25 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const ProtectedNotifications = () => {
-  const [open, setOpen] = useState(false);
   const { colorScheme } = useMantineColorScheme();
   const { classes } = useStyles();
+  const { data: session, status } = useSession();
+
+  const [open, setOpen] = useState(false);
+
+  const trpc = api.useUtils();
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
   const clickOutsidePaper = useClickOutside(() => setOpen(false));
-  const { data: session, status } = useSession();
-  const trpc = api.useUtils();
+
+  const closeLabel = t("common:app-notifications-close-button");
+  const haveReadLabel = t(
+    "common:app-notifications-mark-all-read-button"
+  );
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
@@ -83,7 +97,7 @@ const ProtectedNotifications = () => {
         // Handle error, e.g., show an error message
       },
       onSuccess: () => {
-        toast.success("markNotificationAsRead!");
+        // toast.success("markNotificationAsRead!");
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
@@ -104,14 +118,6 @@ const ProtectedNotifications = () => {
       markNotificationAsReadMutation(notidicationId);
   };
 
-  const markAllReadMessage = {
-    title: "Success",
-    message: "All notifications have been marked as read",
-    color: "green",
-    icon: <IconCheck />,
-    loading: false,
-  };
-
   const notificationEvents: Record<NotificationEventMap, string> = {
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "has commented on",
@@ -121,7 +127,7 @@ const ProtectedNotifications = () => {
 
   return (
     <Box style={{ position: "relative" }}>
-      {/* Notification Icon */}
+      {/* Notification Bell */}
       <ActionIcon
         className="cursor-default"
         onClick={() => setOpen(!open)}
@@ -129,15 +135,19 @@ const ProtectedNotifications = () => {
         style={{ position: "relative" }}
         size={32}
         variant="outline"
-        color={dark ? "orange" : "growgreen"}
+        color={dark ? "orange.6" : "growgreen.5 "}
       >
         {hasUnreadNotifications(
           notificationsFromDb as Notifications
         ) ? (
           <Indicator
-            color={theme.colors.pink[7]}
+            color={
+              theme.colorScheme === "dark"
+                ? theme.colors.growgreen[3]
+                : theme.colors.groworange[3]
+            }
             position="bottom-end"
-            size={16}
+            size={18}
             withBorder
             processing
           >
@@ -161,16 +171,52 @@ const ProtectedNotifications = () => {
             withBorder
             shadow="md"
             mt="sm"
-            className={`rounded p-0 text-right`}
+            className={"absolute rounded top-9 -right-2 text-right"}
             style={{
-              position: "absolute",
-              right: -2,
-              top: "calc(100%  + 6px)",
+              // position: "absolute",
+              // right: -8,
+              // // top: "calc(100%  + 6px)",
               ...transitionStyles,
             }}
           >
-            <Container miw={300} p={4}>
-              <Box className="space-y-1">
+            {/* Alle Gelesen Button */}
+            {!isLoading &&
+              !isError &&
+              notificationsFromDb?.length > 0 && (
+                <Box p={3}>
+                  <Group grow spacing="xs">
+                    <Button
+                      compact
+                      size="sm"
+                      fz={"xs"}
+                      fw={"normal"}
+                      variant="default"
+                      className="cursor-default"
+                      title="Mark all notifications as read"
+                      onClick={() => {
+                        handleMarkAllNotificationsAsRead();
+                      }}
+                      leftIcon={<IconEyeHeart size={18} stroke={1.8} />}
+                    >
+                      {haveReadLabel}
+                    </Button>
+                    <Button
+                      compact
+                      size="sm"
+                      fz={"xs"}
+                      fw={"normal"}
+                      variant="default"
+                      className="cursor-default"
+                      onClick={() => void setOpen(false)}
+                      rightIcon={<IconBellOff size={16} stroke={1.8} />}
+                    >
+                      {closeLabel}
+                    </Button>
+                  </Group>
+                </Box>
+              )}
+            <ScrollArea h={460} miw={300}>
+              <Box p={3} className="space-y-1">
                 {!isLoading &&
                 !isError &&
                 notificationsFromDb?.length ? (
@@ -178,19 +224,19 @@ const ProtectedNotifications = () => {
                     <Box
                       onClick={() => {
                         handleMarkNotificationAsRead(notification.id);
+                        setOpen(false);
                       }}
                       p={2}
                       // my={4}
                       key={notification.id}
                       sx={(theme) => ({
+                        cursor: "pointer",
+                        textAlign: "center",
+                        borderRadius: theme.radius.sm,
                         backgroundColor:
                           theme.colorScheme === "dark"
                             ? theme.colors.dark[6]
                             : theme.colors.gray[1],
-                        textAlign: "center",
-                        // padding: theme.spacing.xl,
-                        borderRadius: theme.radius.xs,
-                        cursor: "pointer",
 
                         "&:hover": {
                           backgroundColor:
@@ -272,14 +318,17 @@ const ProtectedNotifications = () => {
                           >
                             {!notification.readAt && (
                               <Badge
-                                mt={0}
-                                pt={0}
                                 fz={8}
                                 size="xs"
                                 variant="filled"
-                                color="pink"
+                                sx={(theme) => ({
+                                  backgroundColor:
+                                    theme.colorScheme === "dark"
+                                      ? theme.colors.growgreen[5]
+                                      : theme.colors.growgreen[3],
+                                })}
                               >
-                                new
+                                NEW ⭐
                               </Badge>
                             )}
                           </Flex>
@@ -290,41 +339,8 @@ const ProtectedNotifications = () => {
                 ) : (
                   <p>No notifications</p>
                 )}
-                {/* <Boxider /> */}
-                {!isLoading &&
-                  !isError &&
-                  notificationsFromDb?.length > 0 && (
-                    <Button
-                      onClick={() => {
-                        handleMarkAllNotificationsAsRead();
-                      }}
-                      // fullWidth
-                      px="sm"
-                      my={4}
-                      mr={0}
-                      size="xs"
-                      variant="outline"
-                      radius="xs"
-                      style={{ flex: 1 }}
-                    >
-                      <IconEyeCheck
-                        className="ml-0 mr-0"
-                        height={18}
-                        stroke={1.6}
-                      />
-                      mark all as read
-                    </Button>
-                  )}
-                {/* 
-                <NavLink
-                  label="Active filled"
-                  icon={<IconActivity size="1rem" stroke={1.6} />}
-                  rightSection={<IconChevronRight size="0.8rem" stroke={1.6} />}
-                  variant="filled"
-                  active
-                /> */}
               </Box>
-            </Container>
+            </ScrollArea>
           </Paper>
         )}
       </Transition>

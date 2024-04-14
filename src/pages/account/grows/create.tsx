@@ -24,7 +24,7 @@ import { authOptions } from "~/server/auth";
  * @returns Promise<{ props: { [key: string]: any }; }> - A promise resolving to an object containing props to be passed to the page component
  */
 export const getServerSideProps: GetServerSideProps = async (
-  context
+  context: GetServerSidePropsContext
 ) => ({
   props: {
     ...(await serverSideTranslations(context.locale as string, [
