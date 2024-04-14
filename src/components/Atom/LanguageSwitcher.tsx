@@ -35,6 +35,7 @@ const LanguageSwitcher: NextPage = () => {
         })}
       >
         <SegmentedControl
+          value={activeLocale}
           size="md"
           data={[
             {
