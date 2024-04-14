@@ -1,4 +1,10 @@
-import { Group, SegmentedControl } from "@mantine/core";
+import {
+  Box,
+  Center,
+  Group,
+  SegmentedControl,
+  useMantineTheme,
+} from "@mantine/core";
 import deFlag from "public/svg/DE.svg";
 import usFlag from "public/svg/US.svg";
 
@@ -11,46 +17,68 @@ const LanguageSwitcher: NextPage = () => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t, i18n } = useTranslation(activeLocale);
+
+  const theme = useMantineTheme();
   const switchLabel = t("common:app-switchlanguage");
+
   return (
-    <>
-      <Group title={switchLabel} position="center">
+    <Group title={switchLabel} position="center">
+      <Box
+        sx={(theme) => ({
+          cursor: "pointer",
+          border: "solid 1px ",
+          borderRadius: theme.radius.sm,
+          borderColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.orange[6]
+              : theme.colors.growgreen[5],
+        })}
+      >
         <SegmentedControl
-          bottom={0}
-          variant="filled"
-          value={router.locale}
-          onChange={() =>
-            void router.push(router.pathname, router.asPath, {
-              locale: i18n.language === "de" ? "en" : "de",
-            })
-          }
+          size="md"
           data={[
             {
               value: "de",
               label: (
-                <Image
-                  height={12}
-                  width={28}
-                  alt="German language icon"
-                  src={deFlag as string}
-                />
+                <Center>
+                  <Image
+                    height={16}
+                    width={26}
+                    src={deFlag as string}
+                    alt="German Language Flag"
+                  />
+                </Center>
               ),
             },
             {
               value: "en",
               label: (
-                <Image
-                  height={12}
-                  width={28}
-                  alt="German language icon"
-                  src={usFlag as string}
-                />
+                <Center>
+                  <Image
+                    height={16}
+                    width={26}
+                    src={usFlag as string}
+                    alt="English Language Flag"
+                  />
+                </Center>
               ),
             },
           ]}
+          color={theme.colorScheme === "dark" ? "dark.4" : "gray.3"}
+          bg={
+            theme.colorScheme === "dark"
+              ? theme.fn.lighten(theme.colors.dark[7], 0.0)
+              : theme.fn.lighten(theme.colors.growgreen[4], 0.7)
+          }
+          onChange={() =>
+            void router.push(router.pathname, router.asPath, {
+              locale: i18n.language === "de" ? "en" : "de",
+            })
+          }
+          transitionDuration={400}
         />
-      </Group>
-    </>
+      </Box>
+    </Group>
   );
 };
 
