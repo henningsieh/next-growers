@@ -11,6 +11,14 @@ async function main() {
   const cannabisStrains = [
     // Add more cannabis strains here
     {
+      name: "Purple Cookie Kush",
+      description:
+        "Purple Cookie Kush is a hybrid strain bred by Sensi Seeds, resulting from the cross between Girl Scout Cookies and Purple Kush. With 60% indica and 40% sativa heritage, it offers a well-balanced hybrid experience. Its flavors range from grape to sandalwood, with a terpene profile consisting of complementary aromas. Purple Cookie Kush is a short plant with good yields, featuring dense buds similar to Kush strains.",
+      flavors: ["grape", "sandalwood", "spicy", "earthy"],
+      effects: ["euphoria", "relaxation", "pain relief", "body high"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
       name: "Wedding Gelato",
       description:
         "Wedding Gelato seeds result from a complex genetic combination of Wedding Cake, Gelato, and Gelato 33 strains, resulting in a potent and flavorsome hybrid. Its buds emit sickly sweet aromas with earthy undertones, accompanied by flavors of lemon, mint, and vanilla. With a nearly balanced hybrid profile leaning slightly towards indica, it offers euphoric effects followed by mild muscle relaxation. Buds are potent and compact, boasting vibrant orange hairs against dark green buds. Outdoor harvest is typically in early October, with indoor flowering lasting about 8-10 weeks. Despite a moderate yield, its high THC concentration and rich flavor compensate for it.",
