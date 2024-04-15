@@ -26,6 +26,7 @@ import { IconAlertCircle } from "@tabler/icons-react";
 import type { ParsedUrlQuery } from "querystring";
 import {
   filesMaxOneErrorMsg,
+  httpStatusErrorMsg,
   setUserimageSuccessfulMsg,
   setUserNameSuccessfulMsg,
 } from "~/messages";
@@ -86,11 +87,23 @@ const ProtectedEditReport: NextPage = () => {
   const { mutate: tRPCsetUsername, isLoading: isLoadingSetUsername } =
     api.user.saveOwnUsername.useMutation({
       onError(error) {
-        console.debug("error", error.message);
+        // If unique constraint failed on the fields: (`name`)
+        if (error.data?.httpStatus === 409) {
+          notifications.show(
+            httpStatusErrorMsg(
+              "This username is already taken, please choose another one.",
+              error.data?.httpStatus
+            )
+          );
+        } else {
+          notifications.show(
+            httpStatusErrorMsg(error.message, error.data?.httpStatus)
+          );
+        }
       },
       onSuccess(result) {
         notifications.show(
-          setUserNameSuccessfulMsg(result.name as string)
+          setUserNameSuccessfulMsg(result?.user.name as string)
         );
       },
       onSettled() {

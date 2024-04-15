@@ -1,6 +1,7 @@
 import type { NotificationProps } from "@mantine/core";
 import {
   IconAlertCircle,
+  IconAlertTriangle,
   IconCalendarOff,
   IconCannabis,
   IconEyeHeart,
@@ -8,11 +9,22 @@ import {
   IconPhoto,
 } from "@tabler/icons-react";
 
+export const httpStatusErrorMsg = (
+  message: string,
+  httpStatus?: number | undefined
+) => ({
+  loading: false,
+  title: `Error ${httpStatus ? `${String(httpStatus)}` : ""}`,
+  message,
+  color: "red",
+  icon: <IconAlertTriangle size="1.2rem" stroke={2.8} />,
+});
+
 export const markAllReadMessage = {
   title: "I have read all",
   message: "All notifications were marked as read",
   color: "green",
-  icon: <IconEyeHeart />,
+  icon: <IconEyeHeart size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -22,7 +34,7 @@ export const noPostAtThisDay: NotificationProps & {
   title: "Error",
   message: "Sorry... there is no Update for this day! 😢",
   color: "red",
-  icon: <IconCalendarOff />,
+  icon: <IconCalendarOff size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -32,7 +44,7 @@ export const likeGrowSuccessfulMsg: NotificationProps & {
   title: "Success",
   message: "Woohoo... you ❤️ this Grow!",
   color: "green",
-  icon: <IconCannabis />,
+  icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -42,7 +54,7 @@ export const likeUpdateSuccessfulMsg: NotificationProps & {
   title: "Success",
   message: "Woohoo... you ❤️ this Update!",
   color: "green",
-  icon: <IconCannabis />,
+  icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -52,7 +64,7 @@ export const commentSuccessfulMsg: NotificationProps & {
   title: "Success",
   message: "Woohoo... you commented this Grow! 🥳",
   color: "green",
-  icon: <IconCannabis />,
+  icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -62,7 +74,7 @@ export const dislikeSuccessfulMsg: NotificationProps & {
   title: "Success",
   message: "Oh no... you removed your like! 😢",
   color: "green",
-  icon: <IconCannabis />,
+  icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -72,7 +84,7 @@ export const commentDeletedSuccessfulMsg: NotificationProps & {
   title: "Success",
   message: "Oh no... you removed your comment! 😢",
   color: "green",
-  icon: <IconCannabis />,
+  icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -81,14 +93,14 @@ export const setUserNameSuccessfulMsg = (userName: string) => ({
   title: "Success",
   message: `Username "${userName}" has been updated successfully.`,
   color: "green",
-  icon: <IconCannabis />,
+  icon: <IconCannabis size="1.2rem" stroke={2.8} />,
 });
 
 export const setUserimageSuccessfulMsg = {
   title: "Success",
   message: "Your user image has been updated successfully! ✅",
   color: "green",
-  icon: <IconPhoto />,
+  icon: <IconPhoto size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -97,7 +109,7 @@ export const likeErrorMsg = (msg: string) => ({
   title: "Error",
   message: msg,
   color: "red",
-  icon: <IconAlertCircle />,
+  icon: <IconAlertCircle size="1.2rem" stroke={2.8} />,
 });
 
 export const createLikeErrorMsg = (msg: string) => ({
@@ -105,14 +117,14 @@ export const createLikeErrorMsg = (msg: string) => ({
   title: "Error",
   message: msg,
   color: "red",
-  icon: <IconAlertCircle />,
+  icon: <IconAlertCircle size="1.2rem" stroke={2.8} />,
 });
 
 export const onlyOnePostPerDayAllowed = {
   title: "Failure",
   message: "You can only post one Update per Grow and Day! 💁",
   color: "red",
-  icon: <IconCalendarOff />,
+  icon: <IconCalendarOff size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
@@ -121,10 +133,10 @@ export const fileUploadErrorMsg = (
   fileSizeInMB: string,
   uploadMaxSize: string
 ) => ({
-  title: "Error " + filename,
+  title: 'Error with "' + filename + '"',
   message: `File size of ${fileSizeInMB} MB exceeds the allowed maximum of ${uploadMaxSize} MB`,
   color: "red",
-  icon: <IconFileAlert />,
+  icon: <IconFileAlert size="1.2rem" stroke={2.8} />,
   loading: false,
 });
 
@@ -132,6 +144,6 @@ export const filesMaxOneErrorMsg = (filesCount: number) => ({
   title: `File count error: The count ${filesCount} exceeds the permitted files count of 1.`,
   message: ` You can only upload one image file as a user avatar.`,
   color: "red",
-  icon: <IconFileAlert />,
+  icon: <IconFileAlert size="1.2rem" stroke={2.8} />,
   loading: false,
 });

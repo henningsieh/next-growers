@@ -57,7 +57,7 @@ model Notification {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  name          String?   @unique
   password      String?
   image         String?
   imageId       String?
