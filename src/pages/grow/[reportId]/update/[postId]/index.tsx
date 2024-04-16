@@ -9,7 +9,6 @@ import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconChevronLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import { convert } from "html-to-text";
 import { noPostAtThisDay } from "~/messages";
 
 import { useEffect, useState } from "react";
@@ -272,7 +271,7 @@ export default function PublicReportPost(
   const { classes } = useStyles();
   const theme = useMantineTheme();
   const router = useRouter();
-  // const { locale: activeLocale } = router;
+  const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
 
   const pageTitle = `${staticReportFromProps.title}`;
@@ -383,7 +382,7 @@ export default function PublicReportPost(
         <meta name="description" content={description} />
         <meta
           property="og:url"
-          content={`/grow/${staticReportFromProps.id}/update/${thisPost.id}`}
+          content={`${activeLocale ? `/${activeLocale}` : ""}/grow/${staticReportFromProps.id}/update/${thisPost.id}`}
         />
         <meta property="og:title" content={thisPost.title} />
       </Head>

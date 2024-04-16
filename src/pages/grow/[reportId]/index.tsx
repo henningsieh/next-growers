@@ -54,7 +54,7 @@ const PublicReport: NextPage = () => {
   const theme = useMantineTheme();
 
   const router = useRouter();
-  // const { locale: activeLocale } = router;
+  const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
 
   const queryReportId = router.query.reportId as string;
@@ -163,9 +163,10 @@ const PublicReport: NextPage = () => {
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
+        {/* OPEN GRAPH */}
         <meta
           property="og:url"
-          content={`https://growagram.com/grow/${report?.id || ""}`}
+          content={`${activeLocale ? `/${activeLocale}` : ""}/grow/${report?.id as string}`}
         />
         <meta property="og:title" content={title} />
       </Head>
