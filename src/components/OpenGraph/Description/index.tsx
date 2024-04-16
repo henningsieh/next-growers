@@ -1,7 +1,3 @@
-import { convert } from "html-to-text";
-
-import React from "react";
-
 import Head from "next/head";
 
 // Anpassen der Props, um ein Array von Strings zu akzeptieren
