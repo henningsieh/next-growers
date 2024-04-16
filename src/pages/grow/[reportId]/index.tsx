@@ -65,7 +65,7 @@ const PublicReport: NextPage = () => {
     //isError: reportHasErrors,
   } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
 
-  const pageTitle = `${report?.title as string}`;
+  const reportTitle = `${report?.title as string}`;
 
   // const {
   //   data: strains,
@@ -152,7 +152,7 @@ const PublicReport: NextPage = () => {
 
   const images = report?.image?.cloudUrl as string;
   const description = getDescription(report?.description);
-  const title = `Grow "${pageTitle}" from ${
+  const htmlTitle = `Grow "${reportTitle}" from ${
     report?.author?.name as string
   } | GrowAGram`;
 
@@ -161,14 +161,14 @@ const PublicReport: NextPage = () => {
       <OpenGraphDescription description={description} />
       <OpenGraphImage imageUrls={images} />
       <Head>
-        <title>{title}</title>
+        <title>{htmlTitle}</title>
         <meta name="description" content={description} />
         {/* OPEN GRAPH */}
         <meta
           property="og:url"
           content={`${activeLocale ? `/${activeLocale}` : ""}/grow/${report?.id as string}`}
         />
-        <meta property="og:title" content={title} />
+        <meta property="og:title" content={reportTitle} />
       </Head>
       {/* // Main Content Container */}
       <Container
@@ -190,7 +190,7 @@ const PublicReport: NextPage = () => {
             <IconChevronRight size={24} />
           </Box> */}
           <Title order={1} className="inline">
-            {`${pageTitle}`}
+            {`${reportTitle}`}
           </Title>
         </Box>
         {/* // Header End */}
