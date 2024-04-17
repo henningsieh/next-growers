@@ -128,11 +128,10 @@ export default function SortingPanel({
         }
       /> */}
       <NativeSelect
-        w={150}
+        w={174}
         h={28}
         mt={-1}
         size="xs"
-        fz="lg"
         value={sortBy}
         onChange={(event) => setSortBy(event.target.value)}
         data={[

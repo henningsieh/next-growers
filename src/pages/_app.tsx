@@ -123,11 +123,11 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             InputWrapper: {
               styles: (theme) => ({
                 label: {
+                  fontSize: theme.fontSizes.lg,
                   color:
                     theme.colorScheme === "dark"
                       ? theme.colors.growgreen[4]
                       : theme.colors.growgreen[6],
-                  fontSize: theme.fontSizes.md,
                   backgroundColor:
                     theme.colorScheme === "dark"
                       ? "rgba(0, 0, 0, 0)" // no label background in dark mode
@@ -151,6 +151,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             Input: {
               styles: (theme) => ({
                 input: {
+                  fontSize: theme.fontSizes.sm,
                   color:
                     theme.colorScheme === "dark"
                       ? theme.white
