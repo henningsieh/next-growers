@@ -405,7 +405,7 @@ const AddPost = (props: AddPostProps) => {
                 Your main text description for this Update comes here!
               </Box>
               <RichTextEditor editor={editor}>
-                <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                <RichTextEditor.Toolbar>
                   <RichTextEditor.ControlsGroup>
                     <RichTextEditor.Bold />
                     <RichTextEditor.Italic />
