@@ -13,7 +13,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import AddForm from "~/components/Report/AddForm";
+import { CreateReportForm } from "~/components/Report/AddForm";
 
 import { authOptions } from "~/server/auth";
 
@@ -69,9 +69,13 @@ const ProtectedCreateReport: NextPage = () => {
           </Title>
         </Box>
         {/* // Header End */}
+
         {/* // Add Component */}
 
-        <AddForm user={session.user} />
+        <CreateReportForm
+          user={session.user}
+          textContinueButton={t("common:report-save-new-button")}
+        />
       </Container>
     </>
   );

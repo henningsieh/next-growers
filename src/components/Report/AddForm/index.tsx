@@ -29,7 +29,6 @@ import toast from "react-hot-toast";
 import type { User } from "next-auth";
 import { useRouter } from "next/router";
 
-import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import { api } from "~/utils/api";
@@ -38,6 +37,7 @@ import { InputCreateReportForm } from "~/utils/inputValidation";
 
 interface AddFormProps {
   user: User;
+  textContinueButton: string;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -71,8 +71,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function Form({ user }: AddFormProps) {
+export function CreateReportForm({
+  user,
+  textContinueButton,
+}: AddFormProps) {
   const router = useRouter();
+
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
@@ -146,8 +150,6 @@ function Form({ user }: AddFormProps) {
       imageId: "",
     },
   });
-
-  if (!user) return <AccessDenied />;
 
   return (
     <>
@@ -322,12 +324,13 @@ function Form({ user }: AddFormProps) {
             />
             <Group position="right" mt="xl">
               <Button
+                fz="md"
+                variant="filled"
+                color={theme.primaryColor}
+                // disabled={!createReportForm.isValid()}
                 type="submit"
-                w={140}
-                variant="outline"
-                disabled={!createReportForm.isValid()}
               >
-                Continue
+                {textContinueButton}
               </Button>
             </Group>
           </Box>
@@ -336,5 +339,3 @@ function Form({ user }: AddFormProps) {
     </>
   );
 }
-
-export default Form;

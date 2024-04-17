@@ -2,7 +2,6 @@ import {
   Anchor,
   Box,
   Burger,
-  Button,
   Center,
   Collapse,
   createStyles,
@@ -224,7 +223,7 @@ export default function RootLayout({
     >
       <Group noWrap align="flex-start">
         <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
+          <item.icon size={rem(22)} color={theme.colors.growgreen[5]} />
         </ThemeIcon>
         <Box>
           <Text size="sm" fw={500}>
@@ -341,7 +340,7 @@ export default function RootLayout({
                 <Group position="apart" px="md">
                   <Text fw={500}>Community</Text>
                   <Anchor href="#" fz="xs">
-                    View all
+                    {/* View all */}
                   </Anchor>
                 </Group>
 
@@ -358,7 +357,7 @@ export default function RootLayout({
                 </SimpleGrid>
 
                 <Box className={classes.dropdownFooter}>
-                  <Group position="apart">
+                  {/* <Group position="apart">
                     <Box>
                       <Text fw={500} fz="sm">
                         Get started
@@ -369,7 +368,7 @@ export default function RootLayout({
                       </Text>
                     </Box>
                     <Button variant="default">Get started</Button>
-                  </Group>
+                  </Group> */}
                 </Box>
               </HoverCard.Dropdown>
             </HoverCard>

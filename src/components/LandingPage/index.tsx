@@ -96,7 +96,7 @@ export default function LandingPage() {
               void router.push("/grows");
             }}
             className="
-              text-lg uppercase 
+              text-lg uppercase cursor-pointer
               my-4 h-12 w-72 rounded-md 
               bg-gradient-to-r from-orange-600 via-pink-600 to-red-500 text-white"
           >

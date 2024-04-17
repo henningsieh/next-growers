@@ -138,14 +138,14 @@ export default function SessionPanel() {
           </Menu>
         ) : (
           <Button
-            onClick={open}
-            className="cursor-default w-28 px-0"
-            variant="default"
-            // size={"xs"}
-            // h={rem(22)}
+            compact
+            fz="lg"
+            fw="bold"
             h={rem(32)}
-            fz={rem(18)}
-            fw={500}
+            size="lg"
+            variant="filled"
+            color="growgreen"
+            onClick={open}
           >
             <Group position="right">
               <IconLogin2 size={"22"} />

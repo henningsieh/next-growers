@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostsAccordion from "~/components/Post/Accordion";
 import AddPost from "~/components/Post/AddForm";
-import { ProtectedEditReportForm } from "~/components/Report/EditForm";
+import { EditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
 
@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (
  * @param props: { trpcState: DehydratedState, reportId: string }
  * @returns HTML Component
  */
-const EditReportDetails: NextPage = () => {
+const ProtectedEditReportDetails: NextPage = () => {
   const router = useRouter();
   const queryReportId = router.query.reportId as string;
 
@@ -121,7 +121,7 @@ const EditReportDetails: NextPage = () => {
             !reportIsLoading &&
             !strainsAreLoading && (
               <>
-                <ProtectedEditReportForm
+                <EditReportForm
                   report={report}
                   strains={strains}
                   user={session.user}
@@ -148,4 +148,4 @@ const EditReportDetails: NextPage = () => {
   );
 };
 
-export default EditReportDetails;
+export default ProtectedEditReportDetails;

@@ -41,10 +41,11 @@ import type {
 } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
-import type { SSRConfig } from "next-i18next";
+import { type SSRConfig, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 
@@ -80,6 +81,11 @@ export const getServerSideProps: GetServerSideProps = async (
 
 const ProtectedEditReport: NextPage = () => {
   const { data: session, update } = useSession();
+
+  const router = useRouter();
+
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   const theme = useMantineTheme();
   const pageTitle = "Edit Profile";
@@ -395,10 +401,9 @@ const ProtectedEditReport: NextPage = () => {
               <Group position="right">
                 <Button
                   type="submit"
-                  w={140}
-                  title={"save profile"}
+                  title="save profile"
+                  variant="filled"
                   className="cursor-default"
-                  variant="default"
                   disabled={isLoadingSetUsername}
                   leftIcon={
                     isLoadingSetUsername ? (
@@ -408,7 +413,7 @@ const ProtectedEditReport: NextPage = () => {
                     )
                   }
                 >
-                  Save Profile
+                  {t("common:profile-save-button")}
                 </Button>
               </Group>
             </Box>

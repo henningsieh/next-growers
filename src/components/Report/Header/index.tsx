@@ -126,18 +126,7 @@ ReportHeaderProps) {
           <Box className="absolute bottom-4 right-3 cursor-pointer">
             <Group className="cursor-pointer" position="right">
               <Link href={`/account/grows/${report.id as string}`}>
-                <Button
-                  className="cursor-pointer"
-                  py={0}
-                  px={12}
-                  variant="outline"
-                  radius="sm"
-                  size="xs"
-                  fz={12}
-                  color={
-                    theme.colorScheme === "dark" ? undefined : "dark"
-                  }
-                >
+                <Button variant="filled" className="cursor-pointer">
                   {t("common:report-edit-button")}
                   <IconEdit className="ml-2" height={22} stroke={1.4} />
                 </Button>

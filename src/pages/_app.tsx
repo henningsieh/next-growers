@@ -193,25 +193,25 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                       ? theme.white
                       : theme.white,
 
-                  boxShadow: `0 0 0 1px ${
+                  boxShadow:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? theme.colors.growgreen[4]
-                        : theme.colors.gray[6]
-                      : ""
-                  }`,
+                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][4]}`
+                        : `0 0 0px 1px ${theme.colors[params.color || "gray"][6]}`
+                      : undefined,
                   backgroundColor:
                     variant === "filled"
-                      ? theme.colors[
-                          params.color || theme.primaryColor
-                        ][6]
+                      ? theme.colorScheme === "dark"
+                        ? theme.colors[params.color || "dark"][6]
+                        : theme.colors[params.color || "growgreen"][4]
                       : undefined,
+
                   "&:hover": {
                     backgroundColor:
                       variant === "filled"
-                        ? theme.colors[
-                            params.color || theme.primaryColor
-                          ][5]
+                        ? theme.colorScheme === "dark"
+                          ? theme.colors[params.color || "dark"][4]
+                          : theme.colors[params.color || "growgreen"][5]
                         : undefined,
                   },
                 },

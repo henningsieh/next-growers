@@ -29,6 +29,7 @@ import { commentDeletedSuccessfulMsg } from "~/messages";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -103,6 +104,10 @@ export function UserComment({
   setNewOpen,
   newForm,
 }: CommentHtmlProps) {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const theme = useMantineTheme();
   const largeScreen = useMediaQuery(
     `(min-width: ${theme.breakpoints.sm})`
@@ -117,7 +122,6 @@ export function UserComment({
     null
   );
 
-  const router = useRouter();
   const trpc = api.useUtils();
 
   const { mutate: tRPCdeleteComment } =
@@ -389,7 +393,7 @@ export function UserComment({
               type="submit"
               variant="outline"
             >
-              save
+              {t("common:comment-save-button")}
             </Button>
           </Flex>
         </form>

@@ -19,7 +19,7 @@ import { RichTextEditor } from "@mantine/tiptap";
 import {
   IconBulb,
   IconCalendarEvent,
-  IconCloudUpload,
+  IconDeviceFloppy,
   IconNumber,
   IconPlant,
 } from "@tabler/icons-react";
@@ -490,10 +490,12 @@ const AddPost = (props: AddPostProps) => {
 
               <Group position="right" mt="xl">
                 <Button
-                  w={160}
+                  fz="lg"
+                  variant="filled"
+                  color="growgreen"
                   type="submit"
                   leftIcon={
-                    <IconCloudUpload stroke={1.6} size="1.2rem" />
+                    <IconDeviceFloppy stroke={2.2} size="1.4rem" />
                   }
                 >
                   {t("common:post-addformn-save-button")}

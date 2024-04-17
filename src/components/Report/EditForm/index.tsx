@@ -21,6 +21,7 @@ import { notifications } from "@mantine/notifications";
 import {
   IconCalendar,
   IconCloudUpload,
+  IconDeviceFloppy,
   IconDownload,
   IconHome,
   IconTrashXFilled,
@@ -75,13 +76,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function ProtectedEditReportForm(props: EditReportFormProps) {
-  const {
-    report: reportfromProps,
-    strains: allStrains,
-    user: user,
-  } = props;
-
+export function EditReportForm({
+  report: reportfromProps,
+  strains: allStrains,
+  user: user,
+}: EditReportFormProps) {
   const router = useRouter();
 
   const { locale: activeLocale } = router;
@@ -111,6 +110,19 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
   );
 
   const trpc = api.useUtils();
+
+  const submitEditReportForm = (values: {
+    id: string;
+    title: string;
+    imageId: string;
+    description: string;
+    strains: string[];
+    environment: keyof typeof Environment;
+    createdAt: Date;
+  }) => {
+    tRPCsaveReport(values);
+  };
+
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
     {
       onMutate: (savedReport) => {
@@ -135,32 +147,6 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
     }
   );
 
-  const editReportForm = useForm({
-    validate: zodResolver(InputEditReportForm),
-    validateInputOnChange: true,
-    initialValues: {
-      id: report?.id as string,
-      title: report?.title as string,
-      imageId: imageId,
-      description: report?.description as string,
-      createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
-      strains: report.strains.map((strain) => strain.id),
-      environment: report.environment as keyof typeof Environment,
-    },
-  });
-
-  const submitEditReportForm = (values: {
-    id: string;
-    title: string;
-    imageId: string;
-    description: string;
-    strains: string[];
-    environment: keyof typeof Environment;
-    createdAt: Date;
-  }) => {
-    tRPCsaveReport(values);
-  };
-
   const handleErrors = (errors: typeof editReportForm.errors) => {
     if (errors.id) {
       toast.error(errors.id as string);
@@ -175,6 +161,20 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
       toast.error(errors.environment as string);
     }
   };
+
+  const editReportForm = useForm({
+    validate: zodResolver(InputEditReportForm),
+    validateInputOnChange: true,
+    initialValues: {
+      id: report?.id as string,
+      title: report?.title as string,
+      imageId: imageId,
+      description: report?.description as string,
+      createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
+      strains: report.strains.map((strain) => strain.id),
+      environment: report.environment as keyof typeof Environment,
+    },
+  });
 
   // Update "imageId" state, if "imageId" form field value changes
   useEffect(() => {
@@ -413,10 +413,12 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
 
               <Group position="right" mt="xl">
                 <Button
-                  w={160}
+                  fz="lg"
+                  variant="filled"
+                  color="growgreen"
                   type="submit"
                   leftIcon={
-                    <IconCloudUpload stroke={1.6} size="1.2rem" />
+                    <IconDeviceFloppy stroke={2.2} size="1.4rem" />
                   }
                 >
                   {t("common:report-save-button")}

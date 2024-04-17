@@ -11,7 +11,7 @@ import {
   Text,
   Textarea,
   Transition,
-  TypographyStylesProvider, // useMantineTheme,
+  TypographyStylesProvider,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -24,6 +24,7 @@ import { commentSuccessfulMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -45,9 +46,12 @@ interface CommentsProps {
 
 const PostComments = ({ reportId, postId }: CommentsProps) => {
   const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const trpc = api.useUtils();
 
-  //const theme = useMantineTheme();
+  // const theme = useMantineTheme();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -154,14 +158,12 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
             <Button
               title={!newOpen ? "add new comment" : "close form"}
+              variant="filled"
+              color="growgreen"
+              leftIcon={<IconTextWrap size={22} />}
               onClick={() => {
                 setNewOpen((prev) => !prev);
               }}
-              className="cursor-default"
-              variant="default"
-              // c={theme.colors.growgreen[8]}
-              // bg={theme.colors.groworange[5]}
-              leftIcon={<IconTextWrap size={22} />}
             >
               Kommentieren
             </Button>
@@ -293,7 +295,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                       type="submit"
                       variant="outline"
                     >
-                      save new comment
+                      {t("common:comment-save-button")}
                     </Button>
                   </Flex>
                 </form>

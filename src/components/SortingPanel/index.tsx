@@ -189,7 +189,6 @@ export default function SortingPanel({
         h={28}
         size="xs"
         variant="filled"
-        color={theme.colorScheme === "dark" ? "dark" : "growgreen"}
         onClick={handleToggleDesc}
       >
         {desc ? (

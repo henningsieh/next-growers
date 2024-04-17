@@ -84,7 +84,7 @@ const LikeHeart = (props: LikeHeartProps) => {
     onError: (error) => {
       notifications.show(createLikeErrorMsg(error.message));
     },
-    onSuccess: (likedPost) => {
+    onSuccess: () => {
       notifications.show(likeUpdateSuccessfulMsg);
     },
     // Always refetch after error or success:

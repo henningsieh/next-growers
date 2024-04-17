@@ -187,11 +187,8 @@ const ProtectedNotifications = () => {
                   <Group grow spacing="xs">
                     <Button
                       compact
-                      size="sm"
                       fz={"xs"}
-                      fw={"normal"}
-                      variant="default"
-                      className="cursor-default"
+                      variant="filled"
                       title="Mark all notifications as read"
                       onClick={() => {
                         handleMarkAllNotificationsAsRead();
@@ -202,11 +199,9 @@ const ProtectedNotifications = () => {
                     </Button>
                     <Button
                       compact
-                      size="sm"
                       fz={"xs"}
-                      fw={"normal"}
-                      variant="default"
-                      className="cursor-default"
+                      variant="filled"
+                      color="dark"
                       onClick={() => void setOpen(false)}
                       rightIcon={<IconBellOff size={16} stroke={1.8} />}
                     >
