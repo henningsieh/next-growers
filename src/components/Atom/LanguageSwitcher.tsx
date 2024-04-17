@@ -1,5 +1,4 @@
 import {
-  Box,
   Center,
   Group,
   SegmentedControl,
@@ -23,62 +22,50 @@ const LanguageSwitcher: NextPage = () => {
 
   return (
     <Group title={switchLabel} position="center">
-      <Box
-        sx={(theme) => ({
-          cursor: "pointer",
-          border: "solid 1px ",
-          borderRadius: theme.radius.sm,
-          borderColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.orange[6]
-              : theme.colors.growgreen[5],
-        })}
-      >
-        <SegmentedControl
-          value={activeLocale}
-          size="md"
-          data={[
-            {
-              value: "de",
-              label: (
-                <Center>
-                  <Image
-                    height={16}
-                    width={28}
-                    src={deFlag as string}
-                    alt="German Language Flag"
-                  />
-                </Center>
-              ),
-            },
-            {
-              value: "en",
-              label: (
-                <Center>
-                  <Image
-                    height={16}
-                    width={28}
-                    src={usFlag as string}
-                    alt="English Language Flag"
-                  />
-                </Center>
-              ),
-            },
-          ]}
-          color={theme.colorScheme === "dark" ? "dark.4" : "gray.3"}
-          bg={
-            theme.colorScheme === "dark"
-              ? theme.fn.lighten(theme.colors.dark[7], 0.0)
-              : theme.fn.lighten(theme.colors.growgreen[4], 0.7)
-          }
-          onChange={() =>
-            void router.push(router.pathname, router.asPath, {
-              locale: i18n.language === "de" ? "en" : "de",
-            })
-          }
-          transitionDuration={400}
-        />
-      </Box>
+      <SegmentedControl
+        value={activeLocale}
+        size="md"
+        data={[
+          {
+            value: "de",
+            label: (
+              <Center p={2}>
+                <Image
+                  height={22}
+                  width={24}
+                  src={deFlag as string}
+                  alt="German Language Flag"
+                />
+              </Center>
+            ),
+          },
+          {
+            value: "en",
+            label: (
+              <Center p={2}>
+                <Image
+                  height={22}
+                  width={24}
+                  src={usFlag as string}
+                  alt="English Language Flag"
+                />
+              </Center>
+            ),
+          },
+        ]}
+        color={theme.colorScheme === "dark" ? "dark.4" : "gray.3"}
+        bg={
+          theme.colorScheme === "dark"
+            ? theme.fn.darken(theme.colors.dark[5], 0.2)
+            : theme.fn.lighten(theme.colors.growgreen[4], 0.7)
+        }
+        onChange={() =>
+          void router.push(router.pathname, router.asPath, {
+            locale: i18n.language === "de" ? "en" : "de",
+          })
+        }
+        transitionDuration={250}
+      />
     </Group>
   );
 };
