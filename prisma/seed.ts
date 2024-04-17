@@ -11,6 +11,51 @@ async function main() {
   const cannabisStrains = [
     // Add more cannabis strains here
     {
+      name: "Mimosa x Orange Punch",
+      // FAKE DATA
+      description:
+        "Purple Cookie Kush is a hybrid strain bred by Sensi Seeds, resulting from the cross between Girl Scout Cookies and Purple Kush. With 60% indica and 40% sativa heritage, it offers a well-balanced hybrid experience. Its flavors range from grape to sandalwood, with a terpene profile consisting of complementary aromas. Purple Cookie Kush is a short plant with good yields, featuring dense buds similar to Kush strains.",
+      flavors: ["grape", "sandalwood", "spicy", "earthy"],
+      effects: ["euphoria", "relaxation", "pain relief", "body high"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Blueberry Cupcake",
+      // FAKE DATA
+      description:
+        "Purple Cookie Kush is a hybrid strain bred by Sensi Seeds, resulting from the cross between Girl Scout Cookies and Purple Kush. With 60% indica and 40% sativa heritage, it offers a well-balanced hybrid experience. Its flavors range from grape to sandalwood, with a terpene profile consisting of complementary aromas. Purple Cookie Kush is a short plant with good yields, featuring dense buds similar to Kush strains.",
+      flavors: ["grape", "sandalwood", "spicy", "earthy"],
+      effects: ["euphoria", "relaxation", "pain relief", "body high"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Quick One Auto",
+      // FAKE DATA
+      description:
+        "Purple Cookie Kush is a hybrid strain bred by Sensi Seeds, resulting from the cross between Girl Scout Cookies and Purple Kush. With 60% indica and 40% sativa heritage, it offers a well-balanced hybrid experience. Its flavors range from grape to sandalwood, with a terpene profile consisting of complementary aromas. Purple Cookie Kush is a short plant with good yields, featuring dense buds similar to Kush strains.",
+      flavors: ["grape", "sandalwood", "spicy", "earthy"],
+      effects: ["euphoria", "relaxation", "pain relief", "body high"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Hulkberry Auto",
+      // FAKE DATA
+      description:
+        "Purple Cookie Kush is a hybrid strain bred by Sensi Seeds, resulting from the cross between Girl Scout Cookies and Purple Kush. With 60% indica and 40% sativa heritage, it offers a well-balanced hybrid experience. Its flavors range from grape to sandalwood, with a terpene profile consisting of complementary aromas. Purple Cookie Kush is a short plant with good yields, featuring dense buds similar to Kush strains.",
+      flavors: ["grape", "sandalwood", "spicy", "earthy"],
+      effects: ["euphoria", "relaxation", "pain relief", "body high"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
+      name: "Green Gelato",
+      // FAKE DATA
+      description:
+        "Purple Cookie Kush is a hybrid strain bred by Sensi Seeds, resulting from the cross between Girl Scout Cookies and Purple Kush. With 60% indica and 40% sativa heritage, it offers a well-balanced hybrid experience. Its flavors range from grape to sandalwood, with a terpene profile consisting of complementary aromas. Purple Cookie Kush is a short plant with good yields, featuring dense buds similar to Kush strains.",
+      flavors: ["grape", "sandalwood", "spicy", "earthy"],
+      effects: ["euphoria", "relaxation", "pain relief", "body high"],
+      type: CannabisStraintype.Hybrid,
+    },
+    {
       name: "Purple Cookie Kush",
       description:
         "Purple Cookie Kush is a hybrid strain bred by Sensi Seeds, resulting from the cross between Girl Scout Cookies and Purple Kush. With 60% indica and 40% sativa heritage, it offers a well-balanced hybrid experience. Its flavors range from grape to sandalwood, with a terpene profile consisting of complementary aromas. Purple Cookie Kush is a short plant with good yields, featuring dense buds similar to Kush strains.",
