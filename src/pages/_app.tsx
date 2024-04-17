@@ -3,7 +3,12 @@ import {
   MantineProvider,
   rem,
 } from "@mantine/core";
-import type { ButtonStylesParams, ColorScheme } from "@mantine/core";
+import type {
+  ButtonStylesParams,
+  ColorScheme,
+  MantineTheme,
+  NotificationStylesParams,
+} from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import RootLayout from "~/layout/AppLayout";
@@ -165,6 +170,27 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               }),
             },
 
+            Notification: {
+              styles: (
+                theme: MantineTheme,
+                params: NotificationStylesParams
+              ) => ({
+                // Use the background color from the theme
+                root: {
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors[params.color || "dark"][6]
+                      : theme.colors[params.color || "gray"][4],
+                },
+                title: {
+                  fontSize: theme.fontSizes.xl,
+                  color: theme.white,
+                },
+                description: { color: theme.white },
+                // Other styles...
+              }),
+            },
+
             Container: {
               defaultProps: {
                 sizes: {
@@ -300,7 +326,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
       >
         <SessionProvider session={session}>
           <Loading isLoading={isLoading} />
-          <Notifications limit={5} position="bottom-right" />
+          <Notifications limit={5} position="top-center" />
           <Toaster />
 
           <RootLayout>

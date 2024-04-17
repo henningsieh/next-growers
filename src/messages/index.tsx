@@ -23,7 +23,7 @@ export const httpStatusErrorMsg = (
 export const markAllReadMessage = {
   title: "I have read all",
   message: "All notifications were marked as read",
-  color: "green",
+  color: "growgreen",
   icon: <IconEyeHeart size="1.2rem" stroke={2.8} />,
   loading: false,
 };
@@ -43,7 +43,7 @@ export const likeGrowSuccessfulMsg: NotificationProps & {
 } = {
   title: "Success",
   message: "Woohoo... you ❤️ this Grow!",
-  color: "green",
+  color: "growgreen",
   icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
@@ -53,7 +53,7 @@ export const likeUpdateSuccessfulMsg: NotificationProps & {
 } = {
   title: "Success",
   message: "Woohoo... you ❤️ this Update!",
-  color: "green",
+  color: "growgreen",
   icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
@@ -63,7 +63,7 @@ export const commentSuccessfulMsg: NotificationProps & {
 } = {
   title: "Success",
   message: "Woohoo... you commented this Grow! 🥳",
-  color: "green",
+  color: "growgreen",
   icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
@@ -73,7 +73,7 @@ export const dislikeSuccessfulMsg: NotificationProps & {
 } = {
   title: "Success",
   message: "Oh no... you removed your like! 😢",
-  color: "green",
+  color: "growgreen",
   icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
@@ -83,7 +83,7 @@ export const commentDeletedSuccessfulMsg: NotificationProps & {
 } = {
   title: "Success",
   message: "Oh no... you removed your comment! 😢",
-  color: "green",
+  color: "growgreen",
   icon: <IconCannabis size="1.2rem" stroke={2.8} />,
   loading: false,
 };
@@ -92,14 +92,14 @@ export const setUserNameSuccessfulMsg = (userName: string) => ({
   loading: false,
   title: "Success",
   message: `Username "${userName}" has been updated successfully.`,
-  color: "green",
+  color: "growgreen",
   icon: <IconCannabis size="1.2rem" stroke={2.8} />,
 });
 
 export const setUserimageSuccessfulMsg = {
   title: "Success",
   message: "Your user image has been updated successfully! ✅",
-  color: "green",
+  color: "growgreen",
   icon: <IconPhoto size="1.2rem" stroke={2.8} />,
   loading: false,
 };
