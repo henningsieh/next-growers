@@ -702,6 +702,18 @@ export const reportRouter = createTRPCRouter({
           (id) => !newStrainIds.includes(id)
         );
 
+        // Fetch the current updatedAt value to be able to let it unchanged
+        const currentReport = (await ctx.prisma.report.findUnique({
+          where: {
+            id: reportData.id,
+          },
+          select: {
+            updatedAt: true,
+          },
+        })) as {
+          updatedAt: Date;
+        };
+
         const data = {
           ...reportData,
           authorId: ctx.session.user.id,
@@ -720,7 +732,7 @@ export const reportRouter = createTRPCRouter({
           },
 
           createdAt: createdAt,
-          // updatedAt: createdAt,
+          updatedAt: currentReport.updatedAt,
         };
 
         // safe report

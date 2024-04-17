@@ -94,16 +94,38 @@ export const postRouter = createTRPCRouter({
         },
       });
 
-      // console.debug("date", date);
-      // Update the `updated_at` field of the connected report
-      await ctx.prisma.report.update({
+      // Update the `updated_at` field of the connected report to the
+      // newest/youngest Post.date of all Posts of the connected report
+
+      // Find all posts associated with the report
+      const allConnectedPosts = await ctx.prisma.post.findMany({
         where: {
-          id: reportId,
+          reportId,
         },
-        data: {
-          updatedAt: date,
+        orderBy: {
+          date: "desc", // Order by date in descending order to get the newest date first
+        },
+        select: {
+          date: true,
         },
       });
+
+      // Find the newest date among all posts
+      const newestDateOfallConnectedPosts =
+        allConnectedPosts.length > 0 ? allConnectedPosts[0].date : null;
+
+      // Update the `updated_at` field of the connected report
+      if (newestDateOfallConnectedPosts) {
+        await ctx.prisma.report.update({
+          where: {
+            id: reportId,
+          },
+          data: {
+            updatedAt: newestDateOfallConnectedPosts,
+          },
+        });
+      }
+
       return post;
     }),
 

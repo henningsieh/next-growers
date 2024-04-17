@@ -117,9 +117,6 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
 
             InputWrapper: {
               styles: (theme) => ({
-                NativeSelect: {
-                  borderRadius: theme.radius.md,
-                },
                 label: {
                   color:
                     theme.colorScheme === "dark"
@@ -158,7 +155,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   borderColor:
                     theme.colorScheme === "dark"
                       ? theme.colors.growgreen[4]
-                      : theme.colors.growgreen[8],
+                      : theme.colors.growgreen[4],
 
                   // backgroundColor:
                   //   theme.colorScheme === "dark"
@@ -190,22 +187,31 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 { variant }
               ) => ({
                 root: {
+                  cursor: "default",
                   color:
                     theme.colorScheme === "dark"
                       ? theme.white
-                      : theme.black,
+                      : theme.white,
+
+                  boxShadow: `0 0 0 1px ${
+                    variant === "filled"
+                      ? theme.colorScheme === "dark"
+                        ? theme.colors.growgreen[4]
+                        : theme.colors.gray[6]
+                      : ""
+                  }`,
                   backgroundColor:
                     variant === "filled"
                       ? theme.colors[
                           params.color || theme.primaryColor
-                        ][5]
+                        ][6]
                       : undefined,
                   "&:hover": {
                     backgroundColor:
                       variant === "filled"
-                        ? theme.colorScheme === "dark"
-                          ? theme.colors.growgreen[7]
-                          : theme.colors.growgreen[3]
+                        ? theme.colors[
+                            params.color || theme.primaryColor
+                          ][5]
                         : undefined,
                   },
                 },
@@ -230,6 +236,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               // padding: theme.spacing.sm,
               // boxShadow: theme.shadows.lg,
               outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
+              // outline: "none", // Remove the yellow outline on focus
             }),
           },
 
