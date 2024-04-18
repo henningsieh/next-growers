@@ -10,6 +10,7 @@ import {
   rem,
   Text,
   Textarea,
+  TextInput,
   useMantineTheme,
 } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
@@ -37,7 +38,7 @@ import { useRouter } from "next/router";
 import LikeHeart from "~/components/Atom/LikeHeart";
 import UserAvatar from "~/components/Atom/UserAvatar";
 
-import { type Comment, Locale } from "~/types";
+import { type Comment, type Comments, Locale } from "~/types";
 
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/utils/helperUtils";
@@ -48,12 +49,18 @@ const useStyles = createStyles((theme) => ({
     marginBottom: theme.spacing.xs,
   },
 
-  body: {
-    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.sm})`)
+  contentHtml: {
+    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
       ? rem(58)
       : rem(4),
     paddingTop: theme.spacing.sm,
     fontSize: theme.fontSizes.sm,
+  },
+
+  responses: {
+    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
+      ? rem(200)
+      : rem(40),
   },
 
   content: {
@@ -63,18 +70,26 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface CommentHtmlProps {
+interface UserCommentProps {
   reportId: string;
   comment: Comment;
+  isResponse: string;
   setNewOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  newForm: UseFormReturnType<
+  newCommentForm: UseFormReturnType<
     {
       id: undefined;
+      isResponseTo: string;
       postId: string;
       content: string;
     },
-    (values: { id: undefined; postId: string; content: string }) => {
+    (values: {
       id: undefined;
+      isResponseTo: string;
+      postId: string;
+      content: string;
+    }) => {
+      id: undefined;
+      isResponseTo: string;
       postId: string;
       content: string;
     }
@@ -100,10 +115,11 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
 
 export function UserComment({
   reportId,
+  isResponse,
   comment,
   setNewOpen,
-  newForm,
-}: CommentHtmlProps) {
+  newCommentForm,
+}: UserCommentProps) {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
@@ -189,12 +205,18 @@ export function UserComment({
     validateInputOnChange: true,
     initialValues: {
       id: comment.id,
+      isResponseTo: comment.isResponseToId as string,
       postId: comment.postId as string,
       content: comment.content,
     },
   });
 
   useEffect(() => {
+    editCommentForm.setFieldValue(
+      "isResponseToId",
+      comment.isResponseToId
+    );
+
     const fetchHtml = async () => {
       try {
         const html = await renderMarkDownToHtml(comment.content);
@@ -205,6 +227,7 @@ export function UserComment({
       }
     };
     void fetchHtml();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comment.content]);
 
   const handleErrors = (errors: typeof editCommentForm.errors) => {
@@ -237,167 +260,211 @@ export function UserComment({
     };
   }, []);
 
+  console.debug(comment.responses as Comments);
+
   return (
-    <Paper
-      withBorder
-      p="sm"
-      pt="xs"
-      radius="md"
-      className={classes.comment}
-    >
-      <Group position="apart">
-        <Group position="left">
-          <UserAvatar
-            imageUrl={
-              comment.author.image
-                ? comment.author.image
-                : `https://ui-avatars.com/api/?name=${
-                    comment.author.name as string
-                  }`
-            }
-            userName={comment.author.name as string}
-            avatarRadius={largeScreen ? 42 : 32}
-            tailwindMarginTop={false}
-          />
-          <Box>
-            <Text fz={largeScreen ? "sm" : "xs"}>
-              {comment.author.name}
-            </Text>
-            <Text fz={largeScreen ? "xs" : rem(10)} c="dimmed">
-              {sanatizeDateString(
-                comment.createdAt.toISOString(),
-                router.locale === Locale.DE ? Locale.DE : Locale.EN,
-                largeScreen,
-                true
-              )}
-            </Text>
-          </Box>
-        </Group>
-        <Flex
-          mt="xs"
-          justify="flex-end"
-          align="flex-start"
-          gap={4}
-          style={{ flexGrow: 1 }}
-        >
-          {status === "authenticated" &&
-            session.user.id === comment.author.id && (
-              <>
-                <ActionIcon
-                  onClick={() => tRPCdeleteComment(comment.id)}
-                  className=" cursor-default"
-                  variant="default"
-                >
-                  <IconTrashX size="1.4rem" stroke={1.2} />
-                </ActionIcon>
-                {!isEditing ? (
-                  <ActionIcon
-                    title="edit comment"
-                    onClick={() => setIsEditing((prev) => !prev)}
-                    className="cursor-default"
-                    variant="default"
-                  >
-                    <IconEdit size="1.4rem" stroke={1.2} />
-                  </ActionIcon>
-                ) : (
-                  <ActionIcon
-                    title="end editing"
-                    onClick={() => setIsEditing((prev) => !prev)}
-                    className="cursor-default"
-                    variant="default"
-                  >
-                    <IconEditOff size="1.4rem" stroke={1.2} />
-                  </ActionIcon>
+    <>
+      <Paper
+        withBorder
+        p="sm"
+        pt="xs"
+        radius="md"
+        className={classes.comment}
+      >
+        <Box>id: {comment.id}</Box>
+        <Box>isResponseToId: {comment.isResponseToId}</Box>
+        <Group position="apart">
+          <Group position="left">
+            <UserAvatar
+              imageUrl={
+                comment.author.image
+                  ? comment.author.image
+                  : `https://ui-avatars.com/api/?name=${
+                      comment.author.name as string
+                    }`
+              }
+              userName={comment.author.name as string}
+              avatarRadius={largeScreen ? 42 : 32}
+              tailwindMarginTop={false}
+            />
+            <Box>
+              <Text fz={largeScreen ? "sm" : "xs"}>
+                {comment.author.name}
+              </Text>
+              <Text fz={largeScreen ? "xs" : rem(10)} c="dimmed">
+                {sanatizeDateString(
+                  comment.createdAt.toISOString(),
+                  router.locale === Locale.DE ? Locale.DE : Locale.EN,
+                  largeScreen,
+                  true
                 )}
-              </>
-            )}
+              </Text>
+            </Box>
+          </Group>
+          <Flex
+            mt="xs"
+            justify="flex-end"
+            align="flex-start"
+            gap={4}
+            style={{ flexGrow: 1 }}
+          >
+            {status === "authenticated" &&
+              session.user.id === comment.author.id && (
+                <>
+                  <ActionIcon
+                    onClick={() => tRPCdeleteComment(comment.id)}
+                    className=" cursor-default"
+                    variant="default"
+                  >
+                    <IconTrashX size="1.4rem" stroke={1.2} />
+                  </ActionIcon>
+                  {!isEditing ? (
+                    <ActionIcon
+                      title="edit comment"
+                      onClick={() => setIsEditing((prev) => !prev)}
+                      className="cursor-default"
+                      variant="default"
+                    >
+                      <IconEdit size="1.4rem" stroke={1.2} />
+                    </ActionIcon>
+                  ) : (
+                    <ActionIcon
+                      title="end editing"
+                      onClick={() => setIsEditing((prev) => !prev)}
+                      className="cursor-default"
+                      variant="default"
+                    >
+                      <IconEditOff size="1.4rem" stroke={1.2} />
+                    </ActionIcon>
+                  )}
+                </>
+              )}
 
-          {/* Response Button */}
-          <ActionIcon
-            className=" cursor-default"
-            variant="default"
-            onClick={() => {
-              setNewOpen(true);
+            {/* Response Button */}
+            <ActionIcon
+              className=" cursor-default"
+              variant="default"
+              onClick={() => {
+                console.debug("Response button clicked");
+                setNewOpen(true);
 
-              const lines = comment.content.split("\n");
-              const formattedContent = lines
-                .map((line) => `> ${line}`)
-                .join("\n");
+                const lines = comment.content.split("\n");
+                const formattedContent = lines
+                  .map((line) => `> ${line}`)
+                  .join("\n");
 
-              newForm.setValues({
-                ...newForm.values,
-                content: `${newForm.values.content}> from: [${
+                // Update the value of isResponseTo separately
+                newCommentForm.setFieldValue(
+                  "isResponseTo",
+                  isResponse ? isResponse : comment.id
+                );
+
+                // Update the content field
+                const updatedContent = `${newCommentForm.values.content}> from: [${
                   comment.author.name as string
                 } <comment#${comment.id}](/grow/${reportId}/update/${
                   comment.postId as string
-                }#${comment.id})>\n${formattedContent}\n\n`,
-              });
-            }}
-          >
-            <IconMessageForward
-              color="orange"
-              size="1.4rem"
-              stroke={1.2}
-            />
-          </ActionIcon>
+                }#${comment.id})>\n${formattedContent}\n\n`;
 
-          {/* Like Button */}
-          <Box mt={-2}>
-            <LikeHeart itemToLike={comment} itemType={"Comment"} />
-          </Box>
-        </Flex>
-      </Group>
-      {!isEditing ? (
-        <Paper className={classes.body}>
-          {transformedHtml ? (
-            <Box
-              className={classes.content}
-              dangerouslySetInnerHTML={{ __html: transformedHtml }}
-            />
-          ) : null}
-        </Paper>
-      ) : (
-        <form
-          onSubmit={editCommentForm.onSubmit((values) => {
-            tRPCsaveComment(values);
-          }, handleErrors)}
-        >
-          <Box className="relative">
-            <LoadingOverlay
-              ml={42}
-              mt={12}
-              radius="sm"
-              visible={isSaving}
-              transitionDuration={150}
-              loaderProps={{
-                size: "sm",
-                variant: "dots",
+                // Update the content field value directly
+                newCommentForm.setFieldValue("content", updatedContent);
+
+                console.debug(newCommentForm.values);
               }}
+            >
+              <IconMessageForward
+                color="orange"
+                size="1.4rem"
+                stroke={1.2}
+              />
+            </ActionIcon>
+
+            {/* Like Button */}
+            <Box mt={-2}>
+              <LikeHeart itemToLike={comment} itemType={"Comment"} />
+            </Box>
+          </Flex>
+        </Group>
+        {!isEditing ? (
+          <Paper className={classes.contentHtml}>
+            {transformedHtml ? (
+              <Box
+                className={classes.content}
+                dangerouslySetInnerHTML={{ __html: transformedHtml }}
+              />
+            ) : null}
+          </Paper>
+        ) : (
+          // EDITING
+          <form
+            onSubmit={editCommentForm.onSubmit((values) => {
+              tRPCsaveComment(values);
+            }, handleErrors)}
+          >
+            <TextInput
+              // "isResponseToId" is set and I can see it in frontend
+              // but it is not included in values sent to backend,
+              // server console.debug("isResponseTo", isResponseTo) is empty.
+              // Why?
+              type="text"
+              {...editCommentForm.getInputProps("isResponseTo")}
+              value={comment.isResponseToId as string}
             />
-            <Textarea
-              autosize
-              minRows={3}
-              maxRows={14}
-              ml={42}
-              pt={12}
-              withAsterisk
-              placeholder={comment.content}
-              {...editCommentForm.getInputProps("content")}
+            <Box className="relative">
+              <LoadingOverlay
+                ml={42}
+                mt={12}
+                radius="sm"
+                visible={isSaving}
+                transitionDuration={150}
+                loaderProps={{
+                  size: "sm",
+                  variant: "dots",
+                }}
+              />
+              <Textarea
+                autosize
+                minRows={3}
+                maxRows={14}
+                ml={42}
+                pt={12}
+                withAsterisk
+                placeholder={comment.content}
+                {...editCommentForm.getInputProps("content")}
+              />
+            </Box>
+            <Flex justify="flex-end" align="center">
+              <Button
+                disabled={isSaving}
+                mt="xs"
+                size="xs"
+                type="submit"
+                variant="outline"
+              >
+                {t("common:comment-save-button")}
+              </Button>
+            </Flex>
+          </form>
+        )}
+      </Paper>
+
+      {/* Display responses */}
+      <Box className={classes.responses}>
+        {comment.responses.map((response) => (
+          <Box
+            key={response.id}
+            style={{ paddingRight: 0, marginRight: 0 }}
+          >
+            <UserComment
+              reportId={reportId}
+              isResponse={comment.id}
+              comment={response as Comment}
+              setNewOpen={setNewOpen}
+              newCommentForm={newCommentForm}
             />
           </Box>
-          <Flex justify="flex-end" align="center">
-            <Button
-              disabled={isSaving}
-              mt="xs"
-              size="xs"
-              type="submit"
-              variant="outline"
-            >
-              {t("common:comment-save-button")}
-            </Button>
-          </Flex>
-        </form>
-      )}
-    </Paper>
+        ))}
+      </Box>
+    </>
   );
 }

@@ -38,8 +38,33 @@ export const commentRouter = createTRPCRouter({
         },
         where: {
           postId: postId,
+          isResponseTo: null, // Filter out comments that are responses, they come as 'responses[]'
         },
         include: {
+          isResponseTo: true, // Include the "mother" comment if it exists
+          responses: {
+            orderBy: {
+              createdAt: "asc",
+            },
+            include: {
+              author: {
+                select: { id: true, name: true, image: true },
+              },
+              likes: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      image: true,
+                    },
+                  },
+                },
+              },
+              responses: true, // Include the array of responses for each response
+              isResponseTo: true, // Include the isResponseTo field for each response
+            },
+          },
           author: {
             select: { id: true, name: true, image: true },
           },
@@ -56,6 +81,8 @@ export const commentRouter = createTRPCRouter({
           },
         },
       });
+
+      //console.debug({ comments });
       /* 
       const formattedPosts = await Promise.all(
         posts.map(async (post) => {
@@ -112,7 +139,12 @@ export const commentRouter = createTRPCRouter({
   saveComment: protectedProcedure
     .input(InputEditCommentForm)
     .mutation(async ({ ctx, input }) => {
-      const { id, postId, content } = input;
+      const {
+        id,
+        isResponseTo: isResponseToId,
+        postId,
+        content,
+      } = input;
 
       if (id) {
         // Saving an edited comment
@@ -129,6 +161,8 @@ export const commentRouter = createTRPCRouter({
             "You are not authorized to edit this comment"
           );
         }
+
+        console.debug("isResponseToId", isResponseToId);
 
         const updatedComment = await ctx.prisma.comment.update({
           where: { id },
@@ -149,6 +183,7 @@ export const commentRouter = createTRPCRouter({
         // Create a new comment
         const newComment = await ctx.prisma.comment.create({
           data: {
+            isResponseTo: { connect: { id: isResponseToId } }, // Connect the response comment
             content,
             author: { connect: { id: ctx.session.user.id } },
             post: { connect: { id: postId } },
