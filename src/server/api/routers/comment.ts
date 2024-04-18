@@ -155,22 +155,25 @@ export const commentRouter = createTRPCRouter({
           },
         });
 
-        // Create a notification for the report author
-        await ctx.prisma.notification.create({
-          data: {
-            recipient: {
-              connect: {
-                id: post.authorId,
+        // Create a notification for the author of the Grow, but
+        // only if this is NOT the author of the comment itself.
+        if (newComment.authorId !== post.authorId) {
+          await ctx.prisma.notification.create({
+            data: {
+              recipient: {
+                connect: {
+                  id: post.authorId,
+                },
+              },
+              event: NotificationEvent.COMMENT_CREATED,
+              comment: {
+                connect: {
+                  id: newComment.id,
+                },
               },
             },
-            event: NotificationEvent.COMMENT_CREATED,
-            comment: {
-              connect: {
-                id: newComment.id,
-              },
-            },
-          },
-        });
+          });
+        }
 
         return newComment;
       }
