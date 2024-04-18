@@ -59,8 +59,8 @@ const useStyles = createStyles((theme) => ({
 
   responses: {
     paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
-      ? rem(200)
-      : rem(40),
+      ? rem(60)
+      : rem(30),
   },
 
   content: {
@@ -271,8 +271,6 @@ export function UserComment({
         radius="md"
         className={classes.comment}
       >
-        <Box>id: {comment.id}</Box>
-        <Box>isResponseToId: {comment.isResponseToId}</Box>
         <Group position="apart">
           <Group position="left">
             <UserAvatar
@@ -362,7 +360,7 @@ export function UserComment({
                 // Update the content field
                 const updatedContent = `${newCommentForm.values.content}> from: [${
                   comment.author.name as string
-                } <comment#${comment.id}](/grow/${reportId}/update/${
+                } <comment#${comment.id}](${activeLocale === "en" ? "" : `/${activeLocale as string}`}/grow/${reportId}/update/${
                   comment.postId as string
                 }#${comment.id})>\n${formattedContent}\n\n`;
 
