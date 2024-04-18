@@ -64,7 +64,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   // FETCH COMMENTS
   const {
-    data: userComments,
+    data: comments,
     isLoading,
     // isError,
   } = api.comments.getCommentsByPostId.useQuery({
@@ -86,7 +86,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       },
       onSuccess: async (newCommentDB) => {
         notifications.show(commentSuccessfulMsg);
-        editCommentForm.reset();
+        newCommentForm.reset();
         await trpc.comments.getCommentsByPostId.fetch({
           postId: newCommentDB.postId as string,
         });
@@ -100,17 +100,18 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   const commentsRef = useRef<HTMLElement[]>([]);
 
-  const editCommentForm = useForm({
+  const newCommentForm = useForm({
     validate: zodResolver(InputEditCommentForm),
     validateInputOnChange: false,
     initialValues: {
       id: undefined,
+      isResponseTo: "",
       postId: postId,
       content: "",
     },
   });
 
-  const comments = userComments?.map((postComment) => {
+  const userComments = comments?.map((postComment) => {
     return (
       <div
         key={postComment.id}
@@ -123,15 +124,16 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       >
         <UserComment
           reportId={reportId}
+          isResponse=""
           comment={postComment}
           setNewOpen={setNewOpen}
-          newForm={editCommentForm}
+          newCommentForm={newCommentForm}
         />
       </div>
     );
   });
 
-  const handleErrors = (errors: typeof editCommentForm.errors) => {
+  const handleErrors = (errors: typeof newCommentForm.errors) => {
     Object.keys(errors).forEach((key) => {
       notifications.show(
         httpStatusErrorMsg(errors[key] as string, 422)
@@ -140,7 +142,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   };
 
   useEffect(() => {
-    editCommentForm.setFieldValue("postId", postId);
+    newCommentForm.setFieldValue("postId", postId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
@@ -218,7 +220,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                         title="reset form and close"
                         onClick={() => {
                           setNewOpen(false);
-                          editCommentForm.reset();
+                          newCommentForm.reset();
                         }}
                         m={0}
                         p={0}
@@ -258,7 +260,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                   </TypographyStylesProvider>
                 </Box>
                 <form
-                  onSubmit={editCommentForm.onSubmit((values) => {
+                  onSubmit={newCommentForm.onSubmit((values) => {
                     tRPCsaveComment(values);
                   }, handleErrors)}
                 >
@@ -282,7 +284,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                       pt={12}
                       withAsterisk
                       // placeholder={`be nice and friendly :-)`}
-                      {...editCommentForm.getInputProps("content")}
+                      {...newCommentForm.getInputProps("content")}
                     />
                   </Box>
                   <Flex justify="flex-end" align="center">
@@ -303,7 +305,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
         </>
       )}
 
-      {comments}
+      {userComments}
     </Box>
   );
 };

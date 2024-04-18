@@ -106,6 +106,7 @@ export const InputGetCommentsByPostId = z.object({
 
 export const InputEditCommentForm = z.object({
   id: z.string().optional(),
+  isResponseTo: z.string().optional(),
   postId: z.string(),
   content: z
     .string()
