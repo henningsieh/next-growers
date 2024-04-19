@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 
 import {
   createTRPCRouter,

@@ -5,8 +5,7 @@ import {
   Group,
   Menu,
   rem,
-  useMantineColorScheme,
-  useMantineTheme, // useMantineTheme,
+  useMantineColorScheme, //useMantineTheme, // useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -64,7 +63,7 @@ const useStyles = createStyles((theme) => ({
 
 export default function SessionPanel() {
   const router = useRouter();
-  const theme = useMantineTheme();
+  //const theme = useMantineTheme();
 
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);

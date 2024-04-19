@@ -1,9 +1,6 @@
-import { createStyles, rem } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { appTitle } from "~/pages/_document";
 
-import { useTranslation } from "react-i18next";
-
+// import { useTranslation } from "react-i18next";
 import type {
   GetStaticProps,
   GetStaticPropsContext,
@@ -11,9 +8,8 @@ import type {
 } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useRouter } from "next/router";
 
-import HowTo from "~/components/HowTo";
+// import { useRouter } from "next/router";
 import TechStack from "~/components/TechStack";
 
 /** PUBLIC STATIC PAGE with translations
@@ -37,9 +33,9 @@ export const getStaticProps: GetStaticProps = async (
  * @returns NextPage
  */
 const PublicTechStackPage: NextPage = () => {
-  const router = useRouter();
-  const { locale: activeLocale } = router;
-  const { t } = useTranslation(activeLocale);
+  // const router = useRouter();
+  // const { locale: activeLocale } = router;
+  // const { t } = useTranslation(activeLocale);
   return (
     <>
       <Head>
