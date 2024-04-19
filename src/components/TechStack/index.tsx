@@ -1,7 +1,5 @@
-import OAuth2Icon from "../../../public/svg/Oauth_logo.svg";
 // Import the SVG
 import {
-  Box,
   Button,
   Container,
   createStyles,
@@ -15,35 +13,22 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
-import type { TablerIconsProps } from "@tabler/icons-react";
 import {
   IconBrandGithub,
   IconBrandJavascript,
-  IconCircleKey,
   IconCloudUpload,
-  IconCode,
   IconCookie,
-  IconGauge,
-  IconGitBranch,
-  IconHelpSquareFilled,
   IconKey,
   IconLock,
-  IconLogin,
-  IconLogin2,
   IconMail,
-  IconMessage2,
-  IconPhoto,
   IconServer2,
-  IconSourceCode,
-  IconUser,
 } from "@tabler/icons-react";
 import { IconExternalLink } from "@tabler/icons-react";
 
-import { useTranslation } from "react-i18next";
-
+// import { useTranslation } from "react-i18next";
 import Link from "next/link";
-import { useRouter } from "next/router";
+
+// import { useRouter } from "next/router";
 
 export const MOCKDATA = [
   {
@@ -138,6 +123,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface FeatureProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: React.FC<any>;
   title: React.ReactNode;
   description: React.ReactNode;
@@ -152,7 +138,6 @@ export function Feature({
 }: FeatureProps) {
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-  const theme = useMantineTheme();
 
   return (
     <div>
@@ -219,17 +204,17 @@ export function Feature({
   );
 }
 export default function TechStack() {
-  const router = useRouter();
-  const { locale: activeLocale } = router;
-  const { t } = useTranslation(activeLocale);
+  // const router = useRouter();
+  // const { locale: activeLocale } = router;
+  // const { t } = useTranslation(activeLocale);
 
   const theme = useMantineTheme();
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
   const { classes } = useStyles();
-  const largeScreen = useMediaQuery(
-    `(min-width: ${theme.breakpoints.sm})`
-  );
+  // const { colorScheme } = useMantineColorScheme();
+  // const dark = colorScheme === "dark";
+  // const largeScreen = useMediaQuery(
+  //   `(min-width: ${theme.breakpoints.sm})`
+  // );
 
   const features = MOCKDATA.map((feature, index) => (
     <Feature {...feature} key={index} />
