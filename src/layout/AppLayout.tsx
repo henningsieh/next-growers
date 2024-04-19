@@ -309,6 +309,9 @@ export default function RootLayout({
                 {t("common:usermenu-mygrows")}
               </Link>
             )}
+            <Link href="/info/tech-stack" className={classes.link}>
+              Technologie
+            </Link>
             <Link
               href="/how-to-manual-anleitung-wie-geht-das"
               className={classes.link}
@@ -410,7 +413,6 @@ export default function RootLayout({
             my="sm"
             color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
           />
-
           <Link href="/" className={classes.link}>
             {t("common:app-headermenu-welcome")}
           </Link>
@@ -422,6 +424,9 @@ export default function RootLayout({
               {t("common:usermenu-mygrows")}
             </Link>
           )}
+          <Link href="/info/tech-stack" className={classes.link}>
+            Technologie
+          </Link>
           <Link
             href="/how-to-manual-anleitung-wie-geht-das"
             className={classes.link}
@@ -442,9 +447,7 @@ export default function RootLayout({
               />
             </Center>
           </UnstyledButton>
-
           <Collapse in={externLinksOpen}>{externLinks}</Collapse>
-
           <Divider
             my="sm"
             color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
