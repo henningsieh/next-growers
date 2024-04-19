@@ -5,7 +5,8 @@ import {
   Group,
   Menu,
   rem,
-  useMantineColorScheme, // useMantineTheme,
+  useMantineColorScheme,
+  useMantineTheme, // useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -63,6 +64,7 @@ const useStyles = createStyles((theme) => ({
 
 export default function SessionPanel() {
   const router = useRouter();
+  const theme = useMantineTheme();
 
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
@@ -192,18 +194,17 @@ export default function SessionPanel() {
         ) : (
           <Button
             compact
-            fz="lg"
-            fw="bold"
+            fz="xl"
+            fw="normal"
             h={rem(32)}
             size="lg"
             variant="filled"
-            color="growgreen"
+            c="white"
+            color={dark ? "growgreen" : "growgreen"}
             onClick={open}
+            leftIcon={<IconLogin2 stroke={2} size={"22"} />}
           >
-            <Group position="right">
-              <IconLogin2 size={"22"} />
-              {t("common:app-headermenu-signin")}
-            </Group>
+            {t("common:app-headermenu-signin")}
           </Button>
         )}
       </Group>
