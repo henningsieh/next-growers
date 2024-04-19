@@ -145,7 +145,7 @@ export const commentRouter = createTRPCRouter({
         postId,
         content,
       } = input;
-
+      console.debug("isResponseToId", isResponseToId);
       if (id) {
         // Saving an edited comment
         const existingComment = await ctx.prisma.comment.findUnique({
@@ -183,12 +183,39 @@ export const commentRouter = createTRPCRouter({
         // Create a new comment
         const newComment = await ctx.prisma.comment.create({
           data: {
-            isResponseTo: { connect: { id: isResponseToId } }, // Connect the response comment
+            isResponseTo: isResponseToId
+              ? { connect: { id: isResponseToId } }
+              : undefined,
             content,
             author: { connect: { id: ctx.session.user.id } },
             post: { connect: { id: postId } },
           },
         });
+
+        // FIXME:
+        // Create an additional notification for the
+        // author of the comment that has been replied to
+        // The author of that comment is author of comment where id = isResponseTo
+        // Retrieve the comment that newComment is responding to
+        const respondedComment = await ctx.prisma.comment.findUnique({
+          where: { id: isResponseToId }, // Assuming isResponseTo contains the ID of the responded comment
+          select: { authorId: true }, // Selecting only the authorId field
+        });
+
+        // Create a notification for the author of the responded comment if response
+        if (respondedComment != null) {
+          await ctx.prisma.notification.create({
+            data: {
+              recipient: {
+                connect: { id: respondedComment?.authorId }, // Connect to the author of the responded comment
+              },
+              event: NotificationEvent.COMMENT_ANSWERED, // Assuming you have a specific event type for comment replies
+              comment: {
+                connect: { id: newComment.id }, // Connect to the newly created comment
+              },
+            },
+          });
+        }
 
         // Create a notification for the author of the Grow, but
         // only if this is NOT the author of the comment itself.

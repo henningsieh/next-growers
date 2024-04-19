@@ -448,10 +448,7 @@ export function UserComment({
       {/* Display responses */}
       <Box className={classes.responses}>
         {comment.responses.map((response) => (
-          <Box
-            key={response.id}
-            style={{ paddingRight: 0, marginRight: 0 }}
-          >
+          <Box id={response.id} key={response.id}>
             <UserComment
               reportId={reportId}
               isResponse={comment.id}

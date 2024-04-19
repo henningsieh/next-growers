@@ -111,11 +111,11 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     },
   });
 
-  const userComments = comments?.map((postComment) => {
+  const userComments = comments?.map((comment) => {
     return (
       <div
-        key={postComment.id}
-        id={postComment.id}
+        key={comment.id}
+        id={comment.id}
         ref={(ref) => {
           if (ref) {
             commentsRef.current.push(ref);
@@ -125,7 +125,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
         <UserComment
           reportId={reportId}
           isResponse=""
-          comment={postComment}
+          comment={comment}
           setNewOpen={setNewOpen}
           newCommentForm={newCommentForm}
         />
