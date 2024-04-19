@@ -113,10 +113,15 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
 ) => {
   return z.object({
-    date: z.date().refine((value) => value >= reportStartDate, {
-      message:
-        "Date should be greater than or equal to report's germination date",
-    }),
+    date: z
+      .date()
+      .refine((value) => value >= reportStartDate, {
+        message:
+          "Date must be greater than or equal to 'Grow start date'",
+      })
+      .refine((value) => value <= new Date(), {
+        message: "Date must be less than or equal to today",
+      }),
     id: z.string().optional(),
     day: z.number().min(0, { message: "Day must be greater than 0" }),
     title: z

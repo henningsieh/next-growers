@@ -131,7 +131,11 @@ const ProtectedEditReportDetails: NextPage = () => {
                 <Space h="xl" />
 
                 {/* AddPost Component */}
-                {/* Ein neues Update hinzufügen */}
+                <Container p={0}>
+                  <Title order={2}>
+                    {t("common:addpost-headline")}
+                  </Title>
+                </Container>
                 <AddPost isoReport={report} post={null} />
 
                 <Space h="xl" />

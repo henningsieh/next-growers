@@ -10,7 +10,6 @@ import {
   Select,
   Space,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
@@ -35,11 +34,11 @@ import StarterKit from "@tiptap/starter-kit";
 import { env } from "~/env.mjs";
 import {
   fileUploadErrorMsg,
+  httpStatusErrorMsg,
   onlyOnePostPerDayAllowed,
 } from "~/messages";
 
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -128,10 +127,8 @@ const AddPost = (props: AddPostProps) => {
         if (!context) return;
       },
       onSuccess: async () => {
-        toast.success("The update was saved to your report");
         setImageIds([]);
         createPostForm.setFieldValue("images", imageIds);
-        console.log("imageIds: ", imageIds);
         await trpc.reports.getIsoReportWithPostsFromDb.refetch();
         // Navigate to the new report page
         // void router.push(`/account/grows/${newReportDB.id}`);
@@ -167,6 +164,7 @@ const AddPost = (props: AddPostProps) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const createPostForm = useForm({
     validate: zodResolver(InputCreatePostForm(reportStartDate)),
+    validateInputOnChange: true,
     initialValues: {
       id: post ? post.id : "",
       date: post ? new Date(post.date) : today,
@@ -206,22 +204,18 @@ const AddPost = (props: AddPostProps) => {
   }
 
   const handleErrors = (errors: typeof createPostForm.errors) => {
-    if (errors.id) {
-      toast.error(errors.id as string);
-    }
-    if (errors.title) {
-      toast.error(errors.title as string);
-    }
-    if (errors.images) {
-      toast.error(errors.images as string);
-    }
+    console.debug(errors);
+    Object.keys(errors).forEach((key) => {
+      const errorMessage = httpStatusErrorMsg(
+        errors[key] as string,
+        key === "date" || key === "title" ? 422 : undefined
+      );
+      notifications.show(errorMessage);
+    });
   };
 
   return (
     <>
-      <Container p={0}>
-        <Title order={2}>{t("common:addpost-headline")}</Title>
-      </Container>
       <Space h="xs" />
 
       <Container p={0} size="md">
@@ -294,8 +288,7 @@ const AddPost = (props: AddPostProps) => {
                         {...createPostForm.getInputProps("day")}
                         onChange={(value: number) => {
                           const growDayOffSet = parseInt(
-                            value.toString(),
-                            10
+                            value.toString()
                           );
                           if (!growDayOffSet && growDayOffSet != 0)
                             return; // prevent error if changed to empty string
@@ -303,6 +296,7 @@ const AddPost = (props: AddPostProps) => {
                           newPostDate.setUTCDate(
                             newPostDate.getUTCDate() + growDayOffSet
                           );
+                          // newPostDate.setUTCHours(22, 0, 0, 0);
                           createPostForm.setFieldValue(
                             "date",
                             newPostDate
@@ -369,7 +363,7 @@ const AddPost = (props: AddPostProps) => {
               <Space h="lg" />
 
               <Box
-                fz={"md"}
+                fz={"lg"}
                 fw={"normal"}
                 color="#00ff00"
                 sx={(theme) => ({
@@ -404,7 +398,12 @@ const AddPost = (props: AddPostProps) => {
               >
                 Your main text description for this Update comes here!
               </Box>
-              <RichTextEditor editor={editor}>
+              <RichTextEditor
+                editor={editor}
+                sx={(theme) => ({
+                  boxShadow: `0 0 0px 1px ${theme.colors.growgreen[4]}`,
+                })}
+              >
                 <RichTextEditor.Toolbar>
                   <RichTextEditor.ControlsGroup>
                     <RichTextEditor.Bold />
@@ -450,7 +449,6 @@ const AddPost = (props: AddPostProps) => {
 
                 <RichTextEditor.Content
                   sx={(theme) => ({
-                    // subscribe to color scheme changes
                     backgroundColor:
                       theme.colorScheme === "dark"
                         ? theme.colors.dark[6]
