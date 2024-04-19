@@ -119,10 +119,11 @@ const ProtectedNotifications = () => {
   };
 
   const notificationEvents: Record<NotificationEventMap, string> = {
+    REPORT_CREATED: "Report Created",
+    POST_CREATED: "Post Created",
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "has commented on",
-    POST_CREATED: "Post Created",
-    REPORT_CREATED: "Report Created",
+    COMMENT_ANSWERED: "has responded to",
   };
 
   return (
@@ -245,7 +246,9 @@ const ProtectedNotifications = () => {
                         scroll={false}
                         href={
                           // handle Comment hrefs
-                          notification.event === "COMMENT_CREATED" &&
+                          (notification.event === "COMMENT_CREATED" ||
+                            notification.event ===
+                              "COMMENT_ANSWERED") &&
                           notification.commentId != null
                             ? `/grow/${
                                 notification.comment?.post
@@ -253,8 +256,7 @@ const ProtectedNotifications = () => {
                               }/update/${
                                 notification.comment?.postId as string
                               }#${notification.commentId}`
-                            : // TODO: handle Like hrefs
-                              notification.like?.commentId != null
+                            : notification.like?.commentId != null
                               ? `/grow/${
                                   notification.like.comment?.post
                                     ?.reportId as string
@@ -281,6 +283,14 @@ const ProtectedNotifications = () => {
                             />
                           </Center>
                           <Box p={4} fz="0.78rem" className="text-left">
+                            {notification.event ===
+                              "COMMENT_ANSWERED" && (
+                              <>
+                                {notification.comment?.author.name}{" "}
+                                {notificationEvents[notification.event]}{" "}
+                                {"your"} {"Comment"}
+                              </>
+                            )}
                             {notification.event ===
                               "COMMENT_CREATED" && (
                               <>

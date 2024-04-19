@@ -14,10 +14,11 @@ enum Role {
 }
 
 enum NotificationEvent {
+  REPORT_CREATED
+  POST_CREATED
   LIKE_CREATED
   COMMENT_CREATED
-  POST_CREATED
-  REPORT_CREATED
+  COMMENT_ANSWERED
 }
 
 enum CannabisStraintype {

@@ -95,10 +95,11 @@ export interface SplitObject {
 }
 
 export type NotificationEventMap =
-  | "LIKE_CREATED" // TODO: NOTIFY item.author
-  | "COMMENT_CREATED" //TODO: NOTIFY report.author + comment.parent.author
-  | "POST_CREATED" //TODO: NOTIFY report.author + report.followers
-  | "REPORT_CREATED"; //TODO: NOTIFY user.followers
+  | "REPORT_CREATED" //TODO: NOTIFY user.followers
+  | "POST_CREATED" //TODO: NOTIFY report.followers
+  | "LIKE_CREATED"
+  | "COMMENT_CREATED"
+  | "COMMENT_ANSWERED";
 
 export enum Locale {
   EN = "en",
