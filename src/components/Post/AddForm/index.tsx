@@ -122,6 +122,7 @@ const AddPost = (props: AddPostProps) => {
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back
+      //FIXME: decide server side, which error on conflict
       onError: (err, newReport, context) => {
         notifications.show(onlyOnePostPerDayAllowed);
         if (!context) return;
@@ -207,13 +208,10 @@ const AddPost = (props: AddPostProps) => {
   }
 
   const handleErrors = (errors: typeof createPostForm.errors) => {
-    console.debug(errors);
     Object.keys(errors).forEach((key) => {
-      const errorMessage = httpStatusErrorMsg(
-        errors[key] as string,
-        key === "date" || key === "title" ? 422 : undefined
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
       );
-      notifications.show(errorMessage);
     });
   };
 

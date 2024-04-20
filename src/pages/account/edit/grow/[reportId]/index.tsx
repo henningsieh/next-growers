@@ -1,10 +1,13 @@
 import {
   Box,
   Container,
+  createStyles,
+  Loader,
   LoadingOverlay,
   Space,
   Title,
 } from "@mantine/core";
+import { IconChevronLeft } from "@tabler/icons-react";
 
 import type {
   GetServerSideProps,
@@ -16,6 +19,7 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
@@ -54,6 +58,19 @@ export const getServerSideProps: GetServerSideProps = async (
  * @returns HTML Component
  */
 const ProtectedEditReportDetails: NextPage = () => {
+  const useStyles = createStyles((theme) => ({
+    titleLink: {
+      display: "inline-flex",
+      color: theme.colors.orange?.[7],
+    },
+    title: {
+      display: "inline-flex",
+      // paddingBottom: 10,
+      // color: theme.colors.orange?.[7],
+    },
+  }));
+  const { classes } = useStyles();
+
   const router = useRouter();
   const queryReportId = router.query.reportId as string;
 
@@ -106,13 +123,28 @@ const ProtectedEditReportDetails: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <Box className="flex items-center justify-between pt-2">
-          {/* // Title */}
-          <Title order={1} className="inline">
-            {pageTitle}
-          </Title>
-        </Box>
+        {reportIsLoading ? (
+          <Loader /> // Render Loader component if reportIsLoading is true
+        ) : (
+          <Box className="flex items-center justify-start pt-2">
+            <Link
+              title="back to Grow"
+              href={`/grow/${report?.id as string}`}
+            >
+              <Box className={classes.titleLink}>
+                <IconChevronLeft size={28} />
+                {report?.title}
+              </Box>
+            </Link>
+          </Box>
+        )}
+
+        {/* // Title */}
+        <Title order={1} className="inline">
+          {pageTitle}
+        </Title>
         {/* // Header End */}
+
         <Box pos="relative">
           <LoadingOverlay
             visible={reportIsLoading}

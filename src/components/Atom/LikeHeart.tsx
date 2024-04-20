@@ -64,6 +64,7 @@ const LikeHeart = (props: LikeHeartProps) => {
         await trpc.notifications.invalidate();
       },
     });
+
   const { mutate: dislikeReportMutation } =
     api.like.dislikeReport.useMutation({
       onError: (error) => {

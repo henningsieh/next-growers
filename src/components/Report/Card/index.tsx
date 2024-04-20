@@ -290,16 +290,17 @@ export default function ReportCard({
             </Button> */}
             <Link href={`/account/edit/grow/${isoReport.id as string}`}>
               <Button
-                h={30}
-                w={130}
+                h={32}
                 compact
                 variant="filled"
                 fw="normal"
                 radius="xs"
                 style={{ flex: 1 }}
+                rightIcon={
+                  <IconEdit className="ml-1" size={22} stroke={1.6} />
+                }
               >
                 {t("common:report-edit-button")}
-                <IconEdit className="ml-2" height={22} stroke={1.4} />
               </Button>
             </Link>
           </Group>

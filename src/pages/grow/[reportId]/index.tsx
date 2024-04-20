@@ -3,9 +3,11 @@ import {
   Box,
   Button,
   Container,
+  createStyles,
   LoadingOverlay,
   Text,
   Title,
+  useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
@@ -56,6 +58,28 @@ export const getServerSideProps: GetServerSideProps = async (
  */
 const PublicReport: NextPage = () => {
   const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
+  const useStyles = createStyles((theme) => ({
+    titleLink: {
+      display: "inline-flex",
+      color: dark
+        ? theme.colors.growgreen?.[4]
+        : theme.colors.growgreen?.[4],
+    },
+
+    title: {
+      display: "flex",
+      [theme.fn.smallerThan("md")]: {
+        flexDirection: "column",
+      },
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingTop: theme.spacing.sm,
+    },
+  }));
+  const { classes } = useStyles();
 
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -191,8 +215,8 @@ const PublicReport: NextPage = () => {
         className="mb-8 flex w-full flex-col space-y-1"
       >
         {/* // Header with Title */}
-        <Box className="flex items-center justify-between pt-2">
-          <Title order={1} className="inline">
+        <Box className={classes.title}>
+          <Title mb={6} order={1} className="inline">
             {`${pageTitle}`}
           </Title>
 
@@ -201,17 +225,12 @@ const PublicReport: NextPage = () => {
             report.authorId === session.user.id && (
               <Link href={`/account/edit/grow/${report?.id as string}`}>
                 <Button
-                  h={30}
-                  w={200}
+                  h={32}
                   compact
                   variant="filled"
                   className="cursor-pointer"
-                  leftIcon={
-                    <IconEdit
-                      className="ml-2"
-                      height={22}
-                      stroke={1.4}
-                    />
+                  rightIcon={
+                    <IconEdit className="ml-1" size={22} stroke={1.6} />
                   }
                 >
                   {t("common:report-edit-button")}

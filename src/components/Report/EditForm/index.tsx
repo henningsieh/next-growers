@@ -28,10 +28,13 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
-import { fileUploadErrorMsg } from "~/messages";
+import {
+  fileUploadErrorMsg,
+  httpStatusErrorMsg,
+  saveGrowSuccessfulMsg,
+} from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-hot-toast";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -109,7 +112,7 @@ export function EditReportForm({
     reportfromProps.image?.cloudUrl as string
   );
 
-  const trpc = api.useUtils();
+  // const trpc = api.useUtils();
 
   const submitEditReportForm = (values: {
     id: string;
@@ -125,41 +128,37 @@ export function EditReportForm({
 
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
     {
-      onMutate: (savedReport) => {
-        console.log("START api.reports.saveReport.useMutation");
-        console.log("newReportDB", savedReport);
+      onMutate: () => {
+        console.debug("START api.reports.saveReport.useMutation");
       },
-      // If the mutation fails,
-      // use the context returned from onMutate to roll back
-      onError: (err, newReport, context) => {
-        toast.error("An error occured when saving your report");
-        if (!context) return;
+      // FIXME: If the mutation fails, use the
+      // context returned from onMutate to roll back
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (error, report) => {
+        httpStatusErrorMsg(error.message, 500);
       },
-      onSuccess: async () => {
-        toast.success("Your report was successfully saved");
-        await trpc.reports.getIsoReportWithPostsFromDb.invalidate();
-        trpc.reports.getIsoReportWithPostsFromDb.getData();
+      onSuccess: (savedReport) => {
+        notifications.show(saveGrowSuccessfulMsg);
+        // Navigate to the report page
+        void router.push(
+          `/${activeLocale as string}/grow/${savedReport?.id as string}`
+        );
       },
       // Always refetch after error or success:
       onSettled: () => {
-        console.log("END api.reports.saveReport.useMutation");
+        console.debug("END api.reports.saveReport.useMutation");
       },
     }
   );
 
   const handleErrors = (errors: typeof editReportForm.errors) => {
-    if (errors.id) {
-      toast.error(errors.id as string);
-    }
-    if (errors.title) {
-      toast.error(errors.title as string);
-    }
-    if (errors.imageId) {
-      toast.error(errors.imageId as string);
-    }
-    if (errors.environment) {
-      toast.error(errors.environment as string);
-    }
+    Object.keys(errors).forEach((key) => {
+      const errorMessage = httpStatusErrorMsg(
+        errors[key] as string,
+        422
+      );
+      notifications.show(errorMessage);
+    });
   };
 
   const editReportForm = useForm({

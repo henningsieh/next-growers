@@ -114,27 +114,28 @@ const ProtectedEditReportDetails: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        {/* Show <Loader /> instead of the <Box> while reportIsLoading is true */}
         {reportIsLoading ? (
           <Loader /> // Render Loader component if reportIsLoading is true
         ) : (
           <Box className="flex items-center justify-start pt-2">
-            {/* // Title */}
             <Link
+              title="back to Update"
               href={`/grow/${report?.id as string}/update/${queryPostId}`}
             >
               <Box className={classes.titleLink}>
-                <IconChevronLeft size={26} />
+                <IconChevronLeft size={28} />
                 {queryPost?.title}
               </Box>
             </Link>
           </Box>
         )}
 
+        {/* // Title */}
         <Title className={classes.title} order={1}>
           {pageTitle}
         </Title>
         {/* // Header End */}
+
         <Box pos="relative">
           <LoadingOverlay
             visible={sessionIsLoading || reportIsLoading}

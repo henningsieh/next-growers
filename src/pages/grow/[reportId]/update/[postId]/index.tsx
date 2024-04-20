@@ -3,6 +3,7 @@ import {
   Button,
   Container,
   createStyles,
+  rem,
   Title,
   useMantineColorScheme,
   useMantineTheme,
@@ -271,9 +272,17 @@ export default function PublicReportPost(
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
-      color: dark
-        ? theme.colors.growgreen?.[4]
-        : theme.colors.growgreen?.[4],
+      color: dark ? "white" : theme.black,
+    },
+
+    title: {
+      display: "flex",
+      [theme.fn.smallerThan("md")]: {
+        flexDirection: "column",
+      },
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingTop: theme.spacing.sm,
     },
   }));
   const { classes } = useStyles();
@@ -406,16 +415,8 @@ export default function PublicReportPost(
         className="mb-8 flex w-full flex-col space-y-1"
       >
         {/* // Header with Title */}
-        <Box className="flex items-center justify-between pt-2">
+        <Box className={classes.title}>
           {/* // Title */}
-          {/* <Title order={1}>
-            <Link
-              // className="text-orange-600"
-              href={`/grows`}
-            >
-              {t("common:reports-headline")}
-            </Link>
-          </Title> */}
           <Title order={1}>
             <Link
               className={classes.titleLink}
@@ -434,32 +435,21 @@ export default function PublicReportPost(
                 href={`/account/edit/grow/${staticReportFromProps.id}/update/${postIdfromProps}`}
               >
                 <Button
-                  h={30}
-                  w={200}
+                  h={32}
                   compact
                   variant="filled"
                   className="cursor-pointer"
-                  leftIcon={
-                    <IconEdit
-                      className="ml-2"
-                      height={22}
-                      stroke={1.4}
-                    />
+                  rightIcon={
+                    <IconEdit className="ml-1" size={22} stroke={1.6} />
                   }
                 >
                   {t("common:post-edit-button")}
                 </Button>
               </Link>
             )}
-
-          {/* <Box px={"sm"}>
-            <IconChevronRight size={24} />
-          </Box>
-          <Title order={1}>
-            {`${thisPost?.title as string}`} | DATE
-          </Title> */}
         </Box>
         {/* // Header End */}
+
         <Container
           size="xl"
           px={0}

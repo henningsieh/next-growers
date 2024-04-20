@@ -21,6 +21,14 @@ export const httpStatusErrorMsg = (
   icon: <IconAlertTriangle size="1.2rem" stroke={2.8} />,
 });
 
+export const defaultErrorMsg = (msg: string) => ({
+  loading: false,
+  title: "Error",
+  message: msg,
+  color: "red",
+  icon: <IconAlertCircle size="1.2rem" stroke={2.8} />,
+});
+
 export const markAllReadMessage = {
   title: "I have read all",
   message: "All notifications were marked as read",
@@ -105,6 +113,14 @@ export const setUserimageSuccessfulMsg = {
   loading: false,
 };
 
+export const saveGrowSuccessfulMsg = {
+  title: "Success",
+  message: "Your Grow has been saved successfully! ✅",
+  color: "growgreen",
+  icon: <IconDeviceFloppy size="1.2rem" stroke={2.8} />,
+  loading: false,
+};
+
 export const savePostSuccessfulMsg = {
   title: "Success",
   message: "Your update has been saved successfully! ✅",
@@ -112,14 +128,6 @@ export const savePostSuccessfulMsg = {
   icon: <IconDeviceFloppy size="1.2rem" stroke={2.8} />,
   loading: false,
 };
-
-export const likeErrorMsg = (msg: string) => ({
-  loading: false,
-  title: "Error",
-  message: msg,
-  color: "red",
-  icon: <IconAlertCircle size="1.2rem" stroke={2.8} />,
-});
 
 export const createLikeErrorMsg = (msg: string) => ({
   loading: false,

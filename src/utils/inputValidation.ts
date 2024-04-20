@@ -29,25 +29,25 @@ export const InputEditProfile = z.object({
 export const InputCreateReportForm = z.object({
   title: z
     .string()
-    .min(8, { message: "Title should have at least 8 letters" })
-    .max(32, { message: "Title should have max 32 letters" })
+    .min(8, { message: "Title must have at least 8 letters" })
+    .max(32, { message: "Title must have max 32 letters" })
     .refine(
       (val) => val.length < 32,
       (val) => ({
-        message: `Title should have max 32 letters. ${val.length} letters given.`,
+        message: `Title must have max 32 letters. ${val.length} letters given.`,
       })
     ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
   description: z
     .string()
     .min(12, {
-      message: "Content should have at least 12 letters",
+      message: "Content must have at least 12 letters",
     })
-    .max(64, { message: "Description should have max 64 letters" })
+    .max(64, { message: "Description must have max 64 letters" })
     .refine(
       (val) => val.length < 64,
       (val) => ({
-        message: `Description should have max 64 letters. ${val.length} letters given.`,
+        message: `Description must have max 64 letters. ${val.length} letters given.`,
       })
     ),
 });
@@ -56,29 +56,29 @@ export const InputEditReportForm = z.object({
   id: z.string().min(1),
   title: z
     .string()
-    .min(8, { message: "Title should have at least 8 letters" })
-    .max(32, { message: "Title should have max 32 letters" })
+    .min(8, { message: "Title must have at least 8 letters" })
+    .max(32, { message: "Title must have max 32 letters" })
     .refine(
       (val) => val.length < 32,
       (val) => ({
-        message: `Title should have max 32 letters. ${val.length} letters given.`,
+        message: `Title must have max 32 letters. ${val.length} letters given.`,
       })
     ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
   description: z
     .string()
     .min(12, {
-      message: "Content should have at least 12 letters",
+      message: "Content must have at least 12 letters",
     })
-    .max(64, { message: "Content should have max 64 letters" })
+    .max(64, { message: "Content must have max 64 letters" })
     .refine(
       (val) => val.length < 64,
       (val) => ({
-        message: `Content should have max 64 letters. ${val.length} letters given.`,
+        message: `Content must have max 64 letters. ${val.length} letters given.`,
       })
     ),
   strains: z.array(z.string()).min(1, {
-    message: "Report should have at least 1 strain",
+    message: "Report must have at least 1 strain",
   }),
   environment: z.enum(
     Object.keys(Environment) as [keyof typeof Environment]
@@ -127,9 +127,9 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
     title: z
       .string()
       .min(8, {
-        message: "Title should have at least 8 letters",
+        message: "Title must have at least 8 letters",
       })
-      .max(32, { message: "Title should have max 32 letters" }),
+      .max(32, { message: "Title must have max 32 letters" }),
     lightHoursPerDay: z
       .number({
         invalid_type_error: "(h) must be set, may be 0",
