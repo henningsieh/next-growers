@@ -25,7 +25,6 @@ import {
   IconMapPin,
   IconMessageCircle,
 } from "@tabler/icons-react";
-import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { useSession } from "next-auth/react";
@@ -464,7 +463,6 @@ export default function RootLayout({
       {/* Content */}
       <Box className="relative mt-16 mb-16">
         {children}
-        <Analytics />
         <SpeedInsights />
       </Box>
 
