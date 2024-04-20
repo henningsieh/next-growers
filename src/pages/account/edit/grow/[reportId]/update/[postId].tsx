@@ -1,10 +1,12 @@
 import {
   Box,
   Container,
+  createStyles,
+  Loader,
   LoadingOverlay,
-  Space,
   Title,
 } from "@mantine/core";
+import { IconChevronLeft } from "@tabler/icons-react";
 
 import type {
   GetServerSideProps,
@@ -16,14 +18,15 @@ import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import PostsAccordion from "~/components/Post/Accordion";
 import AddPost from "~/components/Post/AddForm";
-import { EditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
+
+import type { Post } from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -56,13 +59,31 @@ export const getServerSideProps: GetServerSideProps = async (
 const ProtectedEditReportDetails: NextPage = () => {
   const router = useRouter();
   const queryReportId = router.query.reportId as string;
+  const queryPostId = router.query.postId as string;
+
+  const useStyles = createStyles((theme) => ({
+    titleLink: {
+      display: "inline-flex",
+      color: theme.colors.orange?.[7],
+    },
+    title: {
+      display: "inline-flex",
+      // paddingBottom: 10,
+      // color: theme.colors.orange?.[7],
+    },
+  }));
+  const { classes } = useStyles();
 
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
-  const pageTitle = t("common:report-edit-headline");
+  const pageTitle = t("common:post-edit-headline");
 
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const sessionIsLoading = status === "loading";
+
+  if (!sessionIsLoading && status === "unauthenticated") {
+    return <AccessDenied />;
+  }
 
   const {
     data: report,
@@ -70,30 +91,20 @@ const ProtectedEditReportDetails: NextPage = () => {
     isError: reportHasErrors,
   } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
 
-  const {
-    data: strains,
-    isLoading: strainsAreLoading,
-    isError: strainsHaveErrors,
-  } = api.strains.getAllStrains.useQuery();
-
-  if (reportHasErrors || strainsHaveErrors) {
+  if (!reportIsLoading && reportHasErrors) {
     return <>Server Error</>;
   }
 
-  if (
-    !sessionIsLoading &&
-    !reportIsLoading &&
-    !strainsAreLoading &&
-    (status === "unauthenticated" ||
-      report?.authorId != session?.user.id)
-  ) {
-    return <AccessDenied />;
-  }
+  const reportTitle = `${report?.title as string}`;
+
+  const queryPost = report?.posts.find(
+    (post: Post) => post.id === queryPostId
+  );
 
   return (
     <>
       <Head>
-        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <title>{`${pageTitle} | GrowAGram | ${reportTitle}`}</title>
         <meta
           name="description"
           content="Create your grow report on growagram.com"
@@ -103,47 +114,39 @@ const ProtectedEditReportDetails: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <Box className="flex items-center justify-between pt-2">
-          {/* // Title */}
-          <Title order={1} className="inline">
-            {pageTitle}
-          </Title>
-        </Box>
+        {/* Show <Loader /> instead of the <Box> while reportIsLoading is true */}
+        {reportIsLoading ? (
+          <Loader /> // Render Loader component if reportIsLoading is true
+        ) : (
+          <Box className="flex items-center justify-start pt-2">
+            {/* // Title */}
+            <Link
+              href={`/grow/${report?.id as string}/update/${queryPostId}`}
+            >
+              <Box className={classes.titleLink}>
+                <IconChevronLeft size={26} />
+                {queryPost?.title}
+              </Box>
+            </Link>
+          </Box>
+        )}
+
+        <Title className={classes.title} order={1}>
+          {pageTitle}
+        </Title>
         {/* // Header End */}
         <Box pos="relative">
           <LoadingOverlay
             visible={sessionIsLoading || reportIsLoading}
-            transitionDuration={600}
+            transitionDuration={900}
             overlayBlur={2}
           />
 
           {status === "authenticated" &&
             !reportIsLoading &&
-            !strainsAreLoading && (
+            !reportHasErrors && (
               <>
-                <EditReportForm
-                  report={report}
-                  strains={strains}
-                  user={session.user}
-                />
-
-                <Space h="xl" />
-                <Space h="xl" />
-
-                {/* AddPost Component */}
-                <Container p={0}>
-                  <Title order={2}>
-                    {t("common:addpost-headline")}
-                  </Title>
-                </Container>
-                <AddPost isoReport={report} post={null} />
-
-                <Space h="xl" />
-                <Space h="xl" />
-
-                {/* PostsAccordion Component */}
-                {/* Alle Updates bearbeiten*/}
-                <PostsAccordion report={report && report} />
+                <AddPost isoReport={report} post={queryPost as Post} />
               </>
             )}
         </Box>

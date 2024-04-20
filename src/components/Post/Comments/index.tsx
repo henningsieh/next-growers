@@ -87,8 +87,6 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
         await trpc.comments.getCommentsByPostId.fetch({
           postId: newCommentDB.postId as string,
         });
-        // Navigate to the new report page
-        // void router.push(`/account/grows/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {

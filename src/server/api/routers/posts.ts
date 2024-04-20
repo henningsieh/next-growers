@@ -232,35 +232,4 @@ export const postRouter = createTRPCRouter({
 
       return formattedPosts;
     }),
-
-  /**
-   * Get PostDbInput // ONLY NEEDED AS TYPE
-   * @Input: postId: String
-   */
-  getPostDbInput: publicProcedure
-    .input(z.string().min(1))
-    .query(async ({ ctx, input }) => {
-      const postId = input;
-
-      const post = await ctx.prisma.post.findUnique({
-        where: {
-          id: postId,
-        },
-        include: {
-          images: {
-            select: {
-              id: true,
-            },
-          },
-        },
-      });
-
-      if (!post) {
-        throw new Error(`Post with id ${postId} does not exist`);
-      }
-
-      const imageIds = post.images.map((image) => image.id);
-
-      return { ...post, images: imageIds };
-    }),
 });

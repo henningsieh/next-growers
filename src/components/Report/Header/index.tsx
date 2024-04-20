@@ -1,19 +1,13 @@
 import {
   Blockquote,
   Box,
-  Button,
   Card,
   createStyles,
-  Group,
   rem,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconEdit } from "@tabler/icons-react";
 
-import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 import UserAvatar from "~/components/Atom/UserAvatar";
 
@@ -42,7 +36,7 @@ interface ReportHeaderProps {
   image: string;
   avatar: string;
   name: string;
-  job: string;
+  description: string;
   // stats: { label: string; value: string }[];
 }
 
@@ -51,17 +45,10 @@ export function ReportHeader({
   image,
   avatar,
   name,
-  job,
+  description,
 }: // stats, //FIXME: not needed
 ReportHeaderProps) {
-  const router = useRouter();
-
-  const { locale: activeLocale } = router;
-  const { t } = useTranslation(activeLocale);
-
   const { classes, theme } = useStyles();
-
-  const { data: session, status } = useSession();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -109,31 +96,17 @@ ReportHeaderProps) {
       <Box p="sm" className="-m-5">
         {/* Blockquote */}
         <Blockquote p="xs" className={classes.cite} cite={name}>
-          {job}
+          {description}
         </Blockquote>
       </Box>
       {/* </Center> */}
       {/* 
       <Text ta="center" fz="sm" c="dimmed">
-        {job}
+        {description}
       </Text> 
       <Group mt="md" position="center" spacing={30}>
         {items}
       </Group>*/}
-
-      {status === "authenticated" &&
-        report.authorId === session.user.id && (
-          <Box className="absolute bottom-4 right-3 cursor-pointer">
-            <Group className="cursor-pointer" position="right">
-              <Link href={`/account/grows/${report.id as string}`}>
-                <Button variant="filled" className="cursor-pointer">
-                  {t("common:report-edit-button")}
-                  <IconEdit className="ml-2" height={22} stroke={1.4} />
-                </Button>
-              </Link>
-            </Group>
-          </Box>
-        )}
     </Card>
   );
 }

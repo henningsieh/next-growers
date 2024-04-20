@@ -36,6 +36,7 @@ import {
   fileUploadErrorMsg,
   httpStatusErrorMsg,
   onlyOnePostPerDayAllowed,
+  savePostSuccessfulMsg,
 } from "~/messages";
 
 import { useEffect, useState } from "react";
@@ -61,7 +62,7 @@ import {
 import { InputCreatePostForm } from "~/utils/inputValidation";
 
 interface AddPostProps {
-  isoReport: IsoReportWithPostsFromDb;
+  isoReport: IsoReportWithPostsFromDb | null;
   post: Post | null;
 }
 
@@ -116,9 +117,8 @@ const AddPost = (props: AddPostProps) => {
 
   const { mutate: tRPCaddPostToReport } =
     api.posts.createPost.useMutation({
-      onMutate: (addPostToReport) => {
+      onMutate: () => {
         console.log("START posts.createPost.useMutation");
-        console.log("addPostToReport", addPostToReport);
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back
@@ -126,12 +126,15 @@ const AddPost = (props: AddPostProps) => {
         notifications.show(onlyOnePostPerDayAllowed);
         if (!context) return;
       },
-      onSuccess: async () => {
+      onSuccess: async (newPost) => {
+        notifications.show(savePostSuccessfulMsg);
         setImageIds([]);
         createPostForm.setFieldValue("images", imageIds);
         await trpc.reports.getIsoReportWithPostsFromDb.refetch();
         // Navigate to the new report page
-        // void router.push(`/account/grows/${newReportDB.id}`);
+        void router.push(
+          `/${activeLocale as string}/grow/${newPost.reportId}/update/${newPost.id}`
+        );
       },
       // Always refetch after error or success:
       onSettled: () => {
@@ -196,8 +199,8 @@ const AddPost = (props: AddPostProps) => {
       ...postFormValues,
       images: imageIds,
       growStage: postFormValues.growStage as keyof typeof GrowStage,
-      reportId: report.id as string,
-      authorId: report.authorId as string,
+      reportId: report?.id || (post?.reportId as string),
+      authorId: report?.authorId || (post?.authorId as string),
     };
 
     tRPCaddPostToReport(savePost);

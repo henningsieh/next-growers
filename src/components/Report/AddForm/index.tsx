@@ -18,6 +18,7 @@ import {
   IconCloudUpload,
   IconDownload,
   IconFileAlert,
+  IconFileArrowRight,
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
@@ -120,7 +121,7 @@ export function CreateReportForm({
     },
     onSuccess: (newReportDB) => {
       // Navigate to the new report page
-      void router.push(`/account/grows/${newReportDB.id}`);
+      void router.push(`/account/edit/grow/${newReportDB.id}`);
     },
     // Always refetch after error or success:
     onSettled: () => {
@@ -324,10 +325,14 @@ export function CreateReportForm({
             />
             <Group position="right" mt="xl">
               <Button
-                fz="md"
+                fz="lg"
                 variant="filled"
-                color={theme.primaryColor}
-                // disabled={!createReportForm.isValid()}
+                color="growgreen"
+                className="cursor-pointer"
+                disabled={!createReportForm.isValid()}
+                leftIcon={
+                  <IconFileArrowRight stroke={2.2} size="1.4rem" />
+                }
                 type="submit"
               >
                 {textContinueButton}

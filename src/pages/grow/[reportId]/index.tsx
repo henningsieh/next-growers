@@ -1,21 +1,27 @@
 import {
   Alert,
   Box,
+  Button,
   Container,
+  LoadingOverlay,
   Text,
   Title,
   useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { IconEdit } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { noPostAtThisDay } from "~/messages";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import type { GetServerSideProps, NextPage } from "next";
+import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
@@ -52,8 +58,10 @@ const PublicReport: NextPage = () => {
   const theme = useMantineTheme();
 
   const router = useRouter();
-  // const { locale: activeLocale } = router;
-  // const { t } = useTranslation(activeLocale);
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
+  const { data: session, status } = useSession();
 
   const queryReportId = router.query.reportId as string;
 
@@ -64,12 +72,6 @@ const PublicReport: NextPage = () => {
   } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
 
   const pageTitle = `${report?.title as string}`;
-
-  // const {
-  //   data: strains,
-  //   isLoading: strainsAreLoading,
-  //   isError: strainsHaveErrors,
-  // } = api.strains.getAllStrains.useQuery();
 
   // const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
@@ -99,7 +101,20 @@ const PublicReport: NextPage = () => {
   const [postId, setPostId] = useState<string>("");
   const [selectedDate, selectDate] = useState<Date | null>(null);
 
-  if (reportIsLoading) return null;
+  if (reportIsLoading)
+    return (
+      <LoadingOverlay
+        ml={42}
+        mt={12}
+        radius="sm"
+        visible={reportIsLoading}
+        transitionDuration={150}
+        loaderProps={{
+          size: "sm",
+          variant: "dots",
+        }}
+      />
+    );
   console.debug("report:", report);
 
   const postDays = report?.posts.map((post) =>
@@ -177,21 +192,32 @@ const PublicReport: NextPage = () => {
       >
         {/* // Header with Title */}
         <Box className="flex items-center justify-between pt-2">
-          {/* // Title */}
-          {/* <Title order={1}>
-            <Link
-              // className="text-orange-600"
-              href={`/grows`}
-            >
-              {t("common:reports-headline")}
-            </Link>
-          </Title>
-          <Box px={"sm"}>
-            <IconChevronRight size={24} />
-          </Box> */}
           <Title order={1} className="inline">
             {`${pageTitle}`}
           </Title>
+
+          {!!report &&
+            status === "authenticated" &&
+            report.authorId === session.user.id && (
+              <Link href={`/account/edit/grow/${report?.id as string}`}>
+                <Button
+                  h={30}
+                  w={200}
+                  compact
+                  variant="filled"
+                  className="cursor-pointer"
+                  leftIcon={
+                    <IconEdit
+                      className="ml-2"
+                      height={22}
+                      stroke={1.4}
+                    />
+                  }
+                >
+                  {t("common:report-edit-button")}
+                </Button>
+              </Link>
+            )}
         </Box>
         {/* // Header End */}
         <Container
@@ -213,7 +239,7 @@ const PublicReport: NextPage = () => {
                     }`
               }
               name={report?.author?.name as string}
-              job={report?.description as string}
+              description={report?.description as string}
             />
           )}
           {/* // Posts Date Picker */}

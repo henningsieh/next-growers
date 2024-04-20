@@ -288,8 +288,10 @@ export default function ReportCard({
                 stroke={1.6}
               />
             </Button> */}
-            <Link href={`/account/grows/${isoReport.id as string}`}>
+            <Link href={`/account/edit/grow/${isoReport.id as string}`}>
               <Button
+                h={30}
+                w={130}
                 compact
                 variant="filled"
                 fw="normal"

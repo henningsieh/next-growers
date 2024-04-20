@@ -4,6 +4,7 @@ import {
   IconAlertTriangle,
   IconCalendarOff,
   IconCannabis,
+  IconDeviceFloppy,
   IconEyeHeart,
   IconFileAlert,
   IconPhoto,
@@ -101,6 +102,14 @@ export const setUserimageSuccessfulMsg = {
   message: "Your user image has been updated successfully! ✅",
   color: "growgreen",
   icon: <IconPhoto size="1.2rem" stroke={2.8} />,
+  loading: false,
+};
+
+export const savePostSuccessfulMsg = {
+  title: "Success",
+  message: "Your update has been saved successfully! ✅",
+  color: "growgreen",
+  icon: <IconDeviceFloppy size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 

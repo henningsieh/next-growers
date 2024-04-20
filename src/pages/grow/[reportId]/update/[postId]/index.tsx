@@ -1,24 +1,28 @@
 import {
   Box,
+  Button,
   Container,
   createStyles,
   Title,
+  useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconChevronLeft } from "@tabler/icons-react";
+import { IconChevronLeft, IconEdit } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { convert } from "html-to-text";
 import { noPostAtThisDay } from "~/messages";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
+import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Link from "next/link";
@@ -259,18 +263,25 @@ export default function PublicReportPost(
   const { report: staticReportFromProps, postId: postIdfromProps } =
     props;
 
+  const { data: session, status } = useSession();
+
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
-      color: theme.colors.orange?.[7],
+      color: dark
+        ? theme.colors.growgreen?.[4]
+        : theme.colors.growgreen?.[4],
     },
   }));
-
   const { classes } = useStyles();
+
   const theme = useMantineTheme();
   const router = useRouter();
-  // const { locale: activeLocale } = router;
-  // const { t } = useTranslation(activeLocale);
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   const pageTitle = `${staticReportFromProps.title}`;
 
@@ -395,7 +406,7 @@ export default function PublicReportPost(
         className="mb-8 flex w-full flex-col space-y-1"
       >
         {/* // Header with Title */}
-        <Box className="flex items-center justify-start pt-2">
+        <Box className="flex items-center justify-between pt-2">
           {/* // Title */}
           {/* <Title order={1}>
             <Link
@@ -416,6 +427,31 @@ export default function PublicReportPost(
               {`${pageTitle}`}
             </Link>
           </Title>
+
+          {status === "authenticated" &&
+            staticReportFromProps.authorId === session.user.id && (
+              <Link
+                href={`/account/edit/grow/${staticReportFromProps.id}/update/${postIdfromProps}`}
+              >
+                <Button
+                  h={30}
+                  w={200}
+                  compact
+                  variant="filled"
+                  className="cursor-pointer"
+                  leftIcon={
+                    <IconEdit
+                      className="ml-2"
+                      height={22}
+                      stroke={1.4}
+                    />
+                  }
+                >
+                  {t("common:post-edit-button")}
+                </Button>
+              </Link>
+            )}
+
           {/* <Box px={"sm"}>
             <IconChevronRight size={24} />
           </Box>
@@ -442,7 +478,7 @@ export default function PublicReportPost(
                       }`
             }
             name={staticReportFromProps.author.name as string}
-            job={staticReportFromProps.description}
+            description={staticReportFromProps.description}
           />  */}
           {/* // Posts Date Picker */}
           {/* <Box ref={targetRef}> */}
