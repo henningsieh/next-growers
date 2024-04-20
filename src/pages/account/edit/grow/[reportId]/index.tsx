@@ -93,7 +93,6 @@ const ProtectedEditReportDetails: NextPage = () => {
   );
 
   useEffect(() => {
-    console.debug("Hash:", window.location.hash.slice(1));
     setDefaultTab(window.location.hash.slice(1));
   }, [params]);
 
@@ -173,7 +172,7 @@ const ProtectedEditReportDetails: NextPage = () => {
           {defaultTab && (
             <Tabs
               variant="outline"
-              defaultValue={defaultTab}
+              defaultValue={defaultTab || "editGrow"}
               orientation={!smallScreen ? "vertical" : undefined}
             >
               <Tabs.List>

@@ -120,7 +120,7 @@ export function CreateReportForm({
     },
     onSuccess: (newReportDB) => {
       // Navigate to the new report page
-      void router.push(`/account/edit/grow/${newReportDB.id}`);
+      void router.push(`/account/edit/grow/${newReportDB.id}#editGrow`);
     },
     // Always refetch after error or success:
     onSettled: () => {

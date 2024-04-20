@@ -223,7 +223,9 @@ const PublicReport: NextPage = () => {
           {!!report &&
             status === "authenticated" &&
             report.authorId === session.user.id && (
-              <Link href={`/account/edit/grow/${report?.id as string}`}>
+              <Link
+                href={`/account/edit/grow/${report?.id as string}#editGrow`}
+              >
                 <Button
                   h={32}
                   compact
