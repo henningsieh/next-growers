@@ -218,10 +218,10 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   color:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? theme.white
-                        : theme.white
+                        ? "white"
+                        : "white"
                       : theme.colorScheme === "dark"
-                        ? theme.white
+                        ? "white"
                         : theme.black,
 
                   boxShadow:
