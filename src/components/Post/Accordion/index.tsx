@@ -32,7 +32,12 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
   const [postIsOpen, setPostIsOpen] = useState<string | null>(null);
 
   return (
-    <Container pt="xl" className="flex flex-col space-y-2">
+    <Container
+      pl={0}
+      pr={0}
+      pt="xl"
+      className="flex w-full flex-col space-y-2"
+    >
       <Accordion
         radius="sm"
         variant="contained"

@@ -216,8 +216,13 @@ const AddPost = (props: AddPostProps) => {
 
   return (
     <>
-      <Container pt="xl" size="md">
-        <Paper p="sm" withBorder>
+      <Container
+        pl={0}
+        pr={0}
+        pt="xl"
+        className="flex w-full flex-col space-y-2"
+      >
+        <Paper m={0} p="sm" withBorder>
           <form
             onSubmit={createPostForm.onSubmit((values) => {
               handleSubmit(values);
