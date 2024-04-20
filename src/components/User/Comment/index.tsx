@@ -127,7 +127,9 @@ export function UserComment({
   const { mutate: tRPCdeleteComment } =
     api.comments.deleteCommentById.useMutation({
       onMutate: (newCommentDB) => {
-        console.log("START api.comments.deleteCommentById.useMutation");
+        console.debug(
+          "START api.comments.deleteCommentById.useMutation"
+        );
         setIsSaving(true);
         console.log("newCommentDB", newCommentDB);
       },
@@ -158,9 +160,8 @@ export function UserComment({
   const { mutate: tRPCsaveComment } =
     api.comments.saveComment.useMutation({
       onMutate: (newCommentDB) => {
-        console.log("START api.reports.create.useMutation");
+        console.debug("START api.comments.saveComment.useMutation");
         setIsSaving(true);
-        console.log("newReportDB", newCommentDB);
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back

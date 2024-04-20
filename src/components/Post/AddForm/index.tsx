@@ -111,14 +111,12 @@ const AddPost = (props: AddPostProps) => {
     content: post ? post.content : prefillHTMLContent,
   });
 
-  if (report == null) return null;
-
   const trpc = api.useUtils();
 
   const { mutate: tRPCaddPostToReport } =
     api.posts.createPost.useMutation({
       onMutate: () => {
-        console.log("START posts.createPost.useMutation");
+        console.debug("START posts.createPost.useMutation");
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back
@@ -145,6 +143,7 @@ const AddPost = (props: AddPostProps) => {
       },
     });
 
+  if (report == null) return null;
   const reportStartDate = new Date(report.createdAt);
   reportStartDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   const currentDate = new Date();
@@ -217,9 +216,7 @@ const AddPost = (props: AddPostProps) => {
 
   return (
     <>
-      <Space h="xs" />
-
-      <Container p={0} size="md">
+      <Container pt="xl" size="md">
         <Paper p="sm" withBorder>
           <form
             onSubmit={createPostForm.onSubmit((values) => {

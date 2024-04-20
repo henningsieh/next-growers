@@ -32,8 +32,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
   const [postIsOpen, setPostIsOpen] = useState<string | null>(null);
 
   return (
-    <Container p={0} className="flex flex-col space-y-2">
-      <Title order={2}> {t("common:editallpost-headline")} </Title>
+    <Container pt="xl" className="flex flex-col space-y-2">
       <Accordion
         radius="sm"
         variant="contained"

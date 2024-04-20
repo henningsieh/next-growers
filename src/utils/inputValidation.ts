@@ -135,9 +135,11 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
         invalid_type_error: "(h) must be set, may be 0",
       })
       .nullable(),
-    growStage: z.string().min(1, {
-      message: "Grow stage must be set with every update",
-    }),
+
+    growStage: z
+      .enum(Object.keys(GrowStage) as [keyof typeof GrowStage])
+      .nullable(),
+
     content: z.string(),
     images: z.array(z.string()),
   });

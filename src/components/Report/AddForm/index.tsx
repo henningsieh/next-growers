@@ -109,8 +109,7 @@ export function CreateReportForm({
 
   const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
     onMutate: (newReportDB) => {
-      console.log("START api.reports.create.useMutation");
-      console.log("newReportDB", newReportDB);
+      console.debug("START api.reports.create.useMutation");
     },
     // If the mutation fails,
     // use the context returned from onMutate to roll back

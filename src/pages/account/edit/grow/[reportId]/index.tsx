@@ -5,9 +5,19 @@ import {
   Loader,
   LoadingOverlay,
   Space,
+  Tabs,
   Title,
 } from "@mantine/core";
-import { IconChevronLeft } from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
+import {
+  IconChevronLeft,
+  IconEdit,
+  IconList,
+  IconNewSection,
+  IconPlant,
+} from "@tabler/icons-react";
+
+import { useEffect, useState } from "react";
 
 import type {
   GetServerSideProps,
@@ -20,6 +30,7 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
@@ -72,11 +83,24 @@ const ProtectedEditReportDetails: NextPage = () => {
   const { classes } = useStyles();
 
   const router = useRouter();
+  const params = useParams();
+
+  const [defaultTab, setDefaultTab] = useState("");
+
+  const { theme } = useStyles();
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.lg})`
+  );
+
+  useEffect(() => {
+    console.debug("Hash:", window.location.hash.slice(1));
+    setDefaultTab(window.location.hash.slice(1));
+  }, [params]);
+
   const queryReportId = router.query.reportId as string;
 
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
-  const pageTitle = t("common:report-edit-headline");
 
   const { data: session, status } = useSession();
   const sessionIsLoading = status === "loading";
@@ -113,7 +137,7 @@ const ProtectedEditReportDetails: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{`GrowAGram | ${pageTitle}`}</title>
+        <title>{`GrowAGram | ${t("common:report-edit-headline")}`}</title>
         <meta
           name="description"
           content="Create your grow report on growagram.com"
@@ -138,51 +162,96 @@ const ProtectedEditReportDetails: NextPage = () => {
             </Link>
           </Box>
         )}
-
-        {/* // Title */}
-        <Title order={1} className="inline">
-          {pageTitle}
-        </Title>
         {/* // Header End */}
 
         <Box pos="relative">
           <LoadingOverlay
             visible={reportIsLoading}
-            transitionDuration={1200}
+            transitionDuration={600}
             overlayBlur={2}
           />
-
-          {status === "authenticated" &&
-            !reportIsLoading &&
-            !reportHasErrors &&
-            !strainsAreLoading &&
-            !strainsHaveErrors && (
-              <>
-                <EditReportForm
-                  report={report}
-                  strains={strains}
-                  user={session.user}
-                />
-
-                <Space h="xl" />
-                <Space h="xl" />
-
-                {/* AddPost Component */}
-                <Container p={0}>
-                  <Title order={2}>
+          {defaultTab && (
+            <Tabs
+              variant="outline"
+              defaultValue={defaultTab}
+              orientation={!smallScreen ? "vertical" : undefined}
+            >
+              <Tabs.List>
+                <Tabs.Tab
+                  // onClick={
+                  //   void router.replace(
+                  //     `${router.pathname}#addUpdate`,
+                  //     undefined,
+                  //     {
+                  //       shallow: true,
+                  //       scroll: false,
+                  //     }
+                  //   )
+                  //   alert("");
+                  // }
+                  value="addUpdate"
+                  icon={
+                    <IconPlant size={smallScreen ? "1rem" : "1.6rem"} />
+                  }
+                >
+                  <Title order={2} fz={smallScreen ? "sm" : "xl"}>
                     {t("common:addpost-headline")}
                   </Title>
-                </Container>
-                <AddPost isoReport={report} post={null} />
+                </Tabs.Tab>
 
-                <Space h="xl" />
-                <Space h="xl" />
+                <Tabs.Tab
+                  value="editGrow"
+                  icon={
+                    <IconEdit size={smallScreen ? "1rem" : "1.6rem"} />
+                  }
+                >
+                  {/* // Title */}
+                  <Title order={2} fz={smallScreen ? "sm" : "xl"}>
+                    {t("common:report-edit-headline")}
+                  </Title>
+                </Tabs.Tab>
 
-                {/* PostsAccordion Component */}
-                {/* Alle Updates bearbeiten*/}
-                <PostsAccordion report={report && report} />
-              </>
-            )}
+                <Tabs.Tab
+                  value="editAll"
+                  icon={
+                    <IconList size={smallScreen ? "1rem" : "1.6rem"} />
+                  }
+                >
+                  <Title order={2} fz={smallScreen ? "sm" : "xl"}>
+                    {" "}
+                    {t("common:editallpost-headline")}{" "}
+                  </Title>
+                </Tabs.Tab>
+              </Tabs.List>
+
+              {status === "authenticated" &&
+                !reportIsLoading &&
+                !reportHasErrors &&
+                !strainsAreLoading &&
+                !strainsHaveErrors && (
+                  <>
+                    <Tabs.Panel value="addUpdate" pl="xs">
+                      {/* AddPost Component */}
+                      <AddPost isoReport={report} post={null} />
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="editGrow" pl="xs">
+                      <EditReportForm
+                        report={report}
+                        strains={strains}
+                        user={session.user}
+                      />
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="editAll" pl="xs">
+                      {/* PostsAccordion Component */}
+                      {/* Alle Updates bearbeiten*/}
+                      <PostsAccordion report={report && report} />
+                    </Tabs.Panel>
+                  </>
+                )}
+            </Tabs>
+          )}
         </Box>
       </Container>
     </>
