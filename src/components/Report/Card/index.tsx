@@ -355,8 +355,8 @@ function EditReportMenu({
               px={2}
               w={28}
               compact
-              variant="default"
-              color="dark"
+              variant="filled"
+              color="groworange"
             >
               <IconDots />
             </Button>

@@ -91,8 +91,11 @@ const useStyles = createStyles((theme) => ({
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
     textDecoration: "none",
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    fontWeight: 500,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.white
+        : theme.colors.growgreen[6],
+    fontWeight: 700,
     fontSize: theme.fontSizes.lg,
 
     [theme.fn.smallerThan("sm")]: {
@@ -103,10 +106,11 @@ const useStyles = createStyles((theme) => ({
     },
 
     ...theme.fn.hover({
+      color: theme.white,
       backgroundColor:
         theme.colorScheme === "dark"
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
+          ? theme.colors.growgreen[6]
+          : theme.colors.growgreen[4],
     }),
   },
 
@@ -128,9 +132,7 @@ const useStyles = createStyles((theme) => ({
 
   dropdownFooter: {
     backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[7]
-        : theme.colors.gray[0],
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     margin: `calc(${theme.spacing.md} * -1)`,
     marginTop: theme.spacing.sm,
     padding: `${theme.spacing.md} calc(${theme.spacing.md} * 2)`,
@@ -214,28 +216,6 @@ export default function RootLayout({
     useDisclosure(false);
   const { classes, theme } = useStyles();
 
-  const externLinks = externLinksMockdata.map((item) => (
-    <UnstyledButton
-      onClick={() => openUrlInNewTab(item.url)}
-      className={classes.subLink}
-      key={item.title}
-    >
-      <Group noWrap align="flex-start">
-        <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={rem(22)} color={theme.colors.growgreen[5]} />
-        </ThemeIcon>
-        <Box>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-          <Text size="xs" color="dimmed">
-            {item.description}
-          </Text>
-        </Box>
-      </Group>
-    </UnstyledButton>
-  ));
-
   const handleUnstyledButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -252,6 +232,29 @@ export default function RootLayout({
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
+
+  const externLinks = externLinksMockdata.map((item) => (
+    <UnstyledButton
+      bg={dark ? "dark.5" : "growgreen.4"}
+      onClick={() => openUrlInNewTab(item.url)}
+      className={classes.subLink}
+      key={item.title}
+    >
+      <Group noWrap align="flex-start">
+        <ThemeIcon size={34} variant="default" radius="md">
+          <item.icon size={rem(22)} color={theme.colors.growgreen[4]} />
+        </ThemeIcon>
+        <Box>
+          <Text size="md" fw={500}>
+            {item.title}
+          </Text>
+          <Text size="sm" color="dimmed">
+            {item.description}
+          </Text>
+        </Box>
+      </Group>
+    </UnstyledButton>
+  ));
 
   return (
     <>
@@ -354,7 +357,7 @@ export default function RootLayout({
                   }
                 />
 
-                <SimpleGrid cols={2} spacing={0}>
+                <SimpleGrid cols={2} spacing="lg">
                   {externLinks}
                 </SimpleGrid>
 
