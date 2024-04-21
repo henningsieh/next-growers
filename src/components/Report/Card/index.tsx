@@ -214,7 +214,7 @@ export default function ReportCard({
           session.user.id == isoReport.authorId && (
             <Box p={5} pos="absolute" className="z-20 bottom-0 right-0">
               <EditReportMenu
-                reportId={isoReport.id as string}
+                reportId={isoReport.id}
                 labelEditGrow={t("common:report-edit-button")}
                 labelAddUpdate={t("common:addpost-headline")}
               />
@@ -222,9 +222,9 @@ export default function ReportCard({
           )}
         <ImagePreview
           imageUrl={isoReport.image?.cloudUrl as string}
-          title={isoReport.title as string}
-          description={isoReport.description as string}
-          publicLink={`/grow/${isoReport.id as string}`}
+          title={isoReport.title}
+          description={isoReport.description}
+          publicLink={`/grow/${isoReport.id}`}
           authorName={isoReport.author?.name as string}
           authorImageUrl={
             isoReport.author?.image
@@ -300,7 +300,7 @@ export default function ReportCard({
               <Center>
                 <Text className={`${classes.label} cursor-default`}>
                   {sanatizeDateString(
-                    isoReport.updatedAt as string,
+                    isoReport.updatedAt,
                     router.locale === Locale.DE ? Locale.DE : Locale.EN,
                     false,
                     false

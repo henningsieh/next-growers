@@ -151,7 +151,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   boxShadow:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][4]}`
+                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][2]}`
                         : `0 0 0px 1px ${theme.colors[params.color || "gray"][6]}`
                       : undefined,
                   backgroundColor:

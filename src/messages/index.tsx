@@ -8,16 +8,19 @@ import {
   IconEyeHeart,
   IconFileAlert,
   IconPhoto,
+  IconPhotoCancel,
 } from "@tabler/icons-react";
 
 export const httpStatusErrorMsg = (
   message: string,
-  httpStatus?: number | undefined
+  httpStatus?: number | undefined,
+  autoClose?: boolean | undefined
 ) => ({
   loading: false,
   title: `Error ${httpStatus ? `${String(httpStatus)}` : ""}`,
   message,
   color: "red",
+  autoClose,
   icon: <IconAlertTriangle size="1.2rem" stroke={2.8} />,
 });
 
@@ -126,6 +129,14 @@ export const savePostSuccessfulMsg = {
   message: "Your update has been saved successfully! ✅",
   color: "growgreen",
   icon: <IconDeviceFloppy size="1.2rem" stroke={2.8} />,
+  loading: false,
+};
+
+export const deletePostSuccessfulMsg = {
+  title: "Success",
+  message: "Your update has been deletet successfully! ✅",
+  color: "growgreen",
+  icon: <IconPhotoCancel size="1.2rem" stroke={2.8} />,
   loading: false,
 };
 
