@@ -4,6 +4,7 @@ import {
   Button,
   Container,
   createStyles,
+  Loader,
   LoadingOverlay,
   Text,
   Title,
@@ -14,7 +15,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconEdit } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import { noPostAtThisDay } from "~/messages";
+import { httpStatusErrorMsg, noPostAtThisDay } from "~/messages";
 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -58,9 +59,12 @@ export const getServerSideProps: GetServerSideProps = async (
  */
 const PublicReport: NextPage = () => {
   const theme = useMantineTheme();
+
+  const router = useRouter();
+  const queryReportId = router.query.reportId as string;
+
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
@@ -81,24 +85,12 @@ const PublicReport: NextPage = () => {
   }));
   const { classes } = useStyles();
 
-  const router = useRouter();
+  const { data: session, status } = useSession();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const { data: session, status } = useSession();
-
-  const queryReportId = router.query.reportId as string;
-
-  const {
-    data: report,
-    isLoading: reportIsLoading,
-    //isError: reportHasErrors,
-  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
-
-  const pageTitle = `${report?.title as string}`;
-
-  // const { locale: activeLocale } = router;
-  // const { t } = useTranslation(activeLocale);
+  const [postId, setPostId] = useState<string>("");
+  const [selectedDate, selectDate] = useState<Date | null>(null);
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -117,34 +109,36 @@ const PublicReport: NextPage = () => {
             ? 4
             : 5;
 
-  const dateOfnewestPost = report?.posts.reduce((maxDate, post) => {
+  const {
+    data: report,
+    isLoading: reportIsLoading,
+    isError: reportHasErrors,
+    error: error,
+  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
+
+  if (reportIsLoading) return <Loader color="growgreen.4" />;
+  if (reportHasErrors) {
+    notifications.show(
+      httpStatusErrorMsg(error.message, error.data?.httpStatus, false)
+    );
+    return (
+      <>
+        Error {error.data?.httpStatus}: {error.message}
+      </>
+    );
+  }
+
+  const pageTitle = `${report.title}`;
+
+  const dateOfnewestPost = report.posts.reduce((maxDate, post) => {
     const postDate = new Date(post.date);
     return postDate > maxDate ? postDate : maxDate;
   }, new Date(0));
 
-  const [postId, setPostId] = useState<string>("");
-  const [selectedDate, selectDate] = useState<Date | null>(null);
-
-  if (reportIsLoading)
-    return (
-      <LoadingOverlay
-        ml={42}
-        mt={12}
-        radius="sm"
-        visible={reportIsLoading}
-        transitionDuration={150}
-        loaderProps={{
-          size: "sm",
-          variant: "dots",
-        }}
-      />
-    );
-  console.debug("report:", report);
-
-  const postDays = report?.posts.map((post) =>
+  const postDays = report.posts.map((post) =>
     new Date(post.date).getTime()
   );
-  const dateOfGermination = new Date(report?.createdAt as string);
+  const dateOfGermination = new Date(report.createdAt);
 
   const defaultRelDate =
     dayjs(selectedDate)
@@ -166,7 +160,7 @@ const PublicReport: NextPage = () => {
       return;
     }
 
-    const matchingPost = report?.posts.find((post) => {
+    const matchingPost = report.posts.find((post) => {
       const postDate = new Date(post.date);
       return selectedDate.toISOString() === postDate.toISOString();
     });
@@ -177,7 +171,7 @@ const PublicReport: NextPage = () => {
       // });
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
-      const newUrl = `/grow/${report?.id as string}/update/${matchingPost.id}`;
+      const newUrl = `/grow/${report.id}/update/${matchingPost.id}`;
       void router.replace(newUrl, undefined, {
         shallow: true,
         scroll: false,
@@ -188,11 +182,11 @@ const PublicReport: NextPage = () => {
   };
 
   const imageTags = generateOpenGraphMetaTagsImage(
-    report?.image?.cloudUrl as string
+    report.image?.cloudUrl as string
   );
   const description = "Create your grow report on growagram.com"; //@TODO fix me SEO
   const title = `Grow "${pageTitle}" from ${
-    report?.author?.name as string
+    report.author?.name as string
   } | GrowAGram`;
 
   return (
@@ -202,7 +196,7 @@ const PublicReport: NextPage = () => {
         <meta name="description" content={description} />
         <meta
           property="og:url"
-          content={`https://growagram.com/grow/${report?.id || ""}`}
+          content={`https://growagram.com/grow/${report.id || ""}`}
         />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
@@ -223,9 +217,7 @@ const PublicReport: NextPage = () => {
           {!!report &&
             status === "authenticated" &&
             report.authorId === session.user.id && (
-              <Link
-                href={`/account/edit/grow/${report?.id as string}#editGrow`}
-              >
+              <Link href={`/account/edit/grow/${report.id}#editGrow`}>
                 <Button
                   h={32}
                   compact
@@ -252,16 +244,16 @@ const PublicReport: NextPage = () => {
           {report && (
             <ReportHeader
               report={report}
-              image={report?.image?.cloudUrl as string}
+              image={report.image?.cloudUrl as string}
               avatar={
-                report?.author?.image
-                  ? report?.author?.image
+                report.author?.image
+                  ? report.author?.image
                   : `https://ui-avatars.com/api/?name=${
-                      report?.author?.name as string
+                      report.author?.name as string
                     }`
               }
-              name={report?.author?.name as string}
-              description={report?.description as string}
+              name={report.author?.name as string}
+              description={report.description}
             />
           )}
           {/* // Posts Date Picker */}
@@ -272,10 +264,10 @@ const PublicReport: NextPage = () => {
               defaultDate={
                 selectedDate ? columnStartMonth : dateOfGermination
               }
-              postDays={postDays as number[]}
+              postDays={postDays}
               selectedDate={selectedDate}
               handleSelectDate={handleSelectDate}
-              dateOfnewestPost={dateOfnewestPost as Date}
+              dateOfnewestPost={dateOfnewestPost}
               dateOfGermination={dateOfGermination}
               responsiveColumnCount={getResponsiveColumnCount}
             />
@@ -306,10 +298,7 @@ const PublicReport: NextPage = () => {
                   </Text>
                 </Alert>
               ) : (
-                <PostCard
-                  postId={postId}
-                  report={report as IsoReportWithPostsFromDb}
-                />
+                <PostCard postId={postId} report={report} />
               )}
             </>
           )}

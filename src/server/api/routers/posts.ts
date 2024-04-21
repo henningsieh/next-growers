@@ -1,3 +1,4 @@
+import { Post } from "@prisma/client";
 import { z } from "zod";
 
 import {
@@ -6,9 +7,62 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { InputCreatePostServer } from "~/utils/inputValidation";
+import { Posts } from "~/types";
+
+import {
+  InputCreatePostServer,
+  InputDeletePost,
+} from "~/utils/inputValidation";
 
 export const postRouter = createTRPCRouter({
+  deletePost: protectedProcedure
+    .input(InputDeletePost)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+
+      // Retrieve the post by its id
+      const post = await ctx.prisma.post.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      // Check if the post exists
+      if (!post) {
+        throw new Error(`The post with id ${id} does not exist.`);
+      }
+
+      // Ensure that the user has permission to delete the post
+      if (post.authorId !== ctx.session.user.id) {
+        throw new Error("You are not authorized to delete this post.");
+      }
+
+      // Mark the post as deleted
+      // const updatedPost = await ctx.prisma.post.update({
+      //   where: {
+      //     id,
+      //   },
+      //   data: {
+      //     isDeleted: true,
+      //   },
+      // });
+      //
+      // return updatedPost;
+
+      // Delete the post
+      await ctx.prisma.post.delete({
+        where: {
+          id,
+        },
+      });
+
+      // Optionally, you can return a success message or some indicator of the deletion
+      return {
+        success: true,
+        deletedPost: post,
+      };
+    }),
+
   createPost: protectedProcedure
     .input(InputCreatePostServer)
     .mutation(async ({ ctx, input }) => {
@@ -153,6 +207,7 @@ export const postRouter = createTRPCRouter({
           date: "asc",
         },
         where: {
+          // isDeleted: false,
           reportId: input,
         },
         include: {
@@ -191,15 +246,6 @@ export const postRouter = createTRPCRouter({
                 (1000 * 60 * 60 * 24)
             ) + 1; // Adding 1 to get 1-based indexing
 
-          const comments = await ctx.prisma.comment.findMany({
-            where: {
-              postId: post.id,
-            },
-            orderBy: {
-              createdAt: "asc",
-            },
-          });
-
           const isoLikes = post.likes.map(
             ({ id, createdAt, updatedAt, user }) => ({
               id,
@@ -209,6 +255,15 @@ export const postRouter = createTRPCRouter({
               updatedAt: updatedAt.toISOString(),
             })
           );
+
+          const comments = await ctx.prisma.comment.findMany({
+            where: {
+              postId: post.id,
+            },
+            orderBy: {
+              createdAt: "asc",
+            },
+          });
 
           const isoComments = comments.map((comment) => ({
             ...comment,

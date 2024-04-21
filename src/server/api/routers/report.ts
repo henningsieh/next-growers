@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -502,6 +503,18 @@ export const reportRouter = createTRPCRouter({
           id: input,
         },
       });
+
+      // If reportFromDb is null, it means no report was found with the given ID
+      if (!reportFromDb) {
+        // Throw an error using tRPC's built-in error handling
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          // no catch error available
+          message: `Grow with ID ${input} was not found.`,
+          // cause: error,
+        });
+      }
+
       // Convert all Dates to IsoStrings
       const newestPostDate = reportFromDb?.posts.reduce(
         (prevDate, post) => {
@@ -513,7 +526,7 @@ export const reportRouter = createTRPCRouter({
 
       const isoReportFromDb = {
         ...reportFromDb,
-        createdAt: reportFromDb?.createdAt.toISOString() as string,
+        createdAt: reportFromDb.createdAt.toISOString(),
         updatedAt: newestPostDate
           ? newestPostDate.toISOString()
           : reportFromDb?.updatedAt.toISOString(),
@@ -527,7 +540,7 @@ export const reportRouter = createTRPCRouter({
           })
         ),
 
-        posts: (reportFromDb?.posts || []).map((post) => {
+        posts: (reportFromDb.posts || []).map((post) => {
           const postDate = post.date ? new Date(post.date) : null;
           const reportCreatedAt = reportFromDb?.createdAt
             ? new Date(reportFromDb.createdAt)

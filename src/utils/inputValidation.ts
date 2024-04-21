@@ -96,6 +96,10 @@ export const InputLike = z.object({
   id: z.string(),
 });
 
+export const InputDeletePost = z.object({
+  id: z.string(),
+});
+
 export const InputGetCommentsByPostId = z.object({
   postId: z.string().min(1),
 });
