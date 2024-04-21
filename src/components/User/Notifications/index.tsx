@@ -22,7 +22,7 @@ import {
   IconEyeHeart,
   IconHeartFilled,
 } from "@tabler/icons-react";
-import { markAllReadMessage } from "~/messages";
+import { defaultErrorMsg, markAllReadMessage } from "~/messages";
 
 import { useState } from "react";
 
@@ -93,11 +93,10 @@ const ProtectedNotifications = () => {
   const { mutate: markNotificationAsReadMutation } =
     api.notifications.markNotificationAsRead.useMutation({
       onError: (error) => {
-        console.error(error);
-        // Handle error, e.g., show an error message
+        notifications.show(defaultErrorMsg(error.message));
       },
       onSuccess: () => {
-        // toast.success("markNotificationAsRead!");
+        // no user message when clicking on a notification
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch the report data
@@ -143,7 +142,7 @@ const ProtectedNotifications = () => {
           <Indicator
             color={
               theme.colorScheme === "dark"
-                ? theme.colors.growgreen[3]
+                ? theme.colors.growgreen[4]
                 : theme.colors.groworange[3]
             }
             position="bottom-end"

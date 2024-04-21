@@ -4,16 +4,15 @@ import {
   createStyles,
   Loader,
   LoadingOverlay,
-  Space,
   Tabs,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
   IconChevronLeft,
   IconEdit,
   IconList,
-  IconNewSection,
   IconPlant,
 } from "@tabler/icons-react";
 
@@ -34,8 +33,8 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import PostsAccordion from "~/components/Post/Accordion";
 import AddPost from "~/components/Post/AddForm";
+import PostsAccordion from "~/components/Post/PostsAccordion";
 import { EditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
@@ -69,25 +68,25 @@ export const getServerSideProps: GetServerSideProps = async (
  * @returns HTML Component
  */
 const ProtectedEditReportDetails: NextPage = () => {
-  const useStyles = createStyles((theme) => ({
-    titleLink: {
-      display: "inline-flex",
-      color: theme.colors.orange?.[7],
-    },
-    title: {
-      display: "inline-flex",
-      // paddingBottom: 10,
-      // color: theme.colors.orange?.[7],
-    },
-  }));
-  const { classes } = useStyles();
-
   const router = useRouter();
   const params = useParams();
 
   const [defaultTab, setDefaultTab] = useState("");
 
-  const { theme } = useStyles();
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
+  const useStyles = createStyles((theme) => ({
+    titleLink: {
+      display: "inline-flex",
+      fontWeight: "bold",
+      color: dark
+        ? theme.colors.groworange[4]
+        : theme.colors.growgreen[5],
+    },
+  }));
+  const { theme, classes } = useStyles();
+
   const smallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.lg})`
   );
@@ -163,65 +162,70 @@ const ProtectedEditReportDetails: NextPage = () => {
         )}
         {/* // Header End */}
 
-        <Box pos="relative">
-          <LoadingOverlay
-            visible={reportIsLoading}
-            transitionDuration={600}
-            overlayBlur={2}
-          />
-          {defaultTab && (
-            <Tabs
-              variant="outline"
-              defaultValue={defaultTab || "editGrow"}
-              orientation={!smallScreen ? "vertical" : undefined}
-            >
-              <Tabs.List>
-                <Tabs.Tab
-                  // onClick={
-                  //   void router.replace(
-                  //     `${router.pathname}#addUpdate`,
-                  //     undefined,
-                  //     {
-                  //       shallow: true,
-                  //       scroll: false,
-                  //     }
-                  //   )
-                  //   alert("");
-                  // }
-                  value="addUpdate"
-                  icon={
-                    <IconPlant size={smallScreen ? "1rem" : "1.6rem"} />
-                  }
-                >
-                  <Title order={2} fz={smallScreen ? "sm" : "xl"}>
-                    {t("common:addpost-headline")}
-                  </Title>
-                </Tabs.Tab>
+        {defaultTab && (
+          <Tabs
+            variant="outline"
+            defaultValue={defaultTab || "editGrow"}
+            // orientation={!smallScreen ? "vertical" : undefined}
+          >
+            <Tabs.List>
+              <Tabs.Tab
+                // onClick={
+                //   void router.replace(
+                //     `${router.pathname}#addUpdate`,
+                //     undefined,
+                //     {
+                //       shallow: true,
+                //       scroll: false,
+                //     }
+                //   )
+                //   alert("");
+                // }
+                value="addUpdate"
+                icon={
+                  <IconPlant size={smallScreen ? "1rem" : "1.6rem"} />
+                }
+              >
+                <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                  {t("common:addpost-headline")}
+                </Title>
+              </Tabs.Tab>
 
-                <Tabs.Tab
-                  value="editGrow"
-                  icon={
-                    <IconEdit size={smallScreen ? "1rem" : "1.6rem"} />
-                  }
-                >
-                  {/* // Title */}
-                  <Title order={2} fz={smallScreen ? "sm" : "xl"}>
-                    {t("common:report-edit-headline")}
-                  </Title>
-                </Tabs.Tab>
+              <Tabs.Tab
+                value="editGrow"
+                icon={
+                  <IconEdit size={smallScreen ? "1rem" : "1.6rem"} />
+                }
+              >
+                {/* // Title */}
+                <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                  {t("common:report-edit-headline")}
+                </Title>
+              </Tabs.Tab>
 
-                <Tabs.Tab
-                  value="editAll"
-                  icon={
-                    <IconList size={smallScreen ? "1rem" : "1.6rem"} />
-                  }
-                >
-                  <Title order={2} fz={smallScreen ? "sm" : "xl"}>
-                    {" "}
-                    {t("common:editallpost-headline")}{" "}
-                  </Title>
-                </Tabs.Tab>
-              </Tabs.List>
+              <Tabs.Tab
+                value="editAll"
+                icon={
+                  <IconList size={smallScreen ? "1rem" : "1.6rem"} />
+                }
+              >
+                <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                  {" "}
+                  {t("common:editallpost-headline")}{" "}
+                </Title>
+              </Tabs.Tab>
+            </Tabs.List>
+
+            <Box pos="relative">
+              <LoadingOverlay
+                visible={
+                  reportIsLoading ||
+                  strainsAreLoading ||
+                  sessionIsLoading
+                }
+                transitionDuration={600}
+                overlayBlur={2}
+              />
 
               {status === "authenticated" &&
                 !reportIsLoading &&
@@ -249,9 +253,9 @@ const ProtectedEditReportDetails: NextPage = () => {
                     </Tabs.Panel>
                   </>
                 )}
-            </Tabs>
-          )}
-        </Box>
+            </Box>
+          </Tabs>
+        )}
       </Container>
     </>
   );

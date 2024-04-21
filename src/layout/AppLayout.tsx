@@ -33,10 +33,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
+import LanguageSwitcher from "~/components/LanguageSwitcher";
 import LightDarkButton from "~/components/LightDarkButton";
-import Notifications from "~/components/Notifications";
-import LoginPanel from "~/components/SessionPanel";
+import Notifications from "~/components/User/Notifications";
+import LoginPanel from "~/components/User/SessionPanel";
 
 const useStyles = createStyles((theme) => ({
   photoCredit: {

@@ -8,7 +8,7 @@ import type {
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-import LandingPage from "~/components/LandingPage";
+import LandingPage from "~/components/StaticPages/LandingPage";
 
 /** PUBLIC DYNAMIC PAGE with translations
  * getServerSideProps (Server-Side Rendering)

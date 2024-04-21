@@ -8,7 +8,7 @@ import type {
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-import HowTo from "~/components/HowTo";
+import HowTo from "~/components/StaticPages/Features";
 
 /** PUBLIC STATIC PAGE with translations
  * getStaticProps (Static Site Generation)

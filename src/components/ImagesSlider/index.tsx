@@ -8,7 +8,7 @@ import { useState } from "react";
 
 import Image from "next/image";
 
-import { PostImagesCarousel } from "~/components//Post/ImageCarousel";
+import { PostImagesCarousel } from "~/components/ImageCarousel";
 
 interface ImagesSliderProps {
   cloudUrls: string[];

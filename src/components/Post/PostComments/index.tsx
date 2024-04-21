@@ -20,10 +20,13 @@ import {
   IconTextWrap,
   IconX,
 } from "@tabler/icons-react";
-import { commentSuccessfulMsg } from "~/messages";
+import {
+  commentSuccessfulMsg,
+  defaultErrorMsg,
+  httpStatusErrorMsg,
+} from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
@@ -74,12 +77,11 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       onMutate: () => {
         setIsSaving(true);
       },
-      // If the mutation fails,
-      // use the context returned from onMutate to roll back
-      onError: (err, newReport, context) => {
-        toast.error("An error occured when saving your report");
-        if (!context) return;
-        console.log(context);
+      // If the mutation fails, use the context
+      // returned from onMutate to roll back
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (error, _comment) => {
+        notifications.show(defaultErrorMsg(error.message));
       },
       onSuccess: async (newCommentDB) => {
         notifications.show(commentSuccessfulMsg);
@@ -129,15 +131,11 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   });
 
   const handleErrors = (errors: typeof editCommentForm.errors) => {
-    if (errors.id) {
-      toast.error(errors.id as string);
-    }
-    if (errors.postId) {
-      toast.error(errors.postId as string);
-    }
-    if (errors.content) {
-      toast.error(errors.content as string);
-    }
+    Object.keys(errors).forEach((key) => {
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
+      );
+    });
   };
 
   useEffect(() => {

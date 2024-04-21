@@ -289,6 +289,23 @@ export default function ReportCard({
               />
             </Button> */}
             <Link
+              href={`/account/edit/grow/${isoReport.id as string}#addUpdate`}
+            >
+              <Button
+                h={32}
+                compact
+                variant="filled"
+                fw="normal"
+                radius="xs"
+                style={{ flex: 1 }}
+                rightIcon={
+                  <IconEdit className="ml-1" size={22} stroke={1.6} />
+                }
+              >
+                {t("common:addpost-headline")}
+              </Button>
+            </Link>
+            <Link
               href={`/account/edit/grow/${isoReport.id as string}#editGrow`}
             >
               <Button

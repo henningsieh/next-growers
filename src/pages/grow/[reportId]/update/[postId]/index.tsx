@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   createStyles,
-  rem,
   Title,
   useMantineColorScheme,
   useMantineTheme,
@@ -30,8 +29,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
-import { PostCard } from "~/components/Post/Card";
 import PostsDatePicker from "~/components/Post/Datepicker";
+import { PostCard } from "~/components/Post/PostCard";
 
 import { prisma } from "~/server/db";
 

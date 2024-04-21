@@ -15,8 +15,6 @@ import RootLayout from "~/layout/AppLayout";
 import "~/styles/emojiPickerStyles.css";
 import "~/styles/globals.css";
 
-import { Toaster } from "react-hot-toast";
-
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
@@ -332,7 +330,6 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
         <SessionProvider session={session}>
           <Loading isLoading={isLoading} />
           <Notifications limit={5} position="top-center" />
-          <Toaster />
 
           <RootLayout>
             <Component {...pageProps} />

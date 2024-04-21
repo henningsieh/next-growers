@@ -22,10 +22,10 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
+import { defaultErrorMsg, httpStatusErrorMsg } from "~/messages";
 
 import { useEffect, useRef } from "react";
 import { useState } from "react";
-import toast from "react-hot-toast";
 
 import type { User } from "next-auth";
 import { useRouter } from "next/router";
@@ -108,15 +108,15 @@ export function CreateReportForm({
   };
 
   const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
-    onMutate: (newReportDB) => {
+    onMutate: () => {
       console.debug("START api.reports.create.useMutation");
     },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, newReport, context) => {
-      toast.error("An error occured when saving your report");
-      if (!context) return;
-      console.log(context);
+    // If the mutation fails, use the context
+    // returned from onMutate to roll back
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onError: (error, _newReport) => {
+      notifications.show(defaultErrorMsg(error.message));
+      console.error({ error });
     },
     onSuccess: (newReportDB) => {
       // Navigate to the new report page
@@ -128,19 +128,6 @@ export function CreateReportForm({
     },
   });
 
-  const handleErrors = (errors: typeof createReportForm.errors) => {
-    console.log(errors);
-    if (errors.description) {
-      toast.error(errors.description as string);
-    }
-    if (errors.title) {
-      toast.error(errors.title as string);
-    }
-    if (errors.imageId) {
-      toast.error(errors.imageId as string);
-    }
-  };
-
   const createReportForm = useForm({
     validate: zodResolver(InputCreateReportForm),
     validateInputOnChange: true,
@@ -150,6 +137,14 @@ export function CreateReportForm({
       imageId: "",
     },
   });
+
+  const handleErrors = (errors: typeof createReportForm.errors) => {
+    Object.keys(errors).forEach((key) => {
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
+      );
+    });
+  };
 
   return (
     <>

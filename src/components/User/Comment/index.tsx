@@ -25,10 +25,13 @@ import { IconEditOff } from "@tabler/icons-react";
 import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
-import { commentDeletedSuccessfulMsg } from "~/messages";
+import {
+  commentDeletedSuccessfulMsg,
+  defaultErrorMsg,
+  httpStatusErrorMsg,
+} from "~/messages";
 
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
@@ -133,13 +136,12 @@ export function UserComment({
         setIsSaving(true);
         console.log("newCommentDB", newCommentDB);
       },
-      // If the mutation fails,
-      // use the context returned from onMutate to roll back
-      onError: (err, newReport, context) => {
-        toast.error("An error occured when deleting the comment");
-        console.log("err", err);
-        if (!context) return;
-        console.debug(context);
+      // If the mutation fails, use the context
+      // returned from onMutate to roll back
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (error, _comment) => {
+        notifications.show(defaultErrorMsg(error.message));
+        console.error({ error });
       },
       onSuccess: async (deletedComment) => {
         notifications.show(commentDeletedSuccessfulMsg);
@@ -159,16 +161,16 @@ export function UserComment({
 
   const { mutate: tRPCsaveComment } =
     api.comments.saveComment.useMutation({
-      onMutate: (newCommentDB) => {
+      onMutate: () => {
         console.debug("START api.comments.saveComment.useMutation");
         setIsSaving(true);
       },
-      // If the mutation fails,
-      // use the context returned from onMutate to roll back
-      onError: (err, newReport, context) => {
-        toast.error("An error occured when saving your report");
-        if (!context) return;
-        console.log(context);
+      // If the mutation fails, use the context
+      // returned from onMutate to roll back
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (error, _comment) => {
+        notifications.show(defaultErrorMsg(error.message));
+        console.error({ error });
       },
       onSuccess: async (newReportDB) => {
         await trpc.comments.getCommentsByPostId.fetch({
@@ -195,6 +197,14 @@ export function UserComment({
     },
   });
 
+  const handleErrors = (errors: typeof editCommentForm.errors) => {
+    Object.keys(errors).forEach((key) => {
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
+      );
+    });
+  };
+
   useEffect(() => {
     const fetchHtml = async () => {
       try {
@@ -207,18 +217,6 @@ export function UserComment({
     };
     void fetchHtml();
   }, [comment.content]);
-
-  const handleErrors = (errors: typeof editCommentForm.errors) => {
-    if (errors.id) {
-      toast.error(errors.id as string);
-    }
-    if (errors.postId) {
-      toast.error(errors.postId as string);
-    }
-    if (errors.content) {
-      toast.error(errors.content as string);
-    }
-  };
 
   const [, setSelectedCommentText] = useState("");
 

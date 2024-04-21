@@ -27,7 +27,7 @@ import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
 import ImagesSlider from "~/components/ImagesSlider";
-import PostComments from "~/components/Post/Comments";
+import PostComments from "~/components/Post/PostComments";
 
 import type { Post } from "~/types";
 import {
@@ -271,9 +271,6 @@ export function PostCard(props: PostCardProps) {
       </Box>
     ));
 
-    const postImagesPulbicUrls =
-      postImages?.map((image) => image.cloudUrl) ?? [];
-
     return (
       <>
         <Paper
@@ -292,12 +289,14 @@ export function PostCard(props: PostCardProps) {
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
           <Box my={"sm"}>
-            <ImagesSlider cloudUrls={postImagesPulbicUrls} />
+            <ImagesSlider
+              cloudUrls={
+                postImages?.map((image) => image.cloudUrl) ?? []
+              }
+            />
           </Box>
           <Paper
             fz={16}
-            // c="dimmed"
-            // withBorder
             p={theme.spacing.xs}
             mb={theme.spacing.sm}
             m={0}

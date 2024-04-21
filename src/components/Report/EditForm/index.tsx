@@ -151,16 +151,6 @@ export function EditReportForm({
     }
   );
 
-  const handleErrors = (errors: typeof editReportForm.errors) => {
-    Object.keys(errors).forEach((key) => {
-      const errorMessage = httpStatusErrorMsg(
-        errors[key] as string,
-        422
-      );
-      notifications.show(errorMessage);
-    });
-  };
-
   const editReportForm = useForm({
     validate: zodResolver(InputEditReportForm),
     validateInputOnChange: true,
@@ -174,6 +164,14 @@ export function EditReportForm({
       environment: report.environment as keyof typeof Environment,
     },
   });
+
+  const handleErrors = (errors: typeof editReportForm.errors) => {
+    Object.keys(errors).forEach((key) => {
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
+      );
+    });
+  };
 
   // Update "imageId" state, if "imageId" form field value changes
   useEffect(() => {
