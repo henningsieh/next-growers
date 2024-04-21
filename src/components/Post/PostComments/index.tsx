@@ -10,6 +10,7 @@ import {
   Space,
   Text,
   Textarea,
+  Title,
   Transition,
   TypographyStylesProvider,
 } from "@mantine/core";
@@ -150,7 +151,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
         <>
           <Space h={"lg"} />
           <Group pb="xs" position="apart">
-            <Text fz="xl">Kommantare</Text>
+            <Title order={2}>{t("common:comments-headline")}</Title>
 
             <Button
               title={!newOpen ? "add new comment" : "close form"}
@@ -161,7 +162,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                 setNewOpen((prev) => !prev);
               }}
             >
-              Kommentieren
+              {t("common:comments-button-comment")}
             </Button>
           </Group>
 

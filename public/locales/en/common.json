@@ -61,5 +61,7 @@
   "editallpost-headline": "Edit all Updates",
   "addpost-headline": "Add new Update",
   "addpost-updatedatedescription": "Date of this Update",
-  "editpost-headline": "Edit Update"
+  "editpost-headline": "Edit Update",
+  "comments-headline": "Comments",
+  "comments-button-comment": "Comment now"
 }

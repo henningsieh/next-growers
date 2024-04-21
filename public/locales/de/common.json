@@ -61,5 +61,7 @@
   "editallpost-headline": "Alle Updates bearbeiten",
   "addpost-headline": "Update hinzufügen",
   "addpost-updatedatedescription": "Datum des Updates",
-  "editpost-headline": "Update bearbeiten"
+  "editpost-headline": "Update bearbeiten",
+  "comments-headline": "Kommentare",
+  "comments-button-comment": "Jetzt kommentieren"
 }
