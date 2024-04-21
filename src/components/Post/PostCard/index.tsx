@@ -170,7 +170,7 @@ export function PostCard(props: PostCardProps) {
     },
     {
       label: sanatizeDateString(
-        report?.updatedAt as string,
+        report?.updatedAt,
         router.locale === Locale.DE ? Locale.DE : Locale.EN,
         false,
         false
@@ -309,7 +309,7 @@ export function PostCard(props: PostCardProps) {
           </Group>
         </Paper>
 
-        <PostComments reportId={report.id as string} postId={postId} />
+        <PostComments reportId={report.id} postId={postId} />
 
         <Space h="xs" />
         <Group px="sm" position="apart" className={classes.section}>

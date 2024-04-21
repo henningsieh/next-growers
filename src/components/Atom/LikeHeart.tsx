@@ -48,7 +48,7 @@ const LikeHeart = (props: LikeHeartProps) => {
     data: itemLikes,
     isLoading,
     isError,
-  } = api.like.getLikesByItemId.useQuery(item.id as string);
+  } = api.like.getLikesByItemId.useQuery(item.id);
 
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
@@ -154,11 +154,11 @@ const LikeHeart = (props: LikeHeartProps) => {
 
     // Call the correct mutation// Call the correct mutation
     if (itemType === "Report") {
-      likeReportMutation({ id: item.id as string });
+      likeReportMutation({ id: item.id });
     } else if (itemType === "Post") {
-      likePostMutation({ id: item.id as string });
+      likePostMutation({ id: item.id });
     } else if (itemType === "Comment") {
-      likeCommentMutation({ id: item.id as string });
+      likeCommentMutation({ id: item.id });
     }
   };
 
@@ -172,13 +172,13 @@ const LikeHeart = (props: LikeHeartProps) => {
     // Call the correct mutation// Call the correct mutation
     if (itemType === "Report") {
       // Call the dislikeReport mutation
-      dislikeReportMutation({ id: item.id as string });
+      dislikeReportMutation({ id: item.id });
     } else if (itemType === "Post") {
       // Call the dislikePost mutation
-      dislikePostMutation({ id: item.id as string });
+      dislikePostMutation({ id: item.id });
     } else if (itemType === "Comment") {
       // Call the dislikePost mutation
-      dislikeCommentMutation({ id: item.id as string });
+      dislikeCommentMutation({ id: item.id });
     }
   };
 

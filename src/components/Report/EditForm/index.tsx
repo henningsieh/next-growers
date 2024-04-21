@@ -155,10 +155,10 @@ export function EditReportForm({
     validate: zodResolver(InputEditReportForm),
     validateInputOnChange: true,
     initialValues: {
-      id: report?.id as string,
-      title: report?.title as string,
+      id: report?.id,
+      title: report?.title,
       imageId: imageId,
-      description: report?.description as string,
+      description: report?.description,
       createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
       strains: report.strains.map((strain) => strain.id),
       environment: report.environment as keyof typeof Environment,
@@ -235,7 +235,7 @@ export function EditReportForm({
                   }
                   title={editReportForm.values.title}
                   description={editReportForm.values.description}
-                  publicLink={`/grow/${report.id as string}`}
+                  publicLink={`/grow/${report.id}`}
                 />
               </Box>
             </>

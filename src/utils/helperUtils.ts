@@ -295,7 +295,7 @@ export const handleMultipleDrop = async (
     for (const file of files) {
       const formData = new FormData();
       formData.append("images", file, `${file.name}`);
-      formData.append("ownerId", report.authorId as string);
+      formData.append("ownerId", report.authorId);
 
       const { data }: { data: MultiUploadResponse } = await axios.post(
         "/api/multiple-upload",

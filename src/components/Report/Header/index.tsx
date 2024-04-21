@@ -71,7 +71,7 @@ ReportHeaderProps) {
 
   return (
     <Card withBorder pt={0} radius="sm" className={classes.card}>
-      <Link title="back to Grow" href={`/grow/${report.id as string}`}>
+      <Link title="back to Grow" href={`/grow/${report.id}`}>
         <Card.Section
           sx={{
             backgroundSize: "cover",

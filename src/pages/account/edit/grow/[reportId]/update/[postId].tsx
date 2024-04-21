@@ -120,7 +120,7 @@ const ProtectedEditReportDetails: NextPage = () => {
           <Box className="flex items-center justify-start pt-2">
             <Link
               title="back to Update"
-              href={`/grow/${report?.id as string}/update/${queryPostId}`}
+              href={`/grow/${report?.id}/update/${queryPostId}`}
             >
               <Box className={classes.titleLink}>
                 <IconChevronLeft size={28} />
