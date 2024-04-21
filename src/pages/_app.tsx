@@ -94,19 +94,86 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           },
           white: "#d7e4d7",
           black: "#333333",
+
+          // Default theme.breakpoints values:
+          // xs	36em	576px
+          // sm	48em	768px
+          // md	62em	992px
+          // lg	75em	1200px
+          // xl	88em	1408px
+
           breakpoints: {
-            xs: "30em",
             // 1 Spalte
-            sm: "38em",
+            xs: "30em", //  480px
             // 2 Spalten
+            sm: "38em",
+            // 4 Spalten
             md: "58em",
             // 4 Spalten
             lg: "78em",
-            // 4 Spalten
-            xl: "90em",
             // 6 Spalten
+            xl: "90em", // 1440px
           },
           components: {
+            Container: {
+              defaultProps: {
+                sizes: {
+                  xs: 515, //   32em x 16px
+                  sm: 720, //   45em x 16px
+                  md: 960, //   60em x 16px
+                  lg: 1024, //  90em x 16px
+                  xl: 1440, // 116em x 16px
+                },
+              },
+            },
+
+            Button: {
+              defaultProps: {
+                variant: "outline",
+              },
+              styles: (
+                theme,
+                params: ButtonStylesParams,
+                { variant }
+              ) => ({
+                root: {
+                  cursor: "default",
+                  color:
+                    variant === "filled"
+                      ? theme.colorScheme === "dark"
+                        ? "white"
+                        : "white"
+                      : theme.colorScheme === "dark"
+                        ? "white"
+                        : theme.black,
+
+                  boxShadow:
+                    variant === "filled"
+                      ? theme.colorScheme === "dark"
+                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][4]}`
+                        : `0 0 0px 1px ${theme.colors[params.color || "gray"][6]}`
+                      : undefined,
+                  backgroundColor:
+                    variant === "filled"
+                      ? theme.colorScheme === "dark"
+                        ? theme.colors[params.color || "dark"][6]
+                        : theme.colors[params.color || "growgreen"][4]
+                      : undefined,
+
+                  "&:hover": {
+                    backgroundColor:
+                      variant === "filled"
+                        ? theme.colorScheme === "dark"
+                          ? theme.colors[params.color || "dark"][4]
+                          : theme.colors[params.color || "growgreen"][5]
+                        : undefined,
+                  },
+                },
+              }),
+            },
+
+            Card: {},
+
             SegmentedControl: {
               styles: () => ({
                 label: {
@@ -187,63 +254,6 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 },
                 description: { color: theme.white },
                 // Other styles...
-              }),
-            },
-
-            Container: {
-              defaultProps: {
-                sizes: {
-                  xs: 515, //   32em x 16px
-                  sm: 720, //   45em x 16px
-                  md: 960, //   60em x 16px
-                  lg: 1024, //  90em x 16px
-                  xl: 1440, // 116em x 16px
-                },
-              },
-            },
-
-            Button: {
-              defaultProps: {
-                variant: "outline",
-              },
-              styles: (
-                theme,
-                params: ButtonStylesParams,
-                { variant }
-              ) => ({
-                root: {
-                  cursor: "default",
-                  color:
-                    variant === "filled"
-                      ? theme.colorScheme === "dark"
-                        ? "white"
-                        : "white"
-                      : theme.colorScheme === "dark"
-                        ? "white"
-                        : theme.black,
-
-                  boxShadow:
-                    variant === "filled"
-                      ? theme.colorScheme === "dark"
-                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][4]}`
-                        : `0 0 0px 1px ${theme.colors[params.color || "gray"][6]}`
-                      : undefined,
-                  backgroundColor:
-                    variant === "filled"
-                      ? theme.colorScheme === "dark"
-                        ? theme.colors[params.color || "dark"][6]
-                        : theme.colors[params.color || "growgreen"][4]
-                      : undefined,
-
-                  "&:hover": {
-                    backgroundColor:
-                      variant === "filled"
-                        ? theme.colorScheme === "dark"
-                          ? theme.colors[params.color || "dark"][4]
-                          : theme.colors[params.color || "growgreen"][5]
-                        : undefined,
-                  },
-                },
               }),
             },
           },

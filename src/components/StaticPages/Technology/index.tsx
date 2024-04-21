@@ -1,12 +1,16 @@
 // Import the SVG
 import {
+  Box,
   Button,
+  Card,
   Container,
   createStyles,
+  Flex,
   Group,
   Paper,
   rem,
   SimpleGrid,
+  Space,
   Text,
   ThemeIcon,
   Title,
@@ -24,6 +28,7 @@ import {
   IconServer2,
 } from "@tabler/icons-react";
 import { IconExternalLink } from "@tabler/icons-react";
+import { Theme } from "emoji-picker-react";
 
 // import { useTranslation } from "react-i18next";
 import Link from "next/link";
@@ -43,7 +48,7 @@ export const MOCKDATA = [
     icon: IconKey,
     title: "Login mit OAuth-Service-Provider",
     description:
-      "Beim Login via Twitter oder Google funktioniert es exakt genauso - nur dass diese Provider eben nun sicherstellen, dass du auch wirklich die E-Mail Adresse bist, die du vorgibst zu sein. 🤓",
+      "Beim Login via Twitter oder Google funktioniert es exakt genauso - nur dass diese Provider eben nun sicherstellen, dass du auch wirklich die E-Mail Adresse bist, die du vorgibst zu sein.",
     href: "https://www.oauth.com",
   },
   {
@@ -65,58 +70,75 @@ export const MOCKDATA = [
     icon: IconCloudUpload,
     title: "Bilder-Upload",
     description:
-      'Bevor eure Bilder hochgeladen und abgespeichert werden, werden alle META-Daten aus euren Bildern gelöscht! \
-      Die Bilder liegen ("trotz Legalisierung") zur Sicherheit extern bei einem amerikanischem Cloud-Hoster.',
+      "Bevor deine Bilder hochgeladen und abgespeichert werden, werden alle META-Daten aus deinen Bildern gelöscht. \
+      Die Bilder liegen (trotz Entkriminilasierung) bei einem Cloud-Hoster außerhalb der EU in den USA.",
     href: "https://cloudinary.com",
   },
   {
     icon: IconServer2,
     title: "Hosting",
     description:
-      "Das Hosting der App erfolgt getrennt von den Bildern, aber ebenfalls in den USA - und zwar (beim Erfinder/Entwickler von NEXT.JS) bei VERCEL.",
+      "Das Hosting der App erfolgt getrennt von den Bildern, aber ebenfalls außerhalb der EU in den USA - und zwar (beim Erfinder/Entwickler von Next.JS) bei Vercel.",
     href: "https://vercel.com",
   },
   {
     icon: IconBrandGithub,
     title: "Open-Source Code",
     description:
-      "Unsere unserer eigene Software im Backend gilt das selbe Prinzip: es gibt keine Geheimnisse, alles ist vollständig Open-Source. Die Software kann bei GitHub eingesehen werden.",
+      "Bei unserer eigene Software im Backend gilt das selbe Prinzip für Sicherheit und Privatsphäre. Der gesamte Quellcode ist Open-Source und kann bei GitHub eingesehen werden.",
     href: "https://github.com/henningsieh/next-growers",
   },
   {
     icon: IconBrandJavascript,
     title: "Javascript Framwork",
     description:
-      "Die Software basiert auf dem Open-Source Javascript React-Framework NEXT.JS.",
+      "Unsere eigene Software im Backend basiert auf dem Open-Source Javascript React-Framework Next.JS.",
     href: "https://nextjs.org",
   },
 ];
 
 const useStyles = createStyles((theme) => ({
-  wrapper: {
-    width: 2000,
-    backgroundColor: "blue",
-    paddingTop: `calc(${theme.spacing.xl} * 2)`,
-    paddingBottom: `calc(${theme.spacing.xl} * 4)`,
-  },
   title: {
     fontFamily: `'Roboto Slab', sans-serif`,
-    fontSize: "2.8rem",
     fontWeight: "bold",
     marginBottom: theme.spacing.md,
     textAlign: "center",
-    [theme.fn.smallerThan("md")]: {
-      fontSize: rem(32),
+    fontSize: rem(34),
+    [theme.fn.smallerThan("lg")]: {
+      fontSize: rem(28),
+      // textAlign: "left",
+    },
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(19),
       textAlign: "left",
     },
-    // color: theme.colors.gray[4],
-    // width: "100%",
   },
 
   description: {
     textAlign: "center",
+    fontWeight: "normal",
+    fontFamily: "monospace",
     [theme.fn.smallerThan("md")]: {
-      // fontSize: rem(28),
+      fontSize: rem(16),
+    },
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(14),
+      textAlign: "left",
+    },
+  },
+
+  footer: {
+    fontFamily: `'Roboto Slab', sans-serif`,
+    fontWeight: "bold",
+    marginBottom: theme.spacing.md,
+    textAlign: "center",
+    fontSize: rem(32),
+    [theme.fn.smallerThan("lg")]: {
+      fontSize: rem(22),
+      // textAlign: "left",
+    },
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(14),
       textAlign: "left",
     },
   },
@@ -130,7 +152,7 @@ interface FeatureProps {
   href?: string;
 }
 
-export function Feature({
+function Feature({
   icon: Icon,
   title,
   description,
@@ -141,8 +163,8 @@ export function Feature({
 
   return (
     <div>
-      <Paper withBorder p={20}>
-        <Group noWrap>
+      <Paper p="sm" withBorder>
+        <Group pb="xs" h={80} mx="sm" noWrap>
           <ThemeIcon
             variant="gradient"
             gradient={
@@ -158,46 +180,46 @@ export function Feature({
                     deg: 60,
                   }
             }
-            // color={dark ? "groworange.5" : "growgreen.5"}
             size={44}
             radius={44}
           >
-            <Icon
-              //   style={{  width: rem(24), height: rem(24),  }}
-              stroke={1.8}
-              size={32}
-            />
+            <Icon stroke={1.8} size={32} />
           </ThemeIcon>
-          <Text
-            mt="sm"
+          <Title
+            order={2}
+            m="sm"
             fz="xl"
             fw="bold"
             c={dark ? "groworange.5" : "growgreen.5"}
             mb={8}
           >
             {title}
-          </Text>
+          </Title>
         </Group>
-        <Text size="md" lh={1.6}>
-          {description}
-        </Text>
+        <Card bg={dark ? undefined : "white"} p="md">
+          <Text size="lg" lh={1.6}>
+            {description}
+          </Text>
+        </Card>
         {href && (
-          <Link href={href} target="_blank">
-            <Button
-              title={href}
-              //   fullWidth
-              compact
-              mt="xl"
-              size="sm"
-              className="cursor-pointer"
-              variant="default"
-              //   c={dark ? "groworange" : "growgreen"}
-              color={dark ? "groworange" : "growgreen"}
-              leftIcon={<IconExternalLink />}
-            >
-              Info-Link
-            </Button>
-          </Link>
+          <Box mt="sm">
+            <Flex justify="flex-end" align="center">
+              <Link href={href} target="_blank">
+                <Button
+                  title={href}
+                  //   fullWidth
+                  compact
+                  size="sm"
+                  className="cursor-pointer"
+                  variant="default"
+                  c={dark ? "groworange.3" : "growgreen"}
+                  rightIcon={<IconExternalLink />}
+                >
+                  Info-Link
+                </Button>
+              </Link>
+            </Flex>
+          </Box>
         )}
       </Paper>
     </div>
@@ -221,10 +243,9 @@ export default function TechStack() {
   ));
 
   return (
-    <Container size="xl" className="flex w-full flex-col space-y-2">
-      {/* <Container className={classes.wrapper}> */}
+    <Container size="xl">
       <>
-        <Title className={classes.title}>
+        <Title order={1} className={classes.title}>
           Die Themen Sicherheit und Privatsphäre sind bei{" "}
           <Link
             target="_blank"
@@ -234,14 +255,14 @@ export default function TechStack() {
           >
             #GrowAGram🪴
           </Link>{" "}
-          extrem wichtig!
+          sehr wichtig!
         </Title>
 
-        <Container size={"44em"} pb={theme.spacing.xl}>
+        <Container size="md" pb={theme.spacing.xl}>
           <Text size="lg" className={classes.description}>
             Das Prinzip: Es gibt keinen Hack, wo es nix zu hacken gibt!
-            🤓 Deswegen speichern wir nicht nur keine Passwörter, es
-            gibt von vornherein gar keine Passwörter.
+            Deswegen speichern wir nicht nur keine Passwörter, es gibt
+            von vornherein gar keine Passwörter.
           </Text>
         </Container>
 
@@ -250,19 +271,21 @@ export default function TechStack() {
           spacing="lg"
           breakpoints={[
             //   { maxWidth: "xl", cols: 4, spacing: "xl" },
-            { maxWidth: "lg", cols: 2, spacing: "lg" },
-            { maxWidth: "md", cols: 1, spacing: "lg" },
+            { maxWidth: "md", cols: 2, spacing: "md" },
+            { maxWidth: "sm", cols: 1, spacing: "sm" },
             // { maxWidth: "sm", cols: 1, spacing: "md" },
           ]}
         >
           {features}
         </SimpleGrid>
 
-        <Title order={2} fz={28} pt="xl" className={classes.title}>
-          Ich hoffe, ich konnte mit diesen detaillierten Informationen
-          zum Hintergrund vorab ein paar Fragen beantworten, Zweifel
-          nehmen und Vertrauen gewinnen. 📝💚🙋‍♂️
-        </Title>
+        <Container size="md">
+          <Title pt="xl" order={4} className={classes.footer}>
+            Ich hoffe, ich konnte mit diesen detaillierten Informationen
+            zum Hintergrund vorab ein paar Fragen beantworten, Zweifel
+            nehmen und Vertrauen gewinnen. 📝💚🙋‍♂️
+          </Title>
+        </Container>
       </>
     </Container>
   );
