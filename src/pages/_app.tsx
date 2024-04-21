@@ -151,13 +151,13 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   boxShadow:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][6]}`
+                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][4]}`
                         : `0 0 0px 1px ${theme.colors[params.color || "gray"][6]}`
                       : undefined,
                   backgroundColor:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? theme.colors[params.color || "dark"][4]
+                        ? theme.colors[params.color || "dark"][5]
                         : theme.colors[params.color || "growgreen"][4]
                       : undefined,
 
@@ -165,7 +165,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     backgroundColor:
                       variant === "filled"
                         ? theme.colorScheme === "dark"
-                          ? theme.colors[params.color || "dark"][4]
+                          ? theme.colors[params.color || "growgreen"][6]
                           : theme.colors[params.color || "growgreen"][5]
                         : undefined,
                   },

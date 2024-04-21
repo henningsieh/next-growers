@@ -230,6 +230,7 @@ const PublicReport: NextPage = () => {
                   h={32}
                   compact
                   variant="filled"
+                  color="groworange"
                   className="cursor-pointer"
                   rightIcon={
                     <IconEdit className="ml-1" size={22} stroke={1.6} />
