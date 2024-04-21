@@ -73,6 +73,8 @@ const ProtectedEditReportDetails: NextPage = () => {
 
   const [defaultTab, setDefaultTab] = useState("");
 
+  const DEFAULTTAB = "addUpdate";
+
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
@@ -91,10 +93,6 @@ const ProtectedEditReportDetails: NextPage = () => {
     `(max-width: ${theme.breakpoints.lg})`
   );
 
-  useEffect(() => {
-    setDefaultTab(window.location.hash.slice(1));
-  }, [params]);
-
   const queryReportId = router.query.reportId as string;
 
   const { locale: activeLocale } = router;
@@ -102,6 +100,26 @@ const ProtectedEditReportDetails: NextPage = () => {
 
   const { data: session, status } = useSession();
   const sessionIsLoading = status === "loading";
+
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+
+    if (hash !== "") {
+      setDefaultTab(hash);
+    } else {
+      setDefaultTab(DEFAULTTAB);
+
+      void router.replace(
+        `${window.location.pathname}${DEFAULTTAB}`,
+        undefined,
+        {
+          shallow: true,
+          scroll: true,
+          locale: activeLocale,
+        }
+      );
+    }
+  }, [activeLocale, params, router]);
 
   const {
     data: report,
@@ -146,7 +164,7 @@ const ProtectedEditReportDetails: NextPage = () => {
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
         {reportIsLoading ? (
-          <Loader /> // Render Loader component if reportIsLoading is true
+          <Loader color="groworange.4" /> // Render Loader component if reportIsLoading is true
         ) : (
           <Box className="flex items-center justify-start pt-2">
             <Link
@@ -161,100 +179,129 @@ const ProtectedEditReportDetails: NextPage = () => {
           </Box>
         )}
         {/* // Header End */}
-
         {defaultTab && (
-          <Tabs
-            variant="outline"
-            defaultValue={defaultTab || "editGrow"}
-            // orientation={!smallScreen ? "vertical" : undefined}
-          >
-            <Tabs.List>
-              <Tabs.Tab
-                // onClick={
-                //   void router.replace(
-                //     `${router.pathname}#addUpdate`,
-                //     undefined,
-                //     {
-                //       shallow: true,
-                //       scroll: false,
-                //     }
-                //   )
-                //   alert("");
-                // }
-                value="addUpdate"
-                icon={
-                  <IconPlant size={smallScreen ? "1rem" : "1.6rem"} />
-                }
+          <>
+            <Tabs
+              variant="outline"
+              defaultValue={defaultTab || "editGrow"}
+            >
+              <Tabs.List
+              // sx={(theme) => ({
+              //   backgroundColor:
+              //     theme.colorScheme === "dark"
+              //       ? theme.colors.growgreen[4]
+              //       : theme.colors.growgreen[6],
+              // })}
               >
-                <Title order={2} fz={smallScreen ? "sm" : "lg"}>
-                  {t("common:addpost-headline")}
-                </Title>
-              </Tabs.Tab>
+                <Tabs.Tab
+                  onClick={() => {
+                    void router.replace(
+                      `${window.location.pathname}#addUpdate`,
+                      undefined,
+                      {
+                        shallow: true,
+                        scroll: true,
+                        locale: activeLocale,
+                      }
+                    );
+                  }}
+                  value="addUpdate"
+                  icon={
+                    <IconPlant size={smallScreen ? "1rem" : "1.4rem"} />
+                  }
+                >
+                  <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                    {t("common:addpost-headline")}
+                  </Title>
+                </Tabs.Tab>
 
-              <Tabs.Tab
-                value="editGrow"
-                icon={
-                  <IconEdit size={smallScreen ? "1rem" : "1.6rem"} />
-                }
-              >
-                {/* // Title */}
-                <Title order={2} fz={smallScreen ? "sm" : "lg"}>
-                  {t("common:report-edit-headline")}
-                </Title>
-              </Tabs.Tab>
+                <Tabs.Tab
+                  onClick={() => {
+                    void router.replace(
+                      `${window.location.pathname}#editGrow`,
+                      undefined,
+                      {
+                        shallow: true,
+                        scroll: true,
+                        locale: activeLocale,
+                      }
+                    );
+                  }}
+                  value="editGrow"
+                  icon={
+                    <IconEdit size={smallScreen ? "1rem" : "1.4rem"} />
+                  }
+                >
+                  {/* // Title */}
+                  <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                    {t("common:report-edit-headline")}
+                  </Title>
+                </Tabs.Tab>
 
-              <Tabs.Tab
-                value="editAll"
-                icon={
-                  <IconList size={smallScreen ? "1rem" : "1.6rem"} />
-                }
-              >
-                <Title order={2} fz={smallScreen ? "sm" : "lg"}>
-                  {" "}
-                  {t("common:editallpost-headline")}{" "}
-                </Title>
-              </Tabs.Tab>
-            </Tabs.List>
+                <Tabs.Tab
+                  onClick={() => {
+                    void router.replace(
+                      `${window.location.pathname}#editAll`,
+                      undefined,
+                      {
+                        shallow: true,
+                        scroll: true,
+                        locale: activeLocale,
+                      }
+                    );
+                  }}
+                  value="editAll"
+                  icon={
+                    <IconList size={smallScreen ? "1rem" : "1.4rem"} />
+                  }
+                >
+                  <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                    {" "}
+                    {t("common:editallpost-headline")}{" "}
+                  </Title>
+                </Tabs.Tab>
+              </Tabs.List>
 
-            <Box pos="relative">
-              <LoadingOverlay
-                visible={
-                  reportIsLoading ||
-                  strainsAreLoading ||
-                  sessionIsLoading
-                }
-                transitionDuration={600}
-                overlayBlur={2}
-              />
+              <Box pos="relative">
+                <LoadingOverlay
+                  visible={
+                    reportIsLoading ||
+                    strainsAreLoading ||
+                    sessionIsLoading
+                  }
+                  transitionDuration={600}
+                  overlayBlur={2}
+                />
 
-              {status === "authenticated" &&
-                !reportIsLoading &&
-                !reportHasErrors &&
-                !strainsAreLoading &&
-                !strainsHaveErrors && (
-                  <>
-                    <Tabs.Panel value="addUpdate" pl="xs">
-                      {/* AddPost Component */}
-                      <AddPost isoReport={report} post={null} />
-                    </Tabs.Panel>
+                {status === "authenticated" &&
+                  !reportIsLoading &&
+                  !reportHasErrors &&
+                  !strainsAreLoading &&
+                  !strainsHaveErrors && (
+                    <>
+                      <Tabs.Panel value="addUpdate" pl="xs">
+                        {/* AddPost Component */}
+                        <AddPost isoReport={report} post={null} />
+                      </Tabs.Panel>
 
-                    <Tabs.Panel value="editGrow" pl="xs">
-                      <EditReportForm
-                        report={report}
-                        strains={strains}
-                        user={session.user}
-                      />
-                    </Tabs.Panel>
+                      <Tabs.Panel value="editGrow" pl="xs">
+                        <EditReportForm
+                          report={report}
+                          strains={strains}
+                          user={session.user}
+                        />
+                      </Tabs.Panel>
 
-                    <Tabs.Panel value="editAll" pl="xs">
-                      {/* PostsAccordion Component */}
-                      {/* Alle Updates bearbeiten*/}
-                      <PostsAccordion report={report && report} />
-                    </Tabs.Panel>
-                  </>
-                )}
-            </Box>
-          </Tabs>
+                      <Tabs.Panel value="editAll" pl="xs">
+                        {/* PostsAccordion Component */}
+                        {/* Alle Updates bearbeiten*/}
+                        <PostsAccordion report={report && report} />
+                      </Tabs.Panel>
+                    </>
+                  )}
+              </Box>
+            </Tabs>
+          </>
         )}
       </Container>
     </>

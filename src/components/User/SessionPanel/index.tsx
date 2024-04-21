@@ -45,7 +45,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[4]
-        : theme.colors.gray[7],
+        : theme.colors.gray[6],
     "&[data-hovered]": {
       backgroundColor: theme.colors[theme.primaryColor][4],
       color: theme.white,

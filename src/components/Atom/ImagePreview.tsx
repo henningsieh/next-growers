@@ -15,7 +15,7 @@ import Link from "next/link";
 const useStyles = createStyles((theme) => ({
   card: {
     transition: "transform 250ms ease, box-shadow 250ms ease",
-    zIndex: 40,
+    zIndex: 10,
     position: "relative",
     height: rem(280),
 
@@ -65,7 +65,7 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-end",
-    zIndex: 12,
+    zIndex: 10,
   },
 
   deleteButtonWrapper: {

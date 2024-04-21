@@ -9,6 +9,7 @@ import type {
   MantineTheme,
   NotificationStylesParams,
 } from "@mantine/core";
+import { MenuItem } from "@mantine/core/lib/Menu/MenuItem/MenuItem";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import RootLayout from "~/layout/AppLayout";

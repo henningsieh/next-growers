@@ -30,11 +30,11 @@ export const InputCreateReportForm = z.object({
   title: z
     .string()
     .min(8, { message: "Title must have at least 8 letters" })
-    .max(32, { message: "Title must have max 32 letters" })
+    .max(64, { message: "Title must have max 64 letters" })
     .refine(
-      (val) => val.length < 32,
+      (val) => val.length < 64,
       (val) => ({
-        message: `Title must have max 32 letters. ${val.length} letters given.`,
+        message: `Title must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
@@ -47,7 +47,7 @@ export const InputCreateReportForm = z.object({
     .refine(
       (val) => val.length < 64,
       (val) => ({
-        message: `Description must have max 64 letters. ${val.length} letters given.`,
+        message: `Description must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
 });
@@ -57,11 +57,11 @@ export const InputEditReportForm = z.object({
   title: z
     .string()
     .min(8, { message: "Title must have at least 8 letters" })
-    .max(32, { message: "Title must have max 32 letters" })
+    .max(64, { message: "Title must have max 64 letters" })
     .refine(
-      (val) => val.length < 32,
+      (val) => val.length < 64,
       (val) => ({
-        message: `Title must have max 32 letters. ${val.length} letters given.`,
+        message: `Title must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
@@ -74,7 +74,7 @@ export const InputEditReportForm = z.object({
     .refine(
       (val) => val.length < 64,
       (val) => ({
-        message: `Content must have max 64 letters. ${val.length} letters given.`,
+        message: `Content must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
   strains: z.array(z.string()).min(1, {
@@ -129,7 +129,7 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
       .min(8, {
         message: "Title must have at least 8 letters",
       })
-      .max(32, { message: "Title must have max 32 letters" }),
+      .max(64, { message: "Title must have max 64 letters" }),
     lightHoursPerDay: z
       .number({
         invalid_type_error: "(h) must be set, may be 0",
