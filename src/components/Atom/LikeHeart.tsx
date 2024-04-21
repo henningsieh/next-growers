@@ -189,6 +189,7 @@ const LikeHeart = (props: LikeHeartProps) => {
         <Box>
           <Box mt={2} ml={2} className="relative">
             <ActionIcon
+              size={30}
               // title="Give props to the Grower"
               variant="default"
               className="cursor-default"

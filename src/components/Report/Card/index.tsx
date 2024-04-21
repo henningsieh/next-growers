@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Badge,
   Box,
   Button,
@@ -250,7 +249,7 @@ export default function ReportCard({
           </Group>
 
           {/* LikeHeart */}
-          <Box p={0} mr={-5}>
+          <Box p={0} mr={-6}>
             <LikeHeart itemToLike={isoReport} itemType={"Report"} />
           </Box>
         </Flex>
