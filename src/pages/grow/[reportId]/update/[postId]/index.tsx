@@ -213,12 +213,11 @@ export async function getStaticProps(
  *  @returns { paths[] }
  */
 export const getStaticPaths: GetStaticPaths = async () => {
-  if (process.env.SKIP_BUILD_STATIC_GENERATION) {
-    return {
-      paths: [],
-      fallback: "blocking",
-    };
-  }
+  // NO PRERENDERING
+  // return {
+  //   paths: [],
+  //   fallback: "blocking",
+  // };
 
   const reports = await prisma.report.findMany({
     select: {
