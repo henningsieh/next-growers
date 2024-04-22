@@ -154,10 +154,11 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
             <Title order={2}>{t("common:comments-headline")}</Title>
 
             <Button
-              title={!newOpen ? "add new comment" : "close form"}
+              fz="lg"
               variant="filled"
               color="growgreen"
               leftIcon={<IconTextWrap size={22} />}
+              title={!newOpen ? "add new comment" : "close form"}
               onClick={() => {
                 setNewOpen((prev) => !prev);
               }}

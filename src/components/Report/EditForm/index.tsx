@@ -197,12 +197,7 @@ export function EditReportForm({
   return (
     <>
       {reportfromProps && (
-        <Container
-          pl={0}
-          pr={0}
-          pt="xl"
-          className="flex w-full flex-col space-y-2"
-        >
+        <Container className="flex flex-col space-y-2">
           {/*// Upload Panel */}
           {cloudUrl ? (
             <>
@@ -340,7 +335,7 @@ export function EditReportForm({
               submitEditReportForm(values);
             }, handleErrors)}
           >
-            <Box className="space-y-4">
+            <Box className="space-y-2">
               <Textarea
                 label="Bockquote cite:"
                 description="This appears at the top of your Grow's main header image"
@@ -409,8 +404,9 @@ export function EditReportForm({
                 </Grid.Col>
               </Grid>
 
-              <Group position="right" mt="xl">
+              <Group position="right" mt="md">
                 <Button
+                  miw={180}
                   fz="lg"
                   variant="filled"
                   color="growgreen"

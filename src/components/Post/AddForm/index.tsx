@@ -1,3 +1,4 @@
+import PostDeleteButton from "../DeleteButton";
 import {
   Box,
   Button,
@@ -283,7 +284,7 @@ const AddPost = (props: AddPostProps) => {
                         description={t(
                           "common:post-addform-growdaydescription"
                         )}
-                        w={214}
+                        w={232}
                         placeholder="1"
                         icon={<IconNumber stroke={1.6} size="1.8rem" />}
                         withAsterisk
@@ -489,8 +490,18 @@ const AddPost = (props: AddPostProps) => {
                 }}
               />
 
-              <Group position="right" mt="xl">
+              <Group position="apart" mt="xl">
+                <PostDeleteButton
+                  postId={post?.id as string}
+                  alertTitle={t("common:post-delete-warning")}
+                  alertText={t("common:user-msg-question-continue")}
+                  labelDeletePostButton={t("common:post-delete-button")}
+                  labelCloseButton={t(
+                    "common:app-notifications-close-button"
+                  )}
+                />
                 <Button
+                  miw={180}
                   fz="lg"
                   variant="filled"
                   color="growgreen"

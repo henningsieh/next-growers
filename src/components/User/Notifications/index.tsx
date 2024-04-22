@@ -202,7 +202,7 @@ const ProtectedNotifications = () => {
                       variant="filled"
                       color="dark"
                       onClick={() => void setOpen(false)}
-                      rightIcon={<IconBellOff size={16} stroke={1.8} />}
+                      leftIcon={<IconBellOff size={16} stroke={1.8} />}
                     >
                       {closeLabel}
                     </Button>

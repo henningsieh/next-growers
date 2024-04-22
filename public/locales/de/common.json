@@ -52,6 +52,7 @@
   "post-edit-headline": "Update bearbeiten",
   "post-edit-button": "Update bearbeiten",
   "post-delete-button": "Update löschen",
+  "post-delete-warning": "Alle Daten und Bilder des Updates gehen verloren!",
   "post-addform-growday": "Grow Tag",
   "post-addform-growdaydescription": "Startet bei 0",
   "post-addform-lighthours": "Lichtstunden",
@@ -62,7 +63,7 @@
   "editallpost-headline": "Alle Updates bearbeiten",
   "addpost-headline": "Update hinzufügen",
   "addpost-updatedatedescription": "Datum des Updates",
-  "editpost-headline": "Update bearbeiten",
   "comments-headline": "Kommentare",
-  "comments-button-comment": "Jetzt kommentieren"
+  "comments-button-comment": "Jetzt kommentieren",
+  "user-msg-question-continue": "Willst du fortfahren?"
 }

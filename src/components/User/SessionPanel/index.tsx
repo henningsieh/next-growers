@@ -194,14 +194,15 @@ export default function SessionPanel() {
           <Button
             compact
             fz="xl"
-            fw="normal"
-            h={rem(32)}
             size="lg"
-            variant="filled"
             c="white"
+            fw="normal"
+            radius="xs"
+            variant="filled"
+            h={rem(32)}
             color={dark ? "growgreen" : "growgreen"}
-            onClick={open}
             leftIcon={<IconLogin2 stroke={2} size={"22"} />}
+            onClick={open}
           >
             {t("common:app-headermenu-signin")}
           </Button>

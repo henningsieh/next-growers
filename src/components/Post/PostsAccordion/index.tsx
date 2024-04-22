@@ -1,9 +1,11 @@
+import PostDeleteButton from "../DeleteButton";
 import {
   Accordion,
   Box,
   Card,
   Center,
   Container,
+  Flex,
   Group,
   Title,
 } from "@mantine/core";
@@ -41,6 +43,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
       <Accordion
         radius="sm"
         variant="contained"
+        chevronSize={11}
         bottom={100}
         transitionDuration={420}
         value={postIsOpen}
@@ -70,11 +73,34 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                     )}
                   </Box>
                 </Group>
-              </Accordion.Control>
+              </Accordion.Control>{" "}
               <Accordion.Panel mx={-8}>
-                <Title pb="xs" order={3}>
-                  {t("common:editpost-headline")}{" "}
+                {/* <Flex
+                  gap="md"
+                  justify="space-between"
+                  align="center"
+                  direction="row"
+                  wrap="wrap"
+                  sx={() => ({
+                    display: "inline-flex", // or "inline-flex"
+                  })}
+                > */}
+                <Title pl="xs" order={1}>
+                  {t("common:post-edit-headline")}{" "}
                 </Title>
+                {/* 
+                  <PostDeleteButton
+                    postId={post.id}
+                    alertTitle={t("common:post-delete-warning")}
+                    alertText={t("common:user-msg-question-continue")}
+                    labelDeletePostButton={t(
+                      "common:post-delete-button"
+                    )}
+                    labelCloseButton={t(
+                      "common:app-notifications-close-button"
+                    )}
+                  />
+                </Flex> */}
 
                 <AddPost isoReport={isoReport} post={post} />
               </Accordion.Panel>

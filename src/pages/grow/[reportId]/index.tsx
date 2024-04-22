@@ -4,6 +4,7 @@ import {
   Button,
   Container,
   createStyles,
+  Group,
   Loader,
   LoadingOverlay,
   Text,
@@ -58,8 +59,6 @@ export const getServerSideProps: GetServerSideProps = async (
  * @returns NextPage
  */
 const PublicReport: NextPage = () => {
-  const theme = useMantineTheme();
-
   const router = useRouter();
   const queryReportId = router.query.reportId as string;
 
@@ -68,9 +67,10 @@ const PublicReport: NextPage = () => {
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
+      fontWeight: "bold",
       color: dark
-        ? theme.colors.growgreen?.[4]
-        : theme.colors.growgreen?.[4],
+        ? theme.colors.groworange[4]
+        : theme.colors.growgreen[5],
     },
 
     title: {
@@ -78,12 +78,13 @@ const PublicReport: NextPage = () => {
       [theme.fn.smallerThan("md")]: {
         flexDirection: "column",
       },
+
       alignItems: "center",
       justifyContent: "space-between",
       paddingTop: theme.spacing.sm,
     },
   }));
-  const { classes } = useStyles();
+  const { theme, classes } = useStyles();
 
   const { data: session, status } = useSession();
   const { locale: activeLocale } = router;
@@ -114,12 +115,15 @@ const PublicReport: NextPage = () => {
     isLoading: reportIsLoading,
     isError: reportHasErrors,
     error: error,
-  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
+  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId, {
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
 
   if (reportIsLoading) return <Loader color="growgreen.4" />;
   if (reportHasErrors) {
     notifications.show(
-      httpStatusErrorMsg(error.message, error.data?.httpStatus, false)
+      httpStatusErrorMsg(error.message, error.data?.httpStatus, true)
     );
     return (
       <>
@@ -203,37 +207,68 @@ const PublicReport: NextPage = () => {
         {imageTags &&
           imageTags.map((tag, index) => <meta key={index} {...tag} />)}
       </Head>
+
       {/* // Main Content Container */}
-      <Container
-        size="xl"
-        className="mb-8 flex w-full flex-col space-y-1"
-      >
+      <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <Box className={classes.title}>
-          <Title mb={6} order={1} className="inline">
+        <Box pt={13} className={classes.title}>
+          <Title order={1} className="inline">
             {`${pageTitle}`}
           </Title>
 
+          {/* Right side Edit Buttons */}
           {!!report &&
             status === "authenticated" &&
             report.authorId === session.user.id && (
-              <Link href={`/account/edit/grow/${report.id}#editGrow`}>
-                <Button
-                  h={32}
-                  compact
-                  variant="filled"
-                  color="groworange"
-                  className="cursor-pointer"
-                  rightIcon={
-                    <IconEdit className="ml-1" size={22} stroke={1.6} />
-                  }
+              <Group position="right">
+                {/* Edit Grow Button */}
+                <Link href={`/account/edit/grow/${report.id}#editGrow`}>
+                  <Button
+                    h={32}
+                    miw={180}
+                    compact
+                    variant="filled"
+                    color="groworange"
+                    className="cursor-pointer"
+                    leftIcon={
+                      <IconEdit
+                        className="ml-1"
+                        size={22}
+                        stroke={1.6}
+                      />
+                    }
+                  >
+                    {t("common:report-edit-button")}
+                  </Button>
+                </Link>
+
+                {/* Add Post Button */}
+                <Link
+                  href={`/account/edit/grow/${report.id}#addUpdate`}
                 >
-                  {t("common:report-edit-button")}
-                </Button>
-              </Link>
+                  <Button
+                    h={32}
+                    miw={180}
+                    compact
+                    variant="filled"
+                    color="growgreen"
+                    className="cursor-pointer"
+                    leftIcon={
+                      <IconEdit
+                        className="ml-1"
+                        size={22}
+                        stroke={1.6}
+                      />
+                    }
+                  >
+                    {t("common:addpost-headline")}
+                  </Button>
+                </Link>
+              </Group>
             )}
         </Box>
         {/* // Header End */}
+
         <Container
           size="xl"
           px={0}

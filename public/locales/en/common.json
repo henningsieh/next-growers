@@ -52,6 +52,7 @@
   "post-edit-headline": "Edit update",
   "post-edit-button": "Edit update",
   "post-delete-button": "Delete update",
+  "post-delete-warning": "All Update data and images will be lost!",
   "post-addform-growday": "Grow Day",
   "post-addform-growdaydescription": "Starts at 0",
   "post-addform-lighthours": "Light Hours",
@@ -62,7 +63,7 @@
   "editallpost-headline": "Edit all Updates",
   "addpost-headline": "Add new Update",
   "addpost-updatedatedescription": "Date of this Update",
-  "editpost-headline": "Edit Update",
   "comments-headline": "Comments",
-  "comments-button-comment": "Comment now"
+  "comments-button-comment": "Comment now",
+  "user-msg-question-continue": "Do you want to continue?"
 }

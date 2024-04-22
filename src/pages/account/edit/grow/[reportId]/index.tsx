@@ -4,17 +4,20 @@ import {
   createStyles,
   Loader,
   LoadingOverlay,
+  rem,
   Tabs,
   Title,
   useMantineColorScheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
   IconChevronLeft,
   IconEdit,
   IconList,
   IconPlant,
 } from "@tabler/icons-react";
+import { httpStatusErrorMsg } from "~/messages";
 
 import { useEffect, useState } from "react";
 
@@ -84,13 +87,13 @@ const ProtectedEditReportDetails: NextPage = () => {
       fontWeight: "bold",
       color: dark
         ? theme.colors.groworange[4]
-        : theme.colors.growgreen[5],
+        : theme.colors.groworange[6],
     },
   }));
   const { theme, classes } = useStyles();
 
   const smallScreen = useMediaQuery(
-    `(max-width: ${theme.breakpoints.lg})`
+    `(max-width: ${theme.breakpoints.sm})`
   );
 
   const queryReportId = router.query.reportId as string;
@@ -102,15 +105,22 @@ const ProtectedEditReportDetails: NextPage = () => {
   const sessionIsLoading = status === "loading";
 
   useEffect(() => {
-    const hash = window.location.hash.slice(1);
+    const hash = window.location.hash;
 
-    if (hash !== "") {
-      setDefaultTab(hash);
+    let slicedHash;
+    if (hash.startsWith("#")) {
+      slicedHash = hash.slice(1);
+    } else {
+      slicedHash = null;
+    }
+
+    if (slicedHash) {
+      setDefaultTab(slicedHash);
     } else {
       setDefaultTab(DEFAULTTAB);
 
       void router.replace(
-        `${window.location.pathname}${DEFAULTTAB}`,
+        `${window.location.pathname}#${DEFAULTTAB}`,
         undefined,
         {
           shallow: true,
@@ -119,26 +129,43 @@ const ProtectedEditReportDetails: NextPage = () => {
         }
       );
     }
-  }, [activeLocale, params, router]);
+  }, [activeLocale, router]);
 
   const {
     data: report,
     isLoading: reportIsLoading,
     isError: reportHasErrors,
-  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
+    error: reportError,
+  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId, {
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
 
   const {
     data: strains,
     isLoading: strainsAreLoading,
     isError: strainsHaveErrors,
-  } = api.strains.getAllStrains.useQuery();
+  } = api.strains.getAllStrains.useQuery(undefined, {
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
 
-  if (
-    !reportIsLoading &&
-    !strainsAreLoading &&
-    (reportHasErrors || strainsHaveErrors)
-  ) {
-    return <>Server Error</>;
+  if (reportIsLoading) return <Loader color="growgreen.4" />;
+  if (reportHasErrors) {
+    notifications.show(
+      httpStatusErrorMsg(
+        reportError.message,
+        reportError.data?.httpStatus,
+        true
+      )
+    );
+    return (
+      <>
+        Error {reportError.data?.httpStatus}: {reportError.message}
+      </>
+    );
   }
 
   if (
@@ -167,10 +194,7 @@ const ProtectedEditReportDetails: NextPage = () => {
           <Loader color="groworange.4" /> // Render Loader component if reportIsLoading is true
         ) : (
           <Box className="flex items-center justify-start pt-2">
-            <Link
-              title="back to Grow"
-              href={`/grow/${report?.id as string}`}
-            >
+            <Link title="back to Grow" href={`/grow/${report.id}`}>
               <Box className={classes.titleLink}>
                 <IconChevronLeft size={28} />
                 {report?.title}
@@ -179,6 +203,7 @@ const ProtectedEditReportDetails: NextPage = () => {
           </Box>
         )}
         {/* // Header End */}
+
         {defaultTab && (
           <>
             <Tabs
@@ -194,28 +219,7 @@ const ProtectedEditReportDetails: NextPage = () => {
               // })}
               >
                 <Tabs.Tab
-                  onClick={() => {
-                    void router.replace(
-                      `${window.location.pathname}#addUpdate`,
-                      undefined,
-                      {
-                        shallow: true,
-                        scroll: true,
-                        locale: activeLocale,
-                      }
-                    );
-                  }}
-                  value="addUpdate"
-                  icon={
-                    <IconPlant size={smallScreen ? "1rem" : "1.4rem"} />
-                  }
-                >
-                  <Title order={2} fz={smallScreen ? "sm" : "lg"}>
-                    {t("common:addpost-headline")}
-                  </Title>
-                </Tabs.Tab>
-
-                <Tabs.Tab
+                  px={smallScreen ? 6 : "md"}
                   onClick={() => {
                     void router.replace(
                       `${window.location.pathname}#editGrow`,
@@ -229,16 +233,44 @@ const ProtectedEditReportDetails: NextPage = () => {
                   }}
                   value="editGrow"
                   icon={
-                    <IconEdit size={smallScreen ? "1rem" : "1.4rem"} />
+                    <IconEdit
+                      size={smallScreen ? "0.8rem" : "1.4rem"}
+                    />
                   }
                 >
                   {/* // Title */}
-                  <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                  <Title order={1} fz={smallScreen ? rem(11) : "lg"}>
                     {t("common:report-edit-headline")}
                   </Title>
                 </Tabs.Tab>
 
                 <Tabs.Tab
+                  p={smallScreen ? 6 : "md"}
+                  onClick={() => {
+                    void router.replace(
+                      `${window.location.pathname}#addUpdate`,
+                      undefined,
+                      {
+                        shallow: true,
+                        scroll: true,
+                        locale: activeLocale,
+                      }
+                    );
+                  }}
+                  value="addUpdate"
+                  icon={
+                    <IconPlant
+                      size={smallScreen ? "0.8rem" : "1.4rem"}
+                    />
+                  }
+                >
+                  <Title order={1} fz={smallScreen ? rem(10) : "lg"}>
+                    {t("common:addpost-headline")}
+                  </Title>
+                </Tabs.Tab>
+
+                <Tabs.Tab
+                  px={smallScreen ? 6 : "md"}
                   onClick={() => {
                     void router.replace(
                       `${window.location.pathname}#editAll`,
@@ -252,10 +284,12 @@ const ProtectedEditReportDetails: NextPage = () => {
                   }}
                   value="editAll"
                   icon={
-                    <IconList size={smallScreen ? "1rem" : "1.4rem"} />
+                    <IconList
+                      size={smallScreen ? "0.8rem" : "1.4rem"}
+                    />
                   }
                 >
-                  <Title order={2} fz={smallScreen ? "sm" : "lg"}>
+                  <Title order={1} fz={smallScreen ? rem(11) : "lg"}>
                     {" "}
                     {t("common:editallpost-headline")}{" "}
                   </Title>

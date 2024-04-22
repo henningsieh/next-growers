@@ -1,38 +1,21 @@
 import {
-  ActionIcon,
-  Alert,
   Box,
   Button,
   Container,
   createStyles,
   Flex,
   Group,
-  Modal,
-  rem,
-  Space,
-  Text,
+  Loader,
   Title,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import {
-  IconAlertTriangle,
-  IconChevronLeft,
-  IconEdit,
-  IconPhotoCancel,
-  IconPhotoX,
-  IconSquareLetterX,
-  IconX,
-} from "@tabler/icons-react";
+import { IconChevronLeft, IconEdit } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { convert } from "html-to-text";
-import {
-  defaultErrorMsg,
-  deletePostSuccessfulMsg,
-  noPostAtThisDay,
-} from "~/messages";
+import { noPostAtThisDay } from "~/messages";
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -50,11 +33,10 @@ import { useRouter } from "next/router";
 
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import PostsDatePicker from "~/components/Post/Datepicker";
+import PostDeleteButton from "~/components/Post/DeleteButton";
 import { PostCard } from "~/components/Post/PostCard";
 
 import { prisma } from "~/server/db";
-
-import { api } from "~/utils/api";
 
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
@@ -276,7 +258,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 /** ReportDetails
- *  @returns React Functional Component
+ * @returns React Functional Component
  * @param props
  */
 export default function PublicReportPost(
@@ -285,34 +267,7 @@ export default function PublicReportPost(
   const { report: staticReportFromProps, postId: postIdfromProps } =
     props;
 
-  const trpc = api.useUtils();
   const { data: session, status } = useSession();
-
-  const [opened, { open, close }] = useDisclosure(false);
-
-  const { mutate: tRPCdeletePost } = api.posts.deletePost.useMutation({
-    onMutate: () => {
-      // setIsSaving(true);
-    },
-    // If the mutation fails, use the context
-    // returned from onMutate to roll back
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onError: (error, _comment) => {
-      notifications.show(defaultErrorMsg(error.message));
-    },
-    onSuccess: async (result) => {
-      notifications.show(deletePostSuccessfulMsg);
-      await trpc.reports.getIsoReportWithPostsFromDb.invalidate(
-        result.deletedPost.id
-      );
-      void router.push(`/grow/${result.deletedPost.reportId}`);
-    },
-    // Always refetch after error or success:
-    onSettled: async () => {
-      await trpc.reports.getIsoReportWithPostsFromDb.refetch();
-      close;
-    },
-  });
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
@@ -320,14 +275,17 @@ export default function PublicReportPost(
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
-      color: dark ? "white" : theme.black,
+      fontWeight: "bold",
+      color: dark
+        ? theme.colors.growgreen[4]
+        : theme.colors.growgreen[6],
     },
-
     title: {
       display: "flex",
       [theme.fn.smallerThan("md")]: {
         flexDirection: "column",
       },
+
       alignItems: "center",
       justifyContent: "space-between",
       paddingTop: theme.spacing.sm,
@@ -457,138 +415,74 @@ export default function PublicReportPost(
         {imageTags &&
           imageTags.map((tag, index) => <meta key={index} {...tag} />)}
       </Head>
-      {/* // Main Content Container */}
-      <Container
-        size="xl"
-        className="mb-8 flex w-full flex-col space-y-1"
-      >
-        {/* // Header with Title */}
-        <Box className={classes.title}>
-          {/* // Title */}
-          <Title order={1}>
-            <Link
-              className={classes.titleLink}
-              href={`/grow/${staticReportFromProps.id}`}
-            >
-              <Box pr={"sm"}>
-                <IconChevronLeft size={32} />
-              </Box>
-              {`${pageTitle}`}
-            </Link>
-          </Title>
 
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex flex-col space-y-2">
+        {/* // Header with Title */}
+        <Box pt={theme.spacing.sm} className={classes.title}>
+          <Link
+            title="back to Grow"
+            href={`/grow/${staticReportFromProps.id}`}
+          >
+            <Box className={classes.titleLink}>
+              <IconChevronLeft size={28} />
+              {staticReportFromProps.title}
+            </Box>
+          </Link>
+
+          {/* Right side Edit Buttons */}
           {status === "authenticated" &&
             staticReportFromProps.authorId === session.user.id && (
-              <Flex
-                justify="flex-end"
-                align="center"
-                className="space-x-2"
-              >
-                <Group>
-                  <Modal
-                    size="xl"
-                    opened={opened}
-                    onClose={close}
-                    withCloseButton={true}
-                    overlayProps={{
-                      color:
-                        theme.colorScheme === "dark"
-                          ? theme.colors.dark[9]
-                          : theme.colors.gray[2],
-                      opacity: 0.55,
-                      blur: 3,
-                    }}
-                  >
-                    <Container>
-                      <Space h={rem(40)} />
-                      <Alert
-                        fz="xl"
-                        color="red.8"
-                        variant="outline"
-                        title={t("common:post-delete-button")}
-                        icon={<IconAlertTriangle size={30} />}
-                      >
-                        <Text fz="lg">
-                          All Update data will be lost! Do you want to
-                          continue?
-                        </Text>
-                      </Alert>
-                      <Space h={rem(20)} />
-                      <Group position="apart" grow>
-                        <Button
-                          h={32}
-                          compact
-                          c="red.7"
-                          variant="default"
-                          leftIcon={
-                            <IconPhotoCancel size={18} stroke={1.8} />
-                          }
-                          onClick={() =>
-                            tRPCdeletePost({ id: postIdfromProps })
-                          }
-                          sx={(theme) => ({
-                            boxShadow: `0 0 2px 1px ${theme.colors.red[8]}`,
-                          })}
-                        >
-                          {t("common:post-delete-button")}
-                        </Button>
-                        <Button
-                          h={32}
-                          compact
-                          // c="red.9"
-                          variant="default"
-                          leftIcon={
-                            <IconSquareLetterX size={18} stroke={1.8} />
-                          }
-                          onClick={close}
-                        >
-                          {t("common:app-notifications-close-button")}
-                        </Button>
-                      </Group>
-
-                      <Space h={rem(40)} />
-                    </Container>
-                  </Modal>
-
+              <Group position="right">
+                {/* Edit Update Button */}
+                <Link
+                  href={`/account/edit/grow/${staticReportFromProps.id}/update/${postIdfromProps}`}
+                >
                   <Button
                     h={32}
+                    miw={180}
                     compact
-                    c="red.8"
-                    variant="default"
-                    rightIcon={
-                      <IconAlertTriangle size={22} stroke={1.8} />
+                    variant="filled"
+                    color="groworange"
+                    className="cursor-pointer"
+                    leftIcon={
+                      <IconEdit
+                        className="ml-1"
+                        size={22}
+                        stroke={1.6}
+                      />
                     }
-                    onClick={open}
-                    sx={(theme) => ({
-                      boxShadow: `0 0 2px 1px ${theme.colors.red[8]}`,
-                    })}
                   >
-                    {t("common:post-delete-button")}
+                    {t("common:post-edit-button")}
                   </Button>
-                  <Link
-                    href={`/account/edit/grow/${staticReportFromProps.id}/update/${postIdfromProps}`}
+                </Link>
+
+                {/* Add Post Button */}
+                <Link
+                  href={`/account/edit/grow/${staticReportFromProps.id}#addUpdate`}
+                >
+                  <Button
+                    h={32}
+                    miw={180}
+                    compact
+                    variant="filled"
+                    color="growgreen"
+                    className="cursor-pointer"
+                    leftIcon={
+                      <IconEdit
+                        className="ml-1"
+                        size={22}
+                        stroke={1.6}
+                      />
+                    }
                   >
-                    <Button
-                      h={32}
-                      compact
-                      variant="filled"
-                      color="groworange"
-                      className="cursor-pointer"
-                      rightIcon={
-                        <IconEdit
-                          className="ml-1"
-                          size={22}
-                          stroke={1.6}
-                        />
-                      }
-                    >
-                      {t("common:post-edit-button")}
-                    </Button>
-                  </Link>
-                </Group>
-              </Flex>
+                    {t("common:addpost-headline")}
+                  </Button>
+                </Link>
+              </Group>
             )}
         </Box>
+
         {/* // Header End */}
 
         <Container

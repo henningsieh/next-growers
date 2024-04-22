@@ -5,8 +5,11 @@ import {
   Loader,
   LoadingOverlay,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconChevronLeft } from "@tabler/icons-react";
+import { httpStatusErrorMsg } from "~/messages";
 
 import type {
   GetServerSideProps,
@@ -61,10 +64,16 @@ const ProtectedEditReportDetails: NextPage = () => {
   const queryReportId = router.query.reportId as string;
   const queryPostId = router.query.postId as string;
 
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
   const useStyles = createStyles((theme) => ({
     titleLink: {
       display: "inline-flex",
-      color: theme.colors.orange?.[7],
+      fontWeight: "bold",
+      color: dark
+        ? theme.colors.groworange[4]
+        : theme.colors.growgreen[5],
     },
     title: {
       display: "inline-flex",
@@ -89,19 +98,34 @@ const ProtectedEditReportDetails: NextPage = () => {
     data: report,
     isLoading: reportIsLoading,
     isError: reportHasErrors,
+    error: reportError,
   } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
 
-  if (!reportIsLoading && reportHasErrors) {
-    return <>Server Error</>;
+  if (reportIsLoading) return <Loader color="growgreen.4" />;
+  if (reportHasErrors) {
+    notifications.show(
+      httpStatusErrorMsg(
+        reportError.message,
+        reportError.data?.httpStatus,
+        true
+      )
+    );
+    return (
+      <>
+        Error {reportError.data?.httpStatus}: {reportError.message}
+      </>
+    );
   }
 
-  const reportTitle = `${report?.title as string}`;
+  const reportTitle = `${report.title}`;
 
   const queryPost = report?.posts.find(
     (post: Post) => post.id === queryPostId
   );
 
-  return (
+  return !!!queryPost ? (
+    <>Error 404: Update with ID {queryPostId} was not found.</>
+  ) : (
     <>
       <Head>
         <title>{`${pageTitle} | GrowAGram | ${reportTitle}`}</title>
@@ -134,8 +158,8 @@ const ProtectedEditReportDetails: NextPage = () => {
         <Title className={classes.title} order={1}>
           {pageTitle}
         </Title>
-        {/* // Header End */}
 
+        {/* // Header End */}
         <Box pos="relative">
           <LoadingOverlay
             visible={sessionIsLoading || reportIsLoading}

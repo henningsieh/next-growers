@@ -1,9 +1,11 @@
 import {
+  Accordion,
   ColorSchemeProvider,
   MantineProvider,
   rem,
 } from "@mantine/core";
 import type {
+  AccordionStylesParams,
   ButtonStylesParams,
   ColorScheme,
   MantineTheme,
@@ -12,6 +14,7 @@ import type {
 import { MenuItem } from "@mantine/core/lib/Menu/MenuItem/MenuItem";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
+import type { MantineColor } from "@mantine/styles";
 import RootLayout from "~/layout/AppLayout";
 import "~/styles/emojiPickerStyles.css";
 import "~/styles/globals.css";
@@ -116,6 +119,59 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             xl: "90em", // 1440px
           },
           components: {
+            Accordion: {
+              styles: (
+                theme,
+                params: AccordionStylesParams & {
+                  color: MantineColor;
+                },
+                { variant }
+              ) => ({
+                control: {
+                  fontWeight: "lighter",
+                  color:
+                    variant === "contained"
+                      ? theme.colorScheme === "dark"
+                        ? "white"
+                        : theme.black
+                      : undefined,
+                  "&:hover": {
+                    backgroundColor:
+                      variant === "contained"
+                        ? theme.colorScheme === "dark"
+                          ? theme.colors.growgreen[8]
+                          : theme.colors.growgreen[3]
+                        : undefined,
+                  },
+                },
+                item: {
+                  // styles added to all items
+                  backgroundColor:
+                    variant === "contained"
+                      ? theme.colorScheme === "dark"
+                        ? theme.colors.dark[7]
+                        : theme.fn.lighten(
+                            theme.colors.growgreen[4],
+                            0.7
+                          )
+                      : undefined,
+
+                  // border: `${rem(1)} solid #ededed`,
+
+                  // styles added to expanded item
+                  "&[data-active]": {
+                    backgroundColor: "transparent",
+                  },
+                },
+
+                chevron: {
+                  // styles added to chevron when it should rotate
+                  // "&[data-rotate]": {
+                  //   transform: "rotate(-90deg)",
+                  // },
+                },
+              }),
+            },
             Container: {
               defaultProps: {
                 sizes: {

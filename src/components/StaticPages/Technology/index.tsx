@@ -213,7 +213,7 @@ function Feature({
                   className="cursor-pointer"
                   variant="default"
                   c={dark ? "groworange.3" : "growgreen"}
-                  rightIcon={<IconExternalLink />}
+                  leftIcon={<IconExternalLink />}
                 >
                   Info-Link
                 </Button>
