@@ -10,7 +10,7 @@ import {
   Title,
   useMantineColorScheme,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -105,7 +105,9 @@ export default function LandingPage({
   }));
 
   const { classes, theme } = useStyles();
-
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.lg})`
+  );
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
@@ -140,35 +142,37 @@ export default function LandingPage({
             🪴 Track Your Grow! 📜
           </Title>
 
-          <Group position="center">
-            <Button
-              variant="default"
-              onClick={() => {
-                void router.push("/grows");
-              }}
-              className="text-lg uppercase cursor-default my-4 h-12 w-72 
+          {smallScreen && (
+            <Group position="center">
+              <Button
+                variant="default"
+                onClick={() => {
+                  void router.push("/grows");
+                }}
+                className="text-lg uppercase cursor-default my-4 h-12 w-72 
               bg-gradient-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
-            >
-              {t("common:landing-button-allgrows")} 🔎
-            </Button>
+              >
+                {t("common:landing-button-allgrows")} 🔎
+              </Button>
 
-            <Button
-              variant="default"
-              onClick={() => {
-                status === "authenticated"
-                  ? void router.push("/account/grows/create")
-                  : open();
-              }}
-              className="text-lg uppercase cursor-default my-4 h-12 w-72 
+              <Button
+                variant="default"
+                onClick={() => {
+                  status === "authenticated"
+                    ? void router.push("/account/grows/create")
+                    : open();
+                }}
+                className="text-lg uppercase cursor-default my-4 h-12 w-72 
               bg-gradient-to-r transition duration-1000 ease-in-out 
               from-teal-700  via-green-600  to-emerald-800 
               hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
-            >
-              {t("common:usermenu-addnewgrow")} ⛏️
-            </Button>
-          </Group>
+              >
+                {t("common:usermenu-addnewgrow")} ⛏️
+              </Button>
+            </Group>
+          )}
 
           {/* <Flex justify="flex-end" align="center"> */}
           {/* LOOP OVER REPORTS topLikeReports */}
@@ -192,6 +196,38 @@ export default function LandingPage({
                 })
               : null}
           </Grid>
+
+          {!smallScreen && (
+            <Group position="center">
+              <Button
+                variant="default"
+                onClick={() => {
+                  void router.push("/grows");
+                }}
+                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+              bg-gradient-to-r transition duration-300 ease-in-out 
+              from-orange-600 via-pink-600 to-red-500 text-white
+              hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
+              >
+                {t("common:landing-button-allgrows")} 🔎
+              </Button>
+
+              <Button
+                variant="default"
+                onClick={() => {
+                  status === "authenticated"
+                    ? void router.push("/account/grows/create")
+                    : open();
+                }}
+                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+              bg-gradient-to-r transition duration-1000 ease-in-out 
+              from-teal-700  via-green-600  to-emerald-800 
+              hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
+              >
+                {t("common:usermenu-addnewgrow")} ⛏️
+              </Button>
+            </Group>
+          )}
 
           <Text className={classes.description} size="xl" mt="xl">
             {t("common:landing-text-top1")}
