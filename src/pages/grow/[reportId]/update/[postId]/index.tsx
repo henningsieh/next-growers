@@ -3,10 +3,7 @@ import {
   Button,
   Container,
   createStyles,
-  Flex,
   Group,
-  Loader,
-  Title,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
@@ -33,7 +30,6 @@ import { useRouter } from "next/router";
 
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import PostsDatePicker from "~/components/Post/Datepicker";
-import PostDeleteButton from "~/components/Post/DeleteButton";
 import { PostCard } from "~/components/Post/PostCard";
 
 import { prisma } from "~/server/db";
@@ -216,46 +212,46 @@ export async function getStaticProps(
  *  @param reports: { id: string; }[]
  *  @returns { paths[] }
  */
-export const getStaticPaths: GetStaticPaths = async () => {
-  const reports = await prisma.report.findMany({
-    select: {
-      id: true,
-      posts: { select: { id: true } },
-    },
-  });
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const reports = await prisma.report.findMany({
+//     select: {
+//       id: true,
+//       posts: { select: { id: true } },
+//     },
+//   });
 
-  const paths = reports.flatMap((staticReport) => {
-    const localizedPaths = [
-      {
-        params: {
-          reportId: staticReport.id,
-        },
-        locale: "en", // English version
-      },
-      {
-        params: {
-          reportId: staticReport.id,
-        },
-        locale: "de", // German version
-      },
-    ];
+//   const paths = reports.flatMap((staticReport) => {
+//     const localizedPaths = [
+//       {
+//         params: {
+//           reportId: staticReport.id,
+//         },
+//         locale: "en", // English version
+//       },
+//       {
+//         params: {
+//           reportId: staticReport.id,
+//         },
+//         locale: "de", // German version
+//       },
+//     ];
 
-    return staticReport.posts.flatMap((post) =>
-      localizedPaths.map((path) => ({
-        ...path,
-        params: {
-          ...path.params,
-          postId: post.id,
-        },
-      }))
-    );
-  });
+//     return staticReport.posts.flatMap((post) =>
+//       localizedPaths.map((path) => ({
+//         ...path,
+//         params: {
+//           ...path.params,
+//           postId: post.id,
+//         },
+//       }))
+//     );
+//   });
 
-  return {
-    paths,
-    fallback: "blocking",
-  };
-};
+//   return {
+//     paths,
+//     fallback: "blocking",
+//   };
+// };
 
 /** ReportDetails
  * @returns React Functional Component
