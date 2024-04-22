@@ -212,46 +212,53 @@ export async function getStaticProps(
  *  @param reports: { id: string; }[]
  *  @returns { paths[] }
  */
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const reports = await prisma.report.findMany({
-//     select: {
-//       id: true,
-//       posts: { select: { id: true } },
-//     },
-//   });
+export const getStaticPaths: GetStaticPaths = async () => {
+  if (process.env.SKIP_BUILD_STATIC_GENERATION) {
+    return {
+      paths: [],
+      fallback: "blocking",
+    };
+  }
 
-//   const paths = reports.flatMap((staticReport) => {
-//     const localizedPaths = [
-//       {
-//         params: {
-//           reportId: staticReport.id,
-//         },
-//         locale: "en", // English version
-//       },
-//       {
-//         params: {
-//           reportId: staticReport.id,
-//         },
-//         locale: "de", // German version
-//       },
-//     ];
+  const reports = await prisma.report.findMany({
+    select: {
+      id: true,
+      posts: { select: { id: true } },
+    },
+  });
 
-//     return staticReport.posts.flatMap((post) =>
-//       localizedPaths.map((path) => ({
-//         ...path,
-//         params: {
-//           ...path.params,
-//           postId: post.id,
-//         },
-//       }))
-//     );
-//   });
+  const paths = reports.flatMap((staticReport) => {
+    const localizedPaths = [
+      {
+        params: {
+          reportId: staticReport.id,
+        },
+        locale: "en", // English version
+      },
+      {
+        params: {
+          reportId: staticReport.id,
+        },
+        locale: "de", // German version
+      },
+    ];
 
-//   return {
-//     paths,
-//     fallback: "blocking",
-//   };
-// };
+    return staticReport.posts.flatMap((post) =>
+      localizedPaths.map((path) => ({
+        ...path,
+        params: {
+          ...path.params,
+          postId: post.id,
+        },
+      }))
+    );
+  });
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
 
 /** ReportDetails
  * @returns React Functional Component

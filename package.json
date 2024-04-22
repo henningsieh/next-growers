@@ -8,7 +8,7 @@
     "lint": "next lint",
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "next-sitemap",
+    "postbuild": "node -e \"if (process.env.SKIP_BUILD_STATIC_GENERATION === 'TRUE'){process.exit(1)} \" || npx next-sitemap",
     "start": "next start"
   },
   "prisma": {
