@@ -105,7 +105,6 @@ const useStyles = createStyles((theme) => ({
 
 export default function ReportCard({
   report: isoReport,
-  // procedure,
   setSearchString,
 }: IsoReportCardProps) {
   const { classes } = useStyles();
@@ -187,7 +186,8 @@ export default function ReportCard({
       <Badge
         className="cursor-pointer"
         onClick={() => {
-          setSearchString(`strain:"${strainBadge.name}"`);
+          setSearchString &&
+            setSearchString(`strain:"${strainBadge.name}"`);
         }}
         variant="gradient"
         gradient={{

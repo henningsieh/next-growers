@@ -15,9 +15,7 @@ export type IsoReportWithPostsFromDb =
 
 export interface IsoReportCardProps {
   report: IsoReportWithPostsFromDb;
-  procedure: "all" | "own";
-
-  setSearchString: Dispatch<SetStateAction<string>>;
+  setSearchString?: Dispatch<SetStateAction<string>>;
 }
 
 type getPostsByReportIdOutput =

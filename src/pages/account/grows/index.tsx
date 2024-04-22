@@ -188,8 +188,6 @@ const ProtectedOwnGrows: NextPage = () => {
                       xl={3}
                     >
                       <ReportCard
-                        // {...cardProps}
-                        procedure="own"
                         report={ownIsoReport}
                         setSearchString={setSearchString}
                       />

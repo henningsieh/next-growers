@@ -92,25 +92,6 @@ const PublicAllGrows: NextPage = () => {
     handleToggleDesc: () => setDesc((prev) => !prev),
   };
 
-  /* // Fake Data for Fake Card */
-  const cardProps = {
-    country: "Sativa",
-    badges: [
-      {
-        emoji: "☀️",
-        label: "Outdoor",
-      },
-      {
-        emoji: "🌲",
-        label: "Sativa",
-      },
-      {
-        emoji: "🌊",
-        label: "pure water",
-      },
-    ],
-  };
-
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchString(event.target.value);
   };
@@ -172,8 +153,6 @@ const PublicAllGrows: NextPage = () => {
                       xl={3}
                     >
                       <ReportCard
-                        procedure="all"
-                        {...cardProps}
                         report={isoReport}
                         setSearchString={setSearchString}
                       />

@@ -3,9 +3,12 @@ import {
   Button,
   Container,
   createStyles,
+  Grid,
+  Group,
   rem,
   Text,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -14,53 +17,94 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import { LoginModal } from "~/components/Atom/LoginModal";
+import ReportCard from "~/components/Report/Card";
 
-const useStyles = createStyles((theme) => ({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "top",
-    alignItems: "center",
-    paddingTop: theme.spacing.md,
-    position: "relative",
+import type { IsoReportWithPostsFromDb } from "~/types";
 
-    // [theme.fn.smallerThan("sm")]: {
-    //   // height: rem(900),
-    //   // flexDirection: "column",
-    //   //justifyContent: "center",
-    //   //paddingBottom: `calc(${theme.spacing.xl} * 3)`,
-    // },
-  },
+interface LandingPageProps {
+  topLikeReports: IsoReportWithPostsFromDb[];
+}
 
-  title: {
-    fontSize: rem(48),
-    fontWeight: 900,
-    lineHeight: 1.1,
-    paddingTop: 12,
-    paddingBottom: 12,
+export default function LandingPage({
+  topLikeReports: isoReports,
+}: LandingPageProps) {
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
 
-    [theme.fn.smallerThan("sm")]: {
-      fontSize: rem(42),
-      lineHeight: 1.2,
+  const useStyles = createStyles((theme) => ({
+    container: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "top",
+      alignItems: "center",
+      paddingTop: theme.spacing.md,
+      position: "relative",
+
+      // [theme.fn.smallerThan("sm")]: {
+      //   // height: rem(900),
+      //   // flexDirection: "column",
+      //   //justifyContent: "center",
+      //   //paddingBottom: `calc(${theme.spacing.xl} * 3)`,
+      // },
     },
 
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(36),
-      lineHeight: 1.3,
+    title: {
+      fontFamily: `'Roboto Slab', sans-serif`,
+      fontSize: rem(112),
+      fontWeight: 700,
+      lineHeight: 0.8,
+      paddingTop: 12,
+      paddingBottom: 12,
+
+      [theme.fn.smallerThan("lg")]: {
+        fontSize: rem(112),
+      },
+
+      [theme.fn.smallerThan("md")]: {
+        fontSize: rem(92),
+      },
+
+      [theme.fn.smallerThan("sm")]: {
+        fontSize: rem(54),
+      },
     },
-  },
+    subTitle: {
+      // fontFamily: `'Lato', sans-serif`,
+      fontSize: rem(54),
+      fontWeight: 900,
+      lineHeight: 1.5,
+      paddingTop: 12,
+      paddingBottom: 12,
+      textShadow: dark
+        ? `2px 3px 6px rgba(255, 83, 34, 0.8)`
+        : `1px 2px 2px rgba(29, 75, 20, 0.9)`,
 
-  description: {
-    textAlign: "center",
+      [theme.fn.smallerThan("lg")]: {
+        fontSize: rem(54),
+        lineHeight: 1.4,
+      },
 
-    [theme.fn.smallerThan("sm")]: {
-      fontSize: theme.fontSizes.md,
+      [theme.fn.smallerThan("md")]: {
+        fontSize: rem(44),
+        lineHeight: 1.3,
+      },
+
+      [theme.fn.smallerThan("sm")]: {
+        fontSize: rem(24),
+        lineHeight: 1.2,
+      },
     },
-  },
-}));
 
-export default function LandingPage() {
-  const { classes } = useStyles();
+    description: {
+      textAlign: "center",
+
+      [theme.fn.smallerThan("sm")]: {
+        fontSize: theme.fontSizes.md,
+      },
+    },
+  }));
+
+  const { classes, theme } = useStyles();
 
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -77,11 +121,77 @@ export default function LandingPage() {
         <Container
           mb={"xl"}
           pb={"xl"}
-          size="lg"
+          size="xl"
           className={classes.container}
         >
-          <Title className={classes.title}>GrowAGram</Title>
-          <Title order={2}>🪴 Show Your Grow! 🚀</Title>
+          <Text
+            className={classes.title}
+            variant="gradient"
+            gradient={{
+              from: theme.fn.lighten(theme.colors.growgreen[4], 0.01),
+              to: theme.fn.darken(theme.colors.groworange[4], 0.01),
+              deg: 90,
+            }}
+          >
+            GrowAGram
+          </Text>
+
+          <Title order={2} className={classes.subTitle}>
+            🪴 Track Your Grow! 📜
+          </Title>
+
+          <Group position="center">
+            <Button
+              variant="default"
+              onClick={() => {
+                void router.push("/grows");
+              }}
+              className="text-lg uppercase cursor-default my-4 h-12 w-72 
+              bg-gradient-to-r transition duration-300 ease-in-out 
+              from-orange-600 via-pink-600 to-red-500 text-white
+              hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
+            >
+              {t("common:landing-button-allgrows")} 🔎
+            </Button>
+
+            <Button
+              variant="default"
+              onClick={() => {
+                status === "authenticated"
+                  ? void router.push("/account/grows/create")
+                  : open();
+              }}
+              className="text-lg uppercase cursor-default my-4 h-12 w-72 
+              bg-gradient-to-r transition duration-1000 ease-in-out 
+              from-teal-700  via-green-600  to-emerald-800 
+              hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
+            >
+              {t("common:usermenu-addnewgrow")} ⛏️
+            </Button>
+          </Group>
+
+          {/* <Flex justify="flex-end" align="center"> */}
+          {/* LOOP OVER REPORTS topLikeReports */}
+          <Grid gutter="xs">
+            {/* LOOP OVER REPORTS */}
+            {isoReports.length
+              ? isoReports.map((isoReport) => {
+                  return (
+                    <Grid.Col
+                      className="scale-90"
+                      key={isoReport.id}
+                      xs={12}
+                      sm={6}
+                      md={4}
+                      lg={3}
+                      xl={3}
+                    >
+                      <ReportCard report={isoReport} />
+                    </Grid.Col>
+                  );
+                })
+              : null}
+          </Grid>
 
           <Text className={classes.description} size="xl" mt="xl">
             {t("common:landing-text-top1")}
@@ -91,35 +201,9 @@ export default function LandingPage() {
             {t("common:landing-text-top3")}
           </Text>
 
-          <Button
-            onClick={() => {
-              void router.push("/grows");
-            }}
-            className="
-              text-lg uppercase cursor-pointer
-              my-4 h-12 w-72 rounded-md 
-              bg-gradient-to-r from-orange-600 via-pink-600 to-red-500 text-white"
-          >
-            {t("common:landing-button-allgrows")} 🔎
-          </Button>
-
           <Text className={classes.description} size="xl" mt="xl">
             {t("common:landing-text-top2")}
           </Text>
-
-          <Button
-            onClick={() => {
-              status === "authenticated"
-                ? void router.push("/account/grows/create")
-                : open();
-            }}
-            className="
-              text-lg uppercase cursor-default
-              my-4 h-12 w-72 rounded-md 
-              bg-gradient-to-r from-teal-700  via-green-600  to-emerald-800 text-white"
-          >
-            {t("common:usermenu-addnewgrow")} ⛏️
-          </Button>
 
           <Text className={classes.description} size="md" mt="xl">
             {t("common:landing-text-bottom")}
