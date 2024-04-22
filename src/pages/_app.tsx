@@ -1,5 +1,4 @@
 import {
-  Accordion,
   ColorSchemeProvider,
   MantineProvider,
   rem,
@@ -11,7 +10,6 @@ import type {
   MantineTheme,
   NotificationStylesParams,
 } from "@mantine/core";
-import { MenuItem } from "@mantine/core/lib/Menu/MenuItem/MenuItem";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import type { MantineColor } from "@mantine/styles";

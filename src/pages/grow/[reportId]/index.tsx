@@ -6,11 +6,9 @@ import {
   createStyles,
   Group,
   Loader,
-  LoadingOverlay,
   Text,
   Title,
   useMantineColorScheme,
-  useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -32,8 +30,6 @@ import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import PostsDatePicker from "~/components/Post/Datepicker";
 import { PostCard } from "~/components/Post/PostCard";
 import { ReportHeader } from "~/components/Report/Header";
-
-import type { IsoReportWithPostsFromDb } from "~/types";
 
 import { api } from "~/utils/api";
 

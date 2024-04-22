@@ -1,11 +1,9 @@
-import PostDeleteButton from "../DeleteButton";
 import {
   Accordion,
   Box,
   Card,
   Center,
   Container,
-  Flex,
   Group,
   Title,
 } from "@mantine/core";

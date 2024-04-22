@@ -10,7 +10,6 @@ import {
   Paper,
   rem,
   SimpleGrid,
-  Space,
   Text,
   ThemeIcon,
   Title,
@@ -28,7 +27,6 @@ import {
   IconServer2,
 } from "@tabler/icons-react";
 import { IconExternalLink } from "@tabler/icons-react";
-import { Theme } from "emoji-picker-react";
 
 // import { useTranslation } from "react-i18next";
 import Link from "next/link";

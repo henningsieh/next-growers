@@ -129,7 +129,7 @@ const ProtectedEditReportDetails: NextPage = () => {
         }
       );
     }
-  }, [activeLocale, router]);
+  }, [activeLocale, router, params]);
 
   const {
     data: report,

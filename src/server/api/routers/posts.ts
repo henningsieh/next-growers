@@ -1,4 +1,3 @@
-import { Post } from "@prisma/client";
 import { z } from "zod";
 
 import {
@@ -6,8 +5,6 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-
-import { Posts } from "~/types";
 
 import {
   InputCreatePostServer,
