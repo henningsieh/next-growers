@@ -13,7 +13,7 @@ import { useState } from "react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
-import AddPost from "~/components/Post/AddForm";
+import PostForm from "~/components/Post/PostForm";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 import { Locale } from "~/types";
@@ -100,7 +100,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                   />
                 </Flex> */}
 
-                <AddPost isoReport={isoReport} post={post} />
+                <PostForm isoReport={isoReport} post={post} />
               </Accordion.Panel>
             </Accordion.Item>
           ))}

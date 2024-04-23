@@ -36,7 +36,7 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import AddPost from "~/components/Post/AddForm";
+import PostForm from "~/components/Post/PostForm";
 import PostsAccordion from "~/components/Post/PostsAccordion";
 import { EditReportForm } from "~/components/Report/EditForm";
 
@@ -315,7 +315,7 @@ const ProtectedEditReportDetails: NextPage = () => {
                     <>
                       <Tabs.Panel value="addUpdate" pl="xs">
                         {/* AddPost Component */}
-                        <AddPost isoReport={report} post={null} />
+                        <PostForm isoReport={report} post={null} />
                       </Tabs.Panel>
 
                       <Tabs.Panel value="editGrow" pl="xs">

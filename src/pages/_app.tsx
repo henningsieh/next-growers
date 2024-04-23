@@ -10,6 +10,7 @@ import type {
   MantineTheme,
   NotificationStylesParams,
 } from "@mantine/core";
+import { DatesProvider } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import type { MantineColor } from "@mantine/styles";
@@ -21,16 +22,22 @@ import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import type { AppType } from "next/app";
+import { useRouter } from "next/router";
 
 import Loading from "~/components/Atom/Loading";
 
 import { api } from "~/utils/api";
 import { useRouteLoader } from "~/utils/routeLoader";
 
+import "dayjs/locale/de";
+import "dayjs/locale/en";
+
 const GrowAGram: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const router = useRouter();
+
   const isLoading = useRouteLoader();
 
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -138,7 +145,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                       variant === "contained"
                         ? theme.colorScheme === "dark"
                           ? theme.colors.growgreen[8]
-                          : theme.colors.growgreen[3]
+                          : theme.colors.growgreen[2]
                         : undefined,
                   },
                 },
@@ -396,9 +403,11 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           <Loading isLoading={isLoading} />
           <Notifications limit={5} position="top-center" />
 
-          <RootLayout>
-            <Component {...pageProps} />
-          </RootLayout>
+          <DatesProvider settings={{ locale: router.locale }}>
+            <RootLayout>
+              <Component {...pageProps} />
+            </RootLayout>
+          </DatesProvider>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>

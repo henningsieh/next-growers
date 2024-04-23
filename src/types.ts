@@ -114,6 +114,6 @@ export enum GrowStage {
 }
 
 export enum Environment {
-  INDOOR = "Indoor",
-  OUTDOOR = "Outdoor",
+  INDOOR = "Indoor 💡",
+  OUTDOOR = "Outdoor 🌦️",
 }

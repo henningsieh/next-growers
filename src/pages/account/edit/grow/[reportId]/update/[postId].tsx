@@ -25,7 +25,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import AddPost from "~/components/Post/AddForm";
+import PostForm from "~/components/Post/PostForm";
 
 import { authOptions } from "~/server/auth";
 
@@ -171,7 +171,7 @@ const ProtectedEditReportDetails: NextPage = () => {
             !reportIsLoading &&
             !reportHasErrors && (
               <>
-                <AddPost isoReport={report} post={queryPost as Post} />
+                <PostForm isoReport={report} post={queryPost as Post} />
               </>
             )}
         </Box>

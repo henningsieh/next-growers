@@ -18,6 +18,7 @@ module.exports = {
     "^~/types(.*)$",
     "^~/helpers(.*)$",
     "^~/utils(.*)$",
+    "^dayjs/(.*)$",
   ],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,

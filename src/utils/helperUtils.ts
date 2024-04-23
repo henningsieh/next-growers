@@ -11,14 +11,16 @@ import type {
   SplitObject,
 } from "~/types";
 
-// export function getKeyByValue<T extends string>(
-//   object: Record<string, T>,
-//   value: T
-// ): keyof typeof object | undefined {
-//   return Object.keys(object).find(
-//     (key) => object[key] === value
-//   ) as keyof typeof object;
-// }
+export function compareDatesWithoutTime(date1: Date, date2: Date) {
+  const date1Clone = new Date(date1);
+  const date2Clone = new Date(date2);
+
+  return (
+    date1Clone.getFullYear() === date2Clone.getFullYear() &&
+    date1Clone.getMonth() === date2Clone.getMonth() &&
+    date1Clone.getDate() === date2Clone.getDate()
+  );
+}
 
 export function hasUnreadNotifications(
   notifications: Notification[]

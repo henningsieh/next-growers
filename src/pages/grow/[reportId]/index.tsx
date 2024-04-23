@@ -27,11 +27,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
-import PostsDatePicker from "~/components/Post/Datepicker";
 import { PostCard } from "~/components/Post/PostCard";
+import PostDatepicker from "~/components/Post/PostDatepicker";
 import { ReportHeader } from "~/components/Report/Header";
 
 import { api } from "~/utils/api";
+import { compareDatesWithoutTime } from "~/utils/helperUtils";
 
 /** PUBLIC DYNAMIC PAGE with translations
  * getServerSideProps (Server-Side Rendering)
@@ -162,7 +163,9 @@ const PublicReport: NextPage = () => {
 
     const matchingPost = report.posts.find((post) => {
       const postDate = new Date(post.date);
-      return selectedDate.toISOString() === postDate.toISOString();
+
+      return compareDatesWithoutTime(selectedDate, postDate);
+      //return selectedDate.toISOString() === postDate.toISOString();
     });
 
     if (matchingPost) {
@@ -291,7 +294,7 @@ const PublicReport: NextPage = () => {
           {/* <Box ref={targetRef}> */}
 
           <Box>
-            <PostsDatePicker
+            <PostDatepicker
               defaultDate={
                 selectedDate ? columnStartMonth : dateOfGermination
               }

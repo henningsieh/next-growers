@@ -1,4 +1,4 @@
-import PostDeleteButton from "../DeleteButton";
+import PostDeleteButton from "../PostDeleteButton";
 import {
   Box,
   Button,
@@ -70,7 +70,7 @@ interface AddPostProps {
 const prefillHTMLContent =
   "<h1>Ich bin eine Überschrift</h1><hr/><p>RichTextEditor is designed to be as simple as possible to bring a familiar editing experience to regular users.</p>";
 
-const AddPost = (props: AddPostProps) => {
+const PostForm = (props: AddPostProps) => {
   const { isoReport: report, post } = props;
   const [imageIds, setImageIds] = useState<string[]>([]);
 
@@ -242,12 +242,12 @@ const AddPost = (props: AddPostProps) => {
                   value={imageId}
                 />
               ))}
-
               <Box>
                 <Grid gutter="sm">
                   <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
                     <Flex
-                      className="justify-start space-x-2"
+                      justify="flex-start"
+                      className="space-x-3"
                       align="baseline"
                     >
                       <DateInput
@@ -255,7 +255,7 @@ const AddPost = (props: AddPostProps) => {
                         description={t(
                           "common:addpost-updatedatedescription"
                         )}
-                        valueFormat="MMM DD, YYYY HH:mm"
+                        valueFormat="MMMM DD, YYYY HH:mm"
                         className="w-full"
                         icon={
                           <IconCalendarEvent
@@ -296,11 +296,13 @@ const AddPost = (props: AddPostProps) => {
                           );
                           if (!growDayOffSet && growDayOffSet != 0)
                             return; // prevent error if changed to empty string
+
                           const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
                           newPostDate.setUTCDate(
                             newPostDate.getUTCDate() + growDayOffSet
                           );
-                          // newPostDate.setUTCHours(22, 0, 0, 0);
+                          newPostDate.setHours(1); //  setUTCHours(22, 0, 0, 0);
+                          console.debug(newPostDate);
                           createPostForm.setFieldValue(
                             "date",
                             newPostDate
@@ -315,7 +317,8 @@ const AddPost = (props: AddPostProps) => {
                   </Grid.Col>
                   <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
                     <Flex
-                      className="justify-start space-x-2"
+                      justify="flex-start"
+                      className="space-x-3"
                       align="baseline"
                     >
                       <Select
@@ -521,4 +524,4 @@ const AddPost = (props: AddPostProps) => {
   );
 };
 
-export default AddPost;
+export default PostForm;

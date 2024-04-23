@@ -29,10 +29,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
-import PostsDatePicker from "~/components/Post/Datepicker";
 import { PostCard } from "~/components/Post/PostCard";
+import PostDatepicker from "~/components/Post/PostDatepicker";
 
 import { prisma } from "~/server/db";
+
+import { compareDatesWithoutTime } from "~/utils/helperUtils";
 
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
@@ -213,11 +215,11 @@ export async function getStaticProps(
  *  @returns { paths[] }
  */
 export const getStaticPaths: GetStaticPaths = async () => {
-  // NO PRERENDERING
-  // return {
-  //   paths: [],
-  //   fallback: "blocking",
-  // };
+  //FIXME: NOT PRERENDERING POSTS
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
 
   const reports = await prisma.report.findMany({
     select: {
@@ -379,7 +381,7 @@ export default function PublicReportPost(
 
     const matchingPost = staticReportFromProps.posts.find((post) => {
       const postDate = new Date(post.date);
-      return selectedDate.toISOString() === postDate.toISOString();
+      return compareDatesWithoutTime(selectedDate, postDate);
     });
 
     if (matchingPost) {
@@ -510,7 +512,7 @@ export default function PublicReportPost(
           {/* // Posts Date Picker */}
           {/* <Box ref={targetRef}> */}
           <Box>
-            <PostsDatePicker
+            <PostDatepicker
               defaultDate={
                 selectedDate ? columnStartMonth : dateOfGermination
               }

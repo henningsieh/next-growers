@@ -14,7 +14,12 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
+import {
+  DateInput,
+  DatePicker,
+  DatePickerInput,
+  DatesProvider,
+} from "@mantine/dates";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -42,7 +47,7 @@ import { useRouter } from "next/router";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import type { EditReportFormProps } from "~/types";
-import { Environment } from "~/types";
+import { Environment, Locale } from "~/types";
 
 import { api } from "~/utils/api";
 import { handleDrop } from "~/utils/helperUtils";
@@ -85,7 +90,6 @@ export function EditReportForm({
   user: user,
 }: EditReportFormProps) {
   const router = useRouter();
-
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
@@ -193,6 +197,13 @@ export function EditReportForm({
       console.debug(error);
     });
   };
+
+  const growstartdatePlaceholder = t(
+    "common:report-form-growstartdate-placeholder"
+  );
+  const strainsPlaceholder = t(
+    "common:report-form-strains-placeholder"
+  );
 
   return (
     <>
@@ -322,8 +333,7 @@ export function EditReportForm({
                   </Text>
                   <Text ta="center" fz="sm" my="xs" c="dimmed">
                     For now we only can accept one <i>.jpg/.png/.gif</i>
-                    image file, that is less than 4.28 MB (4.394 KB,
-                    4.500.000 B)! in size.
+                    image file, that is less than 4.5 MB in size.
                   </Text>
                 </Box>
               </Dropzone>
@@ -337,9 +347,11 @@ export function EditReportForm({
           >
             <Box className="space-y-2">
               <Textarea
-                label="Bockquote cite:"
-                description="This appears at the top of your Grow's main header image"
-                placeholder="My journey through the wonderful world of cannabis cultivation!"
+                label={t("common:report-form-bockquote-label")}
+                description={t(
+                  "common:report-form-bockquote-description"
+                )}
+                placeholder={growstartdatePlaceholder}
                 withAsterisk
                 mt="sm"
                 autosize
@@ -347,14 +359,16 @@ export function EditReportForm({
                 {...editReportForm.getInputProps("description")}
               />
               <TextInput
-                label="Title:"
-                description="This appears as headline on your Grow's main details page"
+                label={t("common:report-form-title-label")}
+                description={t("common:report-form-title-description")}
                 withAsterisk
                 {...editReportForm.getInputProps("title")}
               />
               <Select
-                label="Environment"
-                description="Environment of your Grow"
+                label={t("common:report-form-environment-label")}
+                description={t(
+                  "common:report-form-environment-description"
+                )}
                 data={Object.keys(Environment).map((key) => ({
                   value: key,
                   label: Environment[key as keyof typeof Environment],
@@ -364,12 +378,14 @@ export function EditReportForm({
                 className="w-full"
                 icon={<IconHome size="1.2rem" />}
               />
+              {router.locale}
               <Grid gutter="sm">
                 <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
-                  <DateInput
+                  {/* <DatesProvider settings={{ locale: activeLocale }}> */}
+                  <DatePickerInput
                     label="Grow start date:"
                     description="'Created at' date of your Grow"
-                    valueFormat="MMM DD, YYYY HH:mm"
+                    // valueFormat="MMMM DD, YYYY HH:mm"
                     maxDate={new Date()}
                     // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
                     // className="w-full"
@@ -383,13 +399,16 @@ export function EditReportForm({
                       );
                     }}
                   />
+                  {/* </DatesProvider> */}
                 </Grid.Col>
                 <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
                   {allStrains && (
                     <MultiSelect
-                      label="Strain(s):"
-                      description="Select all strain(s) of your Grow"
-                      placeholder="Pick strains of your Grow"
+                      label={t("common:report-form-strains-label")}
+                      description={t(
+                        "common:report-form-strains-description"
+                      )}
+                      placeholder={strainsPlaceholder}
                       {...editReportForm.getInputProps("strains")}
                       data={allStrains.map((strain) => ({
                         value: strain.id,

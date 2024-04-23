@@ -87,10 +87,6 @@ const ImageUploader = ({
                   maxSize={maxSize}
                   onReject={onReject}
                   sx={(theme) => ({
-                    color:
-                      theme.colorScheme === "dark"
-                        ? theme.white
-                        : theme.black,
                     fontSize: theme.fontSizes.lg,
                     fontWeight: "bolder",
                     display: "flex",
@@ -98,11 +94,17 @@ const ImageUploader = ({
                     justifyContent: "center",
                     border: 0,
                     minHeight: rem(80),
+                    color: "white",
                     backgroundColor:
                       theme.colorScheme === "dark"
-                        ? theme.colors.growgreen[8]
-                        : theme.colors.growgreen[3],
-
+                        ? theme.colors.growgreen[5]
+                        : theme.colors.growgreen[4],
+                    "&:hover": {
+                      backgroundColor:
+                        theme.colorScheme === "dark"
+                          ? theme.colors.growgreen[4]
+                          : theme.colors.growgreen[3],
+                    },
                     "&[data-accept]": {
                       color: theme.white,
                       backgroundColor: theme.colors.growgreen[4],

@@ -6,12 +6,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import "dayjs/locale/de";
-import "dayjs/locale/en";
-
-import { useRouter } from "next/router";
-
-import { Locale } from "~/types";
 
 interface PostsDatePickerProps {
   defaultDate: Date;
@@ -23,7 +17,7 @@ interface PostsDatePickerProps {
   responsiveColumnCount: number;
 }
 
-const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
+const PostDatepicker: React.FC<PostsDatePickerProps> = ({
   defaultDate,
   postDays,
   selectedDate,
@@ -33,18 +27,26 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   responsiveColumnCount,
 }) => {
   const theme = useMantineTheme();
-  const router = useRouter();
-
   return (
     <Paper py="xs" withBorder key={responsiveColumnCount}>
       <Group position="center">
         <DatePicker
-          locale={router.locale === Locale.DE ? Locale.DE : Locale.EN}
           size="sm"
           renderDay={(date) => {
             const day = date.getDate();
             const calDay = date.getTime();
-            const isDisabled = !postDays.includes(calDay);
+
+            // matches regardless of the time of timestamp
+            const isDisabled = !postDays.some((postTimestamp) => {
+              const postDate = new Date(postTimestamp);
+              const calDate = new Date(calDay);
+
+              return (
+                calDate.getFullYear() === postDate.getFullYear() &&
+                calDate.getMonth() === postDate.getMonth() &&
+                calDate.getDate() === postDate.getDate()
+              );
+            });
 
             return (
               <Indicator
@@ -54,7 +56,10 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
                 color={theme.colors.green[8]}
                 offset={-2}
               >
-                <Box>{day}</Box>
+                <Box>
+                  {day}
+                  {isDisabled}
+                </Box>
               </Indicator>
             );
           }}
@@ -71,4 +76,4 @@ const PostsDatePicker: React.FC<PostsDatePickerProps> = ({
   );
 };
 
-export default PostsDatePicker;
+export default PostDatepicker;
