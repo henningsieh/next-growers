@@ -550,7 +550,7 @@ export const reportRouter = createTRPCRouter({
               ? postDate.getTime() - reportCreatedAt.getTime()
               : 0;
           const growDay = Math.floor(
-            timeDifference / (1000 * 60 * 60 * 24) + 1
+            timeDifference / (1000 * 60 * 60 * 24)
           );
 
           const isoLikes = post.likes.map(

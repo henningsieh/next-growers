@@ -12,7 +12,7 @@ import {
   Space,
   TextInput,
 } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
+import { DateInput, DatePickerInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
@@ -154,15 +154,11 @@ const PostForm = (props: AddPostProps) => {
   today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
 
   const growDay = post
-    ? // Calculate Grow day from props calc(post.date - reportStartDate)
-      Math.floor(
-        (new Date(post.date).getTime() - reportStartDate.getTime()) /
-          (1000 * 60 * 60 * 24)
-      )
-    : // Calculate the difference calc(now - reportStartDate)
-      Math.floor(
+    ? post.growDay
+    : Math.floor(
         (currentDate.getTime() - reportStartDate.getTime()) /
-          (1000 * 60 * 60 * 24)
+          (1000 * 60 * 60 * 24) +
+          1
       );
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -172,7 +168,7 @@ const PostForm = (props: AddPostProps) => {
     initialValues: {
       id: post ? post.id : "",
       date: post ? new Date(post.date) : today,
-      day: growDay, //FIXME: calculate GrowDay if prop post,
+      day: growDay,
       title: post ? post.title : "",
       content: post ? post.content : prefillHTMLContent,
       growStage: post ? post.growStage : undefined,
@@ -247,7 +243,7 @@ const PostForm = (props: AddPostProps) => {
                   <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
                     <Flex
                       justify="flex-start"
-                      className="space-x-3"
+                      className="space-x-2"
                       align="baseline"
                     >
                       <DateInput
@@ -297,11 +293,12 @@ const PostForm = (props: AddPostProps) => {
                           if (!growDayOffSet && growDayOffSet != 0)
                             return; // prevent error if changed to empty string
 
-                          const newPostDate = new Date(reportStartDate); // Create a new Date object using the reportStartDate
+                          const newPostDate = new Date(reportStartDate);
                           newPostDate.setUTCDate(
                             newPostDate.getUTCDate() + growDayOffSet
                           );
-                          newPostDate.setHours(1); //  setUTCHours(22, 0, 0, 0);
+                          console.debug(newPostDate);
+                          newPostDate.setHours(0); //  setUTCHours(22, 0, 0, 0);
                           console.debug(newPostDate);
                           createPostForm.setFieldValue(
                             "date",
@@ -318,7 +315,7 @@ const PostForm = (props: AddPostProps) => {
                   <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
                     <Flex
                       justify="flex-start"
-                      className="space-x-3"
+                      className="space-x-2"
                       align="baseline"
                     >
                       <Select

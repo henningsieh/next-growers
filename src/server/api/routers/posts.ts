@@ -236,12 +236,11 @@ export const postRouter = createTRPCRouter({
       const formattedPosts = await Promise.all(
         posts.map(async (post) => {
           const date = new Date(post.date);
-          const growDay =
-            Math.floor(
-              (new Date(post.date).getTime() -
-                report.createdAt.getTime()) /
-                (1000 * 60 * 60 * 24)
-            ) + 1; // Adding 1 to get 1-based indexing
+          const growDay = Math.floor(
+            (new Date(post.date).getTime() -
+              report.createdAt.getTime()) /
+              (1000 * 60 * 60 * 24)
+          ); // + 1; is not consistant for now!
 
           const isoLikes = post.likes.map(
             ({ id, createdAt, updatedAt, user }) => ({
