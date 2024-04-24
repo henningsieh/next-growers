@@ -287,7 +287,7 @@ const ProtectedNotifications = () => {
                               <>
                                 {notification.comment?.author.name}{" "}
                                 {notificationEvents[notification.event]}{" "}
-                                {"your"} {"Comment"}
+                                {"a"} {"Comment"}
                               </>
                             )}
                             {notification.event ===

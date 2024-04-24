@@ -12,7 +12,6 @@ import {
   Textarea,
   Title,
   Transition,
-  TypographyStylesProvider,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -234,30 +233,28 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                   </Group>
                 </Group>
                 <Box>
-                  <TypographyStylesProvider>
-                    <Alert
-                      p="xs"
-                      mt="sm"
-                      ml={42}
-                      // w={420}
-                      icon={<IconInfoCircle size="1rem" />}
-                      title="Markdown support"
-                      color="orange"
-                      variant="outline"
+                  <Alert
+                    p="xs"
+                    mt="sm"
+                    ml={42}
+                    // w={420}
+                    icon={<IconInfoCircle size="1rem" />}
+                    title="Markdown support"
+                    color="orange"
+                    variant="outline"
+                  >
+                    Use{" "}
+                    <Link
+                      title="Markdown Cheat Sheet"
+                      href={
+                        "https://www.markdownguide.org/cheat-sheet/"
+                      }
+                      target="_blank"
                     >
-                      Use{" "}
-                      <Link
-                        title="Markdown Cheat Sheet"
-                        href={
-                          "https://www.markdownguide.org/cheat-sheet/"
-                        }
-                        target="_blank"
-                      >
-                        <u>markdown</u>
-                      </Link>{" "}
-                      to <i>style</i> your <b>comment</b>!
-                    </Alert>
-                  </TypographyStylesProvider>
+                      <u>markdown</u>
+                    </Link>{" "}
+                    to <i>style</i> your <b>comment</b>!
+                  </Alert>
                 </Box>
                 <form
                   onSubmit={newCommentForm.onSubmit((values) => {

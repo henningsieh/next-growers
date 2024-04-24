@@ -33,7 +33,7 @@ const useStyles = createStyles((theme) => ({
     borderLeft: `0px solid`, // no left border for this quote
     fontFamily: `'Roboto Slab', sans-serif`,
     fontSize: "1.2rem",
-    color: theme.colors.gray[4],
+    color: theme.colors.gray[5],
     width: "100%",
   },
 

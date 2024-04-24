@@ -11,6 +11,7 @@ import {
   Text,
   Textarea,
   TextInput,
+  TypographyStylesProvider,
   useMantineTheme,
 } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
@@ -62,7 +63,7 @@ const useStyles = createStyles((theme) => ({
 
   responses: {
     paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
-      ? rem(60)
+      ? rem(120)
       : rem(30),
   },
 
@@ -208,7 +209,7 @@ export function UserComment({
     validateInputOnChange: true,
     initialValues: {
       id: comment.id,
-      isResponseTo: comment.isResponseToId as string,
+      isResponseTo: comment.isResponseToId || undefined,
       postId: comment.postId as string,
       content: comment.content,
     },
@@ -258,8 +259,6 @@ export function UserComment({
       );
     };
   }, []);
-
-  console.debug(comment.responses as Comments);
 
   return (
     <>
@@ -383,14 +382,17 @@ export function UserComment({
           </Flex>
         </Group>
         {!isEditing ? (
-          <Paper className={classes.contentHtml}>
-            {transformedHtml ? (
-              <Box
-                className={classes.content}
-                dangerouslySetInnerHTML={{ __html: transformedHtml }}
-              />
-            ) : null}
-          </Paper>
+          <TypographyStylesProvider>
+            <Paper className={classes.contentHtml}>
+              {transformedHtml ? (
+                <Box
+                  fz="lg"
+                  className={classes.content}
+                  dangerouslySetInnerHTML={{ __html: transformedHtml }}
+                />
+              ) : null}
+            </Paper>
+          </TypographyStylesProvider>
         ) : (
           // EDITING
           <form
@@ -399,13 +401,10 @@ export function UserComment({
             }, handleErrors)}
           >
             <TextInput
-              // "isResponseToId" is set and I can see it in frontend
-              // but it is not included in values sent to backend,
-              // server console.debug("isResponseTo", isResponseTo) is empty.
-              // Why?
               type="text"
+              hidden
               {...editCommentForm.getInputProps("isResponseTo")}
-              value={comment.isResponseToId as string}
+              value={comment.isResponseToId || undefined}
             />
             <Box className="relative">
               <LoadingOverlay

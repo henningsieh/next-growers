@@ -10,6 +10,7 @@ import {
   rem,
   Space,
   Text,
+  TypographyStylesProvider,
   useMantineTheme,
 } from "@mantine/core";
 // import { useMediaQuery } from "@mantine/hooks";
@@ -295,18 +296,20 @@ export function PostCard(props: PostCardProps) {
               }
             />
           </Box>
-          <Paper
-            fz={16}
-            p={theme.spacing.xs}
-            mb={theme.spacing.sm}
-            m={0}
-            dangerouslySetInnerHTML={{
-              __html: postHTMLContent as TrustedHTML,
-            }}
-          />
-          <Group position="apart" px={2} className={classes.section}>
-            {postData}
-          </Group>
+          <TypographyStylesProvider>
+            <Paper
+              fz={16}
+              p={theme.spacing.xs}
+              mb={theme.spacing.sm}
+              m={0}
+              dangerouslySetInnerHTML={{
+                __html: postHTMLContent as TrustedHTML,
+              }}
+            />
+            <Group position="apart" px={2} className={classes.section}>
+              {postData}
+            </Group>
+          </TypographyStylesProvider>
         </Paper>
 
         <PostComments reportId={report.id} postId={postId} />

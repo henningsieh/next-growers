@@ -1,4 +1,5 @@
 import {
+  Blockquote,
   ColorSchemeProvider,
   MantineProvider,
   rem,
@@ -101,7 +102,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               h5: { fontSize: "0.94rem" },
             },
           },
-          white: "#d7e4d7",
+          white: "#fefefe",
           black: "#333333",
 
           // Default theme.breakpoints values:
@@ -123,6 +124,29 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             // 6 Spalten
             xl: "90em", // 1440px
           },
+
+          focusRingStyles: {
+            // reset styles are applied to <button /> and <a /> elements
+            // in &:focus:not(:focus-visible) selector to mimic
+            // default browser behavior for native <button /> and <a /> elements
+            resetStyles: () => ({ outline: "none" }),
+
+            // styles applied to all elements except inputs based on Input component
+            // styles are added with &:focus selector
+            styles: (theme) => ({
+              outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
+            }),
+
+            // focus styles applied to components that are based on Input
+            // styles are added with &:focus selector
+            inputStyles: (theme) => ({
+              // padding: theme.spacing.sm,
+              // boxShadow: theme.shadows.lg,
+              outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
+              // outline: "none", // Remove the yellow outline on focus
+            }),
+          },
+
           components: {
             Accordion: {
               styles: (
@@ -318,27 +342,25 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 // Other styles...
               }),
             },
-          },
-          focusRingStyles: {
-            // reset styles are applied to <button /> and <a /> elements
-            // in &:focus:not(:focus-visible) selector to mimic
-            // default browser behavior for native <button /> and <a /> elements
-            resetStyles: () => ({ outline: "none" }),
-
-            // styles applied to all elements except inputs based on Input component
-            // styles are added with &:focus selector
-            styles: (theme) => ({
-              outline: `${rem(5)} solid ${theme.colors.groworange[4]}`,
-            }),
-
-            // focus styles applied to components that are based on Input
-            // styles are added with &:focus selector
-            inputStyles: (theme) => ({
-              // padding: theme.spacing.sm,
-              // boxShadow: theme.shadows.lg,
-              outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
-              // outline: "none", // Remove the yellow outline on focus
-            }),
+            Blockquote: {
+              styles: () => ({
+                root: {
+                  // padding: 0, // effects grow tile view!!
+                },
+                inner: {
+                  //fontSize: 4,
+                },
+                body: {
+                  // padding: 0,
+                },
+                icon: {
+                  // padding: 0,
+                },
+                cite: {
+                  // padding: 0,
+                },
+              }),
+            },
           },
 
           globalStyles: (theme) => ({
@@ -347,16 +369,23 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               padding: "0.2em 0em 0.3em 0.5em",
               fontSize: "0.96em",
               borderLeft: `2px solid ${theme.colors.growgreen[4]}`,
-              fontStyle: "italic",
             },
-            "blockquote a": {
-              textDecoration: "underline",
-              color: theme.colors.growgreen?.[3],
+            "blockquote p": {
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              fontSize: "0.96em",
             },
             ul: {
+              fontSize: "0.72em",
               paddingLeft: "1.5em",
             },
+            "ul li p": {
+              fontSize: "1em",
+              position: "relative",
+              paddingLeft: "1em",
+            },
             "ul li": {
+              fontSize: "1.3em",
               position: "relative",
               paddingLeft: "1em",
             },
@@ -368,11 +397,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               width: "0.5em",
               height: "0.5em",
               borderRadius: "50%",
-              backgroundColor: theme.colors.groworange[4], // Change the color to match your theme
-            },
-            ol: {
-              paddingLeft: "1.5em",
-              counterReset: "list-counter",
+              backgroundColor: theme.colors.growgreen[4], // Change the color to match your theme
             },
             "ol li": {
               position: "relative",
@@ -386,7 +411,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               top: "0em",
               left: 0,
               fontWeight: "bold",
-              color: theme.colors.groworange[4], // Change the color to match your theme
+              color: theme.colors.growgreen[4], // Change the color to match your theme
             },
             "*, *::before, *::after": {
               boxSizing: "border-box",
