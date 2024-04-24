@@ -42,7 +42,7 @@ import { useRouter } from "next/router";
 import LikeHeart from "~/components/Atom/LikeHeart";
 import UserAvatar from "~/components/Atom/UserAvatar";
 
-import { type Comment, type Comments, Locale } from "~/types";
+import { type Comment, Locale } from "~/types";
 
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/utils/helperUtils";
