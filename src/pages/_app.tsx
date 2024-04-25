@@ -372,7 +372,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             },
             "blockquote p": {
               overflow: "hidden",
-              whiteSpace: "nowrap",
+              // whiteSpace: "nowrap",
               fontSize: "0.96em",
             },
             ul: {

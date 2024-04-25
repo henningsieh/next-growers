@@ -24,6 +24,7 @@ import {
   IconTrashX,
 } from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";
+import { Editor } from "@tiptap/react";
 import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
@@ -75,6 +76,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface UserCommentProps {
+  editor: Editor | null;
   reportId: string;
   comment: Comment;
   isResponse: string;
@@ -118,6 +120,7 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
 }
 
 export function UserComment({
+  editor,
   reportId,
   isResponse,
   comment,
@@ -160,12 +163,9 @@ export function UserComment({
         notifications.show(defaultErrorMsg(error.message));
         console.error({ error });
       },
-      onSuccess: async (deletedComment) => {
+      onSuccess: async () => {
+        await trpc.comments.invalidate();
         notifications.show(commentDeletedSuccessfulMsg);
-
-        await trpc.comments.getCommentsByPostId.fetch({
-          postId: deletedComment.postId as string,
-        });
         // Navigate to the new report page
         // void router.push(`/account/reports/${newReportDB.id}`);
       },
@@ -232,7 +232,11 @@ export function UserComment({
     const fetchHtml = async () => {
       try {
         const html = await renderMarkDownToHtml(comment.content);
-        setTransformedHtml(html);
+
+        console.debug("html", html);
+        console.debug("comment.content", comment.content);
+
+        setTransformedHtml(html || comment.content);
       } catch (error) {
         console.error(error);
         // Handle the error if necessary
@@ -355,7 +359,11 @@ export function UserComment({
                   isResponse ? isResponse : comment.id
                 );
 
+                // Construct the sender link
+                const senderLink = `${activeLocale === "en" ? "" : `/${activeLocale as string}`}/grow/${reportId}/update/${comment.postId as string}#${comment.id}`;
+
                 // Update the content field
+                // OLD SENDER LINK
                 const updatedContent = `${newCommentForm.values.content}> from: [${
                   comment.author.name as string
                 } <comment#${comment.id}](${activeLocale === "en" ? "" : `/${activeLocale as string}`}/grow/${reportId}/update/${
@@ -364,6 +372,12 @@ export function UserComment({
 
                 // Update the content field value directly
                 newCommentForm.setFieldValue("content", updatedContent);
+
+                editor?.commands.setContent(`
+
+                ${activeLocale === "en" ? "fron:" : "von"}: <a href=${senderLink}>${comment.author.name as string} #${comment.id}</a>
+                  <blockquote>${comment.content}</blockquote>
+                  <p></p>`);
 
                 console.debug(newCommentForm.values);
               }}
@@ -449,6 +463,7 @@ export function UserComment({
         {comment.responses.map((response) => (
           <Box id={response.id} key={response.id}>
             <UserComment
+              editor={editor}
               reportId={reportId}
               isResponse={comment.id}
               comment={response as Comment}
