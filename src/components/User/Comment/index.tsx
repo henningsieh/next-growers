@@ -9,7 +9,6 @@ import {
   Paper,
   rem,
   Text,
-  Textarea,
   TextInput,
   TypographyStylesProvider,
   useMantineTheme,
@@ -18,16 +17,21 @@ import type { UseFormReturnType } from "@mantine/form";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { RichTextEditor } from "@mantine/tiptap";
 import {
   IconEdit,
   IconMessageForward,
   IconTrashX,
 } from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";
-import { Editor } from "@tiptap/react";
-import { remark } from "remark";
-import remarkBreaks from "remark-breaks";
-import remarkHtml from "remark-html";
+import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import { type Editor, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import {
   commentDeletedSuccessfulMsg,
   defaultErrorMsg,
@@ -40,6 +44,7 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
+import EmojiPicker from "~/components/Atom/EmojiPicker";
 import LikeHeart from "~/components/Atom/LikeHeart";
 import UserAvatar from "~/components/Atom/UserAvatar";
 
@@ -102,25 +107,8 @@ interface UserCommentProps {
   >;
 }
 
-// Use remark to convert markdown into HTML string
-function renderMarkDownToHtml(markdown: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    remark()
-      .use(remarkHtml)
-      .use(remarkBreaks)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .process(markdown, (err: any, file: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(String(file));
-        }
-      });
-  });
-}
-
 export function UserComment({
-  editor,
+  editor: newCommentEditor,
   reportId,
   isResponse,
   comment,
@@ -141,9 +129,7 @@ export function UserComment({
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [transformedHtml, setTransformedHtml] = useState<string | null>(
-    null
-  );
+  const [commentHtml, setCommentHtml] = useState<string | null>(null);
 
   const trpc = api.useUtils();
 
@@ -223,20 +209,37 @@ export function UserComment({
     });
   };
 
+  // Prepare TipTap Editor for comment content
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({
+        linkOnPaste: true,
+      }),
+      Superscript,
+      Subscript,
+      Highlight,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+        alignments: ["left", "center", "justify"],
+      }),
+    ],
+    content: editCommentForm.values.content,
+    onUpdate: ({ editor }) => {
+      editCommentForm.setFieldValue("content", editor.getHTML());
+    },
+  });
+
   useEffect(() => {
     editCommentForm.setFieldValue(
       "isResponseToId",
       comment.isResponseToId
     );
 
-    const fetchHtml = async () => {
+    const fetchHtml = () => {
       try {
-        const html = await renderMarkDownToHtml(comment.content);
-
-        console.debug("html", html);
-        console.debug("comment.content", comment.content);
-
-        setTransformedHtml(html || comment.content);
+        setCommentHtml(comment.content);
       } catch (error) {
         console.error(error);
         // Handle the error if necessary
@@ -245,24 +248,6 @@ export function UserComment({
     void fetchHtml();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comment.content]);
-
-  const [, setSelectedCommentText] = useState("");
-
-  useEffect(() => {
-    const handleSelectionChange = () => {
-      const selectedText = window.getSelection()?.toString() || "";
-      setSelectedCommentText(selectedText);
-    };
-
-    document.addEventListener("selectionchange", handleSelectionChange);
-
-    return () => {
-      document.removeEventListener(
-        "selectionchange",
-        handleSelectionChange
-      );
-    };
-  }, []);
 
   return (
     <>
@@ -345,7 +330,6 @@ export function UserComment({
               className=" cursor-default"
               variant="default"
               onClick={() => {
-                console.debug("Response button clicked");
                 setNewOpen(true);
 
                 const lines = comment.content.split("\n");
@@ -368,18 +352,16 @@ export function UserComment({
                   comment.author.name as string
                 } <comment#${comment.id}](${activeLocale === "en" ? "" : `/${activeLocale as string}`}/grow/${reportId}/update/${
                   comment.postId as string
-                }#${comment.id})>\n${formattedContent}\n\n`;
+                }#${comment.id})>\n${formattedContent}\n<p></p>`;
 
                 // Update the content field value directly
                 newCommentForm.setFieldValue("content", updatedContent);
 
-                editor?.commands.setContent(`
+                newCommentEditor?.commands.setContent(`
 
                 ${activeLocale === "en" ? "fron:" : "von"}: <a href=${senderLink}>${comment.author.name as string} #${comment.id}</a>
                   <blockquote>${comment.content}</blockquote>
                   <p></p>`);
-
-                console.debug(newCommentForm.values);
               }}
             >
               <IconMessageForward
@@ -398,11 +380,11 @@ export function UserComment({
         {!isEditing ? (
           <TypographyStylesProvider>
             <Paper className={classes.contentHtml}>
-              {transformedHtml ? (
+              {commentHtml ? (
                 <Box
                   fz="lg"
                   className={classes.content}
-                  dangerouslySetInnerHTML={{ __html: transformedHtml }}
+                  dangerouslySetInnerHTML={{ __html: commentHtml }}
                 />
               ) : null}
             </Paper>
@@ -420,28 +402,66 @@ export function UserComment({
               {...editCommentForm.getInputProps("isResponseTo")}
               value={comment.isResponseToId || undefined}
             />
-            <Box className="relative">
+            <Box ml={42} mt={12} className="relative">
               <LoadingOverlay
-                ml={42}
-                mt={12}
                 radius="sm"
                 visible={isSaving}
-                transitionDuration={150}
+                transitionDuration={300}
                 loaderProps={{
-                  size: "sm",
-                  variant: "dots",
+                  size: "md",
+                  color: "growgreen.3",
                 }}
               />
-              <Textarea
-                autosize
-                minRows={3}
-                maxRows={14}
-                ml={42}
-                pt={12}
-                withAsterisk
-                placeholder={comment.content}
-                {...editCommentForm.getInputProps("content")}
-              />
+              {/* Replace Textarea with RichTextEditor */}
+              <RichTextEditor editor={editor}>
+                <RichTextEditor.Toolbar>
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Bold />
+                    <RichTextEditor.Italic />
+                    <RichTextEditor.Underline />
+                    <RichTextEditor.Strikethrough />
+                    <RichTextEditor.ClearFormatting />
+                    <RichTextEditor.Highlight />
+                    <RichTextEditor.Code />
+                  </RichTextEditor.ControlsGroup>
+
+                  <EmojiPicker editor={editor as Editor} />
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.H1 />
+                    <RichTextEditor.H2 />
+                    <RichTextEditor.H3 />
+                    <RichTextEditor.H4 />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Blockquote />
+                    <RichTextEditor.Hr />
+                    <RichTextEditor.BulletList />
+                    <RichTextEditor.OrderedList />
+                    <RichTextEditor.Subscript />
+                    <RichTextEditor.Superscript />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Link />
+                    <RichTextEditor.Unlink />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.AlignLeft />
+                    <RichTextEditor.AlignCenter />
+                    {/* 
+                <RichTextEditor.AlignJustify/>
+                <RichTextEditor.AlignRight/> */}
+                  </RichTextEditor.ControlsGroup>
+                </RichTextEditor.Toolbar>
+                <RichTextEditor.Content
+                  sx={(theme) => ({
+                    boxShadow: `0 0 0px 1px ${theme.colors.growgreen[4]}`,
+                  })}
+                />
+              </RichTextEditor>
             </Box>
             <Flex justify="flex-end" align="center">
               <Button
@@ -463,7 +483,7 @@ export function UserComment({
         {comment.responses.map((response) => (
           <Box id={response.id} key={response.id}>
             <UserComment
-              editor={editor}
+              editor={newCommentEditor}
               reportId={reportId}
               isResponse={comment.id}
               comment={response as Comment}

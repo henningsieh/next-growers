@@ -1,6 +1,5 @@
 import {
   ActionIcon,
-  Alert,
   Box,
   Button,
   Flex,
@@ -9,25 +8,21 @@ import {
   Paper,
   Space,
   Text,
-  Textarea,
   Title,
   Transition,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
-import {
-  IconInfoCircle,
-  IconTextWrap,
-  IconX,
-} from "@tabler/icons-react";
+import { IconTextWrap, IconX } from "@tabler/icons-react";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
-import { Editor, useEditor } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
+import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
   commentSuccessfulMsg,
@@ -39,7 +34,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
-import NextLink from "next/link";
 import { useRouter } from "next/router";
 
 import EmojiPicker from "~/components/Atom/EmojiPicker";
@@ -99,6 +93,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   useEffect(() => {
     newCommentForm.setFieldValue("postId", postId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
   // Prepare TipTap Editor for comment content
@@ -108,6 +103,13 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       Underline,
       Link.configure({
         linkOnPaste: true,
+        HTMLAttributes: {
+          // Change rel to different value
+          // Allow search engines to follow links(remove nofollow)
+          // rel: 'noopener noreferrer',
+          // Remove target entirely so links open in current tab
+          target: null,
+        },
       }),
       Superscript,
       SubScript,
@@ -182,16 +184,16 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
             <Title order={2}>{t("common:comments-headline")}</Title>
 
             <Button
-              fz="lg"
+              fz="md"
               variant="filled"
-              color="growgreen"
+              color={!newOpen ? "growgreen" : "dark"}
               leftIcon={<IconTextWrap size={22} />}
               title={!newOpen ? "add new comment" : "close form"}
               onClick={() => {
                 setNewOpen((prev) => !prev);
               }}
             >
-              {t("common:comments-button-comment")}
+              {t("common:comments-button-open-comments")}
             </Button>
           </Group>
 
@@ -296,9 +298,8 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                       visible={isSaving}
                       transitionDuration={300}
                       loaderProps={{
-                        size: "sm",
+                        size: "md",
                         color: "growgreen.3",
-                        // variant: "bars",
                       }}
                     />
                     <RichTextEditor mt={12} ml={42} editor={editor}>
