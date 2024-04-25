@@ -1,25 +1,32 @@
 import {
   ActionIcon,
-  Alert,
   Box,
   Button,
+  createStyles,
   Flex,
   Group,
   LoadingOverlay,
   Paper,
+  rem,
   Space,
   Text,
-  Textarea,
   Title,
   Transition,
+  useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import {
-  IconInfoCircle,
-  IconTextWrap,
-  IconX,
-} from "@tabler/icons-react";
+import { RichTextEditor } from "@mantine/tiptap";
+import { IconTextWrap, IconX } from "@tabler/icons-react";
+import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
+import SubScript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import type { Editor } from "@tiptap/react";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import {
   commentSuccessfulMsg,
   defaultErrorMsg,
@@ -30,9 +37,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
+import EmojiPicker from "~/components/Atom/EmojiPicker";
 import UserAvatar from "~/components/Atom/UserAvatar";
 import { UserComment } from "~/components/User/Comment";
 
@@ -47,6 +54,17 @@ interface CommentsProps {
   postId: string;
 }
 
+const useStyles = createStyles((theme) => ({
+  button: {
+    [theme.fn.smallerThan("md")]: {
+      padding: rem(5),
+      height: rem(20),
+      // width: rem(140),
+      fontSize: 12,
+    },
+  },
+}));
+
 const PostComments = ({ reportId, postId }: CommentsProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -54,48 +72,20 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   const trpc = api.useUtils();
 
-  // const theme = useMantineTheme();
+  const theme = useMantineTheme();
+  const { classes } = useStyles();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
 
   const now = new Date();
 
-  // FETCH COMMENTS
-  const {
-    data: comments,
-    isLoading,
-    // isError,
-  } = api.comments.getCommentsByPostId.useQuery({
-    postId: postId,
-  });
+  const { data: comments, isLoading } =
+    api.comments.getCommentsByPostId.useQuery({
+      postId: postId,
+    });
 
   const { data: session, status } = useSession();
-
-  const { mutate: tRPCsaveComment } =
-    api.comments.saveComment.useMutation({
-      onMutate: () => {
-        setIsSaving(true);
-      },
-      // If the mutation fails, use the context
-      // returned from onMutate to roll back
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onError: (error, _comment) => {
-        notifications.show(defaultErrorMsg(error.message));
-      },
-      onSuccess: async (newCommentDB) => {
-        notifications.show(commentSuccessfulMsg);
-        newCommentForm.reset();
-        await trpc.comments.getCommentsByPostId.fetch({
-          postId: newCommentDB.postId as string,
-        });
-      },
-      // Always refetch after error or success:
-      onSettled: () => {
-        setNewOpen(false);
-        setIsSaving(false);
-      },
-    });
 
   const commentsRef = useRef<HTMLElement[]>([]);
 
@@ -108,28 +98,6 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       postId: postId,
       content: "",
     },
-  });
-
-  const userComments = comments?.map((comment) => {
-    return (
-      <div
-        key={comment.id}
-        id={comment.id}
-        ref={(ref) => {
-          if (ref) {
-            commentsRef.current.push(ref);
-          }
-        }}
-      >
-        <UserComment
-          reportId={reportId}
-          isResponse=""
-          comment={comment}
-          setNewOpen={setNewOpen}
-          newCommentForm={newCommentForm}
-        />
-      </div>
-    );
   });
 
   const handleErrors = (errors: typeof newCommentForm.errors) => {
@@ -145,26 +113,117 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [postId]);
 
+  // Prepare TipTap Editor for comment content
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({
+        linkOnPaste: true,
+        HTMLAttributes: {
+          // Change rel to different value
+          // Allow search engines to follow links(remove nofollow)
+          // rel: 'noopener noreferrer',
+          // Remove target entirely so links open in current tab
+          target: null,
+        },
+      }),
+      Superscript,
+      SubScript,
+      Highlight,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+        alignments: ["left", "center", "justify"],
+      }),
+    ],
+    content: newCommentForm.values.content,
+    onUpdate: ({ editor }) => {
+      newCommentForm.setFieldValue("content", editor.getHTML());
+    },
+  });
+
+  const userComments = comments?.map((comment) => {
+    return (
+      <Box
+        mt="lg"
+        key={comment.id}
+        id={comment.id}
+        ref={(ref) => {
+          if (ref) {
+            commentsRef.current.push(ref);
+          }
+        }}
+      >
+        <UserComment
+          editor={editor}
+          reportId={reportId}
+          isResponse=""
+          comment={comment}
+          setNewOpen={setNewOpen}
+          newCommentForm={newCommentForm}
+        />
+      </Box>
+    );
+  });
+
+  const { mutate: tRPCsaveComment } =
+    api.comments.saveComment.useMutation({
+      onMutate: () => {
+        setIsSaving(true);
+      },
+      // If the mutation fails, use the context
+      // returned from onMutate to roll back
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (error, _comment) => {
+        notifications.show(defaultErrorMsg(error.message));
+      },
+      onSuccess: async (newCommentDB) => {
+        notifications.show(commentSuccessfulMsg);
+        newCommentForm.reset();
+        editor?.commands.setContent("");
+        await trpc.comments.getCommentsByPostId.fetch({
+          postId: newCommentDB.postId as string,
+        });
+      },
+      // Always refetch after error or success:
+      onSettled: () => {
+        setNewOpen(false);
+        setIsSaving(false);
+      },
+    });
+
   return (
     <Box>
       {status !== "loading" && isLoading && <p>loading comments...</p>}
       {status === "authenticated" && (
         <>
-          <Space h={"lg"} />
-          <Group pb="xs" position="apart">
+          <Group m={4} position="apart">
             <Title order={2}>{t("common:comments-headline")}</Title>
 
             <Button
-              fz="lg"
+              sx={(theme) => ({
+                [theme.fn.smallerThan("sm")]: {
+                  padding: rem(5),
+                  height: rem(26),
+                  // width: rem(140),
+                  fontSize: 16,
+                  fontWeight: "normal",
+                },
+              })}
+              fz="md"
               variant="filled"
-              color="growgreen"
-              leftIcon={<IconTextWrap size={22} />}
+              color={!newOpen ? "growgreen" : "dark"}
+              leftIcon={
+                <IconTextWrap
+                  size={theme.fn.smallerThan("sm") ? 16 : 22}
+                />
+              }
               title={!newOpen ? "add new comment" : "close form"}
               onClick={() => {
                 setNewOpen((prev) => !prev);
               }}
             >
-              {t("common:comments-button-comment")}
+              {t("common:comments-button-open-comments")}
             </Button>
           </Group>
 
@@ -178,7 +237,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
               <Paper
                 style={{ ...transitionStyles }}
                 p="sm"
-                mb="xs"
+                mt="sm"
                 withBorder
               >
                 <Group position="apart">
@@ -233,7 +292,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                   </Group>
                 </Group>
                 <Box>
-                  <Alert
+                  {/* <Alert
                     p="xs"
                     mt="sm"
                     ml={42}
@@ -254,43 +313,88 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                       <u>markdown</u>
                     </Link>{" "}
                     to <i>style</i> your <b>comment</b>!
-                  </Alert>
+                  </Alert> */}
                 </Box>
                 <form
                   onSubmit={newCommentForm.onSubmit((values) => {
                     tRPCsaveComment(values);
                   }, handleErrors)}
                 >
-                  <Box className="relative">
+                  <Box ml={42} mt={12} className="relative">
                     <LoadingOverlay
-                      ml={42}
-                      mt={12}
                       radius="sm"
                       visible={isSaving}
-                      transitionDuration={50}
+                      transitionDuration={300}
                       loaderProps={{
-                        size: "sm",
-                        variant: "dots",
+                        size: "md",
+                        color: "growgreen.3",
                       }}
                     />
-                    <Textarea
-                      autosize
-                      minRows={3}
-                      maxRows={14}
-                      ml={42}
-                      pt={12}
-                      withAsterisk
-                      // placeholder={`be nice and friendly :-)`}
-                      {...newCommentForm.getInputProps("content")}
-                    />
+                    <RichTextEditor editor={editor}>
+                      <RichTextEditor.Toolbar p="xs">
+                        <RichTextEditor.ControlsGroup>
+                          <EmojiPicker editor={editor as Editor} />
+                        </RichTextEditor.ControlsGroup>
+
+                        <RichTextEditor.ControlsGroup>
+                          <RichTextEditor.Bold />
+                          <RichTextEditor.Italic />
+                          <RichTextEditor.Underline />
+                          <RichTextEditor.Strikethrough />
+                          <RichTextEditor.ClearFormatting />
+                          <RichTextEditor.Highlight />
+                          <RichTextEditor.Code />
+                        </RichTextEditor.ControlsGroup>
+
+                        <RichTextEditor.ControlsGroup>
+                          <RichTextEditor.AlignLeft />
+                          <RichTextEditor.AlignCenter />
+                        </RichTextEditor.ControlsGroup>
+
+                        <RichTextEditor.ControlsGroup>
+                          <RichTextEditor.H1 />
+                          <RichTextEditor.H2 />
+                          <RichTextEditor.H3 />
+                          <RichTextEditor.H4 />
+                        </RichTextEditor.ControlsGroup>
+
+                        <RichTextEditor.ControlsGroup>
+                          <RichTextEditor.Link />
+                          <RichTextEditor.Unlink />
+                        </RichTextEditor.ControlsGroup>
+
+                        <RichTextEditor.ControlsGroup>
+                          <RichTextEditor.Blockquote />
+                          <RichTextEditor.Hr />
+                          <RichTextEditor.BulletList />
+                          <RichTextEditor.OrderedList />
+                          {/* <RichTextEditor.Subscript />
+                          <RichTextEditor.Superscript /> */}
+                        </RichTextEditor.ControlsGroup>
+                      </RichTextEditor.Toolbar>
+                      <RichTextEditor.Content
+                        sx={(theme) => ({
+                          boxShadow: `0 0 0px 1px ${theme.colors.growgreen[4]}`,
+                        })}
+                      />
+                    </RichTextEditor>
                   </Box>
-                  <Flex justify="flex-end" align="center">
+                  <Flex mt="sm" justify="flex-end" align="center">
                     <Button
-                      disabled={isSaving}
-                      mt="xs"
-                      size="xs"
+                      size="sm"
+                      sx={(theme) => ({
+                        [theme.fn.smallerThan("sm")]: {
+                          padding: rem(5),
+                          height: rem(26),
+                          // width: rem(140),
+                          fontSize: 14,
+                          fontWeight: "normal",
+                        },
+                      })}
+                      loading={isSaving}
                       type="submit"
-                      variant="outline"
+                      variant="filled"
+                      color="growgreen"
                     >
                       {t("common:comment-save-button")}
                     </Button>

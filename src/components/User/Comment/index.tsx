@@ -9,7 +9,6 @@ import {
   Paper,
   rem,
   Text,
-  Textarea,
   TextInput,
   TypographyStylesProvider,
   useMantineTheme,
@@ -18,12 +17,21 @@ import type { UseFormReturnType } from "@mantine/form";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { RichTextEditor } from "@mantine/tiptap";
 import {
   IconEdit,
   IconMessageForward,
   IconTrashX,
 } from "@tabler/icons-react";
 import { IconEditOff } from "@tabler/icons-react";
+import Highlight from "@tiptap/extension-highlight";
+import Link from "@tiptap/extension-link";
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import TextAlign from "@tiptap/extension-text-align";
+import Underline from "@tiptap/extension-underline";
+import { type Editor, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import { remark } from "remark";
 import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
@@ -39,6 +47,7 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
+import EmojiPicker from "~/components/Atom/EmojiPicker";
 import LikeHeart from "~/components/Atom/LikeHeart";
 import UserAvatar from "~/components/Atom/UserAvatar";
 
@@ -75,6 +84,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface UserCommentProps {
+  editor: Editor | null;
   reportId: string;
   comment: Comment;
   isResponse: string;
@@ -118,6 +128,7 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
 }
 
 export function UserComment({
+  editor: newCommentEditor,
   reportId,
   isResponse,
   comment,
@@ -138,9 +149,7 @@ export function UserComment({
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [transformedHtml, setTransformedHtml] = useState<string | null>(
-    null
-  );
+  const [commentHtml, setCommentHtml] = useState<string | null>(null);
 
   const trpc = api.useUtils();
 
@@ -160,12 +169,9 @@ export function UserComment({
         notifications.show(defaultErrorMsg(error.message));
         console.error({ error });
       },
-      onSuccess: async (deletedComment) => {
+      onSuccess: async () => {
+        await trpc.comments.invalidate();
         notifications.show(commentDeletedSuccessfulMsg);
-
-        await trpc.comments.getCommentsByPostId.fetch({
-          postId: deletedComment.postId as string,
-        });
         // Navigate to the new report page
         // void router.push(`/account/reports/${newReportDB.id}`);
       },
@@ -223,6 +229,28 @@ export function UserComment({
     });
   };
 
+  // Prepare TipTap Editor for comment content
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({
+        linkOnPaste: true,
+      }),
+      Superscript,
+      Subscript,
+      Highlight,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+        alignments: ["left", "center", "justify"],
+      }),
+    ],
+    content: editCommentForm.values.content,
+    onUpdate: ({ editor }) => {
+      editCommentForm.setFieldValue("content", editor.getHTML());
+    },
+  });
+
   useEffect(() => {
     editCommentForm.setFieldValue(
       "isResponseToId",
@@ -232,7 +260,11 @@ export function UserComment({
     const fetchHtml = async () => {
       try {
         const html = await renderMarkDownToHtml(comment.content);
-        setTransformedHtml(html);
+
+        console.debug("html", html);
+        console.debug("comment.content", comment.content);
+
+        setCommentHtml(html || comment.content);
       } catch (error) {
         console.error(error);
         // Handle the error if necessary
@@ -241,24 +273,6 @@ export function UserComment({
     void fetchHtml();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comment.content]);
-
-  const [, setSelectedCommentText] = useState("");
-
-  useEffect(() => {
-    const handleSelectionChange = () => {
-      const selectedText = window.getSelection()?.toString() || "";
-      setSelectedCommentText(selectedText);
-    };
-
-    document.addEventListener("selectionchange", handleSelectionChange);
-
-    return () => {
-      document.removeEventListener(
-        "selectionchange",
-        handleSelectionChange
-      );
-    };
-  }, []);
 
   return (
     <>
@@ -307,41 +321,52 @@ export function UserComment({
             {status === "authenticated" &&
               session.user.id === comment.author.id && (
                 <>
-                  <ActionIcon
-                    onClick={() => tRPCdeleteComment(comment.id)}
-                    className=" cursor-default"
-                    variant="default"
-                  >
-                    <IconTrashX size="1.4rem" stroke={1.2} />
-                  </ActionIcon>
                   {!isEditing ? (
                     <ActionIcon
-                      title="edit comment"
+                      title={
+                        activeLocale === "en" ? "edir" : "bearbeiten"
+                      }
                       onClick={() => setIsEditing((prev) => !prev)}
                       className="cursor-default"
-                      variant="default"
+                      variant="filled"
+                      color="groworange.4"
                     >
                       <IconEdit size="1.4rem" stroke={1.2} />
                     </ActionIcon>
                   ) : (
                     <ActionIcon
-                      title="end editing"
+                      title={
+                        activeLocale === "en"
+                          ? "end editing"
+                          : "bearbeiten beenden"
+                      }
                       onClick={() => setIsEditing((prev) => !prev)}
                       className="cursor-default"
-                      variant="default"
+                      variant="filled"
+                      color="groworange.2"
                     >
                       <IconEditOff size="1.4rem" stroke={1.2} />
                     </ActionIcon>
                   )}
+                  <ActionIcon
+                    title={activeLocale === "en" ? "delete" : "löschen"}
+                    onClick={() => tRPCdeleteComment(comment.id)}
+                    className=" cursor-default"
+                    variant="filled"
+                    color="red"
+                  >
+                    <IconTrashX size="1.4rem" stroke={1.2} />
+                  </ActionIcon>
                 </>
               )}
 
             {/* Response Button */}
             <ActionIcon
+              title={activeLocale === "en" ? "answer" : "antworten"}
               className=" cursor-default"
-              variant="default"
+              variant="filled"
+              color="growgreen.4"
               onClick={() => {
-                console.debug("Response button clicked");
                 setNewOpen(true);
 
                 const lines = comment.content.split("\n");
@@ -355,24 +380,28 @@ export function UserComment({
                   isResponse ? isResponse : comment.id
                 );
 
+                // Construct the sender link
+                const senderLink = `${activeLocale === "en" ? "" : `/${activeLocale as string}`}/grow/${reportId}/update/${comment.postId as string}#${comment.id}`;
+
                 // Update the content field
+                // OLD SENDER LINK
                 const updatedContent = `${newCommentForm.values.content}> from: [${
                   comment.author.name as string
                 } <comment#${comment.id}](${activeLocale === "en" ? "" : `/${activeLocale as string}`}/grow/${reportId}/update/${
                   comment.postId as string
-                }#${comment.id})>\n${formattedContent}\n\n`;
+                }#${comment.id})>\n${formattedContent}\n<p></p>`;
 
                 // Update the content field value directly
                 newCommentForm.setFieldValue("content", updatedContent);
 
-                console.debug(newCommentForm.values);
+                newCommentEditor?.commands.setContent(`
+
+                ${activeLocale === "en" ? "fron:" : "von"}: <a href=${senderLink}>${comment.author.name as string} #${comment.id}</a>
+                  <blockquote>${comment.content}</blockquote>
+                  <p></p>`);
               }}
             >
-              <IconMessageForward
-                color="orange"
-                size="1.4rem"
-                stroke={1.2}
-              />
+              <IconMessageForward size="1.4rem" stroke={1.2} />
             </ActionIcon>
 
             {/* Like Button */}
@@ -384,11 +413,11 @@ export function UserComment({
         {!isEditing ? (
           <TypographyStylesProvider>
             <Paper className={classes.contentHtml}>
-              {transformedHtml ? (
+              {commentHtml ? (
                 <Box
                   fz="lg"
                   className={classes.content}
-                  dangerouslySetInnerHTML={{ __html: transformedHtml }}
+                  dangerouslySetInnerHTML={{ __html: commentHtml }}
                 />
               ) : null}
             </Paper>
@@ -406,36 +435,82 @@ export function UserComment({
               {...editCommentForm.getInputProps("isResponseTo")}
               value={comment.isResponseToId || undefined}
             />
-            <Box className="relative">
+            <Box ml={42} mt={12} className="relative">
               <LoadingOverlay
-                ml={42}
-                mt={12}
                 radius="sm"
                 visible={isSaving}
-                transitionDuration={150}
+                transitionDuration={300}
                 loaderProps={{
-                  size: "sm",
-                  variant: "dots",
+                  size: "md",
+                  color: "growgreen.3",
                 }}
               />
-              <Textarea
-                autosize
-                minRows={3}
-                maxRows={14}
-                ml={42}
-                pt={12}
-                withAsterisk
-                placeholder={comment.content}
-                {...editCommentForm.getInputProps("content")}
-              />
+              {/* Replace Textarea with RichTextEditor */}
+              <RichTextEditor editor={editor}>
+                <RichTextEditor.Toolbar>
+                  <RichTextEditor.ControlsGroup>
+                    <EmojiPicker editor={editor as Editor} />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Bold />
+                    <RichTextEditor.Italic />
+                    <RichTextEditor.Underline />
+                    <RichTextEditor.Strikethrough />
+                    <RichTextEditor.ClearFormatting />
+                    <RichTextEditor.Highlight />
+                    <RichTextEditor.Code />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.H1 />
+                    <RichTextEditor.H2 />
+                    <RichTextEditor.H3 />
+                    <RichTextEditor.H4 />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.AlignLeft />
+                    <RichTextEditor.AlignCenter />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Link />
+                    <RichTextEditor.Unlink />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Blockquote />
+                    <RichTextEditor.Hr />
+                    <RichTextEditor.BulletList />
+                    <RichTextEditor.OrderedList />
+                    <RichTextEditor.Subscript />
+                    <RichTextEditor.Superscript />
+                  </RichTextEditor.ControlsGroup>
+                </RichTextEditor.Toolbar>
+                <RichTextEditor.Content
+                  sx={(theme) => ({
+                    boxShadow: `0 0 0px 1px ${theme.colors.growgreen[4]}`,
+                  })}
+                />
+              </RichTextEditor>
             </Box>
-            <Flex justify="flex-end" align="center">
+            <Flex mt="sm" justify="flex-end" align="center">
               <Button
-                disabled={isSaving}
-                mt="xs"
-                size="xs"
+                size="sm"
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("sm")]: {
+                    padding: rem(5),
+                    height: rem(26),
+                    // width: rem(140),
+                    fontSize: 14,
+                    fontWeight: "normal",
+                  },
+                })}
+                loading={isSaving}
                 type="submit"
-                variant="outline"
+                variant="filled"
+                color="growgreen"
               >
                 {t("common:comment-save-button")}
               </Button>
@@ -449,6 +524,7 @@ export function UserComment({
         {comment.responses.map((response) => (
           <Box id={response.id} key={response.id}>
             <UserComment
+              editor={newCommentEditor}
               reportId={reportId}
               isResponse={comment.id}
               comment={response as Comment}

@@ -1,5 +1,4 @@
 import {
-  Blockquote,
   ColorSchemeProvider,
   MantineProvider,
   rem,
@@ -372,20 +371,20 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             },
             "blockquote p": {
               overflow: "hidden",
-              whiteSpace: "nowrap",
+              // whiteSpace: "nowrap",
               fontSize: "0.96em",
             },
             ul: {
               fontSize: "0.72em",
               paddingLeft: "1.5em",
             },
-            "ul li p": {
-              fontSize: "1em",
+            "ul li": {
+              fontSize: "1.3em",
               position: "relative",
               paddingLeft: "1em",
             },
-            "ul li": {
-              fontSize: "1.3em",
+            "ul li p": {
+              fontSize: "1em",
               position: "relative",
               paddingLeft: "1em",
             },
@@ -404,6 +403,11 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               paddingLeft: "1em",
               marginBottom: "0.5em",
               counterIncrement: "list-counter",
+            },
+            "ol li p": {
+              fontSize: "1em",
+              position: "relative",
+              paddingLeft: "1em",
             },
             "ol li::before": {
               content: "counter(list-counter)",
