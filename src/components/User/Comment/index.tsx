@@ -296,39 +296,51 @@ export function UserComment({
             {status === "authenticated" &&
               session.user.id === comment.author.id && (
                 <>
-                  <ActionIcon
-                    onClick={() => tRPCdeleteComment(comment.id)}
-                    className=" cursor-default"
-                    variant="default"
-                  >
-                    <IconTrashX size="1.4rem" stroke={1.2} />
-                  </ActionIcon>
                   {!isEditing ? (
                     <ActionIcon
-                      title="edit comment"
+                      title={
+                        activeLocale === "en" ? "edir" : "bearbeiten"
+                      }
                       onClick={() => setIsEditing((prev) => !prev)}
                       className="cursor-default"
-                      variant="default"
+                      variant="filled"
+                      color="groworange.4"
                     >
                       <IconEdit size="1.4rem" stroke={1.2} />
                     </ActionIcon>
                   ) : (
                     <ActionIcon
-                      title="end editing"
+                      title={
+                        activeLocale === "en"
+                          ? "end editing"
+                          : "bearbeiten beenden"
+                      }
                       onClick={() => setIsEditing((prev) => !prev)}
                       className="cursor-default"
-                      variant="default"
+                      variant="filled"
+                      color="groworange.2"
                     >
                       <IconEditOff size="1.4rem" stroke={1.2} />
                     </ActionIcon>
                   )}
+                  <ActionIcon
+                    title={activeLocale === "en" ? "delete" : "löschen"}
+                    onClick={() => tRPCdeleteComment(comment.id)}
+                    className=" cursor-default"
+                    variant="filled"
+                    color="red"
+                  >
+                    <IconTrashX size="1.4rem" stroke={1.2} />
+                  </ActionIcon>
                 </>
               )}
 
             {/* Response Button */}
             <ActionIcon
+              title={activeLocale === "en" ? "answer" : "antworten"}
               className=" cursor-default"
-              variant="default"
+              variant="filled"
+              color="growgreen.4"
               onClick={() => {
                 setNewOpen(true);
 
@@ -364,11 +376,7 @@ export function UserComment({
                   <p></p>`);
               }}
             >
-              <IconMessageForward
-                color="orange"
-                size="1.4rem"
-                stroke={1.2}
-              />
+              <IconMessageForward size="1.4rem" stroke={1.2} />
             </ActionIcon>
 
             {/* Like Button */}
@@ -416,6 +424,10 @@ export function UserComment({
               <RichTextEditor editor={editor}>
                 <RichTextEditor.Toolbar>
                   <RichTextEditor.ControlsGroup>
+                    <EmojiPicker editor={editor as Editor} />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
                     <RichTextEditor.Bold />
                     <RichTextEditor.Italic />
                     <RichTextEditor.Underline />
@@ -425,13 +437,21 @@ export function UserComment({
                     <RichTextEditor.Code />
                   </RichTextEditor.ControlsGroup>
 
-                  <EmojiPicker editor={editor as Editor} />
-
                   <RichTextEditor.ControlsGroup>
                     <RichTextEditor.H1 />
                     <RichTextEditor.H2 />
                     <RichTextEditor.H3 />
                     <RichTextEditor.H4 />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.AlignLeft />
+                    <RichTextEditor.AlignCenter />
+                  </RichTextEditor.ControlsGroup>
+
+                  <RichTextEditor.ControlsGroup>
+                    <RichTextEditor.Link />
+                    <RichTextEditor.Unlink />
                   </RichTextEditor.ControlsGroup>
 
                   <RichTextEditor.ControlsGroup>
@@ -442,19 +462,6 @@ export function UserComment({
                     <RichTextEditor.Subscript />
                     <RichTextEditor.Superscript />
                   </RichTextEditor.ControlsGroup>
-
-                  <RichTextEditor.ControlsGroup>
-                    <RichTextEditor.Link />
-                    <RichTextEditor.Unlink />
-                  </RichTextEditor.ControlsGroup>
-
-                  <RichTextEditor.ControlsGroup>
-                    <RichTextEditor.AlignLeft />
-                    <RichTextEditor.AlignCenter />
-                    {/* 
-                <RichTextEditor.AlignJustify/>
-                <RichTextEditor.AlignRight/> */}
-                  </RichTextEditor.ControlsGroup>
                 </RichTextEditor.Toolbar>
                 <RichTextEditor.Content
                   sx={(theme) => ({
@@ -463,13 +470,22 @@ export function UserComment({
                 />
               </RichTextEditor>
             </Box>
-            <Flex justify="flex-end" align="center">
+            <Flex mt="sm" justify="flex-end" align="center">
               <Button
-                disabled={isSaving}
-                mt="xs"
-                size="xs"
+                size="sm"
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("sm")]: {
+                    padding: rem(5),
+                    height: rem(26),
+                    // width: rem(140),
+                    fontSize: 14,
+                    fontWeight: "normal",
+                  },
+                })}
+                loading={isSaving}
                 type="submit"
-                variant="outline"
+                variant="filled"
+                color="growgreen"
               >
                 {t("common:comment-save-button")}
               </Button>

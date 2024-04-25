@@ -2,14 +2,17 @@ import {
   ActionIcon,
   Box,
   Button,
+  createStyles,
   Flex,
   Group,
   LoadingOverlay,
   Paper,
+  rem,
   Space,
   Text,
   Title,
   Transition,
+  useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -51,12 +54,26 @@ interface CommentsProps {
   postId: string;
 }
 
+const useStyles = createStyles((theme) => ({
+  button: {
+    [theme.fn.smallerThan("md")]: {
+      padding: rem(5),
+      height: rem(20),
+      // width: rem(140),
+      fontSize: 12,
+    },
+  },
+}));
+
 const PostComments = ({ reportId, postId }: CommentsProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
   const trpc = api.useUtils();
+
+  const theme = useMantineTheme();
+  const { classes } = useStyles();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -127,7 +144,8 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   const userComments = comments?.map((comment) => {
     return (
-      <div
+      <Box
+        mt="lg"
         key={comment.id}
         id={comment.id}
         ref={(ref) => {
@@ -144,7 +162,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
           setNewOpen={setNewOpen}
           newCommentForm={newCommentForm}
         />
-      </div>
+      </Box>
     );
   });
 
@@ -179,15 +197,27 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       {status !== "loading" && isLoading && <p>loading comments...</p>}
       {status === "authenticated" && (
         <>
-          <Space h={"lg"} />
-          <Group pb="xs" position="apart">
+          <Group m={4} position="apart">
             <Title order={2}>{t("common:comments-headline")}</Title>
 
             <Button
+              sx={(theme) => ({
+                [theme.fn.smallerThan("sm")]: {
+                  padding: rem(5),
+                  height: rem(26),
+                  // width: rem(140),
+                  fontSize: 16,
+                  fontWeight: "normal",
+                },
+              })}
               fz="md"
               variant="filled"
               color={!newOpen ? "growgreen" : "dark"}
-              leftIcon={<IconTextWrap size={22} />}
+              leftIcon={
+                <IconTextWrap
+                  size={theme.fn.smallerThan("sm") ? 16 : 22}
+                />
+              }
               title={!newOpen ? "add new comment" : "close form"}
               onClick={() => {
                 setNewOpen((prev) => !prev);
@@ -207,7 +237,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
               <Paper
                 style={{ ...transitionStyles }}
                 p="sm"
-                mb="xs"
+                mt="sm"
                 withBorder
               >
                 <Group position="apart">
@@ -290,10 +320,8 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                     tRPCsaveComment(values);
                   }, handleErrors)}
                 >
-                  <Box className="relative">
+                  <Box ml={42} mt={12} className="relative">
                     <LoadingOverlay
-                      ml={42}
-                      // mt={12}
                       radius="sm"
                       visible={isSaving}
                       transitionDuration={300}
@@ -302,8 +330,12 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                         color: "growgreen.3",
                       }}
                     />
-                    <RichTextEditor mt={12} ml={42} editor={editor}>
-                      <RichTextEditor.Toolbar>
+                    <RichTextEditor editor={editor}>
+                      <RichTextEditor.Toolbar p="xs">
+                        <RichTextEditor.ControlsGroup>
+                          <EmojiPicker editor={editor as Editor} />
+                        </RichTextEditor.ControlsGroup>
+
                         <RichTextEditor.ControlsGroup>
                           <RichTextEditor.Bold />
                           <RichTextEditor.Italic />
@@ -314,7 +346,10 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                           <RichTextEditor.Code />
                         </RichTextEditor.ControlsGroup>
 
-                        <EmojiPicker editor={editor as Editor} />
+                        <RichTextEditor.ControlsGroup>
+                          <RichTextEditor.AlignLeft />
+                          <RichTextEditor.AlignCenter />
+                        </RichTextEditor.ControlsGroup>
 
                         <RichTextEditor.ControlsGroup>
                           <RichTextEditor.H1 />
@@ -324,25 +359,17 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                         </RichTextEditor.ControlsGroup>
 
                         <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Blockquote />
-                          <RichTextEditor.Hr />
-                          <RichTextEditor.BulletList />
-                          <RichTextEditor.OrderedList />
-                          <RichTextEditor.Subscript />
-                          <RichTextEditor.Superscript />
-                        </RichTextEditor.ControlsGroup>
-
-                        <RichTextEditor.ControlsGroup>
                           <RichTextEditor.Link />
                           <RichTextEditor.Unlink />
                         </RichTextEditor.ControlsGroup>
 
                         <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.AlignLeft />
-                          <RichTextEditor.AlignCenter />
-                          {/* 
-                <RichTextEditor.AlignJustify/>
-                <RichTextEditor.AlignRight/> */}
+                          <RichTextEditor.Blockquote />
+                          <RichTextEditor.Hr />
+                          <RichTextEditor.BulletList />
+                          <RichTextEditor.OrderedList />
+                          {/* <RichTextEditor.Subscript />
+                          <RichTextEditor.Superscript /> */}
                         </RichTextEditor.ControlsGroup>
                       </RichTextEditor.Toolbar>
                       <RichTextEditor.Content
@@ -352,13 +379,22 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                       />
                     </RichTextEditor>
                   </Box>
-                  <Flex justify="flex-end" align="center">
+                  <Flex mt="sm" justify="flex-end" align="center">
                     <Button
+                      size="sm"
+                      sx={(theme) => ({
+                        [theme.fn.smallerThan("sm")]: {
+                          padding: rem(5),
+                          height: rem(26),
+                          // width: rem(140),
+                          fontSize: 14,
+                          fontWeight: "normal",
+                        },
+                      })}
                       loading={isSaving}
-                      mt="xs"
-                      size="xs"
                       type="submit"
-                      variant="outline"
+                      variant="filled"
+                      color="growgreen"
                     >
                       {t("common:comment-save-button")}
                     </Button>
