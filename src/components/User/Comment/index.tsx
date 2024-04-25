@@ -32,6 +32,9 @@ import TextAlign from "@tiptap/extension-text-align";
 import Underline from "@tiptap/extension-underline";
 import { type Editor, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { remark } from "remark";
+import remarkBreaks from "remark-breaks";
+import remarkHtml from "remark-html";
 import {
   commentDeletedSuccessfulMsg,
   defaultErrorMsg,
@@ -105,6 +108,23 @@ interface UserCommentProps {
       content: string;
     }
   >;
+}
+
+// Use remark to convert markdown into HTML string
+function renderMarkDownToHtml(markdown: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    remark()
+      .use(remarkHtml)
+      .use(remarkBreaks)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .process(markdown, (err: any, file: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(String(file));
+        }
+      });
+  });
 }
 
 export function UserComment({
@@ -237,9 +257,14 @@ export function UserComment({
       comment.isResponseToId
     );
 
-    const fetchHtml = () => {
+    const fetchHtml = async () => {
       try {
-        setCommentHtml(comment.content);
+        const html = await renderMarkDownToHtml(comment.content);
+
+        console.debug("html", html);
+        console.debug("comment.content", comment.content);
+
+        setCommentHtml(html || comment.content);
       } catch (error) {
         console.error(error);
         // Handle the error if necessary
