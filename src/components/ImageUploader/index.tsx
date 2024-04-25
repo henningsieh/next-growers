@@ -1,3 +1,4 @@
+import { ImageUpload } from "../ImageUpload";
 import {
   Box,
   Container,
@@ -22,6 +23,7 @@ import ImagesSlider from "~/components/ImagesSlider";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 
+import { generateSignature } from "~/utils/generateSignature";
 import { handleMultipleDrop } from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
@@ -42,6 +44,8 @@ const ImageUploader = ({
   maxSize,
   onReject,
 }: ImageUploaderProps) => {
+  const [isImagUploaded, setIsImageUploaded] = useState(false);
+
   const [cloudUrls, setCloudUrls] = useState<string[]>(
     cloudUrlsFromProps ? cloudUrlsFromProps : []
   );
@@ -70,6 +74,7 @@ const ImageUploader = ({
 
   return (
     <Container p={0} size="md">
+      <ImageUpload />
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
           <Group position="left">

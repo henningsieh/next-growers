@@ -51,7 +51,7 @@
     "@trpc/server": "^10.45.2",
     "@vercel/speed-insights": "^1.0.10",
     "axios": "^1.6.8",
-    "cloudinary": "^2.1.0",
+    "cloudinary": "^2.2.0",
     "cors": "^2.8.5",
     "country-flag-icons": "^1.5.11",
     "dayjs": "^1.11.10",
