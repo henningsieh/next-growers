@@ -20,6 +20,7 @@ import {
   IconEye,
   IconHome,
 } from "@tabler/icons-react";
+import axios, { AxiosResponse } from "axios";
 
 import { useEffect, useState } from "react";
 
@@ -127,29 +128,47 @@ export function PostCard(props: PostCardProps) {
   useEffect(() => {
     const post = report.posts.find((post) => post.id === postId);
     if (post) {
-      setPostHTMLContent(post.content);
+      parseAndReplaceAmazonLinks(post.content)
+        .then((parsedContent) => {
+          setPostHTMLContent(parsedContent);
+        })
+        .catch((error) => {
+          console.error(
+            "Error parsing and replacing Amazon links:",
+            error
+          );
+        });
     }
   }, [report, postId]);
 
+  const parseAndReplaceAmazonLinks = async (
+    content: string
+  ): Promise<string> => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+
+    const links = doc.querySelectorAll('a[href^="https://amzn.to"]');
+
+    for (const link of links) {
+      const shortenedUrl = link.getAttribute("href");
+      try {
+        const response: AxiosResponse<{ resolvedUrl: string }> =
+          await axios.get(
+            `/api/resolveAmazonUrl?shortenedUrl=${shortenedUrl as string}&newTag=growagram-21`
+          );
+        const resolvedUrl = response.data.resolvedUrl;
+        link.setAttribute("href", resolvedUrl);
+      } catch (error) {
+        console.error("Error resolving Amazon URL:", error);
+      }
+    }
+
+    return doc.documentElement.innerHTML;
+  };
+
   const { classes } = useStyles();
   const theme = useMantineTheme();
-  /* 
-  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
-  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
-  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
-  */ /* 
-  const getResponsiveImageHeight = xs
-    ? 460
-    : sm
-    ? 700
-    : md
-    ? 900
-    : lg
-    ? 1180
-    : 1390;
- */
+
   const reportBasicData = [
     {
       label: sanatizeDateString(
