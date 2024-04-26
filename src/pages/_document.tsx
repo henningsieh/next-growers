@@ -14,6 +14,7 @@ export default class _Document extends Document {
             name="google-site-verification"
             content="bH2eAtmFdOW_32cssgRst8T_QiJxJa825XfCpiFZYsc"
           />
+          <meta name="seedfinderverification" content="Open Sesame!" />
           <link rel="manifest" href="/site.webmanifest" />
           <link
             rel="icon"
