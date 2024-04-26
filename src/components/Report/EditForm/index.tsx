@@ -14,12 +14,7 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
-import {
-  DateInput,
-  DatePicker,
-  DatePickerInput,
-  DatesProvider,
-} from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -47,7 +42,7 @@ import { useRouter } from "next/router";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import type { EditReportFormProps } from "~/types";
-import { Environment, Locale } from "~/types";
+import { Environment } from "~/types";
 
 import { api } from "~/utils/api";
 import { handleDrop } from "~/utils/helperUtils";

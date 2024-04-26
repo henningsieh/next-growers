@@ -8,13 +8,13 @@ import {
   LoadingOverlay,
   Paper,
   rem,
-  Space,
   Text,
   Title,
   Transition,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
 import { IconTextWrap, IconX } from "@tabler/icons-react";
@@ -43,11 +43,50 @@ import EmojiPicker from "~/components/Atom/EmojiPicker";
 import UserAvatar from "~/components/Atom/UserAvatar";
 import { UserComment } from "~/components/User/Comment";
 
-import { Locale } from "~/types";
+import { type Comment, Locale } from "~/types";
 
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/utils/helperUtils";
 import { InputEditCommentForm } from "~/utils/inputValidation";
+
+const useStyles = createStyles((theme) => ({
+  responses: {
+    scrollPaddingTop: "60px",
+    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
+      ? rem(120)
+      : rem(30),
+    position: "relative",
+    overflow: "hidden",
+  },
+  treeBackground: {
+    margin: 0,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
+    borderRadius: theme.radius.sm,
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
+      ? rem(72)
+      : 0,
+    width: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
+      ? rem(40)
+      : theme.spacing.xl, // Adjust the width of the tree structure
+
+    background:
+      theme.colorScheme === "dark"
+        ? theme.fn.linearGradient(
+            90,
+            theme.colors.dark[8],
+            theme.colors.growgreen[5]
+          )
+        : theme.fn.linearGradient(
+            90,
+            theme.white,
+            theme.colors.growgreen[3]
+          ),
+  },
+}));
 
 interface CommentsProps {
   reportId: string;
@@ -62,6 +101,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   const trpc = api.useUtils();
 
   const theme = useMantineTheme();
+  const { classes } = useStyles();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -130,40 +170,39 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     },
   });
 
-  // const [responsesLoaded, setResponsesLoaded] = useState(false);
+  const [commentHashId, setCommentHashId] = useState("");
 
   useEffect(() => {
-    // Check if the URL contains a hash
     const hash = window.location.hash;
-
-    console.debug("hash", hash);
-
-    // Remove the '#' symbol from the hash
-    const commentId = hash.slice(1);
-
+    const extractedHashId = hash.slice(1);
+    setCommentHashId(extractedHashId);
     // Timeout before finding the corresponding comment's HTML element
+    setTimeout(() => {
+      const commentElement = document.getElementById(commentHashId);
 
-    // setTimeout(() => {
-    // Find the corresponding comment's HTML element using its ID
-    const commentElement = commentsRef.current.find(
-      (ref) => ref.id === commentId
-    );
+      // Scroll to the comment if it exists
+      // if (commentElement) {
+      //   commentElement.scrollIntoView({ behavior: "smooth" });
+      // }
 
-    console.debug("commentElement", commentElement);
-    // Scroll to the comment if it exists
-    if (commentElement) {
-      commentElement.scrollIntoView({ behavior: "smooth" });
-    }
-    // }, 0); // Adjust the timeout as needed
-  }, [
-    comments,
-    // responsesLoaded
-  ]); // Add comments as a dependency
+      // Scroll to the comment if it exists
+      if (commentElement) {
+        const topOffset = 60; // Your desired top offset
+        const top =
+          commentElement.getBoundingClientRect().top +
+          window.scrollY -
+          topOffset;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }, 100); // Adjust the timeout as needed
+  }, [commentHashId, comments]);
 
   const userComments = comments?.map((comment) => {
     return (
       <Box
-        mt="lg"
+        sx={() => ({
+          scrollPaddingTop: "60px",
+        })}
         key={comment.id}
         id={comment.id}
         ref={(ref) => {
@@ -173,7 +212,6 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
         }}
       >
         <UserComment
-          // setResponsesLoaded={setResponsesLoaded}
           editor={editor}
           reportId={reportId}
           isResponse=""
@@ -181,6 +219,28 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
           setNewOpen={setNewOpen}
           newCommentForm={newCommentForm}
         />
+        {/* Map over comment.responses and wrap each UserComment */}
+        {comment.responses.map((response) => (
+          <Box
+            id={response.id}
+            key={response.id}
+            className={classes.responses}
+          >
+            {/* Conditionally render the tree background only for the current comment */}
+            {commentHashId == response.id && (
+              <div className={classes.treeBackground}></div>
+            )}
+
+            <UserComment
+              editor={editor}
+              reportId={reportId}
+              isResponse={comment.id} // Assuming this is the ID of the parent comment
+              comment={response as Comment}
+              setNewOpen={setNewOpen}
+              newCommentForm={newCommentForm}
+            />
+          </Box>
+        ))}
       </Box>
     );
   });

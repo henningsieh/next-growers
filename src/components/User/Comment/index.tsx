@@ -41,7 +41,7 @@ import {
   httpStatusErrorMsg,
 } from "~/messages";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
@@ -70,12 +70,6 @@ const useStyles = createStyles((theme) => ({
     fontSize: theme.fontSizes.sm,
   },
 
-  responses: {
-    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
-      ? rem(120)
-      : rem(30),
-  },
-
   content: {
     "& > p:last-child": {
       marginBottom: 0,
@@ -84,7 +78,6 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface UserCommentProps {
-  // setResponsesLoaded: Dispatch<SetStateAction<boolean>>;
   editor: Editor | null;
   reportId: string;
   comment: Comment;
@@ -129,7 +122,6 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
 }
 
 export function UserComment({
-  // setResponsesLoaded,
   editor: newCommentEditor,
   reportId,
   isResponse,
@@ -162,7 +154,6 @@ export function UserComment({
           "START api.comments.deleteCommentById.useMutation"
         );
         setIsSaving(true);
-        console.log("newCommentDB", newCommentDB);
       },
       // If the mutation fails, use the context
       // returned from onMutate to roll back
@@ -180,7 +171,7 @@ export function UserComment({
       // Always refetch after error or success:
       onSettled: () => {
         setIsSaving(false);
-        console.log("END api.comments.deleteCommentById.useMutation");
+        console.debug("END api.comments.deleteCommentById.useMutation");
       },
     });
 
@@ -208,7 +199,7 @@ export function UserComment({
       // Always refetch after error or success:
       onSettled: () => {
         setIsSaving(false);
-        console.log("END api.reports.create.useMutation");
+        console.debug("END api.reports.create.useMutation");
       },
     });
 
@@ -262,10 +253,6 @@ export function UserComment({
     const fetchHtml = async () => {
       try {
         const html = await renderMarkDownToHtml(comment.content);
-
-        console.debug("html", html);
-        console.debug("comment.id", comment.id);
-
         setCommentHtml(html || comment.content);
       } catch (error) {
         console.error(error);
@@ -280,8 +267,8 @@ export function UserComment({
     <>
       <Paper
         withBorder
+        my="xs"
         p="sm"
-        pt="xs"
         radius="md"
         className={classes.comment}
       >
@@ -355,7 +342,7 @@ export function UserComment({
                     onClick={() => tRPCdeleteComment(comment.id)}
                     className=" cursor-default"
                     variant="filled"
-                    color="red"
+                    color="red.9"
                   >
                     <IconTrashX size="1.4rem" stroke={1.2} />
                   </ActionIcon>
@@ -504,7 +491,6 @@ export function UserComment({
                   [theme.fn.smallerThan("sm")]: {
                     padding: rem(5),
                     height: rem(26),
-                    // width: rem(140),
                     fontSize: 14,
                     fontWeight: "normal",
                   },
@@ -520,24 +506,6 @@ export function UserComment({
           </form>
         )}
       </Paper>
-
-      {/* Display responses */}
-      <Box className={classes.responses}>
-        {comment.responses.map((response) => (
-          <Box id={response.id} key={response.id}>
-            <UserComment
-              // setResponsesLoaded={setResponsesLoaded}
-              editor={newCommentEditor}
-              reportId={reportId}
-              isResponse={comment.id}
-              comment={response as Comment}
-              setNewOpen={setNewOpen}
-              newCommentForm={newCommentForm}
-            />
-          </Box>
-        ))}
-      </Box>
-      {/* {setResponsesLoaded(true)} */}
     </>
   );
 }
