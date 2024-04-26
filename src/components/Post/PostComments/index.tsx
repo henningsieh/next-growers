@@ -54,17 +54,6 @@ interface CommentsProps {
   postId: string;
 }
 
-const useStyles = createStyles((theme) => ({
-  button: {
-    [theme.fn.smallerThan("md")]: {
-      padding: rem(5),
-      height: rem(20),
-      // width: rem(140),
-      fontSize: 12,
-    },
-  },
-}));
-
 const PostComments = ({ reportId, postId }: CommentsProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -73,7 +62,6 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   const trpc = api.useUtils();
 
   const theme = useMantineTheme();
-  const { classes } = useStyles();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -142,6 +130,36 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     },
   });
 
+  // const [responsesLoaded, setResponsesLoaded] = useState(false);
+
+  useEffect(() => {
+    // Check if the URL contains a hash
+    const hash = window.location.hash;
+
+    console.debug("hash", hash);
+
+    // Remove the '#' symbol from the hash
+    const commentId = hash.slice(1);
+
+    // Timeout before finding the corresponding comment's HTML element
+
+    // setTimeout(() => {
+    // Find the corresponding comment's HTML element using its ID
+    const commentElement = commentsRef.current.find(
+      (ref) => ref.id === commentId
+    );
+
+    console.debug("commentElement", commentElement);
+    // Scroll to the comment if it exists
+    if (commentElement) {
+      commentElement.scrollIntoView({ behavior: "smooth" });
+    }
+    // }, 0); // Adjust the timeout as needed
+  }, [
+    comments,
+    // responsesLoaded
+  ]); // Add comments as a dependency
+
   const userComments = comments?.map((comment) => {
     return (
       <Box
@@ -155,6 +173,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
         }}
       >
         <UserComment
+          // setResponsesLoaded={setResponsesLoaded}
           editor={editor}
           reportId={reportId}
           isResponse=""

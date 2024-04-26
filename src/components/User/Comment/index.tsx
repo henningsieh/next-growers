@@ -41,7 +41,7 @@ import {
   httpStatusErrorMsg,
 } from "~/messages";
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
@@ -84,6 +84,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface UserCommentProps {
+  // setResponsesLoaded: Dispatch<SetStateAction<boolean>>;
   editor: Editor | null;
   reportId: string;
   comment: Comment;
@@ -128,6 +129,7 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
 }
 
 export function UserComment({
+  // setResponsesLoaded,
   editor: newCommentEditor,
   reportId,
   isResponse,
@@ -262,7 +264,7 @@ export function UserComment({
         const html = await renderMarkDownToHtml(comment.content);
 
         console.debug("html", html);
-        console.debug("comment.content", comment.content);
+        console.debug("comment.id", comment.id);
 
         setCommentHtml(html || comment.content);
       } catch (error) {
@@ -524,6 +526,7 @@ export function UserComment({
         {comment.responses.map((response) => (
           <Box id={response.id} key={response.id}>
             <UserComment
+              // setResponsesLoaded={setResponsesLoaded}
               editor={newCommentEditor}
               reportId={reportId}
               isResponse={comment.id}
@@ -534,6 +537,7 @@ export function UserComment({
           </Box>
         ))}
       </Box>
+      {/* {setResponsesLoaded(true)} */}
     </>
   );
 }
