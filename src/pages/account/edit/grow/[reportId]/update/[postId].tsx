@@ -120,7 +120,7 @@ const ProtectedEditReportDetails: NextPage = () => {
   const reportTitle = `${report.title}`;
 
   const queryPost = report?.posts.find(
-    (post: Post) => post.id === queryPostId
+    (post) => post.id === queryPostId
   );
 
   return !!!queryPost ? (

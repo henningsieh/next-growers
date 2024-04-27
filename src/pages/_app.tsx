@@ -429,11 +429,11 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
         }}
       >
         <SessionProvider session={session}>
-          <Loading isLoading={isLoading} />
           <Notifications limit={5} position="top-center" />
 
           <DatesProvider settings={{ locale: router.locale }}>
             <RootLayout>
+              <Loading isLoading={isLoading} />
               <Component {...pageProps} />
             </RootLayout>
           </DatesProvider>

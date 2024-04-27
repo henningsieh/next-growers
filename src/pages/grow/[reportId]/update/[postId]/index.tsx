@@ -95,6 +95,10 @@ export async function getStaticProps(
               id: true,
               publicId: true,
               cloudUrl: true,
+              postOrder: true,
+            },
+            orderBy: {
+              postOrder: "asc", // Sort images by postOrder in ascending order
             },
           },
           likes: {
@@ -116,6 +120,7 @@ export async function getStaticProps(
       id: reportId,
     },
   });
+
   // Report not found, handle the error accordingly (e.g., redirect to an error page)
   if (!reportFromDb) {
     return {
@@ -148,16 +153,24 @@ export async function getStaticProps(
     ),
 
     posts: (reportFromDb?.posts || []).map((post) => {
-      const postDate = post.date ? new Date(post.date) : null;
-      const reportCreatedAt = reportFromDb?.createdAt
-        ? new Date(reportFromDb.createdAt)
-        : null;
-      const timeDifference =
-        postDate && reportCreatedAt
-          ? postDate.getTime() - reportCreatedAt.getTime()
-          : 0;
+      const postDate = new Date(post.date);
+      const reportCreatedAt = reportFromDb?.createdAt;
+
+      // Convert both dates to local time
+      const localPostDate = new Date(postDate);
+      const localReportCreatedAt = new Date(reportCreatedAt);
+
+      // Set the time of day to midnight for both dates
+      localPostDate.setHours(0, 0, 0, 0);
+      localReportCreatedAt.setHours(0, 0, 0, 0);
+
+      // Calculate the difference in milliseconds between the two dates
+      const differenceInMs =
+        localPostDate.getTime() - localReportCreatedAt.getTime();
+
+      // Convert the difference from milliseconds to days
       const growDay = Math.floor(
-        timeDifference / (1000 * 60 * 60 * 24)
+        differenceInMs / (1000 * 60 * 60 * 24)
       );
 
       const isoLikes = post.likes.map(
@@ -180,7 +193,7 @@ export async function getStaticProps(
         ...post,
         createdAt: post.createdAt.toISOString(),
         updatedAt: post.createdAt.toISOString(),
-        date: postDate?.toISOString() as string,
+        date: postDate?.toISOString(),
         likes: isoLikes,
         comments: isoComments,
         growDay,
@@ -397,7 +410,20 @@ export default function PublicReportPost(
       notifications.show(noPostAtThisDay);
     }
   };
-  const images = thisPost?.images.map((image) => image.cloudUrl);
+  //const images = thisPost?.images.map((image) => image.cloudUrl);
+
+  const sortedImages = [...(thisPost?.images || [])].sort((a, b) => {
+    const orderA = a.postOrder ?? 0;
+    const orderB = b.postOrder ?? 0;
+    return orderA - orderB;
+  });
+
+  // console.debug("sortedImages", sortedImages);
+
+  const images = sortedImages?.map((image) => image.cloudUrl);
+
+  // console.debug("images", images);
+
   const imageTags = generateOpenGraphMetaTagsImage(images);
   const slicedContent = convert(thisPost?.content, { wordwrap: 25 });
   return (
@@ -526,7 +552,7 @@ export default function PublicReportPost(
           </Box>
           <PostCard
             postId={thisPost?.id}
-            report={staticReportFromProps}
+            reportFromProps={staticReportFromProps}
           />
         </Container>
       </Container>

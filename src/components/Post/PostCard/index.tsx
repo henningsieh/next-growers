@@ -20,7 +20,8 @@ import {
   IconEye,
   IconHome,
 } from "@tabler/icons-react";
-import axios, { AxiosResponse } from "axios";
+import type { AxiosResponse } from "axios";
+import axios from "axios";
 
 import { useEffect, useState } from "react";
 
@@ -112,12 +113,12 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface PostCardProps {
-  report: IsoReportWithPostsFromDb;
+  reportFromProps: IsoReportWithPostsFromDb;
   postId: string | undefined;
 }
 
 export function PostCard(props: PostCardProps) {
-  const { report, postId } = props;
+  const { reportFromProps: report, postId } = props;
 
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -232,22 +233,6 @@ export function PostCard(props: PostCardProps) {
     const post = report.posts.find((post) => post.id === postId);
 
     const postImages = post?.images;
-
-    // sort postImages ascending by publicId (publicId format: "timespamp_[original_filename]]")
-    if (postImages) {
-      postImages.sort((a, b) => {
-        const publicIdA = a.publicId;
-        const publicIdB = b.publicId;
-
-        if (publicIdA < publicIdB) {
-          return -1;
-        }
-        if (publicIdA > publicIdB) {
-          return 1;
-        }
-        return 0;
-      });
-    }
 
     const postBasicData = {
       // FIXME: this is fake data

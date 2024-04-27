@@ -12,7 +12,7 @@ import {
   Space,
   TextInput,
 } from "@mantine/core";
-import { DateInput, DatePickerInput } from "@mantine/dates";
+import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
@@ -48,11 +48,7 @@ import { useRouter } from "next/router";
 import EmojiPicker from "~/components/Atom/EmojiPicker";
 import ImageUploader from "~/components/ImageUploader";
 
-import type {
-  IsoReportWithPostsFromDb,
-  Post,
-  PostDbInput,
-} from "~/types";
+import type { IsoReportWithPostsFromDb, Post } from "~/types";
 import { GrowStage } from "~/types";
 
 import { api } from "~/utils/api";
@@ -71,21 +67,30 @@ const prefillHTMLContent =
   "<h1>Ich bin eine Überschrift</h1><hr/><p>RichTextEditor is designed to be as simple as possible to bring a familiar editing experience to regular users.</p>";
 
 const PostForm = (props: AddPostProps) => {
-  const { isoReport: report, post } = props;
-  const [imageIds, setImageIds] = useState<string[]>([]);
-
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
+
+  const { isoReport: report, post } = props;
+  const [imageIds, setImageIds] = useState<string[]>([]);
+  const [images, setImages] = useState(
+    [...(post?.images || [])].sort((a, b) => {
+      const orderA = a.postOrder ?? 0;
+      const orderB = b.postOrder ?? 0;
+      return orderA - orderB;
+    })
+  );
+
+  console.debug("images", images);
 
   // const { colorScheme } = useMantineColorScheme();
   // const dark = colorScheme === "dark";
 
   // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
-    createPostForm.setFieldValue("images", imageIds);
+    createPostForm.setFieldValue("images", images);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageIds]);
+  }, [images]);
 
   // Prepare WISIWIG Editior
   const editor = useEditor({
@@ -129,7 +134,7 @@ const PostForm = (props: AddPostProps) => {
       onSuccess: async (newPost) => {
         notifications.show(savePostSuccessfulMsg);
         setImageIds([]);
-        createPostForm.setFieldValue("images", imageIds);
+        // createPostForm.setFieldValue("images", imageIds);
         await trpc.reports.getIsoReportWithPostsFromDb.refetch();
         // Navigate to the new report page
         void router.push(
@@ -139,31 +144,32 @@ const PostForm = (props: AddPostProps) => {
       // Always refetch after error or success:
       onSettled: () => {
         setImageIds([]);
-        createPostForm.setFieldValue("images", imageIds);
+        // createPostForm.setFieldValue("images", imageIds);
         console.log("END posts.createPost.useMutation");
       },
     });
 
   if (report == null) return null;
-  const reportStartDate = new Date(report.createdAt);
-  reportStartDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   const currentDate = new Date();
+  const reportCreatedAt = new Date(report.createdAt);
+
+  reportCreatedAt.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
-  currentDate.setDate(currentDate.getDate());
+  //currentDate.setDate(currentDate.getDate());
+
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
 
   const growDay = post
     ? post.growDay
     : Math.floor(
-        (currentDate.getTime() - reportStartDate.getTime()) /
-          (1000 * 60 * 60 * 24) +
-          1
+        (currentDate.getTime() - reportCreatedAt.getTime()) /
+          (1000 * 60 * 60 * 24)
       );
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const createPostForm = useForm({
-    validate: zodResolver(InputCreatePostForm(reportStartDate)),
+    validate: zodResolver(InputCreatePostForm(reportCreatedAt)),
     validateInputOnChange: true,
     initialValues: {
       id: post ? post.id : "",
@@ -173,7 +179,7 @@ const PostForm = (props: AddPostProps) => {
       content: post ? post.content : prefillHTMLContent,
       growStage: post ? post.growStage : undefined,
       lightHoursPerDay: post ? (post.lightHoursPerDay as number) : 0,
-      images: imageIds,
+      images: images.map(({ id, postOrder }) => ({ id, postOrder })),
     },
   });
 
@@ -184,17 +190,21 @@ const PostForm = (props: AddPostProps) => {
     content: string;
     growStage: keyof typeof GrowStage | undefined;
     lightHoursPerDay: number;
-    images: string[];
+    images: {
+      id: string;
+      postOrder: number;
+    }[];
   }) {
+    console.debug(values.images);
     // Omitting the 'day' field, will not be saved
     type PostFormValuesWithoutDay = Omit<typeof values, "day">;
     const postFormValues: PostFormValuesWithoutDay = values;
     const editorHtml = editor?.getHTML() as string;
     postFormValues.content = editorHtml;
 
-    const savePost: PostDbInput = {
+    const savePost = {
       ...postFormValues,
-      images: imageIds,
+      images: images,
       growStage: postFormValues.growStage as keyof typeof GrowStage,
       reportId: report?.id || (post?.reportId as string),
       authorId: report?.authorId || (post?.authorId as string),
@@ -266,7 +276,7 @@ const PostForm = (props: AddPostProps) => {
                           createPostForm.setFieldValue("date", newDate);
                           const timeDifferenceDays = Math.floor(
                             (selectedDate.getTime() -
-                              reportStartDate.getTime()) /
+                              reportCreatedAt.getTime()) /
                               (1000 * 60 * 60 * 24)
                           );
                           createPostForm.setFieldValue(
@@ -293,13 +303,11 @@ const PostForm = (props: AddPostProps) => {
                           if (!growDayOffSet && growDayOffSet != 0)
                             return; // prevent error if changed to empty string
 
-                          const newPostDate = new Date(reportStartDate);
+                          const newPostDate = new Date(reportCreatedAt);
                           newPostDate.setUTCDate(
                             newPostDate.getUTCDate() + growDayOffSet
                           );
-                          console.debug(newPostDate);
                           newPostDate.setHours(0); //  setUTCHours(22, 0, 0, 0);
-                          console.debug(newPostDate);
                           createPostForm.setFieldValue(
                             "date",
                             newPostDate
@@ -469,7 +477,9 @@ const PostForm = (props: AddPostProps) => {
 
               <ImageUploader
                 report={report}
-                cloudUrls={post?.images.map((image) => image.cloudUrl)}
+                images={images || []}
+                setImages={setImages}
+                //cloudUrls={post?.images.map((image) => image.cloudUrl)}
                 setImageIds={setImageIds}
                 maxSize={getFileMaxSizeInBytes()}
                 maxFiles={getFileMaxUpload()}

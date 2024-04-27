@@ -99,7 +99,23 @@ export const postRouter = createTRPCRouter({
         );
       }
 
-      // const formattedDate = new Date(date);
+      console.debug(
+        images.map((item, index) => ({
+          ...item,
+          postOrder: index,
+        }))
+      );
+
+      await Promise.all(
+        images.map(async (item, index) => {
+          await ctx.prisma.image.update({
+            where: { id: item.id }, // Specify the unique identifier for the image
+            data: {
+              postOrder: index, // Update the postOrder field with the current index
+            },
+          });
+        })
+      );
 
       const post = await ctx.prisma.post.upsert({
         where: { id }, // Optional: Set the condition for upserting based on the id
@@ -120,7 +136,7 @@ export const postRouter = createTRPCRouter({
             },
           },
           images: {
-            connect: images.map((imageId) => ({ id: imageId })),
+            connect: images.map((image) => ({ id: image.id })),
           },
         },
         create: {
@@ -140,7 +156,7 @@ export const postRouter = createTRPCRouter({
             },
           },
           images: {
-            connect: images.map((imageId) => ({ id: imageId })),
+            connect: images.map((image) => ({ id: image.id })),
           },
         },
       });
@@ -216,6 +232,7 @@ export const postRouter = createTRPCRouter({
               id: true,
               publicId: true,
               cloudUrl: true,
+              postOrder: true,
             },
           },
           likes: {
@@ -235,12 +252,25 @@ export const postRouter = createTRPCRouter({
 
       const formattedPosts = await Promise.all(
         posts.map(async (post) => {
-          const date = new Date(post.date);
+          const postDate = new Date(post.date);
+          const reportCreatedAt = report.createdAt;
+
+          // Convert both dates to local time
+          const localPostDate = new Date(postDate);
+          const localReportCreatedAt = new Date(reportCreatedAt);
+
+          // Set the time of day to midnight for both dates
+          localPostDate.setHours(0, 0, 0, 0);
+          localReportCreatedAt.setHours(0, 0, 0, 0);
+
+          // Calculate the difference in milliseconds between the two dates
+          const differenceInMs =
+            localPostDate.getTime() - localReportCreatedAt.getTime();
+
+          // Convert the difference from milliseconds to days
           const growDay = Math.floor(
-            (new Date(post.date).getTime() -
-              report.createdAt.getTime()) /
-              (1000 * 60 * 60 * 24)
-          ); // + 1; is not consistant for now!
+            differenceInMs / (1000 * 60 * 60 * 24)
+          );
 
           const isoLikes = post.likes.map(
             ({ id, createdAt, updatedAt, user }) => ({
@@ -271,12 +301,23 @@ export const postRouter = createTRPCRouter({
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { createdAt, updatedAt, likes, ...strippedPost } = post;
 
+          // Map images and handle postOrder
+          const images = post.images.map(
+            ({ id, publicId, cloudUrl, postOrder }) => ({
+              id,
+              publicId,
+              cloudUrl,
+              postOrder: postOrder ?? 0, // Default to 0 if postOrder is null
+            })
+          );
+
           return {
             ...strippedPost,
             likes: isoLikes,
-            date: date.toISOString(),
+            date: postDate.toISOString(),
             growDay,
             comments: isoComments,
+            images,
           };
         })
       );

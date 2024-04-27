@@ -98,6 +98,7 @@ model Image {
   reportId  String?  @unique // Only one Image can be the main header image of a report
   post      Post?    @relation(fields: [postId], references: [id])
   postId    String?
+  postOrder Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   owner     User     @relation(fields: [ownerId], references: [id])

@@ -286,9 +286,17 @@ export const handleDrop = async (
 export const handleMultipleDrop = async (
   files: File[],
   report: IsoReportWithPostsFromDb,
+  setImages: Dispatch<
+    SetStateAction<
+      {
+        id: string;
+        publicId: string;
+        cloudUrl: string;
+        postOrder: number;
+      }[]
+    >
+  >,
   setImageIds: Dispatch<SetStateAction<string[]>>,
-  setImagePublicIds: Dispatch<SetStateAction<string[]>>,
-  setCloudUrls: Dispatch<SetStateAction<string[]>>,
   setIsUploading: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
   try {
@@ -310,14 +318,35 @@ export const handleMultipleDrop = async (
           ...prevImageIds,
           ...data.imageIds,
         ]);
-        setImagePublicIds((prevImagePublicIds) => [
-          ...prevImagePublicIds,
-          ...data.imagePublicIds,
+        // interface MultiUploadResponse {
+        //   success: boolean;
+        //   imageIds: string[];
+        //   imagePublicIds: string[];
+        //   cloudUrls: string[];
+        // }
+        //   setImages: Dispatch<
+        //   SetStateAction<
+        //     {
+        //       id: string;
+        //       publicId: string;
+        //       cloudUrl: string;
+        //       postOrder: number;
+        //     }[]
+        //   >>,
+        setImages((prevImages) => [
+          ...prevImages,
+          ...data.cloudUrls.map((cloudUrl, index) => ({
+            id: data.imageIds[index], // Assuming imageIds correspond to cloudUrls in order
+            publicId: data.imagePublicIds[index], // Assuming imagePublicIds correspond to cloudUrls in order
+            cloudUrl,
+            postOrder: 0, // You may adjust this according to your logic
+          })),
         ]);
-        setCloudUrls((prevCloudUrls) => [
-          ...prevCloudUrls,
-          ...data.cloudUrls,
-        ]);
+
+        // setCloudUrls((prevCloudUrls) => [
+        //   ...prevCloudUrls,
+        //   ...data.cloudUrls,
+        // ]);
       } else {
         throw new Error("File uploaded NOT successfully");
       }

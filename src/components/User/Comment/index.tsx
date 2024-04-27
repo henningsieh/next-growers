@@ -149,7 +149,7 @@ export function UserComment({
 
   const { mutate: tRPCdeleteComment } =
     api.comments.deleteCommentById.useMutation({
-      onMutate: (newCommentDB) => {
+      onMutate: (/*newCommentDB*/) => {
         console.debug(
           "START api.comments.deleteCommentById.useMutation"
         );
@@ -385,7 +385,7 @@ export function UserComment({
 
                 newCommentEditor?.commands.setContent(`
 
-                ${activeLocale === "en" ? "fron:" : "von"}: <a href=${senderLink}>${comment.author.name as string} #${comment.id}</a>
+                ${activeLocale === "en" ? "from" : "von"}: <a href=${senderLink}>${comment.author.name as string} #${comment.id}</a>
                   <blockquote>${comment.content}</blockquote>
                   <p></p>`);
               }}

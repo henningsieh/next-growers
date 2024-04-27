@@ -313,17 +313,17 @@ const ProtectedEditReportDetails: NextPage = () => {
                   !strainsAreLoading &&
                   !strainsHaveErrors && (
                     <>
-                      <Tabs.Panel value="addUpdate" pl="xs">
-                        {/* AddPost Component */}
-                        <PostForm isoReport={report} post={null} />
-                      </Tabs.Panel>
-
                       <Tabs.Panel value="editGrow" pl="xs">
                         <EditReportForm
                           report={report}
                           strains={strains}
                           user={session.user}
                         />
+                      </Tabs.Panel>
+
+                      <Tabs.Panel value="addUpdate" pl="xs">
+                        {/* AddPost Component */}
+                        <PostForm isoReport={report} post={null} />
                       </Tabs.Panel>
 
                       <Tabs.Panel value="editAll" pl="xs">

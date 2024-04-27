@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 
 import PostForm from "~/components/Post/PostForm";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
+import type { IsoReportWithPostsFromDb, Post } from "~/types";
 import { Locale } from "~/types";
 
 import { sanatizeDateString } from "~/utils/helperUtils";
@@ -100,7 +100,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                   />
                 </Flex> */}
 
-                <PostForm isoReport={isoReport} post={post} />
+                <PostForm isoReport={isoReport} post={post as Post} />
               </Accordion.Panel>
             </Accordion.Item>
           ))}

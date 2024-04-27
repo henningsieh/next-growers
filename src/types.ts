@@ -28,17 +28,6 @@ type getCommentsByPostIdOutput =
 export type Comments = getCommentsByPostIdOutput;
 export type Comment = getCommentsByPostIdOutput[number];
 
-export type PostDbInput = {
-  date: Date;
-  title: string;
-  growStage: keyof typeof GrowStage;
-  lightHoursPerDay: number | null;
-  images: string[];
-  content: string;
-  reportId: string;
-  authorId: string;
-};
-
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
 export type Notifications = getAllNotificationsOutput;

@@ -10,7 +10,7 @@ import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import type { EmblaCarouselType } from "embla-carousel-react";
 
 interface CardProps {
-  images: string[];
+  images: (string | null)[];
   initialSlide: number;
   largeScreen: boolean;
   setEmbla: React.Dispatch<

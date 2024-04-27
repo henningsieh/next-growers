@@ -121,6 +121,7 @@ export const reportRouter = createTRPCRouter({
                     id: true,
                     publicId: true,
                     cloudUrl: true,
+                    postOrder: true,
                   },
                 },
                 likes: {
@@ -145,13 +146,26 @@ export const reportRouter = createTRPCRouter({
               (reportFromDb.posts || []).length > 0
                 ? reportFromDb.posts.map((post) => {
                     const postDate = new Date(post.date).toISOString();
-                    const reportCreatedAt =
-                      reportFromDb.createdAt.toISOString();
-                    const timeDifference =
-                      new Date(postDate).getTime() -
-                      new Date(reportCreatedAt).getTime();
+                    const reportCreatedAt = reportFromDb?.createdAt;
+
+                    // Convert both dates to local time
+                    const localPostDate = new Date(postDate);
+                    const localReportCreatedAt = new Date(
+                      reportCreatedAt
+                    );
+
+                    // Set the time of day to midnight for both dates
+                    localPostDate.setHours(0, 0, 0, 0);
+                    localReportCreatedAt.setHours(0, 0, 0, 0);
+
+                    // Calculate the difference in milliseconds between the two dates
+                    const differenceInMs =
+                      localPostDate.getTime() -
+                      localReportCreatedAt.getTime();
+
+                    // Convert the difference from milliseconds to days
                     const growDay = Math.floor(
-                      timeDifference / (1000 * 60 * 60 * 24)
+                      differenceInMs / (1000 * 60 * 60 * 24)
                     );
 
                     const isoLikes = post.likes.map(
@@ -326,6 +340,7 @@ export const reportRouter = createTRPCRouter({
                     id: true,
                     publicId: true,
                     cloudUrl: true,
+                    postOrder: true,
                   },
                 },
                 likes: {
@@ -350,13 +365,26 @@ export const reportRouter = createTRPCRouter({
               (reportFromDb.posts || []).length > 0
                 ? reportFromDb.posts.map((post) => {
                     const postDate = new Date(post.date).toISOString();
-                    const reportCreatedAt =
-                      reportFromDb.createdAt.toISOString();
-                    const timeDifference =
-                      new Date(postDate).getTime() -
-                      new Date(reportCreatedAt).getTime();
+                    const reportCreatedAt = reportFromDb?.createdAt;
+
+                    // Convert both dates to local time
+                    const localPostDate = new Date(postDate);
+                    const localReportCreatedAt = new Date(
+                      reportCreatedAt
+                    );
+
+                    // Set the time of day to midnight for both dates
+                    localPostDate.setHours(0, 0, 0, 0);
+                    localReportCreatedAt.setHours(0, 0, 0, 0);
+
+                    // Calculate the difference in milliseconds between the two dates
+                    const differenceInMs =
+                      localPostDate.getTime() -
+                      localReportCreatedAt.getTime();
+
+                    // Convert the difference from milliseconds to days
                     const growDay = Math.floor(
-                      timeDifference / (1000 * 60 * 60 * 24)
+                      differenceInMs / (1000 * 60 * 60 * 24)
                     );
 
                     const isoLikes = post.likes.map(
@@ -482,6 +510,7 @@ export const reportRouter = createTRPCRouter({
                   id: true,
                   publicId: true,
                   cloudUrl: true,
+                  postOrder: true,
                 },
               },
               likes: {
@@ -541,16 +570,24 @@ export const reportRouter = createTRPCRouter({
         ),
 
         posts: (reportFromDb.posts || []).map((post) => {
-          const postDate = post.date ? new Date(post.date) : null;
-          const reportCreatedAt = reportFromDb?.createdAt
-            ? new Date(reportFromDb.createdAt)
-            : null;
-          const timeDifference =
-            postDate && reportCreatedAt
-              ? postDate.getTime() - reportCreatedAt.getTime()
-              : 0;
+          const postDate = new Date(post.date);
+          const reportCreatedAt = reportFromDb?.createdAt;
+
+          // Convert both dates to local time
+          const localPostDate = new Date(postDate);
+          const localReportCreatedAt = new Date(reportCreatedAt);
+
+          // Set the time of day to midnight for both dates
+          localPostDate.setHours(0, 0, 0, 0);
+          localReportCreatedAt.setHours(0, 0, 0, 0);
+
+          // Calculate the difference in milliseconds between the two dates
+          const differenceInMs =
+            localPostDate.getTime() - localReportCreatedAt.getTime();
+
+          // Convert the difference from milliseconds to days
           const growDay = Math.floor(
-            timeDifference / (1000 * 60 * 60 * 24)
+            differenceInMs / (1000 * 60 * 60 * 24)
           );
 
           const isoLikes = post.likes.map(
@@ -573,7 +610,7 @@ export const reportRouter = createTRPCRouter({
             ...post,
             createdAt: post.createdAt.toISOString(),
             updatedAt: post.createdAt.toISOString(),
-            date: postDate?.toISOString() as string,
+            date: postDate.toISOString(),
             likes: isoLikes,
             comments: isoComments,
             growDay,

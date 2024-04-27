@@ -9,8 +9,6 @@ import type { Editor } from "@tiptap/react";
 import type { EmojiClickData } from "emoji-picker-react";
 import { EmojiStyle, SkinTones, Theme } from "emoji-picker-react";
 
-import { useState } from "react";
-
 import dynamic from "next/dynamic";
 
 const Picker = dynamic(
@@ -25,16 +23,12 @@ interface EmojiPickerProps {
 }
 
 function EmojiPicker({ editor }: EmojiPickerProps) {
-  const [, setPickerOpen] = useState(false);
-
   const [opened, { open, close }] = useDisclosure(false);
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
-  const clickOutsidePicker = useClickOutside(() =>
-    setPickerOpen(false)
-  );
+  const clickOutsidePicker = useClickOutside(() => close());
 
   function handleEmojiClick(emojiData: EmojiClickData) {
     editor?.commands.insertContent(emojiData.emoji);

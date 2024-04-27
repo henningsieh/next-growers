@@ -29,6 +29,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
   // const { t } = useTranslation(activeLocale);
 
   const { cloudUrls } = props;
+
   const { classes, theme } = useStyles();
 
   const [opened, { open, close }] = useDisclosure(false);

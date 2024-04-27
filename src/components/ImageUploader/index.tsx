@@ -1,3 +1,4 @@
+import DragAndSortGrid from "../DragAndSortGrid/DragAndSortGrid";
 import {
   Box,
   Container,
@@ -18,15 +19,29 @@ import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
 import type { FileRejection } from "react-dropzone";
 
-import ImagesSlider from "~/components/ImagesSlider";
-
 import type { IsoReportWithPostsFromDb } from "~/types";
 
 import { handleMultipleDrop } from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
   report: IsoReportWithPostsFromDb;
-  cloudUrls: string[] | undefined;
+  images: {
+    id: string;
+    publicId: string;
+    cloudUrl: string;
+    postOrder: number;
+  }[];
+  setImages: Dispatch<
+    SetStateAction<
+      {
+        id: string;
+        publicId: string;
+        cloudUrl: string;
+        postOrder: number;
+      }[]
+    >
+  >;
+  //cloudUrls: string[] | undefined;
   setImageIds: Dispatch<SetStateAction<string[]>>;
   maxFiles?: number;
   maxSize?: number;
@@ -36,32 +51,29 @@ interface ImageUploaderProps {
 
 const ImageUploader = ({
   report,
-  cloudUrls: cloudUrlsFromProps,
+  images,
+  setImages,
   setImageIds,
   maxFiles,
   maxSize,
   onReject,
 }: ImageUploaderProps) => {
-  const [cloudUrls, setCloudUrls] = useState<string[]>(
-    cloudUrlsFromProps ? cloudUrlsFromProps : []
-  );
   const [isUploading, setIsUploading] = useState(false);
-  const [, setFiles] = useState<FileWithPath[]>([]);
-  const [, setImagePublicIds] = useState<string[]>([]);
 
   const theme = useMantineTheme();
 
   const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
     setIsUploading(true);
-    setFiles(fileWithPath);
+    // setFiles(fileWithPath);
 
     // handleMultipleDrop calls the /api/multi-upload endpoint
     handleMultipleDrop(
       fileWithPath,
       report,
+      setImages,
       setImageIds,
-      setImagePublicIds,
-      setCloudUrls,
+      // setImagePublicIds,
+      //setCloudUrls,
       setIsUploading
     ).catch((error) => {
       console.debug(error);
@@ -123,7 +135,10 @@ const ImageUploader = ({
 
                 <Space h="sm" />
 
-                <ImagesSlider cloudUrls={cloudUrls} />
+                <DragAndSortGrid
+                  itemsToSort={images}
+                  setImages={setImages}
+                />
               </Box>
             </Box>
           </Box>

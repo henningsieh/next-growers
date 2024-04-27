@@ -140,13 +140,16 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
         invalid_type_error: "(h) must be set, may be 0",
       })
       .nullable(),
-
     growStage: z
       .enum(Object.keys(GrowStage) as [keyof typeof GrowStage])
       .nullable(),
-
     content: z.string(),
-    images: z.array(z.string()),
+    images: z.array(
+      z.object({
+        id: z.string(),
+        postOrder: z.number().nullable(),
+      })
+    ),
   });
 };
 
@@ -159,5 +162,10 @@ export const InputCreatePostServer = z.object({
   content: z.string().min(1),
   reportId: z.string().min(1),
   authorId: z.string().min(1),
-  images: z.array(z.string()),
+  images: z.array(
+    z.object({
+      id: z.string(),
+      postOrder: z.number().nullable(),
+    })
+  ),
 });
