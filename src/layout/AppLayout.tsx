@@ -464,7 +464,7 @@ export default function RootLayout({
       <Overlay className={classes.overlay} opacity={1} />
 
       {/* Content */}
-      <Box className="relative mt-12 pb-16 border-2">
+      <Box className="relative mt-12 pb-16">
         {children}
         <SpeedInsights />
       </Box>
