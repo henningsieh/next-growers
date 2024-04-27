@@ -81,11 +81,6 @@ const PostForm = (props: AddPostProps) => {
     })
   );
 
-  console.debug("images", images);
-
-  // const { colorScheme } = useMantineColorScheme();
-  // const dark = colorScheme === "dark";
-
   // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
     createPostForm.setFieldValue("images", images);
@@ -135,10 +130,14 @@ const PostForm = (props: AddPostProps) => {
         notifications.show(savePostSuccessfulMsg);
         setImageIds([]);
         // createPostForm.setFieldValue("images", imageIds);
-        await trpc.reports.getIsoReportWithPostsFromDb.refetch();
-        // Navigate to the new report page
+        await trpc.reports.getIsoReportWithPostsFromDb.refetch(); // When navigating to the new page
         void router.push(
-          `/${activeLocale as string}/grow/${newPost.reportId}/update/${newPost.id}`
+          {
+            pathname: `/${activeLocale as string}/grow/${newPost.reportId}/update/${newPost.id}`,
+            query: { refresh: new Date().getTime() }, // Add a unique query parameter to force a new page render
+          },
+          undefined,
+          { scroll: true }
         );
       },
       // Always refetch after error or success:

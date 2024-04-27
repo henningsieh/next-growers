@@ -25,7 +25,6 @@ import {
   IconMapPin,
   IconMessageCircle,
 } from "@tabler/icons-react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -464,10 +463,7 @@ export default function RootLayout({
       <Overlay className={classes.overlay} opacity={1} />
 
       {/* Content */}
-      <Box className="relative mt-12 pb-16">
-        {children}
-        <SpeedInsights />
-      </Box>
+      <Box className="relative mt-12 pb-16">{children}</Box>
 
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (
