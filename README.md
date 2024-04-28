@@ -1,4 +1,4 @@
-# GrowAGram 🪴 Show Your Grow! 🚀
+#GrowAGram 🪴 Track Your Grow! 📜
 
 ![GrowAGram Header Screenshot](https://growagram.com/Landing%20_%20GrowAGram%20_%20Show%20your%20Grow%20_%20EN.png "GrowAGram LandingPage Screenshot")
 

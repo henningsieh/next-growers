@@ -56,4 +56,4 @@ export default class _Document extends Document {
   }
 }
 
-export const appTitle = "GrowAGram 🪴 Show Your Grow";
+export const appTitle = "GrowAGram 🪴 Track Your Grow! 📜";
