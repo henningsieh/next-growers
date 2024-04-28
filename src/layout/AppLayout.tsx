@@ -463,7 +463,7 @@ export default function RootLayout({
       <Overlay className={classes.overlay} opacity={1} />
 
       {/* Content */}
-      <Box className="relative mt-12 pb-16">{children}</Box>
+      <Box className="relative mt-16 pb-16">{children}</Box>
 
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (
