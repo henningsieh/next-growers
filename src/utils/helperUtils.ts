@@ -5,11 +5,11 @@ import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import type {
   ImageUploadResponse,
   IsoReportWithPostsFromDb,
-  Locale,
   MultiUploadResponse,
   Notification,
   SplitObject,
 } from "~/types";
+import { Locale } from "~/types";
 
 export function compareDatesWithoutTime(date1: Date, date2: Date) {
   const date1Clone = new Date(date1);
@@ -226,7 +226,7 @@ export function sanatizeDateString(
     minute: withTime ? "numeric" : undefined,
   };
 
-  if (locale === "en") {
+  if (locale === Locale.EN) {
     // international date
     const intlFormatter = new Intl.DateTimeFormat("en-US", options);
     const internationalDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
