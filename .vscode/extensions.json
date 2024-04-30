@@ -1,0 +1,31 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "burkeholland.simple-react-snippets",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "dbaeumer.vscode-eslint",
+    "donjayamanne.githistory",
+    "dsznajder.es7-react-js-snippets",
+    "eamodio.gitlens",
+    "ecmel.vscode-html-css",
+    "esbenp.prettier-vscode",
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-rename-tag",
+    "github.vscode-pull-request-github",
+    "mhutchie.git-graph",
+    "ms-vscode.vscode-typescript-next",
+    "perkovec.emoji",
+    "pmneo.tsimporter",
+    "prisma.prisma",
+    "rvest.vs-code-prettier-eslint",
+    "stylelint.vscode-stylelint",
+    "vscode-icons-team.vscode-icons",
+    "vunguyentuan.vscode-css-variables",
+    "vunguyentuan.vscode-postcss",
+    "wayou.vscode-todo-highlight",
+    "yoavbls.pretty-ts-errors",
+    "yuzu.snippets-next-13",
+    "zignd.html-css-class-completion"
+  ]
+}
