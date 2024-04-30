@@ -229,10 +229,10 @@ export async function getStaticProps(
  */
 export const getStaticPaths: GetStaticPaths = async () => {
   //FIXME: NOT PRERENDERING POSTS
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
+  // return {
+  //   paths: [],
+  //   fallback: "blocking",
+  // };
 
   const reports = await prisma.report.findMany({
     select: {
