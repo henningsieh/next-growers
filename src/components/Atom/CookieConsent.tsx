@@ -32,7 +32,7 @@ function CookieConsentBanner() {
         fontWeight: "bolder",
         border: `1px solid ${theme.colors.growgreen[2]}`, // Example border style
       }}
-      debug
+      // debug
       // overlay
       // expires={30}
     >
