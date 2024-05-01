@@ -1,14 +1,14 @@
-import {
-  ColorSchemeProvider,
-  MantineProvider,
-  rem,
-} from "@mantine/core";
 import type {
   AccordionStylesParams,
   ButtonStylesParams,
   ColorScheme,
   MantineTheme,
   NotificationStylesParams,
+} from "@mantine/core";
+import {
+  ColorSchemeProvider,
+  MantineProvider,
+  rem,
 } from "@mantine/core";
 import { DatesProvider } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
@@ -166,7 +166,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     backgroundColor:
                       variant === "contained"
                         ? theme.colorScheme === "dark"
-                          ? theme.colors.growgreen[8]
+                          ? theme.colors.growgreen[6]
                           : theme.colors.growgreen[2]
                         : undefined,
                   },
@@ -177,17 +177,27 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     variant === "contained"
                       ? theme.colorScheme === "dark"
                         ? theme.colors.dark[7]
-                        : theme.fn.lighten(
-                            theme.colors.growgreen[4],
-                            0.7
-                          )
-                      : undefined,
+                        : theme.colors.gray[2]
+                      : // : theme.fn.lighten(
+                        //     theme.colors.growgreen[4],
+                        //     0.7
+                        //   )
+                        undefined,
 
                   // border: `${rem(1)} solid #ededed`,
 
                   // styles added to expanded item
                   "&[data-active]": {
-                    backgroundColor: "transparent",
+                    backgroundColor:
+                      variant === "contained"
+                        ? theme.colorScheme === "dark"
+                          ? "transparent"
+                          : theme.white
+                        : // : theme.fn.lighten(
+                          //     theme.colors.growgreen[4],
+                          //     0.7
+                          //   )
+                          undefined,
                   },
                 },
 

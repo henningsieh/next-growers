@@ -59,7 +59,7 @@ export const getServerSideProps: GetServerSideProps = async (
  * @param props: { trpcState: DehydratedState, reportId: string }
  * @returns HTML Component
  */
-const ProtectedEditReportDetails: NextPage = () => {
+const ProtectedEditPost: NextPage = () => {
   const router = useRouter();
   const queryReportId = router.query.reportId as string;
   const queryPostId = router.query.postId as string;
@@ -180,4 +180,4 @@ const ProtectedEditReportDetails: NextPage = () => {
   );
 };
 
-export default ProtectedEditReportDetails;
+export default ProtectedEditPost;
