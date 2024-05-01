@@ -32,6 +32,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import CookieConsentBanner from "~/components/Atom/CookieConsent";
 import LanguageSwitcher from "~/components/LanguageSwitcher";
 import LightDarkButton from "~/components/LightDarkButton";
 import Notifications from "~/components/User/Notifications";
@@ -464,6 +465,9 @@ export default function RootLayout({
 
       {/* Content */}
       <Box className="relative mt-16 pb-16">{children}</Box>
+
+      {/* CookieConsent */}
+      <CookieConsentBanner />
 
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (
