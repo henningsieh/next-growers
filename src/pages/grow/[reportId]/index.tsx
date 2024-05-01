@@ -344,6 +344,7 @@ const PublicReport: NextPage = () => {
           Statistics
         </Title>
         <LightWattChart
+          repordId={report.id}
           reportStartDate={new Date(report.createdAt)}
           dateOfnewestPost={dateOfnewestPost}
         />

@@ -15,11 +15,13 @@ import { api } from "~/utils/api";
 import { processLightwattsData } from "~/utils/helperUtils";
 
 interface LightWattChartOptions {
+  repordId: string;
   reportStartDate: Date;
   dateOfnewestPost: Date;
 }
 
 export function LightWattChart({
+  repordId,
   reportStartDate,
   dateOfnewestPost,
 }: LightWattChartOptions) {
@@ -31,9 +33,7 @@ export function LightWattChart({
   const dark = colorScheme === "dark";
 
   const { data: lightWatts } =
-    api.lightwatts.getAllLightWattsByReportId.useQuery(
-      "cluqhy9eh00002a6i6o3gf6v6"
-    );
+    api.lightwatts.getAllLightWattsByReportId.useQuery(repordId);
 
   // process data in helper function
   const processedData = processLightwattsData(lightWatts);

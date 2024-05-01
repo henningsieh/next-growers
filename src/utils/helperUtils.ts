@@ -367,7 +367,7 @@ export function processLightwattsData(
 ) {
   const processedData: LightswattsDataPoint[] = [];
 
-  if (!!!lightWatts) {
+  if (!!!lightWatts || lightWatts.length == 0) {
     return null;
   } else {
     for (let i = 0; i < lightWatts.length - 1; i++) {

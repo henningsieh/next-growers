@@ -228,49 +228,10 @@ export async function getStaticProps(
  *  @param reports: { id: string; }[]
  *  @returns { paths[] }
  */
-export const getStaticPaths: GetStaticPaths = async () => {
+export const getStaticPaths: GetStaticPaths = () => {
   //FIXME: NOT PRERENDERING POSTS
-  // return {
-  //   paths: [],
-  //   fallback: "blocking",
-  // };
-
-  const reports = await prisma.report.findMany({
-    select: {
-      id: true,
-      posts: { select: { id: true } },
-    },
-  });
-
-  const paths = reports.flatMap((staticReport) => {
-    const localizedPaths = [
-      {
-        params: {
-          reportId: staticReport.id,
-        },
-        locale: "en", // English version
-      },
-      {
-        params: {
-          reportId: staticReport.id,
-        },
-        locale: "de", // German version
-      },
-    ];
-
-    return staticReport.posts.flatMap((post) =>
-      localizedPaths.map((path) => ({
-        ...path,
-        params: {
-          ...path.params,
-          postId: post.id,
-        },
-      }))
-    );
-  });
-
   return {
-    paths,
+    paths: [],
     fallback: "blocking",
   };
 };
