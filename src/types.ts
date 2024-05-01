@@ -107,3 +107,8 @@ export enum Environment {
   INDOOR = "Indoor 💡",
   OUTDOOR = "Outdoor 🌦️",
 }
+
+export interface LightswattsDataPoint {
+  date: Date;
+  watt: number;
+}

@@ -5,6 +5,7 @@ import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import type {
   ImageUploadResponse,
   IsoReportWithPostsFromDb,
+  LightswattsDataPoint,
   MultiUploadResponse,
   Notification,
   SplitObject,
@@ -358,3 +359,52 @@ export const handleMultipleDrop = async (
     throw new Error("Error uploading file");
   }
 };
+
+// Preprocess the data to include intermediate points
+export function processLightwattsData(
+  lightWatts: LightswattsDataPoint[] | undefined
+) {
+  const processedData: LightswattsDataPoint[] = [];
+
+  if (!!!lightWatts) {
+    return null;
+  } else {
+    for (let i = 0; i < lightWatts.length - 1; i++) {
+      const currentDate = lightWatts[i].date;
+      const nextDate = lightWatts[i + 1].date;
+      const currentDateValue = lightWatts[i].watt;
+
+      processedData.push(lightWatts[i]);
+
+      const daysDiff =
+        (nextDate.getTime() - currentDate.getTime()) /
+        (1000 * 60 * 60 * 24);
+      for (let j = 1; j < daysDiff; j++) {
+        const interpolatedDate = new Date(
+          currentDate.getTime() + j * (1000 * 60 * 60 * 24)
+        );
+        processedData.push({
+          date: interpolatedDate,
+          watt: currentDateValue,
+        });
+      }
+    }
+    // Fill in additional interpolated dates up to today with the last known value
+    const lastDataPoint = lightWatts[lightWatts.length - 1];
+    const today = new Date();
+    const daysDiffToToday =
+      (today.getTime() - lastDataPoint.date.getTime()) /
+      (1000 * 60 * 60 * 24);
+    for (let i = 0; i <= daysDiffToToday; i++) {
+      const interpolatedDate = new Date(
+        lastDataPoint.date.getTime() + i * (1000 * 60 * 60 * 24)
+      );
+      processedData.push({
+        date: interpolatedDate,
+        watt: lastDataPoint.watt,
+      });
+    }
+
+    return processedData;
+  }
+}

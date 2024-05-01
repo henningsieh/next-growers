@@ -30,6 +30,7 @@ import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/PostCard";
 import PostDatepicker from "~/components/Post/PostDatepicker";
 import { ReportHeader } from "~/components/Report/Header";
+import { LightWattChart } from "~/components/Report/LightWattChart/LightWattChart";
 
 import { api } from "~/utils/api";
 import { compareDatesWithoutTime } from "~/utils/helperUtils";
@@ -267,7 +268,6 @@ const PublicReport: NextPage = () => {
             )}
         </Box>
         {/* // Header End */}
-
         <Container
           size="xl"
           px={0}
@@ -337,6 +337,16 @@ const PublicReport: NextPage = () => {
             </>
           )}
         </Container>
+      </Container>
+
+      <Container size="xl" p="md" className="flex flex-col">
+        <Title py="sm" order={2}>
+          Statistics
+        </Title>
+        <LightWattChart
+          reportStartDate={new Date(report.createdAt)}
+          dateOfnewestPost={dateOfnewestPost}
+        />
       </Container>
     </>
   );

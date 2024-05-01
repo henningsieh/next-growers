@@ -15,7 +15,6 @@ import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import type { MantineColor } from "@mantine/styles";
 import RootLayout from "~/layout/AppLayout";
-import "~/styles/emojiPickerStyles.css";
 import "~/styles/globals.css";
 
 import type { Session } from "next-auth";
