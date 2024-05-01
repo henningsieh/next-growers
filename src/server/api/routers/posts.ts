@@ -70,6 +70,7 @@ export const postRouter = createTRPCRouter({
         content,
         growStage,
         lightHoursPerDay,
+        watt,
         reportId,
         authorId,
         images, // Include the images field in the input
@@ -98,13 +99,6 @@ export const postRouter = createTRPCRouter({
           `You are not the owner of this report with id: ${reportId}`
         );
       }
-
-      console.debug(
-        images.map((item, index) => ({
-          ...item,
-          postOrder: index,
-        }))
-      );
 
       await Promise.all(
         images.map(async (item, index) => {
@@ -193,6 +187,18 @@ export const postRouter = createTRPCRouter({
         });
       }
 
+      // Check if watt is defined and not null or undefined
+      if (watt !== undefined && watt !== null) {
+        await ctx.prisma.lightWatts.upsert({
+          where: { postId: id },
+          update: { watt },
+          create: {
+            watt,
+            post: { connect: { id } },
+          },
+        });
+      }
+
       return post;
     }),
 
@@ -247,6 +253,7 @@ export const postRouter = createTRPCRouter({
             },
           },
           comments: true,
+          LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
         },
       });
 

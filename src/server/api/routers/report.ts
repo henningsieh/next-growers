@@ -136,6 +136,7 @@ export const reportRouter = createTRPCRouter({
                   },
                 },
                 comments: true,
+                LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
           },
@@ -355,6 +356,7 @@ export const reportRouter = createTRPCRouter({
                   },
                 },
                 comments: true,
+                LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
           },
@@ -525,6 +527,7 @@ export const reportRouter = createTRPCRouter({
                 },
               },
               comments: true,
+              LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
             },
           },
         },

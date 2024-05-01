@@ -20,8 +20,6 @@ import {
   IconEye,
   IconHome,
 } from "@tabler/icons-react";
-import type { AxiosResponse } from "axios";
-import axios from "axios";
 
 import { useEffect, useState } from "react";
 
@@ -37,10 +35,13 @@ import {
   Environment,
   GrowStage,
   type IsoReportWithPostsFromDb,
+  Locale,
 } from "~/types";
-import { Locale } from "~/types";
 
-import { sanatizeDateString } from "~/utils/helperUtils";
+import {
+  parseAndReplaceAmazonLinks,
+  sanatizeDateString,
+} from "~/utils/helperUtils";
 
 const useStyles = createStyles((theme) => ({
   carousel: {
@@ -114,61 +115,20 @@ const useStyles = createStyles((theme) => ({
 
 interface PostCardProps {
   reportFromProps: IsoReportWithPostsFromDb;
-  postId: string | undefined;
+  postId: string;
 }
 
 export function PostCard(props: PostCardProps) {
   const { reportFromProps: report, postId } = props;
+
+  const theme = useMantineTheme();
+  const { classes } = useStyles();
 
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
   const [postHTMLContent, setPostHTMLContent] = useState("");
-
-  useEffect(() => {
-    const post = report.posts.find((post) => post.id === postId);
-    if (post) {
-      parseAndReplaceAmazonLinks(post.content)
-        .then((parsedContent) => {
-          setPostHTMLContent(parsedContent);
-        })
-        .catch((error) => {
-          console.error(
-            "Error parsing and replacing Amazon links:",
-            error
-          );
-        });
-    }
-  }, [report, postId]);
-
-  const parseAndReplaceAmazonLinks = async (
-    content: string
-  ): Promise<string> => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(content, "text/html");
-
-    const links = doc.querySelectorAll('a[href^="https://amzn.to"]');
-
-    for (const link of links) {
-      const shortenedUrl = link.getAttribute("href");
-      try {
-        const response: AxiosResponse<{ resolvedUrl: string }> =
-          await axios.get(
-            `/api/resolveAmazonUrl?shortenedUrl=${shortenedUrl as string}&newTag=growagram-21`
-          );
-        const resolvedUrl = response.data.resolvedUrl;
-        link.setAttribute("href", resolvedUrl);
-      } catch (error) {
-        console.error("Error resolving Amazon URL:", error);
-      }
-    }
-
-    return doc.documentElement.innerHTML;
-  };
-
-  const { classes } = useStyles();
-  const theme = useMantineTheme();
 
   const reportBasicData = [
     {
@@ -210,6 +170,22 @@ export function PostCard(props: PostCardProps) {
       <Text size="xs"> {growBasic.label} </Text>
     </Center>
   ));
+
+  useEffect(() => {
+    const post = report.posts.find((post) => post.id === postId);
+    if (post) {
+      parseAndReplaceAmazonLinks(post.content)
+        .then((parsedContent) => {
+          setPostHTMLContent(parsedContent);
+        })
+        .catch((error) => {
+          console.error(
+            "Error parsing and replacing Amazon links:",
+            error
+          );
+        });
+    }
+  }, [report, postId]);
 
   if (!postId) {
     return (
@@ -258,6 +234,11 @@ export function PostCard(props: PostCardProps) {
           title: t("common:post-lighthperday"),
           value: post?.lightHoursPerDay,
         },
+        // FIXME: take the last valid watt value from past posts, not value from this post
+        // {
+        //   title: "Watt",
+        //   value: post?.LightWatts?.watt,
+        // },
         {
           title: "Growth Stage",
           value: GrowStage[post?.growStage as keyof typeof GrowStage],
@@ -288,11 +269,15 @@ export function PostCard(props: PostCardProps) {
           withBorder
         >
           <Group position="apart">
-            <Text fw={700} fz="xl">
+            <Text py="md" fw={700} fz="xl">
               {post?.title}
             </Text>
             <LikeHeart itemToLike={post as Post} itemType={"Post"} />
           </Group>
+          <Group position="apart" pt="sm" className={classes.section}>
+            {postData}
+          </Group>
+
           <Box my={"sm"}>
             <ImagesSlider
               cloudUrls={
@@ -310,9 +295,6 @@ export function PostCard(props: PostCardProps) {
                 __html: postHTMLContent as TrustedHTML,
               }}
             />
-            <Group position="apart" px={2} className={classes.section}>
-              {postData}
-            </Group>
           </TypographyStylesProvider>
         </Paper>
 

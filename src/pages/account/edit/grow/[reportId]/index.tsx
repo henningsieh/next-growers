@@ -290,7 +290,6 @@ const ProtectedEditReportDetails: NextPage = () => {
                   }
                 >
                   <Title order={1} fz={smallScreen ? rem(11) : "lg"}>
-                    {" "}
                     {t("common:editallpost-headline")}{" "}
                   </Title>
                 </Tabs.Tab>
@@ -313,7 +312,7 @@ const ProtectedEditReportDetails: NextPage = () => {
                   !strainsAreLoading &&
                   !strainsHaveErrors && (
                     <>
-                      <Tabs.Panel value="editGrow" pl="xs">
+                      <Tabs.Panel value="editGrow">
                         <EditReportForm
                           report={report}
                           strains={strains}
@@ -321,12 +320,12 @@ const ProtectedEditReportDetails: NextPage = () => {
                         />
                       </Tabs.Panel>
 
-                      <Tabs.Panel value="addUpdate" pl="xs">
+                      <Tabs.Panel value="addUpdate">
                         {/* AddPost Component */}
                         <PostForm isoReport={report} post={null} />
                       </Tabs.Panel>
 
-                      <Tabs.Panel value="editAll" pl="xs">
+                      <Tabs.Panel value="editAll">
                         {/* PostsAccordion Component */}
                         {/* Alle Updates bearbeiten*/}
                         <PostsAccordion report={report && report} />

@@ -17,8 +17,9 @@ import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
 import {
-  IconBulb,
+  IconBolt,
   IconCalendarEvent,
+  IconClock,
   IconDeviceFloppy,
   IconNumber,
   IconPlant,
@@ -154,7 +155,6 @@ const PostForm = (props: AddPostProps) => {
 
   reportCreatedAt.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
-  //currentDate.setDate(currentDate.getDate());
 
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
@@ -178,6 +178,7 @@ const PostForm = (props: AddPostProps) => {
       content: post ? post.content : prefillHTMLContent,
       growStage: post ? post.growStage : undefined,
       lightHoursPerDay: post ? (post.lightHoursPerDay as number) : 0,
+      watt: post && post.LightWatts ? post.LightWatts.watt : undefined,
       images: images.map(({ id, postOrder }) => ({ id, postOrder })),
     },
   });
@@ -194,7 +195,6 @@ const PostForm = (props: AddPostProps) => {
       postOrder: number;
     }[];
   }) {
-    console.debug(values.images);
     // Omitting the 'day' field, will not be saved
     type PostFormValuesWithoutDay = Omit<typeof values, "day">;
     const postFormValues: PostFormValuesWithoutDay = values;
@@ -225,7 +225,6 @@ const PostForm = (props: AddPostProps) => {
       <Container
         pl={0}
         pr={0}
-        pt="xl"
         className="flex w-full flex-col space-y-2"
       >
         <Paper m={0} p="sm" withBorder>
@@ -256,12 +255,12 @@ const PostForm = (props: AddPostProps) => {
                       align="baseline"
                     >
                       <DateInput
+                        className="w-full"
                         label={t("common:post-updatedate")}
                         description={t(
                           "common:addpost-updatedatedescription"
                         )}
                         valueFormat="MMMM DD, YYYY HH:mm"
-                        className="w-full"
                         icon={
                           <IconCalendarEvent
                             stroke={1.6}
@@ -285,11 +284,11 @@ const PostForm = (props: AddPostProps) => {
                         }}
                       />
                       <NumberInput
+                        w={232}
                         label={t("common:post-addform-growday")}
                         description={t(
                           "common:post-addform-growdaydescription"
                         )}
-                        w={232}
                         placeholder="1"
                         icon={<IconNumber stroke={1.6} size="1.8rem" />}
                         withAsterisk
@@ -326,6 +325,7 @@ const PostForm = (props: AddPostProps) => {
                       align="baseline"
                     >
                       <Select
+                        className="w-full"
                         label="Grow stage"
                         description="Actual grow stage"
                         data={Object.keys(GrowStage).map((key) => ({
@@ -335,37 +335,60 @@ const PostForm = (props: AddPostProps) => {
                         }))}
                         withAsterisk
                         {...createPostForm.getInputProps("growStage")}
-                        className="w-full"
                         icon={<IconPlant stroke={1.6} size="1.4rem" />}
                       />
+                    </Flex>
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
+                    <Flex
+                      justify="flex-start"
+                      className="space-x-2"
+                      align="baseline"
+                    >
                       <NumberInput
+                        className="w-full"
                         label={t("common:post-addform-lighthours")}
                         description={t(
                           "common:post-addform-lighthoursdescription"
                         )}
                         withAsterisk
-                        w={232}
                         min={0}
                         max={24}
                         {...createPostForm.getInputProps(
                           "lightHoursPerDay"
                         )}
-                        icon={<IconBulb stroke={1.6} size="1.6rem" />}
+                        icon={<IconClock stroke={1.6} size="1.6rem" />}
+                      />
+                      <NumberInput
+                        w={232}
+                        label="Watt"
+                        description="LED"
+                        // withAsterisk
+                        min={0}
+                        max={2000}
+                        {...createPostForm.getInputProps("watt")}
+                        icon={<IconBolt stroke={1.6} size="1.6rem" />}
+                      />
+                    </Flex>
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Flex
+                      justify="flex-start"
+                      className="space-x-2"
+                      align="baseline"
+                    >
+                      <TextInput
+                        className="w-full"
+                        label="Title for this update"
+                        description="Every must have a text title, which is also used as HTML page title."
+                        withAsterisk
+                        placeholder="Title of this Update"
+                        {...createPostForm.getInputProps("title")}
                       />
                     </Flex>
                   </Grid.Col>
                 </Grid>
               </Box>
-
-              <Space h="lg" />
-
-              <TextInput
-                label="Title for this update"
-                description="Every must have a text title, which is also used as HTML page title."
-                withAsterisk
-                placeholder="Title of this Update"
-                {...createPostForm.getInputProps("title")}
-              />
               <TextInput
                 hidden
                 {...createPostForm.getInputProps("content")}

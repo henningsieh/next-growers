@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  Box,
-  Loader,
   Paper,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 
-import React from "react";
 import { Chart } from "react-google-charts";
 
 import { useRouter } from "next/router";
@@ -77,16 +73,9 @@ export function LightWattChart({
       },
       hAxis: {
         ticks: ticks,
-        // ticks: [
-        //   new Date(2024, 2, 30),
-        //   new Date(2024, 3, 5),
-        //   new Date(2024, 3, 10),
-        //   new Date(2024, 3, 15),
-        //   new Date(2024, 3, 20),
-        // ],
-        format: router.locale === Locale.EN ? "MM/dd" : "dd.MM.",
+        format: activeLocale === Locale.EN ? "MM/dd" : "dd.MM.",
 
-        title: "Date",
+        title: activeLocale === Locale.EN ? "Date" : "Datum",
         titleTextStyle: {
           color: theme.white, // Set the color of the title text to white
         },

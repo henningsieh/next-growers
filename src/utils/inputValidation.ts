@@ -140,6 +140,7 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
         invalid_type_error: "(h) must be set, may be 0",
       })
       .nullable(),
+    watt: z.number().optional(),
     growStage: z
       .enum(Object.keys(GrowStage) as [keyof typeof GrowStage])
       .nullable(),
@@ -158,6 +159,7 @@ export const InputCreatePostServer = z.object({
   date: z.date(),
   title: z.string().min(1),
   lightHoursPerDay: z.number().nullable(),
+  watt: z.number().optional(),
   growStage: z.enum(Object.keys(GrowStage) as [keyof typeof GrowStage]),
   content: z.string().min(1),
   reportId: z.string().min(1),

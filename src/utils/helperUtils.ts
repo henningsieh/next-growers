@@ -1,3 +1,4 @@
+import type { AxiosResponse } from "axios";
 import axios from "axios";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
@@ -408,3 +409,28 @@ export function processLightwattsData(
     return processedData;
   }
 }
+
+export const parseAndReplaceAmazonLinks = async (
+  content: string
+): Promise<string> => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(content, "text/html");
+
+  const links = doc.querySelectorAll('a[href^="https://amzn.to"]');
+
+  for (const link of links) {
+    const shortenedUrl = link.getAttribute("href");
+    try {
+      const response: AxiosResponse<{ resolvedUrl: string }> =
+        await axios.get(
+          `/api/resolveAmazonUrl?shortenedUrl=${shortenedUrl as string}&newTag=growagram-21`
+        );
+      const resolvedUrl = response.data.resolvedUrl;
+      link.setAttribute("href", resolvedUrl);
+    } catch (error) {
+      console.error("Error resolving Amazon URL:", error);
+    }
+  }
+
+  return doc.documentElement.innerHTML;
+};

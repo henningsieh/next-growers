@@ -113,6 +113,7 @@ export async function getStaticProps(
             },
           },
           comments: true,
+          LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
         },
       },
     },
@@ -418,14 +419,12 @@ export default function PublicReportPost(
     return orderA - orderB;
   });
 
-  // console.debug("sortedImages", sortedImages);
-
   const images = sortedImages?.map((image) => image.cloudUrl);
 
-  // console.debug("images", images);
-
   const imageTags = generateOpenGraphMetaTagsImage(images);
+
   const slicedContent = convert(thisPost?.content, { wordwrap: 25 });
+
   return (
     <>
       <Head>
@@ -551,7 +550,7 @@ export default function PublicReportPost(
             />
           </Box>
           <PostCard
-            postId={thisPost?.id}
+            postId={thisPost.id}
             reportFromProps={staticReportFromProps}
           />
         </Container>
