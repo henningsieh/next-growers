@@ -1,3 +1,4 @@
+import PostComments from "../PostComments";
 import {
   Box,
   createStyles,
@@ -214,7 +215,7 @@ export function PostCard(props: PostCardProps) {
           </TypographyStylesProvider>
         </Paper>
 
-        {/* <PostComments reportId={report.id} postId={postId} /> */}
+        <PostComments reportId={report.id} postId={postId} />
       </>
     );
   }

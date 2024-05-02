@@ -124,7 +124,11 @@ const useStyles = createStyles((theme) => ({
       backgroundColor:
         theme.colorScheme === "dark"
           ? theme.colors.dark[7]
-          : theme.colors.gray[0],
+          : theme.colors.growgreen[3],
+      color:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[7]
+          : theme.white,
     }),
 
     "&:active": theme.activeStyles,
@@ -235,7 +239,7 @@ export default function RootLayout({
 
   const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
-      bg={dark ? "dark.5" : "growgreen.4"}
+      bg={dark ? "dark.5" : "gray.2"}
       onClick={() => openUrlInNewTab(item.url)}
       className={classes.subLink}
       key={item.title}
