@@ -69,7 +69,7 @@ export function LightWattChart({
     const options = {
       title: "Light power during the grow",
       titleTextStyle: {
-        color: theme.white, // Set the color of the title here
+        color: dark ? theme.white : theme.black, // Set the color of the title here
       },
       hAxis: {
         ticks: ticks,
@@ -77,17 +77,17 @@ export function LightWattChart({
 
         title: activeLocale === Locale.EN ? "Date" : "Datum",
         titleTextStyle: {
-          color: theme.white, // Set the color of the title text to white
+          color: dark ? theme.white : theme.black, // Set the color of the title text to white
         },
         textStyle: {
-          color: theme.white, // Set the color of the yAxis values here
+          color: dark ? theme.white : theme.black, // Set the color of the yAxis values here
         },
       },
       vAxis: {
         ticks: yAxisTicks,
         title: "Watt",
         titleTextStyle: {
-          color: theme.white, // Set the color of the title text to white
+          color: dark ? theme.white : theme.black, // Set the color of the title text to white
         },
         viewWindow: {
           min: 0, // Minimum value of the vAxis
@@ -95,7 +95,7 @@ export function LightWattChart({
           max: yAxisUpperLimit, // Example value, replace with your desired maximum value
         },
         textStyle: {
-          color: theme.white, // Set the color of the yAxis values here
+          color: dark ? theme.white : theme.black, // Set the color of the yAxis values here
         },
       },
       legend: { position: "top" },
@@ -103,7 +103,7 @@ export function LightWattChart({
 
       chartArea: { backgroundColor: theme.white },
       height: 360,
-      backgroundColor: theme.colors.dark[7],
+      backgroundColor: dark ? theme.colors.dark[7] : theme.white,
     };
 
     return (

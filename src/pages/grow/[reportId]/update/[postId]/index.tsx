@@ -1,15 +1,26 @@
 import {
   Box,
   Button,
+  Center,
   Container,
   createStyles,
   Group,
+  rem,
+  Text,
+  Title,
   useMantineColorScheme,
-  useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconChevronLeft, IconEdit } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconChevronLeft,
+  IconClock,
+  IconEdit,
+  IconEye,
+  IconHome,
+  IconPlant,
+} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { convert } from "html-to-text";
 import { noPostAtThisDay } from "~/messages";
@@ -28,13 +39,20 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import LikeHeart from "~/components/Atom/LikeHeart";
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/PostCard";
 import PostDatepicker from "~/components/Post/PostDatepicker";
+import { LightWattChart } from "~/components/Report/LightWattChart/LightWattChart";
 
 import { prisma } from "~/server/db";
 
-import { compareDatesWithoutTime } from "~/utils/helperUtils";
+import { Environment, Locale } from "~/types";
+
+import {
+  compareDatesWithoutTime,
+  sanatizeDateString,
+} from "~/utils/helperUtils";
 
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
@@ -240,18 +258,28 @@ export const getStaticPaths: GetStaticPaths = () => {
  * @returns React Functional Component
  * @param props
  */
-export default function PublicReportPost(
+function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
-  const { report: staticReportFromProps, postId: postIdfromProps } =
-    props;
+  const router = useRouter();
 
-  const { data: session, status } = useSession();
+  const { report: grow, postId: updateId } = props;
+  const thisPost = grow.posts.find((post) => post.id === updateId);
+
+  const postDate = new Date(thisPost ? thisPost.date : "");
+  const [selectedDate, selectDate] = useState<Date | null>(postDate);
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-
   const useStyles = createStyles((theme) => ({
+    icon: {
+      marginRight: rem(5),
+      color:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[2]
+          : theme.black,
+    },
+
     titleLink: {
       display: "inline-flex",
       fontWeight: "bold",
@@ -269,15 +297,22 @@ export default function PublicReportPost(
       justifyContent: "space-between",
       paddingTop: theme.spacing.sm,
     },
-  }));
-  const { classes } = useStyles();
 
-  const theme = useMantineTheme();
-  const router = useRouter();
+    section: {
+      marginTop: theme.spacing.xl,
+      padding: theme.spacing.xs,
+      borderTop: `${rem(1)} solid ${
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[4]
+          : theme.colors.gray[3]
+      }`,
+    },
+  }));
+  const { theme, classes } = useStyles();
+
+  const { data: session, status } = useSession();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
-
-  const pageTitle = `${staticReportFromProps.title}`;
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -296,31 +331,71 @@ export default function PublicReportPost(
             ? 4
             : 5;
 
-  const dateOfGermination = new Date(staticReportFromProps.createdAt);
-
-  const thisPost = staticReportFromProps.posts.find(
-    (post) => post.id === postIdfromProps
-  );
-
-  const postDate = new Date(thisPost ? thisPost.date : "");
-  const [selectedDate, selectDate] = useState<Date | null>(postDate);
-
-  // If the post is not found, redirect to the 404 page
-  if (!thisPost) {
-    // Redirect to the 404 page
-    // void router.push("/404");
-    // Return null to prevent rendering anything else
-    return null;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    const post = staticReportFromProps.posts.find(
-      (post) => post.id === postIdfromProps
-    );
+    const post = grow.posts.find((post) => post.id === updateId);
     const postDate = new Date(post?.date as string);
     selectDate(postDate);
-  }, [postIdfromProps, staticReportFromProps.posts]);
+  }, [updateId, grow.posts]);
+
+  // If the post is not found, redirect to the 404 page
+  if (thisPost === undefined) {
+    return (
+      <>Error 404: Update with Id: {updateId} could not be found!</>
+    );
+  }
+
+  const dateOfnewestPost = grow.posts.reduce((maxDate, post) => {
+    const postDate = new Date(post.date);
+    return postDate > maxDate ? postDate : maxDate;
+  }, new Date(0));
+
+  const postDays = grow.posts.map((post) =>
+    new Date(post.date).getTime()
+  );
+
+  const pageTitle = `${grow.title}`;
+
+  const reportBasicData = [
+    {
+      label: sanatizeDateString(
+        grow.createdAt,
+        router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false,
+        false
+      ),
+      icon: IconCalendar,
+    },
+    {
+      label: Environment[grow.environment as keyof typeof Environment],
+      icon: IconHome,
+    },
+    {
+      label: "1468",
+      icon: IconEye,
+    },
+    {
+      label: sanatizeDateString(
+        grow.updatedAt,
+        router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false,
+        false
+      ),
+      icon: IconClock,
+    },
+  ];
+
+  const reportBasics = reportBasicData.map((growBasic) => (
+    <Center key={growBasic.label}>
+      <growBasic.icon
+        size="1.05rem"
+        className={classes.icon}
+        stroke={1.6}
+      />
+      <Text size="xs"> {growBasic.label} </Text>
+    </Center>
+  ));
+
+  const dateOfGermination = new Date(grow.createdAt);
 
   const defaultRelDate =
     dayjs(selectedDate)
@@ -332,18 +407,6 @@ export default function PublicReportPost(
       ? dateOfGermination
       : defaultRelDate;
 
-  const postDays = staticReportFromProps.posts.map((post) =>
-    new Date(post.date).getTime()
-  );
-
-  const dateOfnewestPost = staticReportFromProps.posts.reduce(
-    (maxDate, post) => {
-      const postDate = new Date(post.date);
-      return postDate > maxDate ? postDate : maxDate;
-    },
-    new Date(0)
-  );
-
   // const { scrollIntoView, targetRef } =
   //   useScrollIntoView<HTMLDivElement>({
   //     offset: 1,
@@ -354,7 +417,7 @@ export default function PublicReportPost(
       return;
     }
 
-    const matchingPost = staticReportFromProps.posts.find((post) => {
+    const matchingPost = grow.posts.find((post) => {
       const postDate = new Date(post.date);
       return compareDatesWithoutTime(selectedDate, postDate);
     });
@@ -365,9 +428,8 @@ export default function PublicReportPost(
       // });
       selectDate(new Date(matchingPost.date));
       // setPostId(matchingPost.id);
-      const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
+      const newUrl = `/grow/${grow.id}/update/${matchingPost.id}`;
       void router.push(newUrl, undefined, { scroll: false });
-      // window.history.replaceState({}, "", newUrl);
     } else {
       notifications.show(noPostAtThisDay);
     }
@@ -390,7 +452,7 @@ export default function PublicReportPost(
     <>
       <Head>
         <title>{`Grow "${pageTitle}" from ${
-          staticReportFromProps.author?.name as string
+          grow.author?.name as string
         } | GrowAGram`}</title>
         <meta
           name="description"
@@ -398,7 +460,7 @@ export default function PublicReportPost(
         />
         <meta
           property="og:url"
-          content={`/grow/${staticReportFromProps.id}/update/${thisPost.id}`}
+          content={`/grow/${grow.id}/update/${thisPost.id}`}
         />
         <meta property="og:title" content={thisPost.title} />
         <meta property="og:description" content={slicedContent} />
@@ -410,23 +472,20 @@ export default function PublicReportPost(
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
         <Box pt={theme.spacing.sm} className={classes.title}>
-          <Link
-            title="back to Grow"
-            href={`/grow/${staticReportFromProps.id}`}
-          >
+          <Link title="back to Grow" href={`/grow/${grow.id}`}>
             <Box className={classes.titleLink}>
               <IconChevronLeft size={28} />
-              {staticReportFromProps.title}
+              {grow.title}
             </Box>
           </Link>
 
           {/* Right side Edit Buttons */}
           {status === "authenticated" &&
-            staticReportFromProps.authorId === session.user.id && (
+            grow.authorId === session.user.id && (
               <Group position="right">
                 {/* Edit Update Button */}
                 <Link
-                  href={`/account/edit/grow/${staticReportFromProps.id}/update/${postIdfromProps}`}
+                  href={`/account/edit/grow/${grow.id}/update/${updateId}`}
                 >
                   <Button
                     h={32}
@@ -448,9 +507,7 @@ export default function PublicReportPost(
                 </Link>
 
                 {/* Add Post Button */}
-                <Link
-                  href={`/account/edit/grow/${staticReportFromProps.id}#addUpdate`}
-                >
+                <Link href={`/account/edit/grow/${grow.id}#addUpdate`}>
                   <Button
                     h={32}
                     miw={180}
@@ -459,7 +516,7 @@ export default function PublicReportPost(
                     color="growgreen"
                     className="cursor-pointer"
                     leftIcon={
-                      <IconEdit
+                      <IconPlant
                         className="ml-1"
                         size={22}
                         stroke={1.6}
@@ -510,12 +567,45 @@ export default function PublicReportPost(
               responsiveColumnCount={getResponsiveColumnCount}
             />
           </Box>
-          <PostCard
-            postId={thisPost.id}
-            reportFromProps={staticReportFromProps}
-          />
+          <PostCard postId={thisPost.id} reportFromProps={grow} />
         </Container>
+      </Container>
+
+      <Container size="xl" className="flex flex-col space-y-2">
+        <Group
+          my="xs"
+          px="sm"
+          position="apart"
+          className={classes.section}
+        >
+          <Title py="sm" order={3}>
+            Grow
+          </Title>
+          <Text fz="md">{grow.title}</Text>
+          <LikeHeart itemToLike={grow} itemType={"Report"} />
+        </Group>
+
+        <Title p="sm" order={4}>
+          Grow Statistics
+        </Title>
+
+        <LightWattChart
+          repordId={grow.id}
+          reportStartDate={new Date(grow.createdAt)}
+          dateOfnewestPost={dateOfnewestPost}
+        />
+
+        <Group
+          my="xs"
+          position="apart"
+          spacing="xs"
+          className={classes.section}
+        >
+          {reportBasics}
+        </Group>
       </Container>
     </>
   );
 }
+
+export default PublicReportPost;

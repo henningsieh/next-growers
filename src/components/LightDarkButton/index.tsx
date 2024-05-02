@@ -21,15 +21,15 @@ export default function LightDarkButton() {
       <ActionIcon
         className="cursor-default"
         size={32}
-        variant="outline"
+        variant="subtle"
         color={dark ? "orange.6" : "growgreen.5 "}
         onClick={() => toggleColorScheme()}
         title={t("common:app-themetoggle")}
       >
         {dark ? (
-          <IconSun size="1.5rem" stroke={2.2} />
+          <IconSun size="1.8rem" stroke={2.2} />
         ) : (
-          <IconMoonStars size="1.5rem" stroke={1.8} />
+          <IconMoonStars size="1.8rem" stroke={1.8} />
         )}
       </ActionIcon>
     </Group>

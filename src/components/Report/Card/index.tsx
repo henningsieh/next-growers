@@ -10,6 +10,7 @@ import {
   Menu,
   Paper,
   rem,
+  ScrollArea,
   Text,
   Tooltip,
   useMantineTheme,
@@ -32,8 +33,8 @@ import { useRouter } from "next/router";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
-import { Locale } from "~/types";
 import type { IsoReportCardProps } from "~/types";
+import { Locale } from "~/types";
 
 import { sanatizeDateString } from "~/utils/helperUtils";
 
@@ -47,21 +48,34 @@ const useStyles = createStyles((theme) => ({
         : theme.fn.lighten(theme.colors.growgreen[5], 0.7),
   },
   item: {
-    color:
-      theme.colorScheme === "dark"
-        ? theme.white
-        : theme.colors.growgreen[7],
+    fontWeight: 500,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
     padding: rem(8),
     marginBottom: rem(2),
+  },
+
+  edit: {
     backgroundColor:
       theme.colorScheme === "dark"
         ? theme.colors.dark[4]
         : theme.fn.lighten(theme.colors.gray[5], 0.5),
     "&[data-hovered]": {
-      backgroundColor: theme.colors["groworange"][4],
+      backgroundColor: theme.colors.groworange[4],
       color: theme.white,
     },
   },
+
+  add: {
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[4]
+        : theme.fn.lighten(theme.colors.gray[5], 0.5),
+    "&[data-hovered]": {
+      backgroundColor: theme.colors.growgreen[5],
+      color: theme.white,
+    },
+  },
+
   divider: {
     borderTop: `2px ${
       theme.colorScheme === "dark"
@@ -91,9 +105,9 @@ const useStyles = createStyles((theme) => ({
         ? theme.colors.dark[4]
         : theme.colors.gray[2]
     }`,
-    paddingLeft: theme.spacing.xs,
-    paddingRight: theme.spacing.xs,
-    // paddingBottom: theme.spacing.xs,
+    padding: theme.spacing.xs,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
 
   label: {
@@ -205,14 +219,14 @@ export default function ReportCard({
   ));
 
   return (
-    <Paper m={0} withBorder radius="sm" p={0} className={classes.card}>
+    <Paper withBorder p={0} m={0} radius="sm" className={classes.card}>
       {/* HEADER IMAGE */}
       <Card.Section pos="relative">
         {/*// Session buttons */}
         {status === "authenticated" &&
           !!isoReport &&
           session.user.id == isoReport.authorId && (
-            <Box p={5} pos="absolute" className="z-20 bottom-0 right-0">
+            <Box p={8} pos="absolute" className="z-20 bottom-0 right-0">
               <EditReportMenu
                 reportId={isoReport.id}
                 labelEditGrow={t("common:report-edit-button")}
@@ -239,24 +253,25 @@ export default function ReportCard({
       </Card.Section>
 
       {/* Strains and LikeHeart */}
-      <Card.Section className={`${classes.section}`}>
-        <Flex align="center" justify="space-between">
+      <Card.Section className={classes.section}>
+        <Flex align="flex-start" justify="space-between">
           {/* Strains */}
-          <Group
-            className={`pb-2 mr-2 overflow-y-hidden overflow-x-auto flex-nowrap inline-flex`}
-          >
-            {reportStrains}
-          </Group>
+
+          <ScrollArea h={42}>
+            <Flex py={4} gap="xs">
+              {reportStrains}
+            </Flex>
+          </ScrollArea>
 
           {/* LikeHeart */}
-          <Box p={0} mr={-6}>
+          <Box mt={0} mr={-4}>
             <LikeHeart itemToLike={isoReport} itemType={"Report"} />
           </Box>
         </Flex>
       </Card.Section>
 
       {/* GROW DATES */}
-      <Card.Section p={theme.spacing.xs} className={classes.section}>
+      <Card.Section className={classes.section}>
         <Group position="apart" c="dimmed">
           {/*// Stage/ Date */}
           <Group position="left">
@@ -353,7 +368,7 @@ function EditReportMenu({
           >
             <Button
               px={2}
-              w={28}
+              w={26}
               compact
               variant="filled"
               color="groworange"
@@ -364,21 +379,20 @@ function EditReportMenu({
         </Menu.Target>
 
         <Menu.Dropdown>
+          <Link href={`/account/edit/grow/${reportId}#editGrow`}>
+            <Menu.Item
+              className={classes.edit}
+              icon={<IconEdit size={rem(14)} />}
+            >
+              {labelEditGrow}
+            </Menu.Item>
+          </Link>
           <Link href={`/account/edit/grow/${reportId}#addUpdate`}>
             <Menu.Item
-              // rightSection={
-              //   <Text size="xs" color="dimmed">
-              //     ⌘
-              //   </Text>
-              // }
+              className={classes.add}
               icon={<IconPlant size={rem(14)} />}
             >
               {labelAddUpdate}
-            </Menu.Item>
-          </Link>
-          <Link href={`/account/edit/grow/${reportId}#editGrow`}>
-            <Menu.Item icon={<IconEdit size={rem(14)} />}>
-              {labelEditGrow}
             </Menu.Item>
           </Link>
         </Menu.Dropdown>

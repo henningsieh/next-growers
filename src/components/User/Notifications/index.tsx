@@ -8,12 +8,12 @@ import {
   Flex,
   Group,
   Indicator,
+  Paper,
   ScrollArea,
+  Transition,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
-import { Paper } from "@mantine/core";
-import { Transition } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
@@ -31,8 +31,7 @@ import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import type { NotificationEventMap } from "~/types";
-import type { Notifications } from "~/types";
+import type { NotificationEventMap, Notifications } from "~/types";
 
 import { api } from "~/utils/api";
 import { hasUnreadNotifications } from "~/utils/helperUtils";
@@ -134,7 +133,7 @@ const ProtectedNotifications = () => {
         title="Notifications"
         style={{ position: "relative" }}
         size={32}
-        variant="outline"
+        variant="subtle"
         color={dark ? "orange.6" : "growgreen.5 "}
       >
         {hasUnreadNotifications(
@@ -151,10 +150,10 @@ const ProtectedNotifications = () => {
             withBorder
             processing
           >
-            <IconBell size="1.5rem" stroke={2.2} />
+            <IconBell size="1.8rem" stroke={1.8} />
           </Indicator>
         ) : (
-          <IconBell size="1.5rem" stroke={2.2} />
+          <IconBell size="1.8rem" stroke={1.8} />
         )}
       </ActionIcon>
 
