@@ -143,20 +143,19 @@ export default function LandingPage({
           </Title>
 
           {smallScreen && (
-            <Group position="center">
+            <Group p="sm" position="center">
               <Button
                 variant="default"
                 onClick={() => {
                   void router.push("/grows");
                 }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
               >
                 {t("common:landing-button-allgrows")} 🔎
               </Button>
-
               <Button
                 variant="default"
                 onClick={() => {
@@ -164,7 +163,7 @@ export default function LandingPage({
                     ? void router.push("/account/grows/create")
                     : open();
                 }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-1000 ease-in-out 
               from-teal-700  via-green-600  to-emerald-800 
               hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
@@ -182,7 +181,6 @@ export default function LandingPage({
               ? isoReports.map((isoReport) => {
                   return (
                     <Grid.Col
-                      className="scale-90"
                       key={isoReport.id}
                       xs={12}
                       sm={6}
@@ -198,13 +196,13 @@ export default function LandingPage({
           </Grid>
 
           {!smallScreen && (
-            <Group position="center">
+            <Group mt="xl" p="sm" position="center">
               <Button
                 variant="default"
                 onClick={() => {
                   void router.push("/grows");
                 }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
@@ -219,7 +217,7 @@ export default function LandingPage({
                     ? void router.push("/account/grows/create")
                     : open();
                 }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-1000 ease-in-out 
               from-teal-700  via-green-600  to-emerald-800 
               hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
@@ -228,7 +226,7 @@ export default function LandingPage({
               </Button>
             </Group>
           )}
-
+          {/* 
           <Text className={classes.description} size="xl" mt="xl">
             {t("common:landing-text-top1")}
           </Text>
@@ -243,7 +241,7 @@ export default function LandingPage({
 
           <Text className={classes.description} size="md" mt="xl">
             {t("common:landing-text-bottom")}
-          </Text>
+          </Text> */}
         </Container>
       </Box>
     </>

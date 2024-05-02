@@ -257,7 +257,7 @@ export default function ReportCard({
         <Flex align="flex-start" justify="space-between">
           {/* Strains */}
 
-          <ScrollArea h={42}>
+          <ScrollArea maw={260} h={42}>
             <Flex py={4} gap="xs">
               {reportStrains}
             </Flex>
