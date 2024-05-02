@@ -35,6 +35,7 @@ import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { env } from "~/env.mjs";
 import {
+  defaultErrorMsg,
   fileUploadErrorMsg,
   httpStatusErrorMsg,
   onlyOnePostPerDayAllowed,
@@ -122,10 +123,20 @@ const PostForm = (props: AddPostProps) => {
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back
-      //FIXME: decide server side, which error on conflict
-      onError: (err, newReport, context) => {
-        notifications.show(onlyOnePostPerDayAllowed);
-        if (!context) return;
+      onError: (error, badNewPost) => {
+        if (error.data) {
+          if (error.data.code === "CONFLICT") {
+            notifications.show(onlyOnePostPerDayAllowed);
+          } else {
+            notifications.show(
+              httpStatusErrorMsg(error.message, error.data?.httpStatus)
+            );
+          }
+        } else {
+          notifications.show(defaultErrorMsg(error.message));
+        }
+        console.debug("error", error);
+        console.debug("badNewPost", badNewPost);
       },
       onSuccess: async (newPost) => {
         notifications.show(savePostSuccessfulMsg);
@@ -134,7 +145,7 @@ const PostForm = (props: AddPostProps) => {
         await trpc.reports.getIsoReportWithPostsFromDb.refetch(); // When navigating to the new page
         void router.push(
           {
-            pathname: `/${activeLocale as string}/grow/${newPost.reportId}/update/${newPost.id}`,
+            pathname: `/${activeLocale as string}/grow/${newPost?.reportId}/update/${newPost?.id}`,
             query: { refresh: new Date().getTime() }, // Add a unique query parameter to force a new page render
           },
           undefined,
