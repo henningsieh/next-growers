@@ -10,7 +10,7 @@ import {
   Title,
   useMantineColorScheme,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconCalendar,
@@ -43,6 +43,7 @@ import LikeHeart from "~/components/Atom/LikeHeart";
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/PostCard";
 import PostDatepicker from "~/components/Post/PostDatepicker";
+import { ReportHeader } from "~/components/Report/Header";
 import { LightWattChart } from "~/components/Report/LightWattChart/LightWattChart";
 
 import { prisma } from "~/server/db";
@@ -331,6 +332,17 @@ function PublicReportPost(
             ? 4
             : 5;
 
+  const { scrollIntoView, targetRef } =
+    useScrollIntoView<HTMLDivElement>({
+      offset: 0,
+    });
+
+  useEffect(() => {
+    scrollIntoView({
+      alignment: "start",
+    });
+  }, [scrollIntoView]);
+
   useEffect(() => {
     const post = grow.posts.find((post) => post.id === updateId);
     const postDate = new Date(post?.date as string);
@@ -406,11 +418,6 @@ function PublicReportPost(
     defaultRelDate < dateOfGermination
       ? dateOfGermination
       : defaultRelDate;
-
-  // const { scrollIntoView, targetRef } =
-  //   useScrollIntoView<HTMLDivElement>({
-  //     offset: 1,
-  //   });
 
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
@@ -540,34 +547,34 @@ function PublicReportPost(
           className="flex w-full flex-col space-y-4"
         >
           {/* Update view without Header brings better UI! */}
-          {/* <ReportHeader
-            report={staticReportFromProps}
-            image={staticReportFromProps.image?.cloudUrl as string}
-            avatar={staticReportFromProps.author.image 
-                                  ? staticReportFromProps.author.image
-                    : `https://ui-avatars.com/api/?name=${
-                        staticReportFromProps.author.name as string
-                      }`
+          <ReportHeader
+            report={grow}
+            image={grow.image?.cloudUrl as string}
+            avatar={
+              grow.author.image
+                ? grow.author.image
+                : `https://ui-avatars.com/api/?name=${
+                    grow.author.name as string
+                  }`
             }
-            name={staticReportFromProps.author.name as string}
-            description={staticReportFromProps.description}
-          />  */}
+            name={grow.author.name as string}
+            description={grow.description}
+          />
           {/* // Posts Date Picker */}
-          {/* <Box ref={targetRef}> */}
-          <Box>
-            <PostDatepicker
-              defaultDate={
-                selectedDate ? columnStartMonth : dateOfGermination
-              }
-              postDays={postDays}
-              selectedDate={selectedDate}
-              handleSelectDate={handleSelectDate}
-              dateOfnewestPost={dateOfnewestPost}
-              dateOfGermination={dateOfGermination}
-              responsiveColumnCount={getResponsiveColumnCount}
-            />
+          <PostDatepicker
+            defaultDate={
+              selectedDate ? columnStartMonth : dateOfGermination
+            }
+            postDays={postDays}
+            selectedDate={selectedDate}
+            handleSelectDate={handleSelectDate}
+            dateOfnewestPost={dateOfnewestPost}
+            dateOfGermination={dateOfGermination}
+            responsiveColumnCount={getResponsiveColumnCount}
+          />
+          <Box ref={targetRef}>
+            <PostCard postId={thisPost.id} reportFromProps={grow} />
           </Box>
-          <PostCard postId={thisPost.id} reportFromProps={grow} />
         </Container>
       </Container>
 

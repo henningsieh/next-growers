@@ -1,5 +1,6 @@
 import type {
   AccordionStylesParams,
+  ActionIconStylesParams,
   ButtonStylesParams,
   ColorScheme,
   MantineTheme,
@@ -221,6 +222,21 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               },
             },
 
+            ActionIcon: {
+              styles: (
+                theme,
+                params: ActionIconStylesParams,
+                { variant }
+              ) => ({
+                defaultProps: {
+                  variant: { variant },
+                },
+                root: {
+                  cursor: "default",
+                },
+              }),
+            },
+
             Button: {
               defaultProps: {
                 variant: "outline",
@@ -250,7 +266,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   backgroundColor:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? theme.colors[params.color || "dark"][5]
+                        ? theme.colors[params.color || "dark"][6]
                         : theme.colors[params.color || "growgreen"][4]
                       : undefined,
 
@@ -258,7 +274,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     backgroundColor:
                       variant === "filled"
                         ? theme.colorScheme === "dark"
-                          ? theme.colors[params.color || "growgreen"][6]
+                          ? theme.colors[params.color || "dark"][5]
                           : theme.colors[params.color || "growgreen"][5]
                         : undefined,
                   },

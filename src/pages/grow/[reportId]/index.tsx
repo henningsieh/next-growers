@@ -142,6 +142,11 @@ const PublicReport: NextPage = () => {
             ? 4
             : 5;
 
+  // const { scrollIntoView, targetRef } =
+  //   useScrollIntoView<HTMLDivElement>({
+  //     offset: 1,
+  //   });
+
   const {
     data: grow,
     isLoading: reportIsLoading,
@@ -227,11 +232,6 @@ const PublicReport: NextPage = () => {
       ? dateOfGermination
       : defaultRelDate;
 
-  // const { scrollIntoView, targetRef } =
-  //   useScrollIntoView<HTMLDivElement>({
-  //     offset: 1,
-  //   });
-
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
       return;
@@ -239,20 +239,19 @@ const PublicReport: NextPage = () => {
 
     const matchingPost = grow.posts.find((post) => {
       const postDate = new Date(post.date);
-
       return compareDatesWithoutTime(selectedDate, postDate);
-      //return selectedDate.toISOString() === postDate.toISOString();
     });
 
     if (matchingPost) {
       // scrollIntoView({
-      //   alignment: "start",
+      //   // alignment: "start",
       // });
+
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
       const newUrl = `/grow/${grow.id}/update/${matchingPost.id}`;
-      void router.push(newUrl, undefined, {
-        shallow: true,
+      void router.replace(newUrl, undefined, {
+        // shallow: true,
         scroll: false,
       });
     } else {
@@ -365,7 +364,6 @@ const PublicReport: NextPage = () => {
           )}
           {/* // Posts Date Picker */}
           {/* <Box ref={targetRef}> */}
-
           <Box>
             <PostDatepicker
               defaultDate={
