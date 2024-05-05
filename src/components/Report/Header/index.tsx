@@ -63,7 +63,7 @@ ReportHeaderProps) {
         {status === "authenticated" &&
           !!report &&
           session.user.id == report.authorId && (
-            <Box p={8} pos="absolute" className="z-20 top-0 right-0">
+            <Box p={8} pos="absolute" className="z-20 top-1 right-1">
               <EditReportMenu
                 reportId={report.id}
                 labelEditGrow={t("common:report-edit-button")}

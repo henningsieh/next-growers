@@ -11,7 +11,6 @@ import {
   Text,
   Title,
   Transition,
-  useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
@@ -102,8 +101,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   const trpc = api.useUtils();
 
-  const theme = useMantineTheme();
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -291,7 +289,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     <Box>
       {status !== "loading" && isLoading && <p>loading comments...</p>}
       {status === "authenticated" && (
-        <Box py="xs">
+        <Box p="xs">
           <Group m={1} position="apart">
             <Title order={3}>{t("common:comments-headline")}</Title>
 
@@ -300,7 +298,6 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                 [theme.fn.smallerThan("sm")]: {
                   padding: rem(5),
                   height: rem(26),
-
                   fontWeight: "normal",
                 },
               })}

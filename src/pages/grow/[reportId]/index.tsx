@@ -303,7 +303,7 @@ const PublicReport: NextPage = () => {
         {/* // Header End */}
         <Container
           size="xl"
-          // px={0}
+          px={0}
           mx="auto"
           pt="xs"
           className="flex w-full flex-col space-y-4"

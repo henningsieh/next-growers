@@ -1,4 +1,5 @@
-import { Button } from "@mantine/core";
+import { Button, createStyles, rem } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconEdit } from "@tabler/icons-react";
 
 import Link from "next/link";
@@ -9,23 +10,40 @@ interface Props {
   buttonLabel: string;
 }
 
+const useStyles = createStyles((theme) => ({
+  button: {
+    cursor: "pointer",
+
+    height: rem(38),
+    fontSize: theme.fontSizes.md,
+
+    [theme.fn.smallerThan("sm")]: {
+      height: rem(28),
+      fontSize: theme.fontSizes.sm,
+    },
+  },
+}));
+
 export default function EditPostButton({
   growId,
   postId,
   buttonLabel,
 }: Props) {
+  const { classes, theme } = useStyles();
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
+
   return (
-    // /account/edit/grow/clrlllh1e0000ky08t1fvp1pw/update/clrlnaoo30008l908laoc5m4w
     <Link href={`/account/edit/grow/${growId}/update/${postId}`}>
       <Button
-        fz="sm"
-        h={32}
-        miw={180}
-        compact
         variant="filled"
         color="groworange"
-        className="cursor-pointer"
-        leftIcon={<IconEdit size={22} stroke={1.6} />}
+        compact={smallScreen}
+        className={classes.button}
+        leftIcon={
+          <IconEdit size={smallScreen ? 18 : 24} stroke={1.8} />
+        }
       >
         {buttonLabel}
       </Button>
