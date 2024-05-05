@@ -77,7 +77,8 @@ export const InputEditReportForm = z.object({
         message: `Content must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
-  strains: z.array(z.string()).min(1, {
+  strains: z.array(z.string()).min(0, {
+    // min(0), giving setStrain a own Page or Form!
     message: "Report must have at least 1 strain",
   }),
   environment: z.enum(
