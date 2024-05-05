@@ -373,7 +373,6 @@ export function EditReportForm({
                 className="w-full"
                 icon={<IconHome size="1.2rem" />}
               />
-              {router.locale}
               <Grid gutter="sm">
                 <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
                   {/* <DatesProvider settings={{ locale: activeLocale }}> */}

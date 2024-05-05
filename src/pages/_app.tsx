@@ -289,7 +289,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 label: {
                   paddingTop: rem(2),
                   paddingBottom: rem(2),
-                  paddingLeft: rem(4),
+                  // paddingLeft: rem(4),
                   paddingRight: rem(4),
                 },
               }),
@@ -399,41 +399,33 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               // whiteSpace: "nowrap",
               fontSize: "0.96em",
             },
-            ul: {
-              fontSize: "0.72em",
-              paddingLeft: "1.5em",
-            },
-            "ul li": {
-              fontSize: "1.3em",
+
+            "ul li, ol li": {
+              fontSize: "1rem",
               position: "relative",
               paddingLeft: "1em",
+              counterIncrement: "list-counter",
+              marginTop: "0 !important", // Explicitly set margin to 0
             },
-            "ul li p": {
+
+            "ul li p,  ol li p": {
               fontSize: "1em",
               position: "relative",
               paddingLeft: "1em",
+              marginBottom: "0 !important", // Explicitly set margin to 0
             },
+
             "ul li::before": {
               content: '""',
               position: "absolute",
-              top: "0.66em",
+              top: "0.6em",
               left: 0,
               width: "0.5em",
               height: "0.5em",
               borderRadius: "50%",
               backgroundColor: theme.colors.growgreen[4], // Change the color to match your theme
             },
-            "ol li": {
-              position: "relative",
-              paddingLeft: "1em",
-              marginBottom: "0.5em",
-              counterIncrement: "list-counter",
-            },
-            "ol li p": {
-              fontSize: "1em",
-              position: "relative",
-              paddingLeft: "1em",
-            },
+
             "ol li::before": {
               content: "counter(list-counter)",
               position: "absolute",
@@ -442,6 +434,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               fontWeight: "bold",
               color: theme.colors.growgreen[4], // Change the color to match your theme
             },
+
             "*, *::before, *::after": {
               boxSizing: "border-box",
             },

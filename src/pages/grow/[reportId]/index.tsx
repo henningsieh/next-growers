@@ -296,7 +296,7 @@ const PublicReport: NextPage = () => {
             grow.authorId === session.user.id && (
               <Group position="right">
                 {/* Edit Grow Button */}
-                <Link href={`/account/edit/grow/${grow.id}#editGrow`}>
+                <Link href={`/account/edit/grow/${grow.id}/editGrow`}>
                   <Button
                     h={32}
                     miw={180}
@@ -317,7 +317,7 @@ const PublicReport: NextPage = () => {
                 </Link>
 
                 {/* Add Post Button */}
-                <Link href={`/account/edit/grow/${grow.id}#addUpdate`}>
+                <Link href={`/account/edit/grow/${grow.id}/addUpdate`}>
                   <Button
                     h={32}
                     miw={180}
@@ -342,7 +342,7 @@ const PublicReport: NextPage = () => {
         {/* // Header End */}
         <Container
           size="xl"
-          px={0}
+          // px={0}
           mx="auto"
           pt="xs"
           className="flex w-full flex-col space-y-4"

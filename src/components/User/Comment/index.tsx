@@ -20,10 +20,10 @@ import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
 import {
   IconEdit,
+  IconEditOff,
   IconMessageForward,
   IconTrashX,
 } from "@tabler/icons-react";
-import { IconEditOff } from "@tabler/icons-react";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import Subscript from "@tiptap/extension-subscript";

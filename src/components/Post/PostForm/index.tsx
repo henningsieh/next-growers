@@ -233,11 +233,7 @@ const PostForm = (props: AddPostProps) => {
 
   return (
     <>
-      <Container
-        pl={0}
-        pr={0}
-        className="flex w-full flex-col space-y-2"
-      >
+      <Container py="xl" px={0} className="flex flex-col space-y-">
         <Paper m={0} p="sm" withBorder>
           <form
             onSubmit={createPostForm.onSubmit((values) => {

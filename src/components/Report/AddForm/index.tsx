@@ -24,8 +24,7 @@ import {
 } from "@tabler/icons-react";
 import { defaultErrorMsg, httpStatusErrorMsg } from "~/messages";
 
-import { useEffect, useRef } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { User } from "next-auth";
 import { useRouter } from "next/router";
@@ -120,7 +119,7 @@ export function CreateReportForm({
     },
     onSuccess: (newReportDB) => {
       // Navigate to the new report page
-      void router.push(`/account/edit/grow/${newReportDB.id}#editGrow`);
+      void router.push(`/account/edit/grow/${newReportDB.id}/editGrow`);
     },
     // Always refetch after error or success:
     onSettled: () => {
@@ -160,6 +159,7 @@ export function CreateReportForm({
           <>
             {/* // Image Preview */}
             <Box className="relative" px={0}>
+              asecvpiub wpczuvb
               <Box className="absolute right-2 top-2 z-50 flex justify-end">
                 <ActionIcon
                   title="delete this image"

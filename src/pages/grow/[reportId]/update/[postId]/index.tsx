@@ -514,7 +514,7 @@ function PublicReportPost(
                 </Link>
 
                 {/* Add Post Button */}
-                <Link href={`/account/edit/grow/${grow.id}#addUpdate`}>
+                <Link href={`/account/edit/grow/${grow.id}/addUpdate`}>
                   <Button
                     h={32}
                     miw={180}

@@ -379,7 +379,7 @@ function EditReportMenu({
         </Menu.Target>
 
         <Menu.Dropdown>
-          <Link href={`/account/edit/grow/${reportId}#editGrow`}>
+          <Link href={`/account/edit/grow/${reportId}/editGrow`}>
             <Menu.Item
               className={classes.edit}
               icon={<IconEdit size={rem(14)} />}
@@ -387,7 +387,7 @@ function EditReportMenu({
               {labelEditGrow}
             </Menu.Item>
           </Link>
-          <Link href={`/account/edit/grow/${reportId}#addUpdate`}>
+          <Link href={`/account/edit/grow/${reportId}/addUpdate`}>
             <Menu.Item
               className={classes.add}
               icon={<IconPlant size={rem(14)} />}

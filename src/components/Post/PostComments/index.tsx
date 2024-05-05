@@ -17,9 +17,11 @@ import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
-import { IconTextWrap, IconX } from "@tabler/icons-react";
+import { IconMessagePlus, IconX } from "@tabler/icons-react";
+import { BulletList } from "@tiptap/extension-bullet-list";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
+import { ListItem } from "@tiptap/extension-list-item";
 import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
@@ -117,6 +119,10 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   const commentsRef = useRef<HTMLElement[]>([]);
 
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
+
   const newCommentForm = useForm({
     validate: zodResolver(InputEditCommentForm),
     validateInputOnChange: false,
@@ -162,6 +168,16 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       TextAlign.configure({
         types: ["heading", "paragraph"],
         alignments: ["left", "center", "justify"],
+      }),
+      BulletList.configure({
+        HTMLAttributes: {
+          itemTypeName: "List",
+        },
+      }),
+      ListItem.configure({
+        HTMLAttributes: {
+          itemTypeName: "List.Item",
+        },
       }),
     ],
     content: newCommentForm.values.content,
@@ -277,25 +293,22 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       {status === "authenticated" && (
         <>
           <Group m={4} position="apart">
-            <Title order={2}>{t("common:comments-headline")}</Title>
+            <Title order={3}>{t("common:comments-headline")}</Title>
 
             <Button
               sx={(theme) => ({
                 [theme.fn.smallerThan("sm")]: {
                   padding: rem(5),
                   height: rem(26),
-                  // width: rem(140),
-                  fontSize: 16,
+
                   fontWeight: "normal",
                 },
               })}
-              fz="md"
+              fz={smallScreen ? "sm" : "lg"}
               variant="filled"
               color={!newOpen ? "growgreen" : "dark"}
               leftIcon={
-                <IconTextWrap
-                  size={theme.fn.smallerThan("sm") ? 16 : 22}
-                />
+                <IconMessagePlus size={smallScreen ? 16 : 22} />
               }
               title={!newOpen ? "add new comment" : "close form"}
               onClick={() => {
@@ -357,6 +370,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                         title="reset form and close"
                         onClick={() => {
                           setNewOpen(false);
+                          editor?.commands.clearContent();
                           newCommentForm.reset();
                         }}
                         m={0}
@@ -409,7 +423,10 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                         color: "growgreen.3",
                       }}
                     />
-                    <RichTextEditor editor={editor}>
+                    <RichTextEditor
+                      editor={editor}
+                      withTypographyStyles={false}
+                    >
                       <RichTextEditor.Toolbar p="xs">
                         <RichTextEditor.ControlsGroup>
                           <EmojiPicker editor={editor as Editor} />
