@@ -16,6 +16,7 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { LoginModal } from "~/components/Atom/LoginModal";
@@ -38,8 +39,6 @@ export default function LandingPage({
       fontSize: rem(112),
       fontWeight: 700,
       lineHeight: 0.8,
-      paddingTop: 12,
-      paddingBottom: 12,
 
       [theme.fn.smallerThan("lg")]: {
         fontSize: rem(112),
@@ -109,7 +108,7 @@ export default function LandingPage({
       >
         <Center>
           <Container p={0} m={0}>
-            <Paper>
+            <Paper py="xs">
               <Stack m="xl">
                 <Title
                   p={0}
@@ -137,23 +136,28 @@ export default function LandingPage({
 
         {smallScreen && (
           <Group p="sm" position="center">
-            <Button
-              variant="default"
-              onClick={() => {
-                void router.push("/grows");
-              }}
-              className="cursor-pointer text-lg uppercase h-12 w-72 
+            <Link href={"/grows"}>
+              <Button
+                variant="default"
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
-            >
-              {t("common:landing-button-allgrows")} 🔎
-            </Button>
+              >
+                {t("common:landing-button-allgrows")} 🔎
+              </Button>
+            </Link>
             <Button
               variant="default"
               onClick={() => {
                 status === "authenticated"
-                  ? void router.push("/account/grows/create")
+                  ? void router.push(
+                      {
+                        pathname: "/account/grows/create",
+                      },
+                      undefined,
+                      { scroll: true }
+                    )
                   : open();
               }}
               className="text-lg uppercase cursor-default h-12 w-72 
@@ -190,24 +194,29 @@ export default function LandingPage({
 
         {!smallScreen && (
           <Group mt="xl" p="sm" position="center">
-            <Button
-              variant="default"
-              onClick={() => {
-                void router.push("/grows");
-              }}
-              className="text-lg uppercase cursor-default h-12 w-72 
+            <Link href={"/grows"}>
+              <Button
+                variant="default"
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
-            >
-              {t("common:landing-button-allgrows")} 🔎
-            </Button>
+              >
+                {t("common:landing-button-allgrows")} 🔎
+              </Button>
+            </Link>
 
             <Button
               variant="default"
               onClick={() => {
                 status === "authenticated"
-                  ? void router.push("/account/grows/create")
+                  ? void router.push(
+                      {
+                        pathname: "/account/grows/create",
+                      },
+                      undefined,
+                      { scroll: true }
+                    )
                   : open();
               }}
               className="text-lg uppercase cursor-default h-12 w-72 

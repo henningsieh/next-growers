@@ -157,16 +157,13 @@ export function UserComment({
       },
       // If the mutation fails, use the context
       // returned from onMutate to roll back
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onError: (error, _comment) => {
+      onError: (error) => {
         notifications.show(defaultErrorMsg(error.message));
         console.error({ error });
       },
       onSuccess: async () => {
         await trpc.comments.invalidate();
         notifications.show(commentDeletedSuccessfulMsg);
-        // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {
@@ -193,8 +190,6 @@ export function UserComment({
           postId: newReportDB.postId as string,
         });
         setIsEditing(false);
-        // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {

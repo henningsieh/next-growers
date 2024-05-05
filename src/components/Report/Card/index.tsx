@@ -281,7 +281,7 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-createdAt")}
-              color={theme.colors.groworange[4]}
+              color={theme.colors.growgreen[5]}
               withArrow
               arrowPosition="side"
             >
@@ -308,7 +308,7 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-updatedAt")}
-              color={theme.colors.groworange[4]}
+              color={theme.colors.growgreen[5]}
               withArrow
               arrowPosition="side"
             >
@@ -339,7 +339,7 @@ interface EditReportMenuProps {
   reportId: string;
 }
 
-function EditReportMenu({
+export function EditReportMenu({
   reportId,
   labelEditGrow,
   labelAddUpdate,
@@ -356,10 +356,10 @@ function EditReportMenu({
         <Menu.Target>
           <Tooltip
             transitionProps={{
-              transition: "pop-top-right",
+              transition: "slide-up",
               duration: 300,
             }}
-            color="groworange.4"
+            color="groworange.5"
             c="white"
             withArrow
             arrowPosition="side"

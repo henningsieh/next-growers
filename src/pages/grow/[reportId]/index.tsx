@@ -1,7 +1,6 @@
 import {
   Alert,
   Box,
-  Button,
   Center,
   Container,
   createStyles,
@@ -17,22 +16,17 @@ import { notifications } from "@mantine/notifications";
 import {
   IconCalendar,
   IconClock,
-  IconEdit,
   IconEye,
   IconHome,
-  IconPlant,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { httpStatusErrorMsg, noPostAtThisDay } from "~/messages";
 
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import type { GetServerSideProps, NextPage } from "next";
-import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
@@ -121,10 +115,6 @@ const PublicReport: NextPage = () => {
   }));
   const { theme, classes } = useStyles();
 
-  const { data: session, status } = useSession();
-  const { locale: activeLocale } = router;
-  const { t } = useTranslation(activeLocale);
-
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
@@ -157,7 +147,12 @@ const PublicReport: NextPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  if (reportIsLoading) return <Loader color="growgreen.4" />;
+  if (reportIsLoading)
+    return (
+      <Center>
+        <Loader size="xl" m="xl" color="growgreen.4" />
+      </Center>
+    );
   if (reportHasErrors) {
     notifications.show(
       httpStatusErrorMsg(error.message, error.data?.httpStatus, true)
@@ -250,8 +245,7 @@ const PublicReport: NextPage = () => {
       selectDate(new Date(matchingPost.date));
       setPostId(matchingPost.id);
       const newUrl = `/grow/${grow.id}/update/${matchingPost.id}`;
-      void router.replace(newUrl, undefined, {
-        // shallow: true,
+      void router.push({ pathname: newUrl }, undefined, {
         scroll: false,
       });
     } else {
@@ -285,60 +279,27 @@ const PublicReport: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <Box pt={13} className={classes.title}>
+        {/* <Box pt={theme.spacing.sm} className={classes.title}>
           <Title order={1} className="inline">
             {`${pageTitle}`}
           </Title>
-
-          {/* Right side Edit Buttons */}
+          {/* 
           {!!grow &&
             status === "authenticated" &&
             grow.authorId === session.user.id && (
               <Group position="right">
-                {/* Edit Grow Button */}
-                <Link href={`/account/edit/grow/${grow.id}/editGrow`}>
-                  <Button
-                    h={32}
-                    miw={180}
-                    compact
-                    variant="filled"
-                    color="groworange"
-                    className="cursor-pointer"
-                    leftIcon={
-                      <IconEdit
-                        className="ml-1"
-                        size={22}
-                        stroke={1.6}
-                      />
-                    }
-                  >
-                    {t("common:report-edit-button")}
-                  </Button>
-                </Link>
+                <EditGrowButton
+                  growId={grow.id}
+                  buttonLabel={t("common:report-edit-button")}
+                />
 
-                {/* Add Post Button */}
-                <Link href={`/account/edit/grow/${grow.id}/addUpdate`}>
-                  <Button
-                    h={32}
-                    miw={180}
-                    compact
-                    variant="filled"
-                    color="growgreen"
-                    className="cursor-pointer"
-                    leftIcon={
-                      <IconPlant
-                        className="ml-1"
-                        size={22}
-                        stroke={1.6}
-                      />
-                    }
-                  >
-                    {t("common:addpost-headline")}
-                  </Button>
-                </Link>
+                <AddPostButton
+                  growId={grow.id}
+                  buttonLabel={t("common:addpost-headline")}
+                />
               </Group>
             )}
-        </Box>
+        </Box> */}
         {/* // Header End */}
         <Container
           size="xl"

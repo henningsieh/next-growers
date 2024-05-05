@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Center,
   Container,
   createStyles,
@@ -14,29 +13,23 @@ import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconCalendar,
-  IconChevronLeft,
   IconClock,
-  IconEdit,
   IconEye,
   IconHome,
-  IconPlant,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { convert } from "html-to-text";
 import { noPostAtThisDay } from "~/messages";
 
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import type {
   GetStaticPaths,
   GetStaticPropsContext,
   InferGetStaticPropsType,
 } from "next";
-import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 import LikeHeart from "~/components/Atom/LikeHeart";
@@ -311,10 +304,6 @@ function PublicReportPost(
   }));
   const { theme, classes } = useStyles();
 
-  const { data: session, status } = useSession();
-  const { locale: activeLocale } = router;
-  const { t } = useTranslation(activeLocale);
-
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
@@ -436,7 +425,9 @@ function PublicReportPost(
       selectDate(new Date(matchingPost.date));
       // setPostId(matchingPost.id);
       const newUrl = `/grow/${grow.id}/update/${matchingPost.id}`;
-      void router.push(newUrl, undefined, { scroll: false });
+      void router.push({ pathname: newUrl }, undefined, {
+        scroll: false,
+      });
     } else {
       notifications.show(noPostAtThisDay);
     }
@@ -478,7 +469,7 @@ function PublicReportPost(
       {/* // Main Content Container */}
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <Box pt={theme.spacing.sm} className={classes.title}>
+        {/* <Box pt={theme.spacing.sm} className={classes.title}>
           <Link title="back to Grow" href={`/grow/${grow.id}`}>
             <Box className={classes.titleLink}>
               <IconChevronLeft size={28} />
@@ -486,56 +477,24 @@ function PublicReportPost(
             </Box>
           </Link>
 
-          {/* Right side Edit Buttons */}
           {status === "authenticated" &&
             grow.authorId === session.user.id && (
               <Group position="right">
-                {/* Edit Update Button */}
-                <Link
-                  href={`/account/edit/grow/${grow.id}/update/${updateId}`}
-                >
-                  <Button
-                    h={32}
-                    miw={180}
-                    compact
-                    variant="filled"
-                    color="groworange"
-                    className="cursor-pointer"
-                    leftIcon={
-                      <IconEdit
-                        className="ml-1"
-                        size={22}
-                        stroke={1.6}
-                      />
-                    }
-                  >
-                    {t("common:post-edit-button")}
-                  </Button>
-                </Link>
 
-                {/* Add Post Button */}
-                <Link href={`/account/edit/grow/${grow.id}/addUpdate`}>
-                  <Button
-                    h={32}
-                    miw={180}
-                    compact
-                    variant="filled"
-                    color="growgreen"
-                    className="cursor-pointer"
-                    leftIcon={
-                      <IconPlant
-                        className="ml-1"
-                        size={22}
-                        stroke={1.6}
-                      />
-                    }
-                  >
-                    {t("common:addpost-headline")}
-                  </Button>
-                </Link>
+                <EditPostButton
+                  growId={grow.id}
+                  postId={thisPost.id}
+                  buttonLabel={t("common:post-edit-button")}
+                />
+
+                <AddPostButton
+                  growId={grow.id}
+                  buttonLabel={t("common:addpost-headline")}
+                />
               </Group>
             )}
-        </Box>
+            
+        </Box> */}
 
         {/* // Header End */}
 
