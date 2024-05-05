@@ -14,6 +14,7 @@ import {
 // import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -101,6 +102,7 @@ interface PostCardProps {
 }
 
 export function PostCard(props: PostCardProps) {
+  const { data: session, status } = useSession();
   const { reportFromProps: report, postId } = props;
 
   const theme = useMantineTheme();
@@ -185,11 +187,14 @@ export function PostCard(props: PostCardProps) {
       <>
         <Paper p="sm" withBorder pos="relative">
           <Box pos="absolute" m="xs" className="bottom-0 right-0">
-            <EditPostButton
-              growId={report.id}
-              postId={postId}
-              buttonLabel={t("common:post-edit-button")}
-            />
+            {status === "authenticated" &&
+              session.user.id == report.authorId && (
+                <EditPostButton
+                  growId={report.id}
+                  postId={postId}
+                  buttonLabel={t("common:post-edit-button")}
+                />
+              )}
           </Box>
           <Paper>
             <Group pb={theme.spacing.xs} position="apart">
