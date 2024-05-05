@@ -1,7 +1,8 @@
 import { Container, Group, Paper, Select, Title } from "@mantine/core";
-import type { BreedersResponse } from "~/pages/api/seedfinder/getAllBreeders";
 
 import { useEffect, useState } from "react";
+
+import type { BreedersResponse } from "~/server/api/routers/strains";
 
 export default function AddStrains() {
   const [breeders, setBreeders] = useState<

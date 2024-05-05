@@ -2,13 +2,7 @@
 // import fetch from "node-fetch"; // Import fetch to make HTTP requests
 import type { NextApiRequest, NextApiResponse } from "next";
 
-// Define a type for the response object
-export type BreedersResponse = {
-  [key: string]: {
-    name: string;
-    logo: string;
-  };
-};
+import type { BreedersResponse } from "~/server/api/routers/strains";
 
 export default async function handler(
   req: NextApiRequest,

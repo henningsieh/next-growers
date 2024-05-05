@@ -112,3 +112,10 @@ export interface LightswattsDataPoint {
   date: Date;
   watt: number;
 }
+
+export interface Breeder {
+  image: string;
+  label: string;
+  value: string;
+  // description: string;
+}

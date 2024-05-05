@@ -87,6 +87,11 @@ export const InputEditReportForm = z.object({
   createdAt: z.date(),
 });
 
+export const InputGetStrainInfo = z.object({
+  breederId: z.string(),
+  strainId: z.string(),
+});
+
 export const InputGetReports = z.object({
   orderBy: z.string().min(1),
   desc: z.boolean(),

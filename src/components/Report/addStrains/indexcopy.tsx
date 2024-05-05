@@ -1,124 +1,132 @@
 import {
-  Avatar,
+  Box,
+  Card,
+  Center,
   Container,
-  Group,
-  MultiSelect,
+  Flex,
+  Loader,
   Paper,
   Select,
-  Text,
   Title,
 } from "@mantine/core";
-import type { BreedersResponse } from "~/pages/api/seedfinder/getAllBreeders";
 
-import {
-  forwardRef, // forwardRef,
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
-  image: string;
-  label: string;
-  description: string;
-}
+import type { BreedersResponse } from "~/server/api/routers/strains";
 
-const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
-  ({ image, label, description, ...others }: ItemProps, ref) => (
-    <div ref={ref} {...others}>
-      <Group noWrap>
-        <Avatar src={image} />
+import type { Breeder } from "~/types";
 
-        <div>
-          <Text>{label}</Text>
-          <Text size="xs" color="dimmed">
-            {description}
-          </Text>
-        </div>
-      </Group>
-    </div>
-  )
-);
-SelectItem.displayName = "SelectItem";
+import { api } from "~/utils/api";
 
 export default function AddStrains() {
-  const [breeders, setBreeders] = useState<
-    {
-      image: string;
-      label: string;
-      value: string;
-      // description: string;
-    }[]
-  >([]);
+  const [breeders, setBreeders] = useState<Breeder[]>([]);
+  const [breederId, setBreederId] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch data from the API
         const response = await fetch("/api/seedfinder/getAllBreeders");
         if (!response.ok) {
           throw new Error("Failed to fetch data from the API");
         }
         const data = (await response.json()) as BreedersResponse;
+
         // Map the fetched data to ItemProps
         const mappedData = Object.entries(data).map(([key, value]) => ({
-          image: `https://en.seedfinder.eu/pics/00breeder/${value.logo}`,
-          label: value.name,
           value: key,
+          label: value.name,
+          image: `https://en.seedfinder.eu/pics/00breeder/${value.logo}`,
           // description: `Description of ${value.name}`, // Type assertion here
         }));
+
+        console.debug("mappedData", mappedData);
+
         setBreeders(mappedData);
       } catch (error) {
         console.error("Error:", error);
         // Handle error
       }
     };
-
     void fetchData();
   }, []);
-
-  console.debug(breeders);
-  const [searchValue, onSearchChange] = useState("");
 
   return (
     <Container py="xl" px={0} className="flex flex-col space-y-">
       <Paper withBorder mih={600} p="lg">
-        <Group position="apart">
-          <>
+        <Flex
+          justify="flex-start"
+          align="flex-start"
+          direction="column"
+          gap="sm"
+        >
+          <Box w={"100%"}>
             <Select
               searchable
-              onSearchChange={(item) => {
-                console.debug(item);
-                onSearchChange(item);
-              }}
-              w={500}
-              radius="sm"
+              clearable
               data={breeders}
-              description="Choose the breeder of a strain in your grow"
               label="Pick a breeder"
               placeholder="Pick a breeder"
-            />
-          </>
-          <Container>
-            <Title order={1}>{searchValue}</Title>
-          </Container>
+              description="Choose the breeder of a strain in your grow"
+              onSearchChange={(item) => {
+                item === "" && breederId !== "" && setBreederId("");
+              }}
+              onSelect={(event) => {
+                const selectedValue = event.currentTarget.value;
+                const selectedBreeder = breeders.find(
+                  (breeder) => breeder.label === selectedValue
+                );
 
-          <MultiSelect
-            label="Choose the breeder of a strain in your grow"
-            placeholder="Pick a breeder"
-            itemComponent={SelectItem}
-            maxSelectedValues={1}
-            data={breeders}
-            searchable
-            nothingFound="No Breeder was found with this search"
-            maxDropdownHeight={400}
-            filter={(value, selected, item) =>
-              !selected &&
-              (item.label
-                ?.toLowerCase()
-                .includes(value.toLowerCase().trim()) as boolean)
-            }
-          />
-        </Group>
+                selectedBreeder && console.debug(selectedBreeder.value);
+
+                selectedBreeder && setBreederId(selectedBreeder.value);
+              }}
+            />
+          </Box>
+          <Card withBorder w={"100%"} mt="sm">
+            <Flex direction="column" className="space-y-2">
+              {/* <Card.Section> */}
+              <Title order={3}>Selected Breeder:</Title>
+
+              {/* </Card.Section> */}
+              {breederId && (
+                <>
+                  <Title c="growgreen.3" order={3}>
+                    {breederId}
+                  </Title>
+                  <SelectStrain breederId={breederId} />
+                </>
+              )}
+            </Flex>
+          </Card>
+        </Flex>
       </Paper>
     </Container>
   );
+}
+
+function SelectStrain({ breederId }: { breederId: string }) {
+  const {
+    data: reederStrains,
+    isLoading: breederStrainsAreLoading,
+    isError: breederStrainshaveErrors,
+  } = api.strains.getBreederStrains.useQuery(breederId, {
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+
+  if (breederStrainshaveErrors) {
+    return <>Server Error</>;
+  } else if (!breederStrainshaveErrors && breederStrainsAreLoading) {
+    return (
+      <Center>
+        <Loader size="sm" m="xs" color="growgreen.4" />
+      </Center>
+    );
+  } else {
+    console.debug("breederStrains", reederStrains);
+
+    return <div>{breederId}</div>;
+  }
 }
