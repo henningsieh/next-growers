@@ -38,7 +38,7 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostForm from "~/components/Post/PostForm";
 import PostsAccordion from "~/components/Post/PostsAccordion";
-import AddStrains from "~/components/Report/addStrains/indexcopy";
+import AddStrains from "~/components/Report/AddStrains";
 import { EditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
