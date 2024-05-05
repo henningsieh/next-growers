@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Container,
   createStyles,
   Loader,
@@ -101,7 +102,12 @@ const ProtectedEditPost: NextPage = () => {
     error: reportError,
   } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
 
-  if (reportIsLoading) return <Loader color="growgreen.4" />;
+  if (reportIsLoading)
+    return (
+      <Center>
+        <Loader size="xl" m="xl" color="growgreen.4" />
+      </Center>
+    );
   if (reportHasErrors) {
     notifications.show(
       httpStatusErrorMsg(
@@ -139,7 +145,9 @@ const ProtectedEditPost: NextPage = () => {
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
         {reportIsLoading ? (
-          <Loader /> // Render Loader component if reportIsLoading is true
+          <Center>
+            <Loader size="xl" m="xl" color="growgreen.4" />
+          </Center>
         ) : (
           <Box className="flex items-center justify-start pt-2">
             <Link

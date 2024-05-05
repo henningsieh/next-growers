@@ -134,13 +134,19 @@ export function EditReportForm({
       // context returned from onMutate to roll back
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onError: (error, report) => {
-        httpStatusErrorMsg(error.message, 500);
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
       },
       onSuccess: (savedReport) => {
         notifications.show(saveGrowSuccessfulMsg);
         // Navigate to the report page
         void router.push(
-          `/${activeLocale as string}/grow/${savedReport?.id as string}`
+          {
+            pathname: `/${activeLocale as string}/grow/${savedReport?.id as string}`,
+          },
+          undefined,
+          { scroll: true }
         );
       },
       // Always refetch after error or success:

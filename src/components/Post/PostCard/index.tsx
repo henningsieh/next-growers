@@ -14,9 +14,11 @@ import {
 // import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
+import EditPostButton from "~/components/Atom/EditPostButton";
 import LikeHeart from "~/components/Atom/LikeHeart";
 import ImagesSlider from "~/components/ImagesSlider";
 
@@ -100,6 +102,7 @@ interface PostCardProps {
 }
 
 export function PostCard(props: PostCardProps) {
+  const { data: session, status } = useSession();
   const { reportFromProps: report, postId } = props;
 
   const theme = useMantineTheme();
@@ -182,10 +185,20 @@ export function PostCard(props: PostCardProps) {
 
     return (
       <>
-        <Paper p="sm" withBorder>
-          <Paper p={theme.spacing.xs}>
-            <Group position="apart">
-              <Text py="md" fw={700} fz="xl">
+        <Paper p="sm" withBorder pos="relative">
+          <Box pos="absolute" m="xs" className="bottom-0 right-0">
+            {status === "authenticated" &&
+              session.user.id == report.authorId && (
+                <EditPostButton
+                  growId={report.id}
+                  postId={postId}
+                  buttonLabel={t("common:post-edit-button")}
+                />
+              )}
+          </Box>
+          <Paper>
+            <Group pb={theme.spacing.xs} position="apart">
+              <Text fw={700} fz="xl">
                 {post?.title}
               </Text>
               <LikeHeart itemToLike={post as Post} itemType={"Post"} />

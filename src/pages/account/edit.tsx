@@ -5,7 +5,6 @@ import {
   Button,
   Container,
   Group,
-  Loader,
   LoadingOverlay,
   Space,
   TextInput,
@@ -17,12 +16,12 @@ import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
+  IconAlertCircle,
   IconAt,
   IconDeviceFloppy,
   IconMail,
   IconReload,
 } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
 import type { ParsedUrlQuery } from "querystring";
 import {
   filesMaxOneErrorMsg,
@@ -92,7 +91,7 @@ const ProtectedEditReport: NextPage = () => {
 
   const { mutate: tRPCsetUsername, isLoading: isLoadingSetUsername } =
     api.user.saveOwnUsername.useMutation({
-      onError(error) {
+      onError: (error) => {
         // If unique constraint failed on the fields: (`name`)
         if (error.data?.httpStatus === 409) {
           notifications.show(
@@ -107,12 +106,12 @@ const ProtectedEditReport: NextPage = () => {
           );
         }
       },
-      onSuccess(result) {
+      onSuccess: (result) => {
         notifications.show(
           setUserNameSuccessfulMsg(result?.user.name as string)
         );
       },
-      onSettled() {
+      onSettled: () => {
         void update();
       },
     });
@@ -400,18 +399,13 @@ const ProtectedEditReport: NextPage = () => {
               <Space h={"md"} />
               <Group position="right">
                 <Button
+                  loading={isLoadingSetUsername}
                   type="submit"
                   title="save profile"
                   variant="filled"
                   className="cursor-default"
                   disabled={isLoadingSetUsername}
-                  leftIcon={
-                    isLoadingSetUsername ? (
-                      <Loader size={22} />
-                    ) : (
-                      <IconDeviceFloppy size={22} />
-                    )
-                  }
+                  leftIcon={<IconDeviceFloppy size={22} />}
                 >
                   {t("common:profile-save-button")}
                 </Button>

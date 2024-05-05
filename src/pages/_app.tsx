@@ -25,6 +25,7 @@ import type { AppType } from "next/app";
 import { useRouter } from "next/router";
 
 import Loading from "~/components/Atom/Loading";
+import { RouterTransition } from "~/components/RouterTransition";
 
 import { api } from "~/utils/api";
 import { useRouteLoader } from "~/utils/routeLoader";
@@ -289,7 +290,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 label: {
                   paddingTop: rem(2),
                   paddingBottom: rem(2),
-                  // paddingLeft: rem(4),
+                  paddingLeft: rem(4),
                   paddingRight: rem(4),
                 },
               }),
@@ -446,6 +447,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           // },
         }}
       >
+        <RouterTransition />
         <SessionProvider session={session}>
           <Notifications limit={5} position="top-center" />
 

@@ -1,4 +1,10 @@
-import { Card, createStyles, rem } from "@mantine/core";
+import { EditReportMenu } from "../Card";
+import { Box, Card, createStyles, rem } from "@mantine/core";
+
+import { useTranslation } from "react-i18next";
+
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
@@ -41,10 +47,30 @@ ReportHeaderProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { classes, theme } = useStyles();
 
+  const router = useRouter();
+
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
+  const { data: session, status } = useSession();
+
   return (
     <Card withBorder radius="sm" className={classes.card}>
       {/* <Link title="back to Grow" href={`/grow/${report.id}`}> */}
-      <Card.Section>
+      {/* HEADER IMAGE */}
+      <Card.Section pos="relative">
+        {/*// Session buttons */}
+        {status === "authenticated" &&
+          !!report &&
+          session.user.id == report.authorId && (
+            <Box p={8} pos="absolute" className="z-20 top-1 right-1">
+              <EditReportMenu
+                reportId={report.id}
+                labelEditGrow={t("common:report-edit-button")}
+                labelAddUpdate={t("common:addpost-headline")}
+              />
+            </Box>
+          )}
         <ImagePreview
           publicLink={`/grow/${report.id}`}
           imageUrl={image}

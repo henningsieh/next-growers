@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Container,
   createStyles,
   Loader,
@@ -32,13 +33,12 @@ import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Link from "next/link";
-// import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostForm from "~/components/Post/PostForm";
 import PostsAccordion from "~/components/Post/PostsAccordion";
-import AddStrains from "~/components/Report/addStrains/indexcopy2";
+import AddStrains from "~/components/Report/addStrains/indexcopy";
 import { EditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
@@ -120,7 +120,7 @@ const ProtectedEditReportDetails: NextPage = () => {
   //   } else {
   //     setDefaultTab(DEFAULTTAB);
 
-  //     void router.replace(
+  //     void router.push(
   //       `${window.location.pathname}#${DEFAULTTAB}`,
   //       undefined,
   //       {
@@ -153,7 +153,12 @@ const ProtectedEditReportDetails: NextPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  if (reportIsLoading) return <Loader color="growgreen.4" />;
+  if (reportIsLoading)
+    return (
+      <Center>
+        <Loader size="xl" m="xl" color="growgreen.4" />
+      </Center>
+    );
   if (reportHasErrors) {
     notifications.show(
       httpStatusErrorMsg(
@@ -190,18 +195,14 @@ const ProtectedEditReportDetails: NextPage = () => {
       {/* // Main Content Container */}
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        {reportIsLoading ? (
-          <Loader color="groworange.4" /> // Render Loader component if reportIsLoading is true
-        ) : (
-          <Box className="flex items-center justify-start pt-2">
-            <Link title="back to Grow" href={`/grow/${grow.id}`}>
-              <Box className={classes.titleLink}>
-                <IconChevronLeft size={28} />
-                {grow?.title}
-              </Box>
-            </Link>
-          </Box>
-        )}
+        <Box className="flex items-center justify-start pt-2">
+          <Link title="back to Grow" href={`/grow/${grow.id}`}>
+            <Box className={classes.titleLink}>
+              <IconChevronLeft size={28} />
+              {grow?.title}
+            </Box>
+          </Link>
+        </Box>
         {/* // Header End */}
 
         <>
@@ -229,20 +230,19 @@ const ProtectedEditReportDetails: NextPage = () => {
                   <IconEdit size={smallScreen ? "0.8rem" : "1.4rem"} />
                 }
               >
-                {/* // Title */}
                 <Title order={1} fz={smallScreen ? rem(11) : "md"}>
                   {t("common:report-edit-headline")}
                 </Title>
               </Tabs.Tab>
 
               <Tabs.Tab
-                p={smallScreen ? 6 : "md"}
+                px={smallScreen ? 6 : "md"}
                 value="addStrains"
                 icon={
                   <IconPlant size={smallScreen ? "0.8rem" : "1.4rem"} />
                 }
               >
-                <Title order={1} fz={smallScreen ? rem(10) : "md"}>
+                <Title order={1} fz={smallScreen ? rem(11) : "md"}>
                   {t("common:report-add-strains-headline")}
                 </Title>
               </Tabs.Tab>
@@ -300,7 +300,6 @@ const ProtectedEditReportDetails: NextPage = () => {
                     </Tabs.Panel>
 
                     <Tabs.Panel value="addStrains">
-                      {/* AddPost Component */}
                       <AddStrains />
                     </Tabs.Panel>
 

@@ -17,7 +17,10 @@ import {
   IconPhotoCancel,
   IconSquareLetterX,
 } from "@tabler/icons-react";
-import { defaultErrorMsg, deletePostSuccessfulMsg } from "~/messages";
+import {
+  deletePostSuccessfulMsg,
+  httpStatusErrorMsg,
+} from "~/messages";
 
 import { useRouter } from "next/router";
 
@@ -50,16 +53,23 @@ const PostDeleteButton = ({
     },
     // If the mutation fails, use the context
     // returned from onMutate to roll back
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onError: (error, _comment) => {
-      notifications.show(defaultErrorMsg(error.message));
+    onError: (error) => {
+      notifications.show(
+        httpStatusErrorMsg(error.message, error.data?.httpStatus)
+      );
     },
     onSuccess: async (result) => {
       notifications.show(deletePostSuccessfulMsg);
       await trpc.reports.getIsoReportWithPostsFromDb.invalidate(
         result.deletedPost.id
       );
-      void router.push(`/grow/${result.deletedPost.reportId}`);
+      void router.push(
+        {
+          pathname: `/grow/${result.deletedPost.reportId}`,
+        },
+        undefined,
+        { scroll: true }
+      );
     },
     // Always refetch after error or success:
     onSettled: async () => {

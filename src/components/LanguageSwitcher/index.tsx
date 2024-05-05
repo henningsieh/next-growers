@@ -60,7 +60,7 @@ const LanguageSwitcher: NextPage = () => {
             : theme.fn.lighten(theme.colors.growgreen[4], 0.7)
         }
         onChange={() =>
-          void router.push(router.pathname, router.asPath, {
+          void router.replace(router.pathname, router.asPath, {
             locale: i18n.language === "de" ? "en" : "de",
           })
         }

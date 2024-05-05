@@ -146,7 +146,6 @@ const PostForm = (props: AddPostProps) => {
         void router.push(
           {
             pathname: `/${activeLocale as string}/grow/${newPost?.reportId}/update/${newPost?.id}`,
-            query: { refresh: new Date().getTime() }, // Add a unique query parameter to force a new page render
           },
           undefined,
           { scroll: true }
