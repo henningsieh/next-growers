@@ -209,7 +209,7 @@ export function EditReportForm({
   return (
     <>
       {reportfromProps && (
-        <Container py="xl" px={0} className="flex flex-col space-y-">
+        <Container py="xl" px={0} className="flex flex-col space-y-2">
           {/*// Upload Panel */}
           {cloudUrl ? (
             <>

@@ -1,4 +1,12 @@
-import { Center, Loader, Select } from "@mantine/core";
+import {
+  Center,
+  Container,
+  Loader,
+  Paper,
+  Select,
+  Title,
+  Transition,
+} from "@mantine/core";
 
 import { useEffect, useState } from "react";
 
@@ -11,9 +19,9 @@ export default function AddStrains() {
     GetBreedersFromSeedfinderResponse | undefined
   >(undefined);
 
-  useEffect(() => {
-    console.debug("breeders", breeders);
-  }, [breeders]);
+  // useEffect(() => {
+  //   //console.debug("breeders", breeders);
+  // }, [breeders]);
 
   const {
     data: breedersFromSeedfinder,
@@ -63,56 +71,145 @@ export default function AddStrains() {
           <Loader size="md" m="xs" color="growgreen.4" />
         </Center>
       ) : (
-        breedersOptions && (
-          <>
-            <Select
-              searchable
-              clearable
-              data={breedersOptions}
-              placeholder="Select a breeder"
-              size="md"
-              label="Breeder"
-              onChange={(value) => {
-                // Find the selected breeder in the breeders object
-                const selectedBreederId = value; // This is the ID of the selected breeder
-                if (selectedBreederId) {
-                  const selectedBreeder =
-                    breeders && breeders[selectedBreederId];
-                  console.debug("Selected breeder:", selectedBreeder);
-                  // Check if selectedBreeder has strains
-                  if (
-                    selectedBreeder &&
-                    selectedBreeder.strains != undefined
-                  ) {
-                    const strains = selectedBreeder.strains;
+        <Container py="xl" px={0}>
+          <Paper
+            m={0}
+            p="sm"
+            mih={400}
+            withBorder
+            className="flex flex-col space-y-4"
+          >
+            <Title order={1}>Edit Strains</Title>
+            {/* {breedersOptions && ( */}
+            <Transition
+              mounted={
+                breedersOptions === undefined ||
+                breedersOptions.length == 0
+                  ? false
+                  : true
+              }
+              transition="fade"
+              duration={600} // Duration of the fade animation in milliseconds
+              timingFunction="ease"
+            >
+              {(styles) => (
+                <Select
+                  style={{
+                    ...styles,
+                    opacity: styles.opacity, // Apply the opacity style for the fading effect
+                  }}
+                  searchable
+                  clearable
+                  data={breedersOptions ? breedersOptions : []}
+                  placeholder="Select a breeder"
+                  size="md"
+                  label="Breeder"
+                  onChange={(value) => {
+                    // Find the selected breeder in the breeders object
+                    const selectedBreederId = value; // This is the ID of the selected breeder
+                    if (selectedBreederId) {
+                      const selectedBreeder =
+                        breeders && breeders[selectedBreederId];
+                      // Check if selectedBreeder has strains
+                      if (
+                        selectedBreeder &&
+                        selectedBreeder.strains != undefined
+                      ) {
+                        const strains = selectedBreeder.strains;
 
-                    console.debug("strains:", strains);
+                        // Iterate over each strain in the strains object
+                        Object.entries(strains).forEach(
+                          ([strainId, strainObject]) => {
+                            const strainName = strainObject; // Accessing the value associated with the strainId key
+                            const label =
+                              strainName as unknown as string; // Explicitly cast strainName to a string
 
-                    // Iterate over each strain in the strains object
-                    Object.entries(strains).forEach(
-                      ([strainId, strainObject]) => {
-                        const strainName = strainObject; // Accessing the value associated with the strainId key
-                        const label = strainName as unknown as string; // Explicitly cast strainName to a string
-
-                        // Push strainId and strainName into strainOptions array
-                        strainOptions.push({
-                          value: strainId,
-                          label: label,
-                        });
-                        setStrainsData(strainOptions);
+                            // Push strainId and strainName into strainOptions array
+                            strainOptions.push({
+                              value: strainId,
+                              label: label,
+                            });
+                            setStrainsData(strainOptions);
+                          }
+                        );
+                      } else {
+                        console.error(
+                          "Selected breeder has no strains"
+                        );
                       }
-                    );
-                  } else {
-                    console.debug("Selected breeder has no strains");
-                  }
-                  console.debug("strainOptions:", strainOptions);
-                }
-              }}
-            />
-            {strainsData && <Select data={strainsData} />}
-          </>
-        )
+                      //console.debug("strainOptions:", strainOptions);
+                    } else {
+                      // console.debug("reset breeder");
+                      setStrainsData([]);
+                    }
+                  }}
+                />
+              )}
+            </Transition>
+            {/* // )} */}
+
+            <Transition
+              mounted={strainsData.length > 0}
+              transition="fade"
+              duration={600} // Duration of the fade animation in milliseconds
+              timingFunction="ease"
+            >
+              {(styles) => (
+                <Select
+                  style={{
+                    ...styles,
+                    opacity: styles.opacity, // Apply the opacity style for the fading effect
+                  }}
+                  searchable
+                  clearable
+                  placeholder="Select a strain"
+                  size="md"
+                  label="Strains"
+                  data={strainsData}
+                  onChange={(value) => {
+                    const selectedStrainId = value; // This is the ID of the selected strain
+                    if (selectedStrainId) {
+                      console.debug(selectedStrainId);
+                    } else {
+                      // console.debug("reset strains");
+                    }
+                  }}
+                />
+              )}
+            </Transition>
+          </Paper>
+        </Container>
       )}
     </>
   );
 }
+
+// function SelectStrain({
+//   strainDataData,
+// }: {
+//   strainDataData: { value: string; label: string }[];
+// }) {
+//   return (
+//     <Transition
+//       mounted={!!strainDataData}
+//       transition="fade"
+//       duration={5000} // Duration of the fade animation in milliseconds
+//       timingFunction="ease"
+//     >
+//       {(styles) => (
+//         <Select
+//           style={{
+//             ...styles,
+//             opacity: styles.opacity, // Apply the opacity style for the fading effect
+//           }}
+//           searchable
+//           clearable
+//           placeholder="Select a strain"
+//           size="md"
+//           label="Strains"
+//           data={strainDataData}
+//         />
+//       )}
+//     </Transition>
+//   );
+// }
