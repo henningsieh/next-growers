@@ -6,23 +6,17 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
-import { InputGetStrainInfo } from "~/utils/inputValidation";
+import {
+  InputGetAllBreders,
+  InputGetStrainInfo,
+} from "~/utils/inputValidation";
 
-// Define a type for the response object
-export type BreedersResponse = {
-  [key: string]: {
-    name: string;
-    logo: string;
-    strains: Strain[];
-  };
-};
-
-type Strain = {
+type SeedfinderStrain = {
   [strainName: string]: string;
 };
 
 type BreederStrainsResponse = {
-  [breederName: string]: BreedersResponse;
+  [breederName: string]: GetBreedersFromSeedfinderResponse;
 };
 
 type StrainInfoResponse = {
@@ -61,7 +55,38 @@ type StrainInfoResponse = {
   };
 };
 
+// Response: getBreedersFromSeedfinder
+export type GetBreedersFromSeedfinderResponse = {
+  [key: string]: {
+    name: string;
+    logo: string;
+    strains?: SeedfinderStrain[];
+  };
+};
 export const strainRouter = createTRPCRouter({
+  getBreedersFromSeedfinder: protectedProcedure
+    .input(InputGetAllBreders)
+    .query(async ({ input }) => {
+      const { withStrains } = input;
+      const url = `https://en.seedfinder.eu/api/json/ids.json?br=all&strains=${withStrains ? "1" : "0"}&ac=d8fe19486b31da9dbb7a01ee67798991`;
+
+      // const url = `https://en.seedfinder.eu/api/json/ids.json?br=all&strains=1&ac=d8fe19486b31da9dbb7a01ee67798991`;
+
+      try {
+        const breedersFromSeedfinder = await fetch(url);
+        if (!breedersFromSeedfinder.ok) {
+          throw new Error("Failed to fetch data from the API");
+        }
+        const data =
+          (await breedersFromSeedfinder.json()) as GetBreedersFromSeedfinderResponse;
+
+        return data;
+      } catch (error) {
+        console.error("Error:", error);
+        throw new Error("Internal server error");
+      }
+    }),
+
   getStrainInfo: protectedProcedure
     .input(InputGetStrainInfo)
     .query(async ({ input }) => {
