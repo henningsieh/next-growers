@@ -11,14 +11,6 @@ import {
   InputGetStrainInfo,
 } from "~/utils/inputValidation";
 
-type SeedfinderStrain = {
-  [strainName: string]: string;
-};
-
-type BreederStrainsResponse = {
-  [breederName: string]: GetBreedersFromSeedfinderResponse;
-};
-
 type StrainInfoResponse = {
   error: boolean;
   name: string;
@@ -55,12 +47,19 @@ type StrainInfoResponse = {
   };
 };
 
-// Response: getBreedersFromSeedfinder
+export type SeedfinderStrain = {
+  [strainId: string]: string;
+};
+
+type BreederStrainsResponse = {
+  [breederName: string]: GetBreedersFromSeedfinderResponse;
+};
+
 export type GetBreedersFromSeedfinderResponse = {
   [key: string]: {
     name: string;
     logo: string;
-    strains?: SeedfinderStrain[];
+    strains: SeedfinderStrain[];
   };
 };
 export const strainRouter = createTRPCRouter({

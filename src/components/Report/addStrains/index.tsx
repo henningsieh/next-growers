@@ -12,7 +12,7 @@ export default function AddStrains() {
   >(undefined);
 
   useEffect(() => {
-    console.debug(breeders);
+    console.debug("breeders", breeders);
   }, [breeders]);
 
   const {
@@ -51,6 +51,11 @@ export default function AddStrains() {
       label: breeders[key].name,
     }));
 
+  const strainOptions: { value: string; label: string }[] = [];
+  const [strainsData, setStrainsData] = useState<
+    { value: string; label: string }[]
+  >([]);
+
   return (
     <>
       {breedersFromSeedfinderAreLoading ? (
@@ -59,18 +64,53 @@ export default function AddStrains() {
         </Center>
       ) : (
         breedersOptions && (
-          <Select
-            searchable
-            clearable
-            data={breedersOptions}
-            placeholder="Select a breeder"
-            size="md"
-            label="Breeder"
-            onChange={(value) => {
-              // Handle the selected breeder here
-              console.log("Selected breeder:", value);
-            }}
-          />
+          <>
+            <Select
+              searchable
+              clearable
+              data={breedersOptions}
+              placeholder="Select a breeder"
+              size="md"
+              label="Breeder"
+              onChange={(value) => {
+                // Find the selected breeder in the breeders object
+                const selectedBreederId = value; // This is the ID of the selected breeder
+                if (selectedBreederId) {
+                  const selectedBreeder =
+                    breeders && breeders[selectedBreederId];
+                  console.debug("Selected breeder:", selectedBreeder);
+                  // Check if selectedBreeder has strains
+                  if (
+                    selectedBreeder &&
+                    selectedBreeder.strains != undefined
+                  ) {
+                    const strains = selectedBreeder.strains;
+
+                    console.debug("strains:", strains);
+
+                    // Iterate over each strain in the strains object
+                    Object.entries(strains).forEach(
+                      ([strainId, strainObject]) => {
+                        const strainName = strainObject; // Accessing the value associated with the strainId key
+                        const label = strainName as unknown as string; // Explicitly cast strainName to a string
+
+                        // Push strainId and strainName into strainOptions array
+                        strainOptions.push({
+                          value: strainId,
+                          label: label,
+                        });
+                        setStrainsData(strainOptions);
+                      }
+                    );
+                  } else {
+                    console.debug("Selected breeder has no strains");
+                  }
+                  console.debug("strainOptions:", strainOptions);
+                }
+              }}
+            />
+            {strainsData && <Select data={strainsData} />}
+          </>
         )
       )}
     </>
