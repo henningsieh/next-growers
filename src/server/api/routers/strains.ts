@@ -90,7 +90,7 @@ export const strainRouter = createTRPCRouter({
     .input(InputGetStrainInfo)
     .query(async ({ input }) => {
       const { breederId, strainId } = input;
-      const url = `https://de.seedfinder.eu/api/json/strain.json?br=${breederId}&str=${strainId}&ac=d8fe19486b31da9dbb7a01ee67798991`;
+      const url = `https://en.seedfinder.eu/api/json/strain.json?br=${breederId}&str=${strainId}&ac=d8fe19486b31da9dbb7a01ee67798991`;
 
       try {
         const response = await fetch(url);

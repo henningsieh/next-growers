@@ -87,14 +87,14 @@ const ProtectedEditReportDetails: NextPage = () => {
       display: "inline-flex",
       fontWeight: "bold",
       color: dark
-        ? theme.colors.groworange[4]
-        : theme.colors.groworange[6],
+        ? theme.colors.groworange[3]
+        : theme.colors.groworange[5],
     },
   }));
   const { theme, classes } = useStyles();
 
   const smallScreen = useMediaQuery(
-    `(max-width: ${theme.breakpoints.sm})`
+    `(max-width: ${theme.breakpoints.md})`
   );
 
   const queryReportId = router.query.reportId as string;
@@ -224,51 +224,55 @@ const ProtectedEditReportDetails: NextPage = () => {
             // })}
             >
               <Tabs.Tab
-                px={smallScreen ? 6 : "md"}
+                h={smallScreen ? 28 : 40}
+                px={smallScreen ? 4 : "md"}
                 value="editGrow"
                 icon={
                   <IconEdit size={smallScreen ? "0.8rem" : "1.4rem"} />
                 }
               >
-                <Title order={1} fz={smallScreen ? rem(11) : "md"}>
+                <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   {t("common:report-edit-headline")}
                 </Title>
               </Tabs.Tab>
 
               <Tabs.Tab
-                px={smallScreen ? 6 : "md"}
-                value="addStrains"
+                h={smallScreen ? 28 : 40}
+                px={smallScreen ? 4 : "md"}
+                value="addPlants"
                 icon={
                   <IconPlant size={smallScreen ? "0.8rem" : "1.4rem"} />
                 }
               >
-                <Title order={1} fz={smallScreen ? rem(11) : "md"}>
+                <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   {t("common:report-add-strains-headline")}
                 </Title>
               </Tabs.Tab>
 
               <Tabs.Tab
-                p={smallScreen ? 6 : "md"}
+                h={smallScreen ? 28 : 40}
+                p={smallScreen ? 2 : "md"}
                 value="addUpdate"
                 icon={
                   <IconFilePlus
-                    size={smallScreen ? "0.8rem" : "1.4rem"}
+                    size={smallScreen ? "1rem" : "1.4rem"}
                   />
                 }
               >
-                <Title order={1} fz={smallScreen ? rem(10) : "md"}>
+                <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   {t("common:addpost-headline")}
                 </Title>
               </Tabs.Tab>
 
               <Tabs.Tab
-                px={smallScreen ? 6 : "md"}
+                h={smallScreen ? 28 : 40}
+                px={smallScreen ? 4 : "md"}
                 value="editAll"
                 icon={
                   <IconList size={smallScreen ? "0.8rem" : "1.4rem"} />
                 }
               >
-                <Title order={1} fz={smallScreen ? rem(11) : "md"}>
+                <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   {t("common:editallpost-headline")}{" "}
                 </Title>
               </Tabs.Tab>
@@ -299,7 +303,7 @@ const ProtectedEditReportDetails: NextPage = () => {
                       />
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="addStrains">
+                    <Tabs.Panel value="addPlants">
                       <AddStrains />
                     </Tabs.Panel>
 

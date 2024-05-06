@@ -5,6 +5,12 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "en.seedfinder.eu",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "ui-avatars.com",
         port: "",
         pathname: "/**",

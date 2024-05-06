@@ -1,29 +1,57 @@
 import {
   Box,
+  Button,
   Card,
   Center,
   Container,
+  Divider,
+  Flex,
+  Image,
   Loader,
   Paper,
+  ScrollArea,
   Select,
+  Text,
   Title,
   Transition,
+  useMantineTheme,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import {
+  IconCannabis,
+  IconDeviceFloppy,
+  IconSearch,
+} from "@tabler/icons-react";
 
 import { useEffect, useState } from "react";
 
-import type { GetBreedersFromSeedfinderResponse } from "~/server/api/routers/strains";
+import Link from "next/link";
+
+import type {
+  GetBreedersFromSeedfinderResponse,
+  SeedfinderStrain,
+} from "~/server/api/routers/strains";
 
 import { api } from "~/utils/api";
 
 export default function AddStrains() {
-  const [selectedBreederId, setSelectedBreederId] =
-    useState<string>("");
+  // Base URL for the breeder logo images
+  const baseUrl = "https://en.seedfinder.eu/pics/00breeder/";
+
   const [selectedStrainId, setSelectedStrainId] = useState<string>("");
-  const [strainsData, setStrainsData] = useState<
+  const [strainsSelectData, setSelectStrainsData] = useState<
     { value: string; label: string }[]
   >([]);
-
+  const [selectedBreederId, setSelectedBreederId] =
+    useState<string>("");
+  const [selectedBreeder, setSelectedBreeder] = useState<
+    | {
+        name: string;
+        logo: string;
+        strains: SeedfinderStrain[];
+      }
+    | undefined
+  >(undefined);
   const [breeders, setBreeders] = useState<
     GetBreedersFromSeedfinderResponse | undefined
   >(undefined);
@@ -69,6 +97,11 @@ export default function AddStrains() {
       label: breeders[key].name,
     }));
 
+  const theme = useMantineTheme();
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
+
   return (
     <>
       {breedersFromSeedfinderAreLoading ? (
@@ -97,6 +130,9 @@ export default function AddStrains() {
             >
               {(styles) => (
                 <Select
+                  rightSection={<IconSearch size="1rem" />}
+                  rightSectionWidth={30}
+                  styles={{ rightSection: { pointerEvents: "none" } }}
                   className="z-20"
                   style={{
                     ...styles,
@@ -106,8 +142,15 @@ export default function AddStrains() {
                   clearable
                   data={breedersOptions ? breedersOptions : []}
                   placeholder="Select a breeder"
-                  size="md"
+                  // fz={smallScreen ? "md" : "xl"}
+                  size={smallScreen ? "xs" : "md"}
                   label="Breeder"
+                  onFocus={() => {
+                    setSelectedStrainId("");
+                    setSelectStrainsData([]);
+                    setSelectedBreederId("");
+                    setSelectedBreeder(undefined);
+                  }}
                   onChange={(value) => {
                     // Find the selected breeder in the breeders object
 
@@ -116,6 +159,7 @@ export default function AddStrains() {
 
                       const selectedBreeder =
                         breeders && breeders[value];
+                      setSelectedBreeder(selectedBreeder);
 
                       // Check if selectedBreeder has strains
                       if (
@@ -136,7 +180,7 @@ export default function AddStrains() {
                               value: strainId,
                               label: label,
                             });
-                            setStrainsData(strainOptions);
+                            setSelectStrainsData(strainOptions);
                           }
                         );
                       } else {
@@ -146,9 +190,11 @@ export default function AddStrains() {
                       }
                       //console.debug("strainOptions:", strainOptions);
                     } else {
-                      // console.debug("reset breeder");
-                      setStrainsData([]);
+                      // Reset breeder and strain data if no breeder is selected
                       setSelectedStrainId("");
+                      setSelectStrainsData([]);
+                      setSelectedBreederId("");
+                      setSelectedBreeder(undefined);
                     }
                   }}
                 />
@@ -156,7 +202,7 @@ export default function AddStrains() {
             </Transition>
 
             <Transition
-              mounted={strainsData.length > 0}
+              mounted={strainsSelectData.length > 0}
               transition="slide-down"
               duration={600} // Duration of the fade animation in milliseconds
               timingFunction="ease"
@@ -173,25 +219,27 @@ export default function AddStrains() {
                   placeholder="Select a strain"
                   size="md"
                   label="Strains"
-                  data={strainsData}
+                  data={strainsSelectData}
                   onChange={(value) => {
                     if (value) {
                       setSelectedStrainId(value);
-                      console.debug(value);
                     } else {
-                      // console.debug("reset strains");
                       setSelectedStrainId("");
                     }
                   }}
                 />
               )}
             </Transition>
-            {selectedBreederId && selectedStrainId && (
-              <SelectedStrain
-                breederId={selectedBreederId}
-                strainId={selectedStrainId}
-              />
-            )}
+            {selectedBreeder &&
+              selectedBreederId &&
+              selectedStrainId && (
+                <SelectedStrain
+                  breederId={selectedBreederId}
+                  breederName={selectedBreeder.name}
+                  breederLogoUrl={`${baseUrl}${selectedBreeder.logo}`}
+                  strainId={selectedStrainId}
+                />
+              )}
           </Paper>
         </Container>
       )}
@@ -201,9 +249,13 @@ export default function AddStrains() {
 
 function SelectedStrain({
   breederId,
+  breederName,
+  breederLogoUrl,
   strainId,
 }: {
   breederId: string;
+  breederName: string;
+  breederLogoUrl: string;
   strainId: string;
 }) {
   const {
@@ -219,120 +271,185 @@ function SelectedStrain({
     }
   );
 
-  // console.debug(breeders);
+  const theme = useMantineTheme();
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
 
   return (
-    <Transition
-      mounted={
-        !strainInfosFromSeedfinderAreLoading &&
-        !strainInfosFromSeedfinderHaveErrors &&
-        !!strainInfosFromSeedfinder
-      }
-      transition="fade"
-      duration={500} // Duration of the fade animation in milliseconds
-      timingFunction="ease"
-    >
-      {(styles) => (
-        <Box
-          style={{
-            ...styles,
-            opacity: styles.opacity, // Apply the opacity style for the fading effect
-          }}
-        >
-          {strainInfosFromSeedfinder && (
-            <Card
-              p="lg"
-              shadow="sm"
-              radius="md"
-              className="flex flex-col space-y-4"
-            >
-              <Paper p="xs">
-                <Title order={3}>
-                  Strain: {strainInfosFromSeedfinder.name}
-                </Title>
-                <Title order={3}>
-                  Strain: {strainInfosFromSeedfinder.name}
-                </Title>
-                {/* </Paper>
-              <Paper> */}
-                <p>
-                  <strong>Type:</strong>{" "}
-                  {strainInfosFromSeedfinder.brinfo &&
-                    strainInfosFromSeedfinder.brinfo.type}
-                </p>
-                <p>
-                  <strong>CBD:</strong>{" "}
-                  {strainInfosFromSeedfinder.brinfo &&
-                    strainInfosFromSeedfinder.brinfo.cbd}
-                </p>
-                <p>
-                  <strong>Description:</strong>{" "}
-                  {strainInfosFromSeedfinder.brinfo &&
-                    strainInfosFromSeedfinder.brinfo.description}
-                </p>
-                {/* Render other strain information as needed */}
-                <Box>
-                  <a
-                    href={strainInfosFromSeedfinder.links.info}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    More Info
-                  </a>
-                  <a
-                    href={strainInfosFromSeedfinder.links.review}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Reviews
-                  </a>
-                  {/* Add other links as needed */}
-                </Box>
-              </Paper>
-            </Card>
-          )}
-
-          {/* // display strainInfosFromSeedfinder of type StrainInfoResponse in some pretty Boxes in Flex or so 
-          
-          type StrainInfoResponse = {
-            error: boolean;
-            name: string;
-            id: string;
-            brinfo: {
-              name: string;
-              id: string;
-              type: string;
-              cbd: string;
-              description: string;
-              link: string;
-              pic: string;
-              flowering: {
-                auto: boolean;
-                days: number;
-                info: string;
-              };
-              descr: string;
-            };
-            comments: boolean;
-            links: {
-              info: string;
-              review: string;
-              upload: {
-                picture: string;
-                review: string;
-                medical: string;
-              };
-            };
-            licence: {
-              url_cc: string;
-              url_sf: string;
-              info: string;
-            };
-          };
-          
-          */}
-        </Box>
+    <>
+      {strainId && strainInfosFromSeedfinderAreLoading && (
+        <Center>
+          <Loader size="md" m="xs" color="growgreen.4" />
+        </Center>
       )}
-    </Transition>
+
+      <Flex
+        mih={50}
+        gap="md"
+        justify="flex-end"
+        align="center"
+        direction="row"
+        wrap="wrap"
+      >
+        {!!strainInfosFromSeedfinder && (
+          <Button
+            miw={180}
+            fz="lg"
+            fullWidth={smallScreen}
+            variant="filled"
+            color="growgreen"
+            type="submit"
+            title="This will add 1 plant of this strain to your Grow."
+            leftIcon={<IconDeviceFloppy stroke={2.2} size="1.4rem" />}
+          >
+            Save this Strain as Plant
+          </Button>
+        )}
+      </Flex>
+
+      <Transition
+        mounted={
+          !strainInfosFromSeedfinderAreLoading &&
+          !strainInfosFromSeedfinderHaveErrors &&
+          !!strainInfosFromSeedfinder
+        }
+        transition="scale-y"
+        duration={1000} // Duration of the fade animation in milliseconds
+        timingFunction="ease"
+      >
+        {(styles) => (
+          <Box
+            style={{
+              ...styles,
+              marginTop: 0,
+              opacity: styles.opacity, // Apply the opacity style for the fading effect
+            }}
+          >
+            {strainInfosFromSeedfinder &&
+              strainInfosFromSeedfinder.brinfo && (
+                <>
+                  <Divider
+                    // color="groworange.4"
+                    fz="lg"
+                    my="sm"
+                    size="sm"
+                    label={
+                      <>
+                        <IconCannabis stroke={1.8} size={22} />
+                        <Title order={2} mx="sm" fz="xl">
+                          Strain Infos
+                        </Title>
+                        <IconCannabis stroke={1.8} size={22} />
+                      </>
+                    }
+                    labelPosition="center"
+                  />
+
+                  <Card withBorder p="lg" shadow="sm" radius="md">
+                    <Flex
+                      gap="md"
+                      justify="space-between"
+                      align="flex-start"
+                      direction="row"
+                      wrap="wrap"
+                    >
+                      <Paper withBorder p="xs" w={400} mih={480}>
+                        <Flex direction="column" gap="md">
+                          <Title order={3}>
+                            Breeder:
+                            <Center c="groworange.4">
+                              {breederName}
+                            </Center>
+                          </Title>
+                          <Image
+                            p="xs"
+                            src={breederLogoUrl}
+                            alt={breederName}
+                          />
+                          <Box>
+                            <Title order={4}>Description:</Title>
+                            {strainInfosFromSeedfinder.brinfo &&
+                              strainInfosFromSeedfinder.brinfo
+                                .description}
+                          </Box>
+                        </Flex>
+                      </Paper>
+                      <Paper
+                        withBorder
+                        p="xs"
+                        w={400}
+                        mih={260}
+                        // className="flex flex-col space-y-4"
+                      >
+                        <Flex direction="column" gap="md">
+                          <Title order={3}>
+                            Strain:
+                            <Center c="groworange.4">
+                              {strainInfosFromSeedfinder.name}
+                            </Center>
+                          </Title>
+                          {strainInfosFromSeedfinder.brinfo.pic ? (
+                            <Image
+                              height={320}
+                              p="xs"
+                              src={strainInfosFromSeedfinder.brinfo.pic}
+                              alt={strainInfosFromSeedfinder.name}
+                            />
+                          ) : (
+                            <Text c="dimmed">[no image]</Text>
+                          )}
+                          <Box>
+                            <Title order={4}>Type:</Title>{" "}
+                            {strainInfosFromSeedfinder.brinfo &&
+                              strainInfosFromSeedfinder.brinfo.type}
+                          </Box>
+                          <Box>
+                            <Title order={4}>CBD:</Title>{" "}
+                            {strainInfosFromSeedfinder.brinfo &&
+                              strainInfosFromSeedfinder.brinfo.cbd}
+                          </Box>{" "}
+                          <Title order={4}>Description:</Title>{" "}
+                          <ScrollArea h={160} type="always">
+                            {strainInfosFromSeedfinder.brinfo &&
+                              strainInfosFromSeedfinder.brinfo.descr}
+                          </ScrollArea>
+                        </Flex>
+
+                        {/* Render other strain information as needed */}
+                        <Link
+                          href={
+                            strainInfosFromSeedfinder.links &&
+                            strainInfosFromSeedfinder.links.info
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button w={100} my="xs" compact>
+                            More Info
+                          </Button>
+                        </Link>
+                        <Link
+                          href={
+                            strainInfosFromSeedfinder.links &&
+                            strainInfosFromSeedfinder.links.review
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button w={100} my="xs" ml="xs" compact>
+                            Reviews
+                          </Button>
+                        </Link>
+                        {/* Add other links as needed */}
+                      </Paper>
+                    </Flex>
+                  </Card>
+                </>
+              )}
+          </Box>
+        )}
+      </Transition>
+    </>
   );
 }

@@ -22,7 +22,7 @@ import {
   IconClock,
   IconDots,
   IconEdit,
-  IconPlant,
+  IconFilePlus,
 } from "@tabler/icons-react";
 
 import { useSession } from "next-auth/react";
@@ -390,7 +390,7 @@ export function EditReportMenu({
           <Link href={`/account/edit/grow/${reportId}/addUpdate`}>
             <Menu.Item
               className={classes.add}
-              icon={<IconPlant size={rem(14)} />}
+              icon={<IconFilePlus size={rem(14)} />}
             >
               {labelAddUpdate}
             </Menu.Item>
