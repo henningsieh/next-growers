@@ -1,10 +1,12 @@
 import {
   Box,
+  Card,
   Center,
   Container,
   Loader,
   Paper,
   Select,
+  Title,
   Transition,
 } from "@mantine/core";
 
@@ -15,10 +17,18 @@ import type { GetBreedersFromSeedfinderResponse } from "~/server/api/routers/str
 import { api } from "~/utils/api";
 
 export default function AddStrains() {
+  const [selectedBreederId, setSelectedBreederId] =
+    useState<string>("");
+  const [selectedStrainId, setSelectedStrainId] = useState<string>("");
+  const [strainsData, setStrainsData] = useState<
+    { value: string; label: string }[]
+  >([]);
+
   const [breeders, setBreeders] = useState<
     GetBreedersFromSeedfinderResponse | undefined
   >(undefined);
 
+  const strainOptions: { value: string; label: string }[] = [];
   // useEffect(() => {
   //   //console.debug("breeders", breeders);
   // }, [breeders]);
@@ -59,15 +69,6 @@ export default function AddStrains() {
       label: breeders[key].name,
     }));
 
-  const strainOptions: { value: string; label: string }[] = [];
-  const [strainsData, setStrainsData] = useState<
-    { value: string; label: string }[]
-  >([]);
-
-  const [selectedBreederId, setSelectedBreederId] =
-    useState<string>("");
-  const [selectedStrainId, setSelectedStrainId] = useState<string>("");
-
   return (
     <>
       {breedersFromSeedfinderAreLoading ? (
@@ -96,6 +97,7 @@ export default function AddStrains() {
             >
               {(styles) => (
                 <Select
+                  className="z-20"
                   style={{
                     ...styles,
                     opacity: styles.opacity, // Apply the opacity style for the fading effect
@@ -111,8 +113,10 @@ export default function AddStrains() {
 
                     if (value) {
                       setSelectedBreederId(value);
+
                       const selectedBreeder =
                         breeders && breeders[value];
+
                       // Check if selectedBreeder has strains
                       if (
                         selectedBreeder &&
@@ -144,6 +148,7 @@ export default function AddStrains() {
                     } else {
                       // console.debug("reset breeder");
                       setStrainsData([]);
+                      setSelectedStrainId("");
                     }
                   }}
                 />
@@ -158,6 +163,7 @@ export default function AddStrains() {
             >
               {(styles) => (
                 <Select
+                  className="z-10"
                   style={{
                     ...styles,
                     opacity: styles.opacity, // Apply the opacity style for the fading effect
@@ -174,6 +180,7 @@ export default function AddStrains() {
                       console.debug(value);
                     } else {
                       // console.debug("reset strains");
+                      setSelectedStrainId("");
                     }
                   }}
                 />
@@ -212,6 +219,8 @@ function SelectedStrain({
     }
   );
 
+  // console.debug(breeders);
+
   return (
     <Transition
       mounted={
@@ -220,7 +229,7 @@ function SelectedStrain({
         !!strainInfosFromSeedfinder
       }
       transition="fade"
-      duration={5000} // Duration of the fade animation in milliseconds
+      duration={500} // Duration of the fade animation in milliseconds
       timingFunction="ease"
     >
       {(styles) => (
@@ -230,6 +239,59 @@ function SelectedStrain({
             opacity: styles.opacity, // Apply the opacity style for the fading effect
           }}
         >
+          {strainInfosFromSeedfinder && (
+            <Card
+              p="lg"
+              shadow="sm"
+              radius="md"
+              className="flex flex-col space-y-4"
+            >
+              <Paper p="xs">
+                <Title order={3}>
+                  Strain: {strainInfosFromSeedfinder.name}
+                </Title>
+                <Title order={3}>
+                  Strain: {strainInfosFromSeedfinder.name}
+                </Title>
+                {/* </Paper>
+              <Paper> */}
+                <p>
+                  <strong>Type:</strong>{" "}
+                  {strainInfosFromSeedfinder.brinfo &&
+                    strainInfosFromSeedfinder.brinfo.type}
+                </p>
+                <p>
+                  <strong>CBD:</strong>{" "}
+                  {strainInfosFromSeedfinder.brinfo &&
+                    strainInfosFromSeedfinder.brinfo.cbd}
+                </p>
+                <p>
+                  <strong>Description:</strong>{" "}
+                  {strainInfosFromSeedfinder.brinfo &&
+                    strainInfosFromSeedfinder.brinfo.description}
+                </p>
+                {/* Render other strain information as needed */}
+                <Box>
+                  <a
+                    href={strainInfosFromSeedfinder.links.info}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    More Info
+                  </a>
+                  <a
+                    href={strainInfosFromSeedfinder.links.review}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Reviews
+                  </a>
+                  {/* Add other links as needed */}
+                </Box>
+              </Paper>
+            </Card>
+          )}
+
           {/* // display strainInfosFromSeedfinder of type StrainInfoResponse in some pretty Boxes in Flex or so 
           
           type StrainInfoResponse = {
