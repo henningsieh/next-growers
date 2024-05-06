@@ -1,10 +1,10 @@
 import {
+  Box,
   Center,
   Container,
   Loader,
   Paper,
   Select,
-  Title,
   Transition,
 } from "@mantine/core";
 
@@ -64,6 +64,10 @@ export default function AddStrains() {
     { value: string; label: string }[]
   >([]);
 
+  const [selectedBreederId, setSelectedBreederId] =
+    useState<string>("");
+  const [selectedStrainId, setSelectedStrainId] = useState<string>("");
+
   return (
     <>
       {breedersFromSeedfinderAreLoading ? (
@@ -79,8 +83,6 @@ export default function AddStrains() {
             withBorder
             className="flex flex-col space-y-4"
           >
-            <Title order={1}>Edit Strains</Title>
-            {/* {breedersOptions && ( */}
             <Transition
               mounted={
                 breedersOptions === undefined ||
@@ -88,7 +90,7 @@ export default function AddStrains() {
                   ? false
                   : true
               }
-              transition="fade"
+              transition="scale-y"
               duration={600} // Duration of the fade animation in milliseconds
               timingFunction="ease"
             >
@@ -106,10 +108,11 @@ export default function AddStrains() {
                   label="Breeder"
                   onChange={(value) => {
                     // Find the selected breeder in the breeders object
-                    const selectedBreederId = value; // This is the ID of the selected breeder
-                    if (selectedBreederId) {
+
+                    if (value) {
+                      setSelectedBreederId(value);
                       const selectedBreeder =
-                        breeders && breeders[selectedBreederId];
+                        breeders && breeders[value];
                       // Check if selectedBreeder has strains
                       if (
                         selectedBreeder &&
@@ -146,11 +149,10 @@ export default function AddStrains() {
                 />
               )}
             </Transition>
-            {/* // )} */}
 
             <Transition
               mounted={strainsData.length > 0}
-              transition="fade"
+              transition="slide-down"
               duration={600} // Duration of the fade animation in milliseconds
               timingFunction="ease"
             >
@@ -167,9 +169,9 @@ export default function AddStrains() {
                   label="Strains"
                   data={strainsData}
                   onChange={(value) => {
-                    const selectedStrainId = value; // This is the ID of the selected strain
-                    if (selectedStrainId) {
-                      console.debug(selectedStrainId);
+                    if (value) {
+                      setSelectedStrainId(value);
+                      console.debug(value);
                     } else {
                       // console.debug("reset strains");
                     }
@@ -177,6 +179,12 @@ export default function AddStrains() {
                 />
               )}
             </Transition>
+            {selectedBreederId && selectedStrainId && (
+              <SelectedStrain
+                breederId={selectedBreederId}
+                strainId={selectedStrainId}
+              />
+            )}
           </Paper>
         </Container>
       )}
@@ -184,32 +192,85 @@ export default function AddStrains() {
   );
 }
 
-// function SelectStrain({
-//   strainDataData,
-// }: {
-//   strainDataData: { value: string; label: string }[];
-// }) {
-//   return (
-//     <Transition
-//       mounted={!!strainDataData}
-//       transition="fade"
-//       duration={5000} // Duration of the fade animation in milliseconds
-//       timingFunction="ease"
-//     >
-//       {(styles) => (
-//         <Select
-//           style={{
-//             ...styles,
-//             opacity: styles.opacity, // Apply the opacity style for the fading effect
-//           }}
-//           searchable
-//           clearable
-//           placeholder="Select a strain"
-//           size="md"
-//           label="Strains"
-//           data={strainDataData}
-//         />
-//       )}
-//     </Transition>
-//   );
-// }
+function SelectedStrain({
+  breederId,
+  strainId,
+}: {
+  breederId: string;
+  strainId: string;
+}) {
+  const {
+    data: strainInfosFromSeedfinder,
+    isLoading: strainInfosFromSeedfinderAreLoading,
+    isError: strainInfosFromSeedfinderHaveErrors,
+  } = api.strains.getStrainInfo.useQuery(
+    { breederId, strainId },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  return (
+    <Transition
+      mounted={
+        !strainInfosFromSeedfinderAreLoading &&
+        !strainInfosFromSeedfinderHaveErrors &&
+        !!strainInfosFromSeedfinder
+      }
+      transition="fade"
+      duration={5000} // Duration of the fade animation in milliseconds
+      timingFunction="ease"
+    >
+      {(styles) => (
+        <Box
+          style={{
+            ...styles,
+            opacity: styles.opacity, // Apply the opacity style for the fading effect
+          }}
+        >
+          {/* // display strainInfosFromSeedfinder of type StrainInfoResponse in some pretty Boxes in Flex or so 
+          
+          type StrainInfoResponse = {
+            error: boolean;
+            name: string;
+            id: string;
+            brinfo: {
+              name: string;
+              id: string;
+              type: string;
+              cbd: string;
+              description: string;
+              link: string;
+              pic: string;
+              flowering: {
+                auto: boolean;
+                days: number;
+                info: string;
+              };
+              descr: string;
+            };
+            comments: boolean;
+            links: {
+              info: string;
+              review: string;
+              upload: {
+                picture: string;
+                review: string;
+                medical: string;
+              };
+            };
+            licence: {
+              url_cc: string;
+              url_sf: string;
+              info: string;
+            };
+          };
+          
+          */}
+        </Box>
+      )}
+    </Transition>
+  );
+}
