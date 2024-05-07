@@ -29,8 +29,9 @@ import Link from "next/link";
 
 import type {
   GetBreedersFromSeedfinderResponse,
-  SeedfinderStrain,
-} from "~/server/api/routers/strains";
+  MantineSelectData,
+  SeedfinderBreeder,
+} from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -39,30 +40,21 @@ export default function AddStrains() {
   const baseUrl = "https://en.seedfinder.eu/pics/00breeder/";
 
   const [selectedStrainId, setSelectedStrainId] = useState<string>("");
-  const [strainsSelectData, setSelectStrainsData] = useState<
-    { value: string; label: string }[]
-  >([]);
+  const [strainsSelectData, setSelectStrainsData] =
+    useState<MantineSelectData>([]);
   const [selectedBreederId, setSelectedBreederId] =
     useState<string>("");
   const [selectedBreeder, setSelectedBreeder] = useState<
-    | {
-        name: string;
-        logo: string;
-        strains: SeedfinderStrain[];
-      }
-    | undefined
+    SeedfinderBreeder | undefined
   >(undefined);
-  const [breeders, setBreeders] = useState<
+  const [breedersFromSeedfinder, setBreedersFromSeedfinder] = useState<
     GetBreedersFromSeedfinderResponse | undefined
   >(undefined);
 
   const strainOptions: { value: string; label: string }[] = [];
-  // useEffect(() => {
-  //   //console.debug("breeders", breeders);
-  // }, [breeders]);
 
   const {
-    data: breedersFromSeedfinder,
+    data: result,
     isLoading: breedersFromSeedfinderAreLoading,
     isError: breedersFromSeedfinderHaveErrors,
   } = api.strains.getBreedersFromSeedfinder.useQuery(
@@ -76,26 +68,25 @@ export default function AddStrains() {
 
   useEffect(() => {
     if (
-      !breeders &&
       !breedersFromSeedfinderAreLoading &&
       !breedersFromSeedfinderHaveErrors
     ) {
-      setBreeders(breedersFromSeedfinder);
+      setBreedersFromSeedfinder(result);
     }
   }, [
-    breeders,
-    breedersFromSeedfinder,
+    result,
     breedersFromSeedfinderAreLoading,
     breedersFromSeedfinderHaveErrors,
   ]);
 
   // Convert breeders object into array of objects suitable for Select component
-  const breedersOptions =
-    breeders &&
-    Object.keys(breeders).map((key) => ({
-      value: key,
-      label: breeders[key].name,
-    }));
+  const breedersSelectData: MantineSelectData =
+    breedersFromSeedfinder !== undefined
+      ? Object.keys(breedersFromSeedfinder).map((key) => ({
+          value: key,
+          label: breedersFromSeedfinder[key].name,
+        }))
+      : [];
 
   const theme = useMantineTheme();
   const smallScreen = useMediaQuery(
@@ -119,8 +110,8 @@ export default function AddStrains() {
           >
             <Transition
               mounted={
-                breedersOptions === undefined ||
-                breedersOptions.length == 0
+                breedersSelectData === undefined ||
+                breedersSelectData.length == 0
                   ? false
                   : true
               }
@@ -140,7 +131,7 @@ export default function AddStrains() {
                   }}
                   searchable
                   clearable
-                  data={breedersOptions ? breedersOptions : []}
+                  data={breedersSelectData}
                   placeholder="Select a breeder"
                   // fz={smallScreen ? "md" : "xl"}
                   size={smallScreen ? "xs" : "md"}
@@ -158,7 +149,8 @@ export default function AddStrains() {
                       setSelectedBreederId(value);
 
                       const selectedBreeder =
-                        breeders && breeders[value];
+                        breedersFromSeedfinder &&
+                        breedersFromSeedfinder[value];
                       setSelectedBreeder(selectedBreeder);
 
                       // Check if selectedBreeder has strains
@@ -235,9 +227,9 @@ export default function AddStrains() {
               selectedStrainId && (
                 <SelectedStrain
                   breederId={selectedBreederId}
+                  strainId={selectedStrainId}
                   breederName={selectedBreeder.name}
                   breederLogoUrl={`${baseUrl}${selectedBreeder.logo}`}
-                  strainId={selectedStrainId}
                 />
               )}
           </Paper>

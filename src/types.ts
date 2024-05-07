@@ -81,6 +81,25 @@ export interface SplitObject {
   searchstring: string;
 }
 
+export type MantineSelectData = {
+  value: string;
+  label: string;
+}[];
+
+type SeedfinderStrain = {
+  [strainId: string]: string;
+};
+
+export type SeedfinderBreeder = {
+  name: string;
+  logo: string;
+  strains: SeedfinderStrain[];
+};
+
+export type GetBreedersFromSeedfinderResponse = {
+  [key: string]: SeedfinderBreeder;
+};
+
 export type NotificationEventMap =
   | "REPORT_CREATED" //TODO: NOTIFY user.followers
   | "POST_CREATED" //TODO: NOTIFY report.followers
