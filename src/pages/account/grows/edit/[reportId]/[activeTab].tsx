@@ -17,6 +17,7 @@ import {
   IconEdit,
   IconFilePlus,
   IconList,
+  IconPlant,
 } from "@tabler/icons-react";
 import { httpStatusErrorMsg } from "~/messages";
 
@@ -37,6 +38,7 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostForm from "~/components/Post/PostForm";
 import PostsAccordion from "~/components/Post/PostsAccordion";
+import AddStrains from "~/components/Report/AddPlants";
 import { EditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
@@ -238,6 +240,19 @@ const ProtectedEditReportDetails: NextPage = () => {
 
               <Tabs.Tab
                 h={smallScreen ? 28 : 40}
+                px={smallScreen ? 4 : "md"}
+                value="addPlants"
+                icon={
+                  <IconPlant size={smallScreen ? "0.8rem" : "1.4rem"} />
+                }
+              >
+                <Title order={1} fz={smallScreen ? rem(13) : "md"}>
+                  {t("common:report-add-strains-headline")}
+                </Title>
+              </Tabs.Tab>
+
+              <Tabs.Tab
+                h={smallScreen ? 28 : 40}
                 p={smallScreen ? 2 : "md"}
                 value="addUpdate"
                 icon={
@@ -288,6 +303,10 @@ const ProtectedEditReportDetails: NextPage = () => {
                         strains={strains}
                         user={session.user}
                       />
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="addPlants">
+                      <AddStrains />
                     </Tabs.Panel>
 
                     <Tabs.Panel value="addUpdate">
