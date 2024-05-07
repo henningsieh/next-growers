@@ -122,7 +122,7 @@ export function CreateReportForm({
       // Navigate to the new report page
       void router.push(
         {
-          pathname: `/account/edit/grow/${newReportDB.id}/editGrow`,
+          pathname: `/account/grows/edit/${newReportDB.id}/editGrow`,
         },
         undefined,
         { scroll: true }

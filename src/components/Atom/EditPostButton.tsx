@@ -35,7 +35,7 @@ export default function EditPostButton({
   );
 
   return (
-    <Link href={`/account/edit/grow/${growId}/update/${postId}`}>
+    <Link href={`/account/grows/edit/${growId}/update/${postId}`}>
       <Button
         variant="filled"
         color="groworange"

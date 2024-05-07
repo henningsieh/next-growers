@@ -10,7 +10,7 @@ interface Props {
 
 export default function AddPostButton({ growId, buttonLabel }: Props) {
   return (
-    <Link href={`/account/edit/grow/${growId}/addUpdate`}>
+    <Link href={`/account/grows/edit/${growId}/addUpdate`}>
       <Button
         h={32}
         miw={180}
