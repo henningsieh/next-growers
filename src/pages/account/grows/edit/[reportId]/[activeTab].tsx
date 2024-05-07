@@ -105,33 +105,6 @@ const ProtectedEditReportDetails: NextPage = () => {
   const { data: session, status } = useSession();
   const sessionIsLoading = status === "loading";
 
-  // useEffect(() => {
-  //   const hash = window.location.hash;
-
-  //   let slicedHash;
-  //   if (hash.startsWith("#")) {
-  //     slicedHash = hash.slice(1);
-  //   } else {
-  //     slicedHash = null;
-  //   }
-
-  //   if (slicedHash) {
-  //     setDefaultTab(slicedHash);
-  //   } else {
-  //     setDefaultTab(DEFAULTTAB);
-
-  //     void router.push(
-  //       `${window.location.pathname}#${DEFAULTTAB}`,
-  //       undefined,
-  //       {
-  //         shallow: true,
-  //         scroll: true,
-  //         locale: activeLocale,
-  //       }
-  //     );
-  //   }
-  // }, [activeLocale, router, params]);
-
   const {
     data: grow,
     isLoading: reportIsLoading,
