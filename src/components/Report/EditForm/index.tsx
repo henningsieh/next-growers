@@ -8,6 +8,7 @@ import {
   Group,
   LoadingOverlay,
   MultiSelect,
+  Paper,
   rem,
   Select,
   Text,
@@ -340,105 +341,108 @@ export function EditReportForm({
               </Dropzone>
             </Box>
           )}
-
-          <form
-            onSubmit={editReportForm.onSubmit((values) => {
-              submitEditReportForm(values);
-            }, handleErrors)}
-          >
-            <Box className="space-y-2">
-              <Textarea
-                label={t("common:report-form-bockquote-label")}
-                description={t(
-                  "common:report-form-bockquote-description"
-                )}
-                placeholder={growstartdatePlaceholder}
-                withAsterisk
-                mt="sm"
-                autosize
-                minRows={3}
-                {...editReportForm.getInputProps("description")}
-              />
-              <TextInput
-                label={t("common:report-form-title-label")}
-                description={t("common:report-form-title-description")}
-                withAsterisk
-                {...editReportForm.getInputProps("title")}
-              />
-              <Select
-                label={t("common:report-form-environment-label")}
-                description={t(
-                  "common:report-form-environment-description"
-                )}
-                data={Object.keys(Environment).map((key) => ({
-                  value: key,
-                  label: Environment[key as keyof typeof Environment],
-                }))}
-                withAsterisk
-                {...editReportForm.getInputProps("environment")}
-                className="w-full"
-                icon={<IconHome size="1.2rem" />}
-              />
-              <Grid gutter="sm">
-                <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
-                  {/* <DatesProvider settings={{ locale: activeLocale }}> */}
-                  <DatePickerInput
-                    label="Grow start date:"
-                    description="'Created at' date of your Grow"
-                    // valueFormat="MMMM DD, YYYY HH:mm"
-                    maxDate={new Date()}
-                    // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
-                    // className="w-full"
-                    icon={<IconCalendar size="1.2rem" />}
-                    withAsterisk
-                    {...editReportForm.getInputProps("createdAt")}
-                    onChange={(selectedDate: Date) => {
-                      editReportForm.setFieldValue(
-                        "createdAt",
-                        selectedDate
-                      );
-                    }}
-                  />
-                  {/* </DatesProvider> */}
-                </Grid.Col>
-                <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
-                  {allStrains && (
-                    <MultiSelect
-                      label={t("common:report-form-strains-label")}
-                      description={t(
-                        "common:report-form-strains-description"
-                      )}
-                      placeholder={strainsPlaceholder}
-                      {...editReportForm.getInputProps("strains")}
-                      data={allStrains.map((strain) => ({
-                        value: strain.id,
-                        label: strain.name,
-                      }))}
-                      searchable
-                      searchValue={strainsSarchValue}
-                      onSearchChange={onSttrinsSearchChange}
-                      nothingFound="Nothing found"
-                    />
+          <Paper m={0} p="sm" withBorder>
+            <form
+              onSubmit={editReportForm.onSubmit((values) => {
+                submitEditReportForm(values);
+              }, handleErrors)}
+            >
+              <Box className="space-y-2">
+                <Textarea
+                  label={t("common:report-form-bockquote-label")}
+                  description={t(
+                    "common:report-form-bockquote-description"
                   )}
-                </Grid.Col>
-              </Grid>
+                  placeholder={growstartdatePlaceholder}
+                  withAsterisk
+                  mt="sm"
+                  autosize
+                  minRows={3}
+                  {...editReportForm.getInputProps("description")}
+                />
+                <TextInput
+                  label={t("common:report-form-title-label")}
+                  description={t(
+                    "common:report-form-title-description"
+                  )}
+                  withAsterisk
+                  {...editReportForm.getInputProps("title")}
+                />
+                <Select
+                  label={t("common:report-form-environment-label")}
+                  description={t(
+                    "common:report-form-environment-description"
+                  )}
+                  data={Object.keys(Environment).map((key) => ({
+                    value: key,
+                    label: Environment[key as keyof typeof Environment],
+                  }))}
+                  withAsterisk
+                  {...editReportForm.getInputProps("environment")}
+                  className="w-full"
+                  icon={<IconHome size="1.2rem" />}
+                />
+                <Grid gutter="sm">
+                  <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
+                    {/* <DatesProvider settings={{ locale: activeLocale }}> */}
+                    <DatePickerInput
+                      label="Grow start date:"
+                      description="'Created at' date of your Grow"
+                      // valueFormat="MMMM DD, YYYY HH:mm"
+                      maxDate={new Date()}
+                      // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
+                      // className="w-full"
+                      icon={<IconCalendar size="1.2rem" />}
+                      withAsterisk
+                      {...editReportForm.getInputProps("createdAt")}
+                      onChange={(selectedDate: Date) => {
+                        editReportForm.setFieldValue(
+                          "createdAt",
+                          selectedDate
+                        );
+                      }}
+                    />
+                    {/* </DatesProvider> */}
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
+                    {allStrains && (
+                      <MultiSelect
+                        label={t("common:report-form-strains-label")}
+                        description={t(
+                          "common:report-form-strains-description"
+                        )}
+                        placeholder={strainsPlaceholder}
+                        {...editReportForm.getInputProps("strains")}
+                        data={allStrains.map((strain) => ({
+                          value: strain.id,
+                          label: strain.name,
+                        }))}
+                        searchable
+                        searchValue={strainsSarchValue}
+                        onSearchChange={onSttrinsSearchChange}
+                        nothingFound="Nothing found"
+                      />
+                    )}
+                  </Grid.Col>
+                </Grid>
 
-              <Group position="right" mt="md">
-                <Button
-                  miw={180}
-                  fz="lg"
-                  variant="filled"
-                  color="growgreen"
-                  type="submit"
-                  leftIcon={
-                    <IconDeviceFloppy stroke={2.2} size="1.4rem" />
-                  }
-                >
-                  {t("common:report-save-button")}
-                </Button>
-              </Group>
-            </Box>
-          </form>
+                <Group position="right" mt="md">
+                  <Button
+                    miw={180}
+                    fz="lg"
+                    variant="filled"
+                    color="growgreen"
+                    type="submit"
+                    leftIcon={
+                      <IconDeviceFloppy stroke={2.2} size="1.4rem" />
+                    }
+                  >
+                    {t("common:report-save-button")}
+                  </Button>
+                </Group>
+              </Box>
+            </form>
+          </Paper>
         </Container>
       )}
     </>
