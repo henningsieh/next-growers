@@ -14,10 +14,11 @@ enum Role {
 }
 
 enum NotificationEvent {
+  REPORT_CREATED
+  POST_CREATED
   LIKE_CREATED
   COMMENT_CREATED
-  POST_CREATED
-  REPORT_CREATED
+  COMMENT_ANSWERED
 }
 
 enum CannabisStraintype {
@@ -57,7 +58,7 @@ model Notification {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  name          String?   @unique
   password      String?
   image         String?
   imageId       String?
@@ -78,15 +79,15 @@ model User {
 }
 
 model CannabisStrain {
-  id          String    @id @default(cuid())
-  name        String    @unique
+  id          String             @id @default(cuid())
+  name        String             @unique
   description String?
   effects     String[]
   flavors     String[]
   type        CannabisStraintype
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  reports     Report[]  // A Strain grows in many Report
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  reports     Report[] // A Strain grows in many Report
 }
 
 model Image {
@@ -97,6 +98,7 @@ model Image {
   reportId  String?  @unique // Only one Image can be the main header image of a report
   post      Post?    @relation(fields: [postId], references: [id])
   postId    String?
+  postOrder Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   owner     User     @relation(fields: [ownerId], references: [id])
@@ -109,40 +111,42 @@ enum Environment {
 }
 
 model Report {
-  id           String             @id @default(cuid())
-  author       User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId     String             // A Report has one Author
+  id           String           @id @default(cuid())
+  author       User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId     String // A Report has one Author
   title        String
   image        Image?
   description  String
   environment  Environment?
-  posts        Post[]             // A Report may have many Posts
-  likes        Like[]             // A Report may have many Likes
-  contests     Contest[]          // A Report may participate in many Contests
-  products     Product[]          // A Report may have many Products
-  strains      CannabisStrain[]   // A Report may have many CannabisStrains
+  posts        Post[] // A Report may have many Posts
+  likes        Like[] // A Report may have many Likes
+  contests     Contest[] // A Report may participate in many Contests
+  products     Product[] // A Report may have many Products
+  strains      CannabisStrain[] // A Report may have many CannabisStrains
   Notification Notification[]
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@index([authorId], name: "authorId_idx")
 }
 
 model Post {
   id               String         @id @default(cuid())
+  isDeleted        Boolean        @default(false)
   report           Report         @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  reportId         String         // A Post has one Report
+  reportId         String // A Post has one Report
   author           User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId         String         // A Post has one Author
+  authorId         String // A Post has one Author
   date             DateTime
   growStage        GrowStage      @default(SEEDLING_STAGE)
   lightHoursPerDay Int?
+  LightWatts       LightWatts?
   title            String
   content          String
-  likes            Like[]         // A Post has many Likes
-  images           Image[]        // A Post has many Images
-  comments         Comment[]      // A Post has many Comments
-  Notification     Notification[] 
+  likes            Like[] // A Post has many Likes
+  images           Image[] // A Post has many Images
+  comments         Comment[] // A Post has many Comments
+  Notification     Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -150,20 +154,31 @@ model Post {
   @@unique([reportId, date])
 }
 
+model LightWatts {
+  id   String @id @default(cuid())
+  watt Float // Represents the wattage value
+
+  // Optional one-to-one relation to Post
+  post   Post?   @relation(fields: [postId], references: [id])
+  postId String? // A LightWatts may be associated with one Post
+
+  @@unique([postId])
+}
+
 model Like {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  report    Report?  @relation(fields: [reportId], references: [id], onDelete: Cascade)
-  reportId  String?
-  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    String?
-  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  commentId String?
+  id           String         @id @default(cuid())
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  report       Report?        @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId     String?
+  post         Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId       String?
+  comment      Comment?       @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId    String?
   Notification Notification[]
 
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, commentId])
   @@unique([userId, postId])
@@ -171,13 +186,13 @@ model Like {
 }
 
 model Product {
-  id          String @id @default(cuid())
+  id          String   @id @default(cuid())
   type        TypeOf
   name        String
   description String
-  company     Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   companyId   String // One Company has many Products
-  reports     Report[]  // many-to-many relationship with Report
+  reports     Report[] // many-to-many relationship with Report
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -193,15 +208,20 @@ model Comment {
   id      String @id @default(cuid())
   content String @db.VarChar(10000)
 
-  authorId String // One User has many Comments
-  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  postId   String? // One Post has many Comments
-  post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  Notification Notification[]
-  likes         Like[]
+  responses      Comment[] @relation("CommentAnswers")
+  isResponseTo   Comment?  @relation("CommentAnswers", fields: [isResponseToId], references: [id])
+  isResponseToId String?
 
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String // One User has many Comments
+  post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String? // One Post has many Comments
+
+  Notification Notification[]
+  likes        Like[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Company {
@@ -215,30 +235,30 @@ model Company {
 }
 
 model Contest {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   title     String
   content   String
-  reports   Report[]  
-  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyId String    
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  reports   Report[]
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
-  id                  String  @id @default(cuid())
-  type                String
-  provider            String
-  providerAccountId   String
-  refresh_token       String? @db.Text
-  access_token        String? @db.Text
-  oauth_token         String? @db.Text  // needed if using the old Twitter OAuth 1.0 provider.
-  oauth_token_secret  String? @db.Text  // needed if using the old Twitter OAuth 1.0 provider.
-  expires_at          Int?
-  token_type          String?
-  scope               String?
-  id_token            String? @db.Text
-  session_state       String?
+  id                 String  @id @default(cuid())
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  oauth_token        String? @db.Text // needed if using the old Twitter OAuth 1.0 provider.
+  oauth_token_secret String? @db.Text // needed if using the old Twitter OAuth 1.0 provider.
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
 
   userId String // One User has many Accounts
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

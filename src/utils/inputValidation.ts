@@ -5,10 +5,17 @@ import { Environment, GrowStage } from "~/types";
 
 export const InputLogin = z.string().email("Invalid email address");
 
-export const InputSetUserName = z.object({
+export const InputSaveUserName = z.object({
   id: z.string().min(1),
   name: z.string().min(5, {
     message: "Username must have at least 5 letters",
+  }),
+});
+
+export const InputSaveUserImage = z.object({
+  id: z.string().min(1),
+  imageURL: z.string().url({
+    message: "imageURL must be a valid URL",
   }),
 });
 
@@ -22,25 +29,25 @@ export const InputEditProfile = z.object({
 export const InputCreateReportForm = z.object({
   title: z
     .string()
-    .min(8, { message: "Title should have at least 8 letters" })
-    .max(32, { message: "Title should have max 32 letters" })
+    .min(8, { message: "Title must have at least 8 letters" })
+    .max(64, { message: "Title must have max 64 letters" })
     .refine(
-      (val) => val.length < 32,
+      (val) => val.length < 64,
       (val) => ({
-        message: `Title should have max 32 letters. ${val.length} letters given.`,
+        message: `Title must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
   description: z
     .string()
     .min(12, {
-      message: "Content should have at least 12 letters",
+      message: "Content must have at least 12 letters",
     })
-    .max(64, { message: "Description should have max 64 letters" })
+    .max(64, { message: "Description must have max 64 letters" })
     .refine(
       (val) => val.length < 64,
       (val) => ({
-        message: `Description should have max 64 letters. ${val.length} letters given.`,
+        message: `Description must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
 });
@@ -49,29 +56,29 @@ export const InputEditReportForm = z.object({
   id: z.string().min(1),
   title: z
     .string()
-    .min(8, { message: "Title should have at least 8 letters" })
-    .max(32, { message: "Title should have max 32 letters" })
+    .min(8, { message: "Title must have at least 8 letters" })
+    .max(64, { message: "Title must have max 64 letters" })
     .refine(
-      (val) => val.length < 32,
+      (val) => val.length < 64,
       (val) => ({
-        message: `Title should have max 32 letters. ${val.length} letters given.`,
+        message: `Title must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
   imageId: z.string().min(1, { message: "Header image is missing" }),
   description: z
     .string()
     .min(12, {
-      message: "Content should have at least 12 letters",
+      message: "Content must have at least 12 letters",
     })
-    .max(64, { message: "Content should have max 64 letters" })
+    .max(64, { message: "Content must have max 64 letters" })
     .refine(
       (val) => val.length < 64,
       (val) => ({
-        message: `Content should have max 64 letters. ${val.length} letters given.`,
+        message: `Content must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
   strains: z.array(z.string()).min(1, {
-    message: "Report should have at least 1 strain",
+    message: "Report must have at least 1 strain",
   }),
   environment: z.enum(
     Object.keys(Environment) as [keyof typeof Environment]
@@ -89,12 +96,17 @@ export const InputLike = z.object({
   id: z.string(),
 });
 
+export const InputDeletePost = z.object({
+  id: z.string(),
+});
+
 export const InputGetCommentsByPostId = z.object({
   postId: z.string().min(1),
 });
 
 export const InputEditCommentForm = z.object({
   id: z.string().optional(),
+  isResponseTo: z.string().optional(),
   postId: z.string(),
   content: z
     .string()
@@ -106,28 +118,39 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
   reportStartDate: Date
 ) => {
   return z.object({
-    date: z.date().refine((value) => value >= reportStartDate, {
-      message:
-        "Date should be greater than or equal to report's germination date",
-    }),
+    date: z
+      .date()
+      .refine((value) => value >= reportStartDate, {
+        message:
+          "Date must be greater than or equal to 'Grow start date'",
+      })
+      .refine((value) => value <= new Date(), {
+        message: "Date must be less than or equal to today",
+      }),
     id: z.string().optional(),
     day: z.number().min(0, { message: "Day must be greater than 0" }),
     title: z
       .string()
       .min(8, {
-        message: "Title should have at least 8 letters",
+        message: "Title must have at least 8 letters",
       })
-      .max(32, { message: "Title should have max 32 letters" }),
+      .max(64, { message: "Title must have max 64 letters" }),
     lightHoursPerDay: z
       .number({
         invalid_type_error: "(h) must be set, may be 0",
       })
       .nullable(),
-    growStage: z.string().min(1, {
-      message: "Grow stage must be set with every update",
-    }),
+    watt: z.number().optional(),
+    growStage: z
+      .enum(Object.keys(GrowStage) as [keyof typeof GrowStage])
+      .nullable(),
     content: z.string(),
-    images: z.array(z.string()),
+    images: z.array(
+      z.object({
+        id: z.string(),
+        postOrder: z.number().nullable(),
+      })
+    ),
   });
 };
 
@@ -136,9 +159,15 @@ export const InputCreatePostServer = z.object({
   date: z.date(),
   title: z.string().min(1),
   lightHoursPerDay: z.number().nullable(),
+  watt: z.number().optional(),
   growStage: z.enum(Object.keys(GrowStage) as [keyof typeof GrowStage]),
   content: z.string().min(1),
   reportId: z.string().min(1),
   authorId: z.string().min(1),
-  images: z.array(z.string()),
+  images: z.array(
+    z.object({
+      id: z.string(),
+      postOrder: z.number().nullable(),
+    })
+  ),
 });

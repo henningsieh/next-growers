@@ -8,28 +8,34 @@ import {
   Group,
   LoadingOverlay,
   MultiSelect,
+  Paper,
   rem,
   Select,
   Text,
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { DateInput } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
   IconCalendar,
   IconCloudUpload,
+  IconDeviceFloppy,
   IconDownload,
-  IconFileAlert,
   IconHome,
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
+import { env } from "~/env.mjs";
+import {
+  fileUploadErrorMsg,
+  httpStatusErrorMsg,
+  saveGrowSuccessfulMsg,
+} from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-hot-toast";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -74,15 +80,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function ProtectedEditReportForm(props: EditReportFormProps) {
-  const {
-    report: reportfromProps,
-    strains: allStrains,
-    user: user,
-  } = props;
-
+export function EditReportForm({
+  report: reportfromProps,
+  strains: allStrains,
+  user: user,
+}: EditReportFormProps) {
   const router = useRouter();
-
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
@@ -109,48 +112,7 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
     reportfromProps.image?.cloudUrl as string
   );
 
-  const trpc = api.useUtils();
-  const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
-    {
-      onMutate: (savedReport) => {
-        console.log("START api.reports.saveReport.useMutation");
-        console.log("newReportDB", savedReport);
-      },
-      // If the mutation fails,
-      // use the context returned from onMutate to roll back
-      onError: (err, newReport, context) => {
-        toast.error("An error occured when saving your report");
-        if (!context) return;
-        console.debug(context);
-      },
-      onSuccess: async (savedReport) => {
-        toast.success("Your report was successfully saved");
-        console.debug(savedReport);
-        // Navigate to the new report page
-        // void router.push(`/grow-report/${savedReport.id}`);
-        await trpc.reports.getIsoReportWithPostsFromDb.invalidate();
-        trpc.reports.getIsoReportWithPostsFromDb.getData();
-      },
-      // Always refetch after error or success:
-      onSettled: () => {
-        console.log("END api.reports.saveReport.useMutation");
-      },
-    }
-  );
-
-  const editReportForm = useForm({
-    validate: zodResolver(InputEditReportForm),
-    validateInputOnChange: true,
-    initialValues: {
-      id: report?.id as string,
-      title: report?.title as string,
-      imageId: imageId,
-      description: report?.description as string,
-      createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
-      strains: report.strains.map((strain) => strain.id),
-      environment: report.environment as keyof typeof Environment,
-    },
-  });
+  // const trpc = api.useUtils();
 
   const submitEditReportForm = (values: {
     id: string;
@@ -164,19 +126,57 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
     tRPCsaveReport(values);
   };
 
+  const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
+    {
+      onMutate: () => {
+        console.debug("START api.reports.saveReport.useMutation");
+      },
+      // FIXME: If the mutation fails, use the
+      // context returned from onMutate to roll back
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (error, report) => {
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+      },
+      onSuccess: (savedReport) => {
+        notifications.show(saveGrowSuccessfulMsg);
+        // Navigate to the report page
+        void router.push(
+          {
+            pathname: `/${activeLocale as string}/grow/${savedReport?.id as string}`,
+          },
+          undefined,
+          { scroll: true }
+        );
+      },
+      // Always refetch after error or success:
+      onSettled: () => {
+        console.debug("END api.reports.saveReport.useMutation");
+      },
+    }
+  );
+
+  const editReportForm = useForm({
+    validate: zodResolver(InputEditReportForm),
+    validateInputOnChange: true,
+    initialValues: {
+      id: report?.id,
+      title: report?.title,
+      imageId: imageId,
+      description: report?.description,
+      createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
+      strains: report.strains.map((strain) => strain.id),
+      environment: report.environment as keyof typeof Environment,
+    },
+  });
+
   const handleErrors = (errors: typeof editReportForm.errors) => {
-    if (errors.id) {
-      toast.error(errors.id as string);
-    }
-    if (errors.title) {
-      toast.error(errors.title as string);
-    }
-    if (errors.imageId) {
-      toast.error(errors.imageId as string);
-    }
-    if (errors.environment) {
-      toast.error(errors.environment as string);
-    }
+    Object.keys(errors).forEach((key) => {
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
+      );
+    });
   };
 
   // Update "imageId" state, if "imageId" form field value changes
@@ -200,14 +200,17 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
     });
   };
 
+  const growstartdatePlaceholder = t(
+    "common:report-form-growstartdate-placeholder"
+  );
+  const strainsPlaceholder = t(
+    "common:report-form-strains-placeholder"
+  );
+
   return (
     <>
       {reportfromProps && (
-        <Container
-          p={0}
-          mt={4}
-          className="flex w-full flex-col space-y-10"
-        >
+        <Container py="xl" px={0} className="flex flex-col space-y-">
           {/*// Upload Panel */}
           {cloudUrl ? (
             <>
@@ -240,7 +243,7 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
                   }
                   title={editReportForm.values.title}
                   description={editReportForm.values.description}
-                  publicLink={`/grow/${report.id as string}`}
+                  publicLink={`/grow/${report.id}`}
                 />
               </Box>
             </>
@@ -271,16 +274,13 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
                       fileSizeInBytes /
                       1024 ** 2
                     ).toFixed(2);
-                    notifications.show({
-                      title: "Error",
-                      message:
-                        "File size of " +
-                        fileSizeInMB +
-                        " MB exceeds the allowed maximum of ≈ 4.28 MB (4.394 KB, 4.500.000 B)!",
-                      color: "red",
-                      icon: <IconFileAlert />,
-                      loading: false,
-                    });
+                    notifications.show(
+                      fileUploadErrorMsg(
+                        files[0].file.name,
+                        fileSizeInMB,
+                        env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
+                      )
+                    );
                   }
                 }}
                 // onChange={(e) => {
@@ -335,101 +335,114 @@ export function ProtectedEditReportForm(props: EditReportFormProps) {
                   </Text>
                   <Text ta="center" fz="sm" my="xs" c="dimmed">
                     For now we only can accept one <i>.jpg/.png/.gif</i>
-                    image file, that is less than 4.28 MB (4.394 KB,
-                    4.500.000 B)! in size.
+                    image file, that is less than 4.5 MB in size.
                   </Text>
                 </Box>
               </Dropzone>
             </Box>
           )}
-
-          <form
-            onSubmit={editReportForm.onSubmit((values) => {
-              submitEditReportForm(values);
-            }, handleErrors)}
-          >
-            <Box className="space-y-4">
-              <Textarea
-                label="Bockquote cite:"
-                description="This appears at the top of your Grow's main header image"
-                placeholder="My journey through the wonderful world of cannabis cultivation!"
-                withAsterisk
-                mt="sm"
-                autosize
-                minRows={3}
-                {...editReportForm.getInputProps("description")}
-              />
-              <TextInput
-                label="Title:"
-                description="This appears as headline on your Grow's main details page"
-                withAsterisk
-                {...editReportForm.getInputProps("title")}
-              />
-              <Select
-                label="Environment"
-                description="Environment of your Grow"
-                data={Object.keys(Environment).map((key) => ({
-                  value: key,
-                  label: Environment[key as keyof typeof Environment],
-                }))}
-                withAsterisk
-                {...editReportForm.getInputProps("environment")}
-                className="w-full"
-                icon={<IconHome size="1.2rem" />}
-              />
-              <Grid gutter="sm">
-                <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
-                  <DateInput
-                    label="Grow start date:"
-                    description="'Created at' date of your Grow"
-                    valueFormat="MMM DD, YYYY HH:mm"
-                    maxDate={new Date()}
-                    // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
-                    // className="w-full"
-                    icon={<IconCalendar size="1.2rem" />}
-                    withAsterisk
-                    {...editReportForm.getInputProps("createdAt")}
-                    onChange={(selectedDate: Date) => {
-                      editReportForm.setFieldValue(
-                        "createdAt",
-                        selectedDate
-                      );
-                    }}
-                  />
-                </Grid.Col>
-                <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
-                  {allStrains && (
-                    <MultiSelect
-                      label="Strain(s):"
-                      description="Select all strain(s) of your Grow"
-                      placeholder="Pick strains of your Grow"
-                      {...editReportForm.getInputProps("strains")}
-                      data={allStrains.map((strain) => ({
-                        value: strain.id,
-                        label: strain.name,
-                      }))}
-                      searchable
-                      searchValue={strainsSarchValue}
-                      onSearchChange={onSttrinsSearchChange}
-                      nothingFound="Nothing found"
-                    />
+          <Paper m={0} p="sm" withBorder>
+            <form
+              onSubmit={editReportForm.onSubmit((values) => {
+                submitEditReportForm(values);
+              }, handleErrors)}
+            >
+              <Box className="space-y-2">
+                <Textarea
+                  label={t("common:report-form-bockquote-label")}
+                  description={t(
+                    "common:report-form-bockquote-description"
                   )}
-                </Grid.Col>
-              </Grid>
+                  placeholder={growstartdatePlaceholder}
+                  withAsterisk
+                  mt="sm"
+                  autosize
+                  minRows={3}
+                  {...editReportForm.getInputProps("description")}
+                />
+                <TextInput
+                  label={t("common:report-form-title-label")}
+                  description={t(
+                    "common:report-form-title-description"
+                  )}
+                  withAsterisk
+                  {...editReportForm.getInputProps("title")}
+                />
+                <Select
+                  label={t("common:report-form-environment-label")}
+                  description={t(
+                    "common:report-form-environment-description"
+                  )}
+                  data={Object.keys(Environment).map((key) => ({
+                    value: key,
+                    label: Environment[key as keyof typeof Environment],
+                  }))}
+                  withAsterisk
+                  {...editReportForm.getInputProps("environment")}
+                  className="w-full"
+                  icon={<IconHome size="1.2rem" />}
+                />
+                <Grid gutter="sm">
+                  <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
+                    {/* <DatesProvider settings={{ locale: activeLocale }}> */}
+                    <DatePickerInput
+                      label="Grow start date:"
+                      description="'Created at' date of your Grow"
+                      // valueFormat="MMMM DD, YYYY HH:mm"
+                      maxDate={new Date()}
+                      // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
+                      // className="w-full"
+                      icon={<IconCalendar size="1.2rem" />}
+                      withAsterisk
+                      {...editReportForm.getInputProps("createdAt")}
+                      onChange={(selectedDate: Date) => {
+                        editReportForm.setFieldValue(
+                          "createdAt",
+                          selectedDate
+                        );
+                      }}
+                    />
+                    {/* </DatesProvider> */}
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
+                    {allStrains && (
+                      <MultiSelect
+                        label={t("common:report-form-strains-label")}
+                        description={t(
+                          "common:report-form-strains-description"
+                        )}
+                        placeholder={strainsPlaceholder}
+                        {...editReportForm.getInputProps("strains")}
+                        data={allStrains.map((strain) => ({
+                          value: strain.id,
+                          label: strain.name,
+                        }))}
+                        searchable
+                        searchValue={strainsSarchValue}
+                        onSearchChange={onSttrinsSearchChange}
+                        nothingFound="Nothing found"
+                      />
+                    )}
+                  </Grid.Col>
+                </Grid>
 
-              <Group position="right" mt="xl">
-                <Button
-                  w={160}
-                  type="submit"
-                  leftIcon={
-                    <IconCloudUpload stroke={1.6} size="1.2rem" />
-                  }
-                >
-                  {t("common:report-save-button")}
-                </Button>
-              </Group>
-            </Box>
-          </form>
+                <Group position="right" mt="md">
+                  <Button
+                    miw={180}
+                    fz="lg"
+                    variant="filled"
+                    color="growgreen"
+                    type="submit"
+                    leftIcon={
+                      <IconDeviceFloppy stroke={2.2} size="1.4rem" />
+                    }
+                  >
+                    {t("common:report-save-button")}
+                  </Button>
+                </Group>
+              </Box>
+            </form>
+          </Paper>
         </Container>
       )}
     </>

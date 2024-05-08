@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -120,6 +121,7 @@ export const reportRouter = createTRPCRouter({
                     id: true,
                     publicId: true,
                     cloudUrl: true,
+                    postOrder: true,
                   },
                 },
                 likes: {
@@ -134,6 +136,7 @@ export const reportRouter = createTRPCRouter({
                   },
                 },
                 comments: true,
+                LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
           },
@@ -144,13 +147,26 @@ export const reportRouter = createTRPCRouter({
               (reportFromDb.posts || []).length > 0
                 ? reportFromDb.posts.map((post) => {
                     const postDate = new Date(post.date).toISOString();
-                    const reportCreatedAt =
-                      reportFromDb.createdAt.toISOString();
-                    const timeDifference =
-                      new Date(postDate).getTime() -
-                      new Date(reportCreatedAt).getTime();
+                    const reportCreatedAt = reportFromDb?.createdAt;
+
+                    // Convert both dates to local time
+                    const localPostDate = new Date(postDate);
+                    const localReportCreatedAt = new Date(
+                      reportCreatedAt
+                    );
+
+                    // Set the time of day to midnight for both dates
+                    localPostDate.setHours(0, 0, 0, 0);
+                    localReportCreatedAt.setHours(0, 0, 0, 0);
+
+                    // Calculate the difference in milliseconds between the two dates
+                    const differenceInMs =
+                      localPostDate.getTime() -
+                      localReportCreatedAt.getTime();
+
+                    // Convert the difference from milliseconds to days
                     const growDay = Math.floor(
-                      timeDifference / (1000 * 60 * 60 * 24)
+                      differenceInMs / (1000 * 60 * 60 * 24)
                     );
 
                     const isoLikes = post.likes.map(
@@ -325,6 +341,7 @@ export const reportRouter = createTRPCRouter({
                     id: true,
                     publicId: true,
                     cloudUrl: true,
+                    postOrder: true,
                   },
                 },
                 likes: {
@@ -339,6 +356,7 @@ export const reportRouter = createTRPCRouter({
                   },
                 },
                 comments: true,
+                LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
           },
@@ -349,13 +367,26 @@ export const reportRouter = createTRPCRouter({
               (reportFromDb.posts || []).length > 0
                 ? reportFromDb.posts.map((post) => {
                     const postDate = new Date(post.date).toISOString();
-                    const reportCreatedAt =
-                      reportFromDb.createdAt.toISOString();
-                    const timeDifference =
-                      new Date(postDate).getTime() -
-                      new Date(reportCreatedAt).getTime();
+                    const reportCreatedAt = reportFromDb?.createdAt;
+
+                    // Convert both dates to local time
+                    const localPostDate = new Date(postDate);
+                    const localReportCreatedAt = new Date(
+                      reportCreatedAt
+                    );
+
+                    // Set the time of day to midnight for both dates
+                    localPostDate.setHours(0, 0, 0, 0);
+                    localReportCreatedAt.setHours(0, 0, 0, 0);
+
+                    // Calculate the difference in milliseconds between the two dates
+                    const differenceInMs =
+                      localPostDate.getTime() -
+                      localReportCreatedAt.getTime();
+
+                    // Convert the difference from milliseconds to days
                     const growDay = Math.floor(
-                      timeDifference / (1000 * 60 * 60 * 24)
+                      differenceInMs / (1000 * 60 * 60 * 24)
                     );
 
                     const isoLikes = post.likes.map(
@@ -481,6 +512,7 @@ export const reportRouter = createTRPCRouter({
                   id: true,
                   publicId: true,
                   cloudUrl: true,
+                  postOrder: true,
                 },
               },
               likes: {
@@ -495,6 +527,7 @@ export const reportRouter = createTRPCRouter({
                 },
               },
               comments: true,
+              LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
             },
           },
         },
@@ -502,6 +535,18 @@ export const reportRouter = createTRPCRouter({
           id: input,
         },
       });
+
+      // If reportFromDb is null, it means no report was found with the given ID
+      if (!reportFromDb) {
+        // Throw an error using tRPC's built-in error handling
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          // no catch error available
+          message: `Grow with ID ${input} was not found.`,
+          // cause: error,
+        });
+      }
+
       // Convert all Dates to IsoStrings
       const newestPostDate = reportFromDb?.posts.reduce(
         (prevDate, post) => {
@@ -513,7 +558,7 @@ export const reportRouter = createTRPCRouter({
 
       const isoReportFromDb = {
         ...reportFromDb,
-        createdAt: reportFromDb?.createdAt.toISOString() as string,
+        createdAt: reportFromDb.createdAt.toISOString(),
         updatedAt: newestPostDate
           ? newestPostDate.toISOString()
           : reportFromDb?.updatedAt.toISOString(),
@@ -527,17 +572,25 @@ export const reportRouter = createTRPCRouter({
           })
         ),
 
-        posts: (reportFromDb?.posts || []).map((post) => {
-          const postDate = post.date ? new Date(post.date) : null;
-          const reportCreatedAt = reportFromDb?.createdAt
-            ? new Date(reportFromDb.createdAt)
-            : null;
-          const timeDifference =
-            postDate && reportCreatedAt
-              ? postDate.getTime() - reportCreatedAt.getTime()
-              : 0;
+        posts: (reportFromDb.posts || []).map((post) => {
+          const postDate = new Date(post.date);
+          const reportCreatedAt = reportFromDb?.createdAt;
+
+          // Convert both dates to local time
+          const localPostDate = new Date(postDate);
+          const localReportCreatedAt = new Date(reportCreatedAt);
+
+          // Set the time of day to midnight for both dates
+          localPostDate.setHours(0, 0, 0, 0);
+          localReportCreatedAt.setHours(0, 0, 0, 0);
+
+          // Calculate the difference in milliseconds between the two dates
+          const differenceInMs =
+            localPostDate.getTime() - localReportCreatedAt.getTime();
+
+          // Convert the difference from milliseconds to days
           const growDay = Math.floor(
-            timeDifference / (1000 * 60 * 60 * 24) + 1
+            differenceInMs / (1000 * 60 * 60 * 24)
           );
 
           const isoLikes = post.likes.map(
@@ -560,7 +613,7 @@ export const reportRouter = createTRPCRouter({
             ...post,
             createdAt: post.createdAt.toISOString(),
             updatedAt: post.createdAt.toISOString(),
-            date: postDate?.toISOString() as string,
+            date: postDate.toISOString(),
             likes: isoLikes,
             comments: isoComments,
             growDay,
@@ -702,6 +755,18 @@ export const reportRouter = createTRPCRouter({
           (id) => !newStrainIds.includes(id)
         );
 
+        // Fetch the current updatedAt value to be able to let it unchanged
+        const currentReport = (await ctx.prisma.report.findUnique({
+          where: {
+            id: reportData.id,
+          },
+          select: {
+            updatedAt: true,
+          },
+        })) as {
+          updatedAt: Date;
+        };
+
         const data = {
           ...reportData,
           authorId: ctx.session.user.id,
@@ -720,7 +785,7 @@ export const reportRouter = createTRPCRouter({
           },
 
           createdAt: createdAt,
-          // updatedAt: createdAt,
+          updatedAt: currentReport.updatedAt,
         };
 
         // safe report

@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -6,105 +8,254 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import { InputCreatePostServer } from "~/utils/inputValidation";
+import {
+  InputCreatePostServer,
+  InputDeletePost,
+} from "~/utils/inputValidation";
 
 export const postRouter = createTRPCRouter({
+  deletePost: protectedProcedure
+    .input(InputDeletePost)
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+
+      // Retrieve the post by its id
+      const post = await ctx.prisma.post.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      // Check if the post exists
+      if (!post) {
+        throw new Error(`The post with id ${id} does not exist.`);
+      }
+
+      // Ensure that the user has permission to delete the post
+      if (post.authorId !== ctx.session.user.id) {
+        throw new Error("You are not authorized to delete this post.");
+      }
+
+      // Mark the post as deleted
+      // const updatedPost = await ctx.prisma.post.update({
+      //   where: {
+      //     id,
+      //   },
+      //   data: {
+      //     isDeleted: true,
+      //   },
+      // });
+      //
+      // return updatedPost;
+
+      // Delete the post
+      await ctx.prisma.post.delete({
+        where: {
+          id,
+        },
+      });
+
+      // Update the `updated_at` field of the connected report to the
+      // newest/youngest Post.date of all Posts of the connected report
+
+      // Find all posts associated with the report
+      // const allConnectedPosts = await ctx.prisma.post.findMany({
+      //   where: {
+      //     reportId,
+      //   },
+      //   orderBy: {
+      //     date: "desc", // Order by date in descending order to get the newest date first
+      //   },
+      //   select: {
+      //     date: true,
+      //   },
+      // });
+
+      // // Find the newest date among all posts
+      // const newestDateOfallConnectedPosts =
+      //   allConnectedPosts.length > 0
+      //     ? allConnectedPosts[0].date
+      //     : null;
+
+      // // Update the `updated_at` field of the connected report
+      // if (newestDateOfallConnectedPosts) {
+      //   await ctx.prisma.report.update({
+      //     where: {
+      //       id: reportId,
+      //     },
+      //     data: {
+      //       updatedAt: newestDateOfallConnectedPosts,
+      //     },
+      //   });
+      // }
+
+      // Optionally, you can return a success message or some indicator of the deletion
+      return {
+        success: true,
+        deletedPost: post,
+      };
+    }),
+
   createPost: protectedProcedure
     .input(InputCreatePostServer)
     .mutation(async ({ ctx, input }) => {
-      const {
-        id,
-        date,
-        title,
-        content,
-        growStage,
-        lightHoursPerDay,
-        reportId,
-        authorId,
-        images, // Include the images field in the input
-      } = input;
-
-      const report = await ctx.prisma.report.findFirst({
-        where: {
-          id: reportId,
-        },
-      });
-
-      if (authorId != ctx.session.user.id) {
-        throw new Error(
-          "A SECURITY ISSSUE OCCURED! (Missmatch: authorId != userId )"
-        );
-      }
-
-      if (!report) {
-        throw new Error(
-          `The report with id: ${reportId} does not exist`
-        );
-      }
-
-      if (report.authorId != ctx.session.user.id) {
-        throw new Error(
-          `You are not the owner of this report with id: ${reportId}`
-        );
-      }
-
-      // const formattedDate = new Date(date);
-
-      const post = await ctx.prisma.post.upsert({
-        where: { id }, // Optional: Set the condition for upserting based on the id
-        update: {
+      try {
+        const {
+          id,
           date,
           title,
           content,
           growStage,
           lightHoursPerDay,
-          report: {
-            connect: {
-              id: reportId,
-            },
-          },
-          author: {
-            connect: {
-              id: authorId,
-            },
-          },
-          images: {
-            connect: images.map((imageId) => ({ id: imageId })),
-          },
-        },
-        create: {
-          date,
-          title,
-          content,
-          growStage,
-          lightHoursPerDay,
-          report: {
-            connect: {
-              id: reportId,
-            },
-          },
-          author: {
-            connect: {
-              id: authorId,
-            },
-          },
-          images: {
-            connect: images.map((imageId) => ({ id: imageId })),
-          },
-        },
-      });
+          watt,
+          reportId,
+          authorId,
+          images, // Include the images field in the input
+        } = input;
 
-      // console.debug("date", date);
-      // Update the `updated_at` field of the connected report
-      await ctx.prisma.report.update({
-        where: {
-          id: reportId,
-        },
-        data: {
-          updatedAt: date,
-        },
-      });
-      return post;
+        if (authorId != ctx.session.user.id) {
+          throw new Error(
+            "A SECURITY ISSSUE OCCURED! (Missmatch: authorId != userId )"
+          );
+        }
+
+        const report = await ctx.prisma.report.findFirst({
+          where: {
+            id: reportId,
+          },
+        });
+
+        if (!report) {
+          throw new Error(
+            `The report with id: ${reportId} does not exist`
+          );
+        }
+
+        if (report.authorId != ctx.session.user.id) {
+          throw new Error(
+            `You are not the owner of this report with id: ${reportId}`
+          );
+        }
+
+        await Promise.all(
+          images.map(async (item, index) => {
+            await ctx.prisma.image.update({
+              where: { id: item.id }, // Specify the unique identifier for the image
+              data: {
+                postOrder: index, // Update the postOrder field with the current index
+              },
+            });
+          })
+        );
+
+        const post = await ctx.prisma.post.upsert({
+          where: { id }, // Optional: Set the condition for upserting based on the id
+          update: {
+            date,
+            title,
+            content,
+            growStage,
+            lightHoursPerDay,
+            report: {
+              connect: {
+                id: reportId,
+              },
+            },
+            author: {
+              connect: {
+                id: authorId,
+              },
+            },
+            images: {
+              connect: images.map((image) => ({ id: image.id })),
+            },
+          },
+          create: {
+            date,
+            title,
+            content,
+            growStage,
+            lightHoursPerDay,
+            report: {
+              connect: {
+                id: reportId,
+              },
+            },
+            author: {
+              connect: {
+                id: authorId,
+              },
+            },
+            images: {
+              connect: images.map((image) => ({ id: image.id })),
+            },
+          },
+        });
+
+        // Update the `updated_at` field of the connected report to the
+        // newest/youngest Post.date of all Posts of the connected report
+
+        // Find all posts associated with the report
+        const allConnectedPosts = await ctx.prisma.post.findMany({
+          where: {
+            reportId,
+          },
+          orderBy: {
+            date: "desc", // Order by date in descending order to get the newest date first
+          },
+          select: {
+            date: true,
+          },
+        });
+
+        // Find the newest date among all posts
+        const newestDateOfallConnectedPosts =
+          allConnectedPosts.length > 0
+            ? allConnectedPosts[0].date
+            : null;
+
+        // Update the `updated_at` field of the connected report
+        if (newestDateOfallConnectedPosts) {
+          await ctx.prisma.report.update({
+            where: {
+              id: reportId,
+            },
+            data: {
+              updatedAt: newestDateOfallConnectedPosts,
+            },
+          });
+        }
+
+        // Check if watt is defined and not null or undefined
+        if (watt !== undefined && watt !== null) {
+          await ctx.prisma.lightWatts.upsert({
+            where: { postId: id },
+            update: { watt },
+            create: {
+              watt,
+              post: { connect: { id } },
+            },
+          });
+        }
+
+        return post;
+      } catch (error: unknown) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === "P2002") {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: error.message,
+              cause: error.cause,
+            });
+          }
+        } else if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error.message,
+            cause: error,
+          });
+        }
+      }
     }),
 
   /**
@@ -131,6 +282,7 @@ export const postRouter = createTRPCRouter({
           date: "asc",
         },
         where: {
+          // isDeleted: false,
           reportId: input,
         },
         include: {
@@ -142,6 +294,7 @@ export const postRouter = createTRPCRouter({
               id: true,
               publicId: true,
               cloudUrl: true,
+              postOrder: true,
             },
           },
           likes: {
@@ -156,27 +309,31 @@ export const postRouter = createTRPCRouter({
             },
           },
           comments: true,
+          LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
         },
       });
 
       const formattedPosts = await Promise.all(
         posts.map(async (post) => {
-          const date = new Date(post.date);
-          const growDay =
-            Math.floor(
-              (new Date(post.date).getTime() -
-                report.createdAt.getTime()) /
-                (1000 * 60 * 60 * 24)
-            ) + 1; // Adding 1 to get 1-based indexing
+          const postDate = new Date(post.date);
+          const reportCreatedAt = report.createdAt;
 
-          const comments = await ctx.prisma.comment.findMany({
-            where: {
-              postId: post.id,
-            },
-            orderBy: {
-              createdAt: "asc",
-            },
-          });
+          // Convert both dates to local time
+          const localPostDate = new Date(postDate);
+          const localReportCreatedAt = new Date(reportCreatedAt);
+
+          // Set the time of day to midnight for both dates
+          localPostDate.setHours(0, 0, 0, 0);
+          localReportCreatedAt.setHours(0, 0, 0, 0);
+
+          // Calculate the difference in milliseconds between the two dates
+          const differenceInMs =
+            localPostDate.getTime() - localReportCreatedAt.getTime();
+
+          // Convert the difference from milliseconds to days
+          const growDay = Math.floor(
+            differenceInMs / (1000 * 60 * 60 * 24)
+          );
 
           const isoLikes = post.likes.map(
             ({ id, createdAt, updatedAt, user }) => ({
@@ -188,6 +345,15 @@ export const postRouter = createTRPCRouter({
             })
           );
 
+          const comments = await ctx.prisma.comment.findMany({
+            where: {
+              postId: post.id,
+            },
+            orderBy: {
+              createdAt: "asc",
+            },
+          });
+
           const isoComments = comments.map((comment) => ({
             ...comment,
             createdAt: comment.createdAt.toISOString(),
@@ -198,47 +364,27 @@ export const postRouter = createTRPCRouter({
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { createdAt, updatedAt, likes, ...strippedPost } = post;
 
+          // Map images and handle postOrder
+          const images = post.images.map(
+            ({ id, publicId, cloudUrl, postOrder }) => ({
+              id,
+              publicId,
+              cloudUrl,
+              postOrder: postOrder ?? 0, // Default to 0 if postOrder is null
+            })
+          );
+
           return {
             ...strippedPost,
             likes: isoLikes,
-            date: date.toISOString(),
+            date: postDate.toISOString(),
             growDay,
             comments: isoComments,
+            images,
           };
         })
       );
 
       return formattedPosts;
-    }),
-
-  /**
-   * Get PostDbInput // ONLY NEEDED AS TYPE
-   * @Input: postId: String
-   */
-  getPostDbInput: publicProcedure
-    .input(z.string().min(1))
-    .query(async ({ ctx, input }) => {
-      const postId = input;
-
-      const post = await ctx.prisma.post.findUnique({
-        where: {
-          id: postId,
-        },
-        include: {
-          images: {
-            select: {
-              id: true,
-            },
-          },
-        },
-      });
-
-      if (!post) {
-        throw new Error(`Post with id ${postId} does not exist`);
-      }
-
-      const imageIds = post.images.map((image) => image.id);
-
-      return { ...post, images: imageIds };
     }),
 });

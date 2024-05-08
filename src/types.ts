@@ -15,9 +15,7 @@ export type IsoReportWithPostsFromDb =
 
 export interface IsoReportCardProps {
   report: IsoReportWithPostsFromDb;
-  procedure: "all" | "own";
-
-  setSearchString: Dispatch<SetStateAction<string>>;
+  setSearchString?: Dispatch<SetStateAction<string>>;
 }
 
 type getPostsByReportIdOutput =
@@ -29,17 +27,6 @@ type getCommentsByPostIdOutput =
   RouterOutput["comments"]["getCommentsByPostId"];
 export type Comments = getCommentsByPostIdOutput;
 export type Comment = getCommentsByPostIdOutput[number];
-
-export type PostDbInput = {
-  date: Date;
-  title: string;
-  growStage: keyof typeof GrowStage;
-  lightHoursPerDay: number | null;
-  images: string[];
-  content: string;
-  reportId: string;
-  authorId: string;
-};
 
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
@@ -95,10 +82,11 @@ export interface SplitObject {
 }
 
 export type NotificationEventMap =
-  | "LIKE_CREATED" // TODO: NOTIFY item.author
-  | "COMMENT_CREATED" //TODO: NOTIFY report.author + comment.parent.author
-  | "POST_CREATED" //TODO: NOTIFY report.author + report.followers
-  | "REPORT_CREATED"; //TODO: NOTIFY user.followers
+  | "REPORT_CREATED" //TODO: NOTIFY user.followers
+  | "POST_CREATED" //TODO: NOTIFY report.followers
+  | "LIKE_CREATED"
+  | "COMMENT_CREATED"
+  | "COMMENT_ANSWERED";
 
 export enum Locale {
   EN = "en",
@@ -116,6 +104,11 @@ export enum GrowStage {
 }
 
 export enum Environment {
-  INDOOR = "Indoor",
-  OUTDOOR = "Outdoor",
+  INDOOR = "Indoor 💡",
+  OUTDOOR = "Outdoor 🌦️",
+}
+
+export interface LightswattsDataPoint {
+  date: Date;
+  watt: number;
 }

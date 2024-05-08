@@ -14,6 +14,7 @@ export default class _Document extends Document {
             name="google-site-verification"
             content="bH2eAtmFdOW_32cssgRst8T_QiJxJa825XfCpiFZYsc"
           />
+          <meta name="seedfinderverification" content="Open Sesame!" />
           <link rel="manifest" href="/site.webmanifest" />
           <link
             rel="icon"
@@ -44,6 +45,7 @@ export default class _Document extends Document {
             data-domain="growagram.com"
             src="https://cdn.growagram.com/js/script.js"
           ></script>
+          <meta property="og:type" content="website" />
         </Head>
         <body>
           <Main />
@@ -54,4 +56,4 @@ export default class _Document extends Document {
   }
 }
 
-export const appTitle = "GrowAGram 🪴 Show Your Grow";
+export const appTitle = "GrowAGram 🪴 Track Your Grow! 📜";

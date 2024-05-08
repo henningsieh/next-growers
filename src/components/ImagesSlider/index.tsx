@@ -8,7 +8,7 @@ import { useState } from "react";
 
 import Image from "next/image";
 
-import { PostImagesCarousel } from "~/components//Post/ImageCarousel";
+import { PostImagesCarousel } from "~/components/ImageCarousel";
 
 interface ImagesSliderProps {
   cloudUrls: string[];
@@ -29,6 +29,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
   // const { t } = useTranslation(activeLocale);
 
   const { cloudUrls } = props;
+
   const { classes, theme } = useStyles();
 
   const [opened, { open, close }] = useDisclosure(false);

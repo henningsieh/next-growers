@@ -7,8 +7,10 @@ import {
   createStyles,
   Flex,
   Group,
+  Menu,
   Paper,
   rem,
+  ScrollArea,
   Text,
   Tooltip,
   useMantineTheme,
@@ -18,7 +20,9 @@ import {
   IconCalendar,
   IconCannabis,
   IconClock,
+  IconDots,
   IconEdit,
+  IconPlant,
 } from "@tabler/icons-react";
 
 import { useSession } from "next-auth/react";
@@ -29,18 +33,95 @@ import { useRouter } from "next/router";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
-import { Locale } from "~/types";
 import type { IsoReportCardProps } from "~/types";
+import { Locale } from "~/types";
 
 import { sanatizeDateString } from "~/utils/helperUtils";
 
 // import { api } from "~/utils/api";
 
+const useStyles = createStyles((theme) => ({
+  dropdown: {
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.fn.lighten(theme.colors.dark[6], 0.0)
+        : theme.fn.lighten(theme.colors.growgreen[5], 0.7),
+  },
+  item: {
+    fontWeight: 500,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    padding: rem(8),
+    marginBottom: rem(2),
+  },
+
+  edit: {
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[4]
+        : theme.fn.lighten(theme.colors.gray[5], 0.5),
+    "&[data-hovered]": {
+      backgroundColor: theme.colors.groworange[4],
+      color: theme.white,
+    },
+  },
+
+  add: {
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[4]
+        : theme.fn.lighten(theme.colors.gray[5], 0.5),
+    "&[data-hovered]": {
+      backgroundColor: theme.colors.growgreen[5],
+      color: theme.white,
+    },
+  },
+
+  divider: {
+    borderTop: `2px ${
+      theme.colorScheme === "dark"
+        ? theme.colors.gray[8]
+        : theme.colors.gray[5]
+    }`,
+    borderStyle: "solid",
+  },
+
+  card: {
+    transition: "transform 150ms ease, box-shadow 150ms ease",
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[5]
+        : theme.colors.gray[2],
+    "&:hover": {
+      boxShadow:
+        theme.colorScheme === "dark"
+          ? `0 0 8px ${theme.colors.green[8]}`
+          : `0 0 8px ${theme.colors.green[9]}`,
+    },
+  },
+
+  section: {
+    borderBottom: `${rem(1)} solid ${
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[4]
+        : theme.colors.gray[2]
+    }`,
+    padding: theme.spacing.xs,
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+
+  label: {
+    textTransform: "uppercase",
+    fontSize: theme.fontSizes.xs,
+    fontWeight: 700,
+  },
+}));
+
 export default function ReportCard({
   report: isoReport,
-  // procedure,
   setSearchString,
 }: IsoReportCardProps) {
+  const { classes } = useStyles();
   // const trpc = api.useUtils();
   const router = useRouter();
   const theme = useMantineTheme();
@@ -48,40 +129,6 @@ export default function ReportCard({
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const useStyles = createStyles((theme) => ({
-    card: {
-      transition: "transform 150ms ease, box-shadow 150ms ease",
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[5]
-          : theme.colors.gray[2],
-      "&:hover": {
-        boxShadow:
-          theme.colorScheme === "dark"
-            ? `0 0 8px ${theme.colors.green[8]}`
-            : `0 0 8px ${theme.colors.green[9]}`,
-      },
-    },
-
-    section: {
-      borderBottom: `${rem(1)} solid ${
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[4]
-          : theme.colors.gray[2]
-      }`,
-      paddingLeft: theme.spacing.xs,
-      paddingRight: theme.spacing.xs,
-      // paddingBottom: theme.spacing.xs,
-    },
-
-    label: {
-      textTransform: "uppercase",
-      fontSize: theme.fontSizes.xs,
-      fontWeight: 700,
-    },
-  }));
-
-  const { classes } = useStyles();
   const { data: session, status } = useSession();
 
   // const { mutate: deleteMutation } =
@@ -153,7 +200,8 @@ export default function ReportCard({
       <Badge
         className="cursor-pointer"
         onClick={() => {
-          setSearchString(`strain:"${strainBadge.name}"`);
+          setSearchString &&
+            setSearchString(`strain:"${strainBadge.name}"`);
         }}
         variant="gradient"
         gradient={{
@@ -171,14 +219,26 @@ export default function ReportCard({
   ));
 
   return (
-    <Paper m={0} withBorder radius="sm" p={0} className={classes.card}>
+    <Paper withBorder p={0} m={0} radius="sm" className={classes.card}>
       {/* HEADER IMAGE */}
-      <Card.Section>
+      <Card.Section pos="relative">
+        {/*// Session buttons */}
+        {status === "authenticated" &&
+          !!isoReport &&
+          session.user.id == isoReport.authorId && (
+            <Box p={8} pos="absolute" className="z-20 bottom-0 right-0">
+              <EditReportMenu
+                reportId={isoReport.id}
+                labelEditGrow={t("common:report-edit-button")}
+                labelAddUpdate={t("common:addpost-headline")}
+              />
+            </Box>
+          )}
         <ImagePreview
           imageUrl={isoReport.image?.cloudUrl as string}
-          title={isoReport.title as string}
-          description={isoReport.description as string}
-          publicLink={`/grow/${isoReport.id as string}`}
+          title={isoReport.title}
+          description={isoReport.description}
+          publicLink={`/grow/${isoReport.id}`}
           authorName={isoReport.author?.name as string}
           authorImageUrl={
             isoReport.author?.image
@@ -193,22 +253,25 @@ export default function ReportCard({
       </Card.Section>
 
       {/* Strains and LikeHeart */}
-      <Card.Section className={`${classes.section}`}>
-        <Flex align="center" justify="space-between">
+      <Card.Section className={classes.section}>
+        <Flex align="flex-start" justify="space-between">
           {/* Strains */}
-          <Group
-            className={`pb-2 mr-2 overflow-y-hidden overflow-x-auto flex-nowrap inline-flex`}
-          >
-            {reportStrains}
-          </Group>
+
+          <ScrollArea maw={260} h={42}>
+            <Flex py={4} gap="xs">
+              {reportStrains}
+            </Flex>
+          </ScrollArea>
 
           {/* LikeHeart */}
-          <LikeHeart itemToLike={isoReport} itemType={"Report"} />
+          <Box mt={0} mr={-4}>
+            <LikeHeart itemToLike={isoReport} itemType={"Report"} />
+          </Box>
         </Flex>
       </Card.Section>
 
       {/* GROW DATES */}
-      <Card.Section p={theme.spacing.xs} className={classes.section}>
+      <Card.Section className={classes.section}>
         <Group position="apart" c="dimmed">
           {/*// Stage/ Date */}
           <Group position="left">
@@ -218,7 +281,7 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-createdAt")}
-              color={theme.colors.groworange[4]}
+              color={theme.colors.growgreen[5]}
               withArrow
               arrowPosition="side"
             >
@@ -245,14 +308,14 @@ export default function ReportCard({
                 duration: 100,
               }}
               label={t("common:reports-updatedAt")}
-              color={theme.colors.groworange[4]}
+              color={theme.colors.growgreen[5]}
               withArrow
               arrowPosition="side"
             >
               <Center>
                 <Text className={`${classes.label} cursor-default`}>
                   {sanatizeDateString(
-                    isoReport.updatedAt as string,
+                    isoReport.updatedAt,
                     router.locale === Locale.DE ? Locale.DE : Locale.EN,
                     false,
                     false
@@ -266,36 +329,94 @@ export default function ReportCard({
           </Group>
         </Group>
       </Card.Section>
-
-      {/*// Session buttons */}
-      {status === "authenticated" &&
-        session.user.id == isoReport.authorId && (
-          <Group m="xs" position="apart">
-            {/** NO DANGEROUS DELETE BUTTON AT THE MOMENT */}
-            {/* <Button
-              size="xs"
-              radius="sm"
-              style={{ flex: 0 }}
-              className="hover:bg-red-600 border-red-500"
-              onClick={() => {
-                deleteMutation(isoReport.id as string);
-              }}
-            >
-              {t("common:report-delete-button")}
-              <IconAlertTriangle
-                className="ml-2"
-                height={20}
-                stroke={1.6}
-              />
-            </Button> */}
-            <Link href={`/account/grows/${isoReport.id as string}`}>
-              <Button size="xs" radius="sm" style={{ flex: 1 }}>
-                {t("common:report-edit-button")}
-                <IconEdit className="ml-2" height={22} stroke={1.4} />
-              </Button>
-            </Link>
-          </Group>
-        )}
     </Paper>
+  );
+}
+
+interface EditReportMenuProps {
+  labelEditGrow: React.ReactNode;
+  labelAddUpdate: React.ReactNode;
+  reportId: string;
+}
+
+export function EditReportMenu({
+  reportId,
+  labelEditGrow,
+  labelAddUpdate,
+}: EditReportMenuProps) {
+  const { classes } = useStyles();
+  return (
+    <Flex justify="flex-end" align="center">
+      <Menu
+        classNames={classes}
+        withinPortal={false}
+        position="bottom-end"
+        shadow="sm"
+      >
+        <Menu.Target>
+          <Tooltip
+            transitionProps={{
+              transition: "slide-up",
+              duration: 300,
+            }}
+            color="groworange.5"
+            c="white"
+            withArrow
+            arrowPosition="side"
+            position="top-end"
+            label={labelEditGrow}
+          >
+            <Button
+              px={2}
+              w={26}
+              compact
+              variant="filled"
+              color="groworange"
+            >
+              <IconDots />
+            </Button>
+          </Tooltip>
+        </Menu.Target>
+
+        <Menu.Dropdown>
+          <Link href={`/account/grows/edit/${reportId}/editGrow`}>
+            <Menu.Item
+              className={classes.edit}
+              icon={<IconEdit size={rem(14)} />}
+            >
+              {labelEditGrow}
+            </Menu.Item>
+          </Link>
+          <Link href={`/account/grows/edit/${reportId}/addUpdate`}>
+            <Menu.Item
+              className={classes.add}
+              icon={<IconPlant size={rem(14)} />}
+            >
+              {labelAddUpdate}
+            </Menu.Item>
+          </Link>
+        </Menu.Dropdown>
+      </Menu>
+
+      {/** NO DANGEROUS DELETE BUTTON AT THE MOMENT */}
+      {/* <Group m="xs" position="apart">
+     <Button
+    size="xs"
+    radius="sm"
+    style={{ flex: 0 }}
+    className="hover:bg-red-600 border-red-500"
+    onClick={() => {
+      deleteMutation(isoReport.id as string);
+    }}
+  >
+    {t("common:report-delete-button")}
+    <IconAlertTriangle
+      className="ml-2"
+      height={20}
+      stroke={1.6}
+    />
+  </Button> 
+  </Group> */}
+    </Flex>
   );
 }

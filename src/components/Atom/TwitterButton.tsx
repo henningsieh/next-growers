@@ -6,6 +6,20 @@ import { FaXTwitter } from "react-icons/fa6";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
+export function TwitterButton(props: ButtonProps) {
+  return (
+    <Button
+      m={6}
+      fz="md"
+      variant="filled"
+      className="cursor-pointer"
+      leftIcon={<FaXTwitter size="1.2rem" />}
+      type="submit"
+      {...props}
+    />
+  );
+}
+
 export function TwitterButtonWithText() {
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -15,18 +29,5 @@ export function TwitterButtonWithText() {
     <TwitterButton>
       {t("common:app-login-button-loginWithTwitter")}
     </TwitterButton>
-  );
-}
-
-export function TwitterButton(props: ButtonProps) {
-  return (
-    <Button
-      m={6}
-      type="submit"
-      leftIcon={<FaXTwitter />}
-      variant="outline"
-      color="growgreen"
-      {...props}
-    />
   );
 }

@@ -1,14 +1,24 @@
 import {
   Box,
+  Center,
   Container,
   createStyles,
+  Group,
+  rem,
+  Text,
   Title,
-  useMantineTheme,
+  useMantineColorScheme,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconChevronLeft } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconClock,
+  IconEye,
+  IconHome,
+} from "@tabler/icons-react";
 import dayjs from "dayjs";
+import { convert } from "html-to-text";
 import { noPostAtThisDay } from "~/messages";
 
 import { useEffect, useState } from "react";
@@ -20,13 +30,23 @@ import type {
 } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { PostCard } from "~/components/Post/Card";
-import PostsDatePicker from "~/components/Post/Datepicker";
+import LikeHeart from "~/components/Atom/LikeHeart";
+import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
+import { PostCard } from "~/components/Post/PostCard";
+import PostDatepicker from "~/components/Post/PostDatepicker";
+import { ReportHeader } from "~/components/Report/Header";
+import { LightWattChart } from "~/components/Report/LightWattChart/LightWattChart";
 
 import { prisma } from "~/server/db";
+
+import { Environment, Locale } from "~/types";
+
+import {
+  compareDatesWithoutTime,
+  sanatizeDateString,
+} from "~/utils/helperUtils";
 
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
@@ -87,6 +107,10 @@ export async function getStaticProps(
               id: true,
               publicId: true,
               cloudUrl: true,
+              postOrder: true,
+            },
+            orderBy: {
+              postOrder: "asc", // Sort images by postOrder in ascending order
             },
           },
           likes: {
@@ -101,6 +125,7 @@ export async function getStaticProps(
             },
           },
           comments: true,
+          LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
         },
       },
     },
@@ -108,6 +133,7 @@ export async function getStaticProps(
       id: reportId,
     },
   });
+
   // Report not found, handle the error accordingly (e.g., redirect to an error page)
   if (!reportFromDb) {
     return {
@@ -140,16 +166,24 @@ export async function getStaticProps(
     ),
 
     posts: (reportFromDb?.posts || []).map((post) => {
-      const postDate = post.date ? new Date(post.date) : null;
-      const reportCreatedAt = reportFromDb?.createdAt
-        ? new Date(reportFromDb.createdAt)
-        : null;
-      const timeDifference =
-        postDate && reportCreatedAt
-          ? postDate.getTime() - reportCreatedAt.getTime()
-          : 0;
+      const postDate = new Date(post.date);
+      const reportCreatedAt = reportFromDb?.createdAt;
+
+      // Convert both dates to local time
+      const localPostDate = new Date(postDate);
+      const localReportCreatedAt = new Date(reportCreatedAt);
+
+      // Set the time of day to midnight for both dates
+      localPostDate.setHours(0, 0, 0, 0);
+      localReportCreatedAt.setHours(0, 0, 0, 0);
+
+      // Calculate the difference in milliseconds between the two dates
+      const differenceInMs =
+        localPostDate.getTime() - localReportCreatedAt.getTime();
+
+      // Convert the difference from milliseconds to days
       const growDay = Math.floor(
-        timeDifference / (1000 * 60 * 60 * 24) + 1
+        differenceInMs / (1000 * 60 * 60 * 24)
       );
 
       const isoLikes = post.likes.map(
@@ -172,7 +206,7 @@ export async function getStaticProps(
         ...post,
         createdAt: post.createdAt.toISOString(),
         updatedAt: post.createdAt.toISOString(),
-        date: postDate?.toISOString() as string,
+        date: postDate?.toISOString(),
         likes: isoLikes,
         comments: isoComments,
         growDay,
@@ -206,71 +240,69 @@ export async function getStaticProps(
  *  @param reports: { id: string; }[]
  *  @returns { paths[] }
  */
-export const getStaticPaths: GetStaticPaths = async () => {
-  const reports = await prisma.report.findMany({
-    select: {
-      id: true,
-      posts: { select: { id: true } },
-    },
-  });
-
-  const paths = reports.flatMap((staticReport) => {
-    const localizedPaths = [
-      {
-        params: {
-          reportId: staticReport.id,
-        },
-        locale: "en", // English version
-      },
-      {
-        params: {
-          reportId: staticReport.id,
-        },
-        locale: "de", // German version
-      },
-    ];
-
-    return staticReport.posts.flatMap((post) =>
-      localizedPaths.map((path) => ({
-        ...path,
-        params: {
-          ...path.params,
-          postId: post.id,
-        },
-      }))
-    );
-  });
-
+export const getStaticPaths: GetStaticPaths = () => {
+  //FIXME: NOT PRERENDERING POSTS
   return {
-    paths,
+    paths: [],
     fallback: "blocking",
   };
 };
 
 /** ReportDetails
- *  @param props: { report: Report }
- *  @returns React Functional Component
+ * @returns React Functional Component
+ * @param props
  */
-export default function PublicReportPost(
+function PublicReportPost(
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) {
-  const { report: staticReportFromProps, postId: postIdfromProps } =
-    props;
+  const router = useRouter();
 
+  const { report: grow, postId: updateId } = props;
+  const thisPost = grow.posts.find((post) => post.id === updateId);
+
+  const postDate = new Date(thisPost ? thisPost.date : "");
+  const [selectedDate, selectDate] = useState<Date | null>(postDate);
+
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
   const useStyles = createStyles((theme) => ({
+    icon: {
+      marginRight: rem(5),
+      color:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[2]
+          : theme.black,
+    },
+
     titleLink: {
       display: "inline-flex",
-      color: theme.colors.orange?.[7],
+      fontWeight: "bold",
+      color: dark
+        ? theme.colors.growgreen[4]
+        : theme.colors.growgreen[6],
+    },
+    title: {
+      display: "flex",
+      [theme.fn.smallerThan("md")]: {
+        flexDirection: "column",
+      },
+
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingTop: theme.spacing.sm,
+    },
+
+    section: {
+      marginTop: theme.spacing.xl,
+      padding: theme.spacing.xs,
+      borderTop: `${rem(1)} solid ${
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[4]
+          : theme.colors.gray[3]
+      }`,
     },
   }));
-
-  const { classes } = useStyles();
-  const theme = useMantineTheme();
-  const router = useRouter();
-  // const { locale: activeLocale } = router;
-  // const { t } = useTranslation(activeLocale);
-
-  const pageTitle = `${staticReportFromProps.title}`;
+  const { theme, classes } = useStyles();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -289,31 +321,82 @@ export default function PublicReportPost(
             ? 4
             : 5;
 
-  const dateOfGermination = new Date(staticReportFromProps.createdAt);
+  const { scrollIntoView, targetRef } =
+    useScrollIntoView<HTMLDivElement>({
+      offset: 0,
+    });
 
-  const thisPost = staticReportFromProps.posts.find(
-    (post) => post.id === postIdfromProps
-  );
-
-  const postDate = new Date(thisPost ? thisPost.date : "");
-  const [selectedDate, selectDate] = useState<Date | null>(postDate);
-
-  // If the post is not found, redirect to the 404 page
-  if (!thisPost) {
-    // Redirect to the 404 page
-    // void router.push("/404");
-    // Return null to prevent rendering anything else
-    return null;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    const post = staticReportFromProps.posts.find(
-      (post) => post.id === postIdfromProps
-    );
+    scrollIntoView({
+      alignment: "start",
+    });
+  }, [scrollIntoView]);
+
+  useEffect(() => {
+    const post = grow.posts.find((post) => post.id === updateId);
     const postDate = new Date(post?.date as string);
     selectDate(postDate);
-  }, [postIdfromProps, staticReportFromProps.posts]);
+  }, [updateId, grow.posts]);
+
+  // If the post is not found, redirect to the 404 page
+  if (thisPost === undefined) {
+    return (
+      <>Error 404: Update with Id: {updateId} could not be found!</>
+    );
+  }
+
+  const dateOfnewestPost = grow.posts.reduce((maxDate, post) => {
+    const postDate = new Date(post.date);
+    return postDate > maxDate ? postDate : maxDate;
+  }, new Date(0));
+
+  const postDays = grow.posts.map((post) =>
+    new Date(post.date).getTime()
+  );
+
+  const pageTitle = `${grow.title}`;
+
+  const reportBasicData = [
+    {
+      label: sanatizeDateString(
+        grow.createdAt,
+        router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false,
+        false
+      ),
+      icon: IconCalendar,
+    },
+    {
+      label: Environment[grow.environment as keyof typeof Environment],
+      icon: IconHome,
+    },
+    {
+      label: "1468",
+      icon: IconEye,
+    },
+    {
+      label: sanatizeDateString(
+        grow.updatedAt,
+        router.locale === Locale.DE ? Locale.DE : Locale.EN,
+        false,
+        false
+      ),
+      icon: IconClock,
+    },
+  ];
+
+  const reportBasics = reportBasicData.map((growBasic) => (
+    <Center key={growBasic.label}>
+      <growBasic.icon
+        size="1.05rem"
+        className={classes.icon}
+        stroke={1.6}
+      />
+      <Text size="xs"> {growBasic.label} </Text>
+    </Center>
+  ));
+
+  const dateOfGermination = new Date(grow.createdAt);
 
   const defaultRelDate =
     dayjs(selectedDate)
@@ -325,31 +408,14 @@ export default function PublicReportPost(
       ? dateOfGermination
       : defaultRelDate;
 
-  const postDays = staticReportFromProps.posts.map((post) =>
-    new Date(post.date).getTime()
-  );
-
-  const dateOfnewestPost = staticReportFromProps.posts.reduce(
-    (maxDate, post) => {
-      const postDate = new Date(post.date);
-      return postDate > maxDate ? postDate : maxDate;
-    },
-    new Date(0)
-  );
-
-  // const { scrollIntoView, targetRef } =
-  //   useScrollIntoView<HTMLDivElement>({
-  //     offset: 1,
-  //   });
-
   const handleSelectDate = (selectedDate: Date | null) => {
     if (!selectedDate) {
       return;
     }
 
-    const matchingPost = staticReportFromProps.posts.find((post) => {
+    const matchingPost = grow.posts.find((post) => {
       const postDate = new Date(post.date);
-      return selectedDate.toISOString() === postDate.toISOString();
+      return compareDatesWithoutTime(selectedDate, postDate);
     });
 
     if (matchingPost) {
@@ -358,60 +424,80 @@ export default function PublicReportPost(
       // });
       selectDate(new Date(matchingPost.date));
       // setPostId(matchingPost.id);
-      const newUrl = `/grow/${staticReportFromProps.id}/update/${matchingPost.id}`;
-      void router.push(newUrl, undefined, { scroll: false });
-      // window.history.replaceState({}, "", newUrl);
+      const newUrl = `/grow/${grow.id}/update/${matchingPost.id}`;
+      void router.push({ pathname: newUrl }, undefined, {
+        scroll: false,
+      });
     } else {
       notifications.show(noPostAtThisDay);
     }
   };
+  //const images = thisPost?.images.map((image) => image.cloudUrl);
+
+  const sortedImages = [...(thisPost?.images || [])].sort((a, b) => {
+    const orderA = a.postOrder ?? 0;
+    const orderB = b.postOrder ?? 0;
+    return orderA - orderB;
+  });
+
+  const images = sortedImages?.map((image) => image.cloudUrl);
+
+  const imageTags = generateOpenGraphMetaTagsImage(images);
+
+  const slicedContent = convert(thisPost?.content, { wordwrap: 25 });
 
   return (
     <>
       <Head>
         <title>{`Grow "${pageTitle}" from ${
-          staticReportFromProps.author?.name as string
+          grow.author?.name as string
         } | GrowAGram`}</title>
         <meta
           name="description"
           content="Create your grow report on growagram.com" //FIXME: SEO description
         />
+        <meta
+          property="og:url"
+          content={`/grow/${grow.id}/update/${thisPost.id}`}
+        />
+        <meta property="og:title" content={thisPost.title} />
+        <meta property="og:description" content={slicedContent} />
+        {imageTags &&
+          imageTags.map((tag, index) => <meta key={index} {...tag} />)}
       </Head>
+
       {/* // Main Content Container */}
-      <Container
-        size="xl"
-        className="mb-8 flex w-full flex-col space-y-1"
-      >
+      <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
-        <Box className="flex items-center justify-start pt-2">
-          {/* // Title */}
-          {/* <Title order={1}>
-            <Link
-              // className="text-orange-600"
-              href={`/grows`}
-            >
-              {t("common:reports-headline")}
-            </Link>
-          </Title> */}
-          <Title order={1}>
-            <Link
-              className={classes.titleLink}
-              href={`/grow/${staticReportFromProps.id}`}
-            >
-              <Box pr={"sm"}>
-                <IconChevronLeft size={32} />
-              </Box>
-              {`${pageTitle}`}
-            </Link>
-          </Title>
-          {/* <Box px={"sm"}>
-            <IconChevronRight size={24} />
-          </Box>
-          <Title order={1}>
-            {`${thisPost?.title as string}`} | DATE
-          </Title> */}
-        </Box>
+        {/* <Box pt={theme.spacing.sm} className={classes.title}>
+          <Link title="back to Grow" href={`/grow/${grow.id}`}>
+            <Box className={classes.titleLink}>
+              <IconChevronLeft size={28} />
+              {grow.title}
+            </Box>
+          </Link>
+
+          {status === "authenticated" &&
+            grow.authorId === session.user.id && (
+              <Group position="right">
+
+                <EditPostButton
+                  growId={grow.id}
+                  postId={thisPost.id}
+                  buttonLabel={t("common:post-edit-button")}
+                />
+
+                <AddPostButton
+                  growId={grow.id}
+                  buttonLabel={t("common:addpost-headline")}
+                />
+              </Group>
+            )}
+            
+        </Box> */}
+
         {/* // Header End */}
+
         <Container
           size="xl"
           px={0}
@@ -420,39 +506,72 @@ export default function PublicReportPost(
           className="flex w-full flex-col space-y-4"
         >
           {/* Update view without Header brings better UI! */}
-          {/* <ReportHeader
-            report={staticReportFromProps}
-            image={staticReportFromProps.image?.cloudUrl as string}
-            avatar={staticReportFromProps.author.image 
-                                  ? staticReportFromProps.author.image
-                    : `https://ui-avatars.com/api/?name=${
-                        staticReportFromProps.author.name as string
-                      }`
+          <ReportHeader
+            report={grow}
+            image={grow.image?.cloudUrl as string}
+            avatar={
+              grow.author.image
+                ? grow.author.image
+                : `https://ui-avatars.com/api/?name=${
+                    grow.author.name as string
+                  }`
             }
-            name={staticReportFromProps.author.name as string}
-            job={staticReportFromProps.description}
-          />  */}
-          {/* // Posts Date Picker */}
-          {/* <Box ref={targetRef}> */}
-          <Box>
-            <PostsDatePicker
-              defaultDate={
-                selectedDate ? columnStartMonth : dateOfGermination
-              }
-              postDays={postDays}
-              selectedDate={selectedDate}
-              handleSelectDate={handleSelectDate}
-              dateOfnewestPost={dateOfnewestPost}
-              dateOfGermination={dateOfGermination}
-              responsiveColumnCount={getResponsiveColumnCount}
-            />
-          </Box>
-          <PostCard
-            postId={thisPost?.id}
-            report={staticReportFromProps}
+            name={grow.author.name as string}
+            description={grow.description}
           />
+          {/* // Posts Date Picker */}
+          <PostDatepicker
+            defaultDate={
+              selectedDate ? columnStartMonth : dateOfGermination
+            }
+            postDays={postDays}
+            selectedDate={selectedDate}
+            handleSelectDate={handleSelectDate}
+            dateOfnewestPost={dateOfnewestPost}
+            dateOfGermination={dateOfGermination}
+            responsiveColumnCount={getResponsiveColumnCount}
+          />
+          <Box ref={targetRef}>
+            <PostCard postId={thisPost.id} reportFromProps={grow} />
+          </Box>
         </Container>
+      </Container>
+
+      <Container size="xl" className="flex flex-col space-y-2">
+        <Group
+          my="xs"
+          px="sm"
+          position="apart"
+          className={classes.section}
+        >
+          <Title py="sm" order={3}>
+            Grow
+          </Title>
+          <Text fz="md">{grow.title}</Text>
+          <LikeHeart itemToLike={grow} itemType={"Report"} />
+        </Group>
+
+        <Title p="sm" order={4}>
+          Grow Statistics
+        </Title>
+
+        <LightWattChart
+          repordId={grow.id}
+          reportStartDate={new Date(grow.createdAt)}
+          dateOfnewestPost={dateOfnewestPost}
+        />
+
+        <Group
+          my="xs"
+          position="apart"
+          spacing="xs"
+          className={classes.section}
+        >
+          {reportBasics}
+        </Group>
       </Container>
     </>
   );
 }
+
+export default PublicReportPost;

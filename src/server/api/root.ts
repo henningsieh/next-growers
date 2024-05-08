@@ -1,4 +1,5 @@
 import { commentRouter } from "./routers/comment";
+import { lightWattsRouter } from "./routers/lightWatts";
 import { likeRouter } from "./routers/like";
 import { notificationRouter } from "./routers/notification";
 import { postRouter } from "./routers/posts";
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   notifications: notificationRouter,
   strains: strainRouter,
   posts: postRouter,
+  lightwatts: lightWattsRouter,
   comments: commentRouter,
 });
 

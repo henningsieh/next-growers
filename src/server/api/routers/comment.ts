@@ -38,8 +38,33 @@ export const commentRouter = createTRPCRouter({
         },
         where: {
           postId: postId,
+          isResponseTo: null, // Filter out comments that are responses, they come as 'responses[]'
         },
         include: {
+          isResponseTo: true, // Include the "mother" comment if it exists
+          responses: {
+            orderBy: {
+              createdAt: "asc",
+            },
+            include: {
+              author: {
+                select: { id: true, name: true, image: true },
+              },
+              likes: {
+                include: {
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      image: true,
+                    },
+                  },
+                },
+              },
+              responses: true, // Include the array of responses for each response
+              isResponseTo: true, // Include the isResponseTo field for each response
+            },
+          },
           author: {
             select: { id: true, name: true, image: true },
           },
@@ -56,6 +81,8 @@ export const commentRouter = createTRPCRouter({
           },
         },
       });
+
+      //console.debug({ comments });
       /* 
       const formattedPosts = await Promise.all(
         posts.map(async (post) => {
@@ -112,7 +139,12 @@ export const commentRouter = createTRPCRouter({
   saveComment: protectedProcedure
     .input(InputEditCommentForm)
     .mutation(async ({ ctx, input }) => {
-      const { id, postId, content } = input;
+      const {
+        id,
+        isResponseTo: isResponseToId,
+        postId,
+        content,
+      } = input;
 
       if (id) {
         // Saving an edited comment
@@ -130,6 +162,8 @@ export const commentRouter = createTRPCRouter({
           );
         }
 
+        console.debug("isResponseToId", isResponseToId);
+
         const updatedComment = await ctx.prisma.comment.update({
           where: { id },
           data: { content },
@@ -146,31 +180,91 @@ export const commentRouter = createTRPCRouter({
           throw new Error(`Post with id ${postId} does not exist`);
         }
 
-        // Create a new comment
+        // Create the new comment
         const newComment = await ctx.prisma.comment.create({
           data: {
+            isResponseTo: isResponseToId
+              ? { connect: { id: isResponseToId } }
+              : undefined,
             content,
             author: { connect: { id: ctx.session.user.id } },
             post: { connect: { id: postId } },
           },
         });
 
-        // Create a notification for the report author
-        await ctx.prisma.notification.create({
-          data: {
-            recipient: {
-              connect: {
-                id: post.authorId,
-              },
-            },
-            event: NotificationEvent.COMMENT_CREATED,
-            comment: {
-              connect: {
-                id: newComment.id,
-              },
-            },
-          },
+        // Initialize notifiedAuthors set outside of the if block
+        const notifiedAuthors = new Set<string>();
+
+        // Create a notification for the author of the respondedToComment if response
+        const respondedToComment = await ctx.prisma.comment.findUnique({
+          where: {
+            id: isResponseToId,
+          }, // Assuming isResponseTo contains the ID of the responded comment
+          select: {
+            authorId: true,
+            responses: { select: { authorId: true } },
+          }, // Selecting only the authorId field
         });
+
+        if (respondedToComment != null) {
+          const responseAuthors = [
+            respondedToComment.authorId,
+            ...respondedToComment.responses?.map(
+              (response) => response.authorId
+            ),
+          ];
+
+          // Deduplicate authorIds
+          const uniqueAuthors = Array.from(new Set(responseAuthors));
+
+          // Create a notification for each unique author
+          for (const notificationRecipientAuthorId of uniqueAuthors) {
+            // Skip if this is the author of the newComment itself or if already notified
+            if (
+              newComment.authorId != notificationRecipientAuthorId &&
+              !notifiedAuthors.has(notificationRecipientAuthorId)
+            ) {
+              await ctx.prisma.notification.create({
+                data: {
+                  recipient: {
+                    connect: { id: notificationRecipientAuthorId }, // Connect to the author of the responded comment or response
+                  },
+                  event: NotificationEvent.COMMENT_ANSWERED, // Assuming you have a specific event type for comment replies
+                  comment: {
+                    connect: { id: newComment.id }, // Connect to the newly created comment
+                  },
+                },
+              });
+
+              // Add the author to the notified set
+              notifiedAuthors.add(notificationRecipientAuthorId);
+            }
+          }
+        }
+
+        // Create a notification for the author of the Grow, but
+        // only if this is NOT the author of the newComment itself and not already notified.
+
+        if (
+          post.authorId != newComment.authorId &&
+          !notifiedAuthors.has(post.authorId)
+        ) {
+          await ctx.prisma.notification.create({
+            data: {
+              recipient: {
+                connect: {
+                  id: post.authorId,
+                },
+              },
+              event: NotificationEvent.COMMENT_CREATED,
+              comment: {
+                connect: {
+                  id: newComment.id,
+                },
+              },
+            },
+          });
+        }
 
         return newComment;
       }

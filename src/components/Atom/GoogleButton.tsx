@@ -10,10 +10,11 @@ export function GoogleButton(props: ButtonProps) {
   return (
     <Button
       m={6}
+      fz="md"
+      variant="filled"
+      className="cursor-pointer"
+      leftIcon={<FcGoogle size="1.2rem" />}
       type="submit"
-      leftIcon={<FcGoogle />}
-      variant="outline"
-      color="growgreen"
       {...props}
     />
   );

@@ -1,31 +1,44 @@
+import type {
+  AccordionStylesParams,
+  ActionIconStylesParams,
+  ButtonStylesParams,
+  ColorScheme,
+  MantineTheme,
+  NotificationStylesParams,
+} from "@mantine/core";
 import {
   ColorSchemeProvider,
   MantineProvider,
   rem,
 } from "@mantine/core";
-import type { ButtonStylesParams, ColorScheme } from "@mantine/core";
+import { DatesProvider } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
+import type { MantineColor } from "@mantine/styles";
 import RootLayout from "~/layout/AppLayout";
-import "~/styles/emojiPickerStyles.css";
 import "~/styles/globals.css";
-
-import { Toaster } from "react-hot-toast";
 
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { appWithTranslation } from "next-i18next";
 import type { AppType } from "next/app";
+import { useRouter } from "next/router";
 
 import Loading from "~/components/Atom/Loading";
+import { RouterTransition } from "~/components/RouterTransition";
 
 import { api } from "~/utils/api";
 import { useRouteLoader } from "~/utils/routeLoader";
+
+import "dayjs/locale/de";
+import "dayjs/locale/en";
 
 const GrowAGram: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const router = useRouter();
+
   const isLoading = useRouteLoader();
 
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -89,32 +102,208 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               h5: { fontSize: "0.94rem" },
             },
           },
-          white: "#F1F1F1",
+          white: "#fefefe",
           black: "#333333",
+
+          // Default theme.breakpoints values:
+          // xs	36em	576px
+          // sm	48em	768px
+          // md	62em	992px
+          // lg	75em	1200px
+          // xl	88em	1408px
+
           breakpoints: {
-            xs: "30em",
             // 1 Spalte
-            sm: "38em",
+            xs: "30em", //  480px
             // 2 Spalten
+            sm: "38em",
+            // 4 Spalten
             md: "58em",
             // 4 Spalten
             lg: "78em",
-            // 4 Spalten
-            xl: "90em",
             // 6 Spalten
+            xl: "90em", // 1440px
           },
+
+          focusRingStyles: {
+            // reset styles are applied to <button /> and <a /> elements
+            // in &:focus:not(:focus-visible) selector to mimic
+            // default browser behavior for native <button /> and <a /> elements
+            resetStyles: () => ({ outline: "none" }),
+
+            // styles applied to all elements except inputs based on Input component
+            // styles are added with &:focus selector
+            styles: (theme) => ({
+              outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
+            }),
+
+            // focus styles applied to components that are based on Input
+            // styles are added with &:focus selector
+            inputStyles: (theme) => ({
+              // padding: theme.spacing.sm,
+              // boxShadow: theme.shadows.lg,
+              outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
+              // outline: "none", // Remove the yellow outline on focus
+            }),
+          },
+
           components: {
+            Accordion: {
+              styles: (
+                theme,
+                params: AccordionStylesParams & {
+                  color: MantineColor;
+                },
+                { variant }
+              ) => ({
+                control: {
+                  fontWeight: "lighter",
+                  color:
+                    variant === "contained"
+                      ? theme.colorScheme === "dark"
+                        ? "white"
+                        : theme.black
+                      : undefined,
+                  "&:hover": {
+                    backgroundColor:
+                      variant === "contained"
+                        ? theme.colorScheme === "dark"
+                          ? theme.colors.growgreen[6]
+                          : theme.colors.growgreen[2]
+                        : undefined,
+                  },
+                },
+                item: {
+                  // styles added to all items
+                  backgroundColor:
+                    variant === "contained"
+                      ? theme.colorScheme === "dark"
+                        ? theme.colors.dark[7]
+                        : theme.colors.gray[2]
+                      : // : theme.fn.lighten(
+                        //     theme.colors.growgreen[4],
+                        //     0.7
+                        //   )
+                        undefined,
+
+                  // border: `${rem(1)} solid #ededed`,
+
+                  // styles added to expanded item
+                  "&[data-active]": {
+                    backgroundColor:
+                      variant === "contained"
+                        ? theme.colorScheme === "dark"
+                          ? "transparent"
+                          : theme.white
+                        : // : theme.fn.lighten(
+                          //     theme.colors.growgreen[4],
+                          //     0.7
+                          //   )
+                          undefined,
+                  },
+                },
+
+                chevron: {
+                  // styles added to chevron when it should rotate
+                  // "&[data-rotate]": {
+                  //   transform: "rotate(-90deg)",
+                  // },
+                },
+              }),
+            },
+            Container: {
+              defaultProps: {
+                sizes: {
+                  xs: 515, //   32em x 16px
+                  sm: 720, //   45em x 16px
+                  md: 960, //   60em x 16px
+                  lg: 1024, //  90em x 16px
+                  xl: 1440, // 116em x 16px
+                },
+              },
+            },
+
+            ActionIcon: {
+              styles: (
+                theme,
+                params: ActionIconStylesParams,
+                { variant }
+              ) => ({
+                defaultProps: {
+                  variant: { variant },
+                },
+                root: {
+                  cursor: "default",
+                },
+              }),
+            },
+
+            Button: {
+              defaultProps: {
+                variant: "outline",
+              },
+              styles: (
+                theme,
+                params: ButtonStylesParams,
+                { variant }
+              ) => ({
+                root: {
+                  cursor: "default",
+                  color:
+                    variant === "filled"
+                      ? theme.colorScheme === "dark"
+                        ? "white"
+                        : "white"
+                      : theme.colorScheme === "dark"
+                        ? "white"
+                        : theme.black,
+
+                  boxShadow:
+                    variant === "filled"
+                      ? theme.colorScheme === "dark"
+                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][2]}`
+                        : `0 0 0px 1px ${theme.colors[params.color || "gray"][6]}`
+                      : undefined,
+                  backgroundColor:
+                    variant === "filled"
+                      ? theme.colorScheme === "dark"
+                        ? theme.colors[params.color || "dark"][6]
+                        : theme.colors[params.color || "growgreen"][4]
+                      : undefined,
+
+                  "&:hover": {
+                    backgroundColor:
+                      variant === "filled"
+                        ? theme.colorScheme === "dark"
+                          ? theme.colors[params.color || "dark"][5]
+                          : theme.colors[params.color || "growgreen"][5]
+                        : undefined,
+                  },
+                },
+              }),
+            },
+
+            Card: {},
+
+            SegmentedControl: {
+              styles: () => ({
+                label: {
+                  paddingTop: rem(2),
+                  paddingBottom: rem(2),
+                  paddingLeft: rem(4),
+                  paddingRight: rem(4),
+                },
+              }),
+            },
+
             InputWrapper: {
               styles: (theme) => ({
-                NativeSelect: {
-                  borderRadius: theme.radius.md,
-                },
                 label: {
+                  fontSize: theme.fontSizes.lg,
                   color:
                     theme.colorScheme === "dark"
                       ? theme.colors.growgreen[4]
                       : theme.colors.growgreen[6],
-                  fontSize: theme.fontSizes.md,
                   backgroundColor:
                     theme.colorScheme === "dark"
                       ? "rgba(0, 0, 0, 0)" // no label background in dark mode
@@ -138,6 +327,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             Input: {
               styles: (theme) => ({
                 input: {
+                  fontSize: theme.fontSizes.sm,
                   color:
                     theme.colorScheme === "dark"
                       ? theme.white
@@ -147,7 +337,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   borderColor:
                     theme.colorScheme === "dark"
                       ? theme.colors.growgreen[4]
-                      : theme.colors.growgreen[8],
+                      : theme.colors.growgreen[4],
 
                   // backgroundColor:
                   //   theme.colorScheme === "dark"
@@ -157,68 +347,45 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               }),
             },
 
-            Container: {
-              defaultProps: {
-                sizes: {
-                  xs: 515, //   32em x 16px
-                  sm: 720, //   45em x 16px
-                  md: 960, //   60em x 16px
-                  lg: 1024, //  90em x 16px
-                  xl: 1440, // 116em x 16px
-                },
-              },
-            },
-
-            Button: {
-              defaultProps: {
-                variant: "outline",
-              },
+            Notification: {
               styles: (
-                theme,
-                params: ButtonStylesParams,
-                { variant }
+                theme: MantineTheme,
+                params: NotificationStylesParams
               ) => ({
+                // Use the background color from the theme
                 root: {
                   backgroundColor:
-                    variant === "filled"
-                      ? theme.colors[
-                          params.color || theme.primaryColor
-                        ][9]
-                      : undefined,
-                  color:
                     theme.colorScheme === "dark"
-                      ? theme.white
-                      : theme.black,
-                  "&:hover": {
-                    //   cursor: "default",
-                    backgroundColor:
-                      theme.colorScheme === "dark"
-                        ? theme.colors.growgreen[7]
-                        : theme.colors.growgreen[3],
-                  },
+                      ? theme.colors[params.color || "dark"][6]
+                      : theme.colors[params.color || "gray"][4],
+                },
+                title: {
+                  fontSize: theme.fontSizes.xl,
+                  color: theme.white,
+                },
+                description: { color: theme.white },
+                // Other styles...
+              }),
+            },
+            Blockquote: {
+              styles: () => ({
+                root: {
+                  // padding: 0, // effects grow tile view!!
+                },
+                inner: {
+                  //fontSize: 4,
+                },
+                body: {
+                  // padding: 0,
+                },
+                icon: {
+                  // padding: 0,
+                },
+                cite: {
+                  // padding: 0,
                 },
               }),
             },
-          },
-          focusRingStyles: {
-            // reset styles are applied to <button /> and <a /> elements
-            // in &:focus:not(:focus-visible) selector to mimic
-            // default browser behavior for native <button /> and <a /> elements
-            resetStyles: () => ({ outline: "none" }),
-
-            // styles applied to all elements except inputs based on Input component
-            // styles are added with &:focus selector
-            styles: (theme) => ({
-              outline: `${rem(5)} solid ${theme.colors.groworange[4]}`,
-            }),
-
-            // focus styles applied to components that are based on Input
-            // styles are added with &:focus selector
-            inputStyles: (theme) => ({
-              // padding: theme.spacing.sm,
-              // boxShadow: theme.shadows.lg,
-              outline: `${rem(1)} solid ${theme.colors.growgreen[4]}`,
-            }),
           },
 
           globalStyles: (theme) => ({
@@ -227,47 +394,48 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               padding: "0.2em 0em 0.3em 0.5em",
               fontSize: "0.96em",
               borderLeft: `2px solid ${theme.colors.growgreen[4]}`,
-              fontStyle: "italic",
             },
-            "blockquote a": {
-              textDecoration: "underline",
-              color: theme.colors.growgreen?.[3],
+            "blockquote p": {
+              overflow: "hidden",
+              // whiteSpace: "nowrap",
+              fontSize: "0.96em",
             },
-            ul: {
-              paddingLeft: "1.5em",
-            },
-            "ul li": {
+
+            "ul li, ol li": {
+              fontSize: "1rem",
               position: "relative",
               paddingLeft: "1em",
+              counterIncrement: "list-counter",
+              marginTop: "0 !important", // Explicitly set margin to 0
             },
+
+            "ul li p,  ol li p": {
+              fontSize: "1em",
+              position: "relative",
+              paddingLeft: "1em",
+              marginBottom: "0 !important", // Explicitly set margin to 0
+            },
+
             "ul li::before": {
               content: '""',
               position: "absolute",
-              top: "0.66em",
+              top: "0.6em",
               left: 0,
               width: "0.5em",
               height: "0.5em",
               borderRadius: "50%",
-              backgroundColor: theme.colors.groworange[4], // Change the color to match your theme
+              backgroundColor: theme.colors.growgreen[4], // Change the color to match your theme
             },
-            ol: {
-              paddingLeft: "1.5em",
-              counterReset: "list-counter",
-            },
-            "ol li": {
-              position: "relative",
-              paddingLeft: "1em",
-              marginBottom: "0.5em",
-              counterIncrement: "list-counter",
-            },
+
             "ol li::before": {
               content: "counter(list-counter)",
               position: "absolute",
               top: "0em",
               left: 0,
               fontWeight: "bold",
-              color: theme.colors.groworange[4], // Change the color to match your theme
+              color: theme.colors.growgreen[4], // Change the color to match your theme
             },
+
             "*, *::before, *::after": {
               boxSizing: "border-box",
             },
@@ -279,14 +447,16 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           // },
         }}
       >
+        <RouterTransition />
         <SessionProvider session={session}>
-          <Loading isLoading={isLoading} />
-          <Notifications limit={5} position="bottom-right" />
-          <Toaster />
+          <Notifications limit={5} position="top-center" />
 
-          <RootLayout>
-            <Component {...pageProps} />
-          </RootLayout>
+          <DatesProvider settings={{ locale: router.locale }}>
+            <RootLayout>
+              <Loading isLoading={isLoading} />
+              <Component {...pageProps} />
+            </RootLayout>
+          </DatesProvider>
         </SessionProvider>
       </MantineProvider>
     </ColorSchemeProvider>

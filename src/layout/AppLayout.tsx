@@ -2,7 +2,6 @@ import {
   Anchor,
   Box,
   Burger,
-  Button,
   Center,
   Collapse,
   createStyles,
@@ -26,8 +25,6 @@ import {
   IconMapPin,
   IconMessageCircle,
 } from "@tabler/icons-react";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -35,10 +32,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import LanguageSwitcher from "~/components/Atom/LanguageSwitcher";
-import LightDarkButton from "~/components/Atom/LightDarkButton";
-import Notifications from "~/components/Notifications";
-import LoginPanel from "~/components/SessionPanel";
+import CookieConsentBanner from "~/components/Atom/CookieConsent";
+import LanguageSwitcher from "~/components/LanguageSwitcher";
+import LightDarkButton from "~/components/LightDarkButton";
+import Notifications from "~/components/User/Notifications";
+import LoginPanel from "~/components/User/SessionPanel";
 
 const useStyles = createStyles((theme) => ({
   photoCredit: {
@@ -93,8 +91,11 @@ const useStyles = createStyles((theme) => ({
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
     textDecoration: "none",
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    fontWeight: 500,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.white
+        : theme.colors.growgreen[6],
+    fontWeight: 700,
     fontSize: theme.fontSizes.lg,
 
     [theme.fn.smallerThan("sm")]: {
@@ -105,10 +106,11 @@ const useStyles = createStyles((theme) => ({
     },
 
     ...theme.fn.hover({
+      color: theme.white,
       backgroundColor:
         theme.colorScheme === "dark"
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0],
+          ? theme.colors.growgreen[6]
+          : theme.colors.growgreen[4],
     }),
   },
 
@@ -122,7 +124,11 @@ const useStyles = createStyles((theme) => ({
       backgroundColor:
         theme.colorScheme === "dark"
           ? theme.colors.dark[7]
-          : theme.colors.gray[0],
+          : theme.colors.growgreen[3],
+      color:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[7]
+          : theme.white,
     }),
 
     "&:active": theme.activeStyles,
@@ -130,9 +136,7 @@ const useStyles = createStyles((theme) => ({
 
   dropdownFooter: {
     backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[7]
-        : theme.colors.gray[0],
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     margin: `calc(${theme.spacing.md} * -1)`,
     marginTop: theme.spacing.sm,
     padding: `${theme.spacing.md} calc(${theme.spacing.md} * 2)`,
@@ -216,28 +220,6 @@ export default function RootLayout({
     useDisclosure(false);
   const { classes, theme } = useStyles();
 
-  const externLinks = externLinksMockdata.map((item) => (
-    <UnstyledButton
-      onClick={() => openUrlInNewTab(item.url)}
-      className={classes.subLink}
-      key={item.title}
-    >
-      <Group noWrap align="flex-start">
-        <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
-        </ThemeIcon>
-        <Box>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-          <Text size="xs" color="dimmed">
-            {item.description}
-          </Text>
-        </Box>
-      </Group>
-    </UnstyledButton>
-  ));
-
   const handleUnstyledButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -254,6 +236,29 @@ export default function RootLayout({
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
+
+  const externLinks = externLinksMockdata.map((item) => (
+    <UnstyledButton
+      bg={dark ? "dark.5" : "gray.2"}
+      onClick={() => openUrlInNewTab(item.url)}
+      className={classes.subLink}
+      key={item.title}
+    >
+      <Group noWrap align="flex-start">
+        <ThemeIcon size={34} variant="default" radius="md">
+          <item.icon size={rem(22)} color={theme.colors.growgreen[4]} />
+        </ThemeIcon>
+        <Box>
+          <Text size="md" fw={500}>
+            {item.title}
+          </Text>
+          <Text size="sm" color="dimmed">
+            {item.description}
+          </Text>
+        </Box>
+      </Group>
+    </UnstyledButton>
+  ));
 
   return (
     <>
@@ -310,6 +315,9 @@ export default function RootLayout({
                 {t("common:usermenu-mygrows")}
               </Link>
             )}
+            <Link href="/info/tech-stack" className={classes.link}>
+              Technologie
+            </Link>
             <Link
               href="/how-to-manual-anleitung-wie-geht-das"
               className={classes.link}
@@ -341,7 +349,7 @@ export default function RootLayout({
                 <Group position="apart" px="md">
                   <Text fw={500}>Community</Text>
                   <Anchor href="#" fz="xs">
-                    View all
+                    {/* View all */}
                   </Anchor>
                 </Group>
 
@@ -353,12 +361,12 @@ export default function RootLayout({
                   }
                 />
 
-                <SimpleGrid cols={2} spacing={0}>
+                <SimpleGrid cols={2} spacing="lg">
                   {externLinks}
                 </SimpleGrid>
 
                 <Box className={classes.dropdownFooter}>
-                  <Group position="apart">
+                  {/* <Group position="apart">
                     <Box>
                       <Text fw={500} fz="sm">
                         Get started
@@ -369,14 +377,13 @@ export default function RootLayout({
                       </Text>
                     </Box>
                     <Button variant="default">Get started</Button>
-                  </Group>
+                  </Group> */}
                 </Box>
               </HoverCard.Dropdown>
             </HoverCard>
           </Group>
           <Group>
             <Box className={classes.hiddenIfSmallerThanXs}>
-              {" "}
               {/* Does not fit in mobile portrait mode display */}
               <LanguageSwitcher />
             </Box>
@@ -412,7 +419,6 @@ export default function RootLayout({
             my="sm"
             color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
           />
-
           <Link href="/" className={classes.link}>
             {t("common:app-headermenu-welcome")}
           </Link>
@@ -424,6 +430,9 @@ export default function RootLayout({
               {t("common:usermenu-mygrows")}
             </Link>
           )}
+          <Link href="/info/tech-stack" className={classes.link}>
+            Technologie
+          </Link>
           <Link
             href="/how-to-manual-anleitung-wie-geht-das"
             className={classes.link}
@@ -444,9 +453,7 @@ export default function RootLayout({
               />
             </Center>
           </UnstyledButton>
-
           <Collapse in={externLinksOpen}>{externLinks}</Collapse>
-
           <Divider
             my="sm"
             color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
@@ -461,11 +468,10 @@ export default function RootLayout({
       <Overlay className={classes.overlay} opacity={1} />
 
       {/* Content */}
-      <Box className="relative mt-16 mb-16">
-        {children}
-        <Analytics />
-        <SpeedInsights />
-      </Box>
+      <Box className="relative mt-16 pb-16">{children}</Box>
+
+      {/* CookieConsent */}
+      <CookieConsentBanner />
 
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (

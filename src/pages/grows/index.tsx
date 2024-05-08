@@ -21,8 +21,8 @@ import Head from "next/head";
 
 import LoadingError from "~/components/Atom/LoadingError";
 import SearchInput from "~/components/Atom/SearchInput";
-import SortingPanel from "~/components/Atom/SortingPanel";
 import ReportCard from "~/components/Report/Card";
+import SortingPanel from "~/components/SortingPanel";
 
 import type { SortingPanelProps } from "~/types";
 
@@ -71,19 +71,6 @@ const PublicAllGrows: NextPage = () => {
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
 
-  const useStyles = createStyles((theme) => ({
-    hiddenMobile: {
-      [theme.fn.smallerThan("md")]: {
-        display: "none",
-      },
-    },
-
-    hiddenDesktop: {
-      [theme.fn.largerThan("md")]: {
-        display: "none",
-      },
-    },
-  }));
   const { classes } = useStyles();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
@@ -103,25 +90,6 @@ const PublicAllGrows: NextPage = () => {
     setSortBy,
     desc,
     handleToggleDesc: () => setDesc((prev) => !prev),
-  };
-
-  /* // Fake Data for Fake Card */
-  const cardProps = {
-    country: "Sativa",
-    badges: [
-      {
-        emoji: "☀️",
-        label: "Outdoor",
-      },
-      {
-        emoji: "🌲",
-        label: "Sativa",
-      },
-      {
-        emoji: "🌊",
-        label: "pure water",
-      },
-    ],
   };
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -185,8 +153,6 @@ const PublicAllGrows: NextPage = () => {
                       xl={3}
                     >
                       <ReportCard
-                        procedure="all"
-                        {...cardProps}
                         report={isoReport}
                         setSearchString={setSearchString}
                       />

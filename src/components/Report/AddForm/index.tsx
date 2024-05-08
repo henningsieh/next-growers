@@ -18,18 +18,17 @@ import {
   IconCloudUpload,
   IconDownload,
   IconFileAlert,
+  IconFileArrowRight,
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
+import { httpStatusErrorMsg } from "~/messages";
 
-import { useEffect, useRef } from "react";
-import { useState } from "react";
-import toast from "react-hot-toast";
+import { useEffect, useRef, useState } from "react";
 
 import type { User } from "next-auth";
 import { useRouter } from "next/router";
 
-import AccessDenied from "~/components/Atom/AccessDenied";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import { api } from "~/utils/api";
@@ -38,6 +37,7 @@ import { InputCreateReportForm } from "~/utils/inputValidation";
 
 interface AddFormProps {
   user: User;
+  textContinueButton: string;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -71,8 +71,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-function Form({ user }: AddFormProps) {
+export function CreateReportForm({
+  user,
+  textContinueButton,
+}: AddFormProps) {
   const router = useRouter();
+
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
@@ -103,39 +107,32 @@ function Form({ user }: AddFormProps) {
   };
 
   const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
-    onMutate: (newReportDB) => {
-      console.log("START api.reports.create.useMutation");
-      console.log("newReportDB", newReportDB);
+    onMutate: () => {
+      console.debug("START api.reports.create.useMutation");
     },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, newReport, context) => {
-      toast.error("An error occured when saving your report");
-      if (!context) return;
-      console.log(context);
+    // If the mutation fails, use the context
+    // returned from onMutate to roll back
+    onError: (error) => {
+      notifications.show(
+        httpStatusErrorMsg(error.message, error.data?.httpStatus)
+      );
+      console.error({ error });
     },
     onSuccess: (newReportDB) => {
       // Navigate to the new report page
-      void router.push(`/account/grows/${newReportDB.id}`);
+      void router.push(
+        {
+          pathname: `/account/grows/edit/${newReportDB.id}/editGrow`,
+        },
+        undefined,
+        { scroll: true }
+      );
     },
     // Always refetch after error or success:
     onSettled: () => {
       console.log("END api.reports.create.useMutation");
     },
   });
-
-  const handleErrors = (errors: typeof createReportForm.errors) => {
-    console.log(errors);
-    if (errors.description) {
-      toast.error(errors.description as string);
-    }
-    if (errors.title) {
-      toast.error(errors.title as string);
-    }
-    if (errors.imageId) {
-      toast.error(errors.imageId as string);
-    }
-  };
 
   const createReportForm = useForm({
     validate: zodResolver(InputCreateReportForm),
@@ -147,7 +144,13 @@ function Form({ user }: AddFormProps) {
     },
   });
 
-  if (!user) return <AccessDenied />;
+  const handleErrors = (errors: typeof createReportForm.errors) => {
+    Object.keys(errors).forEach((key) => {
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
+      );
+    });
+  };
 
   return (
     <>
@@ -163,6 +166,7 @@ function Form({ user }: AddFormProps) {
           <>
             {/* // Image Preview */}
             <Box className="relative" px={0}>
+              asecvpiub wpczuvb
               <Box className="absolute right-2 top-2 z-50 flex justify-end">
                 <ActionIcon
                   title="delete this image"
@@ -322,12 +326,17 @@ function Form({ user }: AddFormProps) {
             />
             <Group position="right" mt="xl">
               <Button
-                type="submit"
-                w={140}
-                variant="outline"
+                fz="lg"
+                variant="filled"
+                color="growgreen"
+                className="cursor-pointer"
                 disabled={!createReportForm.isValid()}
+                leftIcon={
+                  <IconFileArrowRight stroke={2.2} size="1.4rem" />
+                }
+                type="submit"
               >
-                Continue
+                {textContinueButton}
               </Button>
             </Group>
           </Box>
@@ -336,5 +345,3 @@ function Form({ user }: AddFormProps) {
     </>
   );
 }
-
-export default Form;
