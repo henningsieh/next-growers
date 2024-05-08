@@ -93,7 +93,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           colorScheme,
           fontFamily: `'Lato', sans-serif`,
           headings: {
-            fontFamily: `'Open Sans', sans-serif`,
+            fontFamily: `'Grandstander', sans-serif`,
             sizes: {
               h1: { fontSize: "1.48rem" },
               h2: { fontSize: "1.36rem" },

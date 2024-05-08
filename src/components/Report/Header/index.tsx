@@ -21,8 +21,8 @@ const useStyles = createStyles((theme) => ({
     }`,
   },
   cite: {
-    fontFamily: `'Roboto Slab', sans-serif`,
-    fontSize: "1.2rem",
+    fontFamily: `'Lato', sans-serif`,
+    fontSize: "3.2rem",
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
     // width: "100%",
   },

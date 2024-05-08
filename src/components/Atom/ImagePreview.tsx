@@ -152,7 +152,6 @@ export function ImagePreview({
             userName={authorName}
             imageUrl={authorImageUrl}
             avatarRadius={42}
-            tailwindMarginTop={false}
           />
         </Box>
 

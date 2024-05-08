@@ -341,7 +341,6 @@ const PostComments = ({ growId, updateId }: CommentsProps) => {
                       }
                       userName={session?.user.name as string}
                       avatarRadius={42}
-                      tailwindMarginTop={false}
                     />
                     <Box>
                       <Text fz="sm">

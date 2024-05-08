@@ -279,7 +279,6 @@ export function UserComment({
               }
               userName={comment.author.name as string}
               avatarRadius={largeScreen ? 42 : 32}
-              tailwindMarginTop={false}
             />
             <Box>
               <Text fz={largeScreen ? "sm" : "xs"}>

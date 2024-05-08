@@ -1,4 +1,4 @@
-import { Tooltip } from "@mantine/core";
+import { Box, Tooltip } from "@mantine/core";
 
 import Image from "next/image";
 
@@ -6,14 +6,12 @@ type UserAvatarProps = {
   imageUrl: string;
   userName: string;
   avatarRadius: number;
-  tailwindMarginTop: boolean;
 };
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
   imageUrl,
   userName,
   avatarRadius,
-  tailwindMarginTop,
 }) => {
   return (
     <Tooltip
@@ -23,15 +21,15 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       color="growgreen.4"
       withArrow
     >
-      <Image
-        className={`mx-auto rounded-full ${
-          tailwindMarginTop ? "-mt-16" : ""
-        }`}
-        width={avatarRadius}
-        height={avatarRadius}
-        src={imageUrl}
-        alt={`${userName}'s Profile Image`}
-      />
+      <Box>
+        <Image
+          className={"mx-auto rounded-full w-auto h-auto"}
+          width={avatarRadius}
+          height={avatarRadius}
+          src={imageUrl}
+          alt={`${userName}'s Profile Image`}
+        />
+      </Box>
     </Tooltip>
   );
 };

@@ -10,6 +10,7 @@ import {
   Group,
   Header,
   HoverCard,
+  Image,
   Overlay,
   rem,
   ScrollArea,
@@ -28,7 +29,6 @@ import {
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -291,9 +291,10 @@ export default function RootLayout({
             </Box>
             <Link href="/grows">
               <Image
-                width={86}
-                height={44}
-                quality={95}
+                mb="xs"
+                width={75}
+                height={50}
+                // quality={100}
                 alt="GrowAGram Logo"
                 src="/grow-a-gram-high-resolution-logo.webp"
               />
