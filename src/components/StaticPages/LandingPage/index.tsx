@@ -138,9 +138,11 @@ export default function LandingPage({
                 GrowAGram
               </Title>{" "}
               <Divider m={0} color="growgreen.4" size="lg" />
-              <Text className={classes.subTitle}>
-                🪴&nbsp;Track&nbsp;Your&nbsp;Grow&nbsp;📜
-              </Text>
+              <Center>
+                <Text className={classes.subTitle}>
+                  🪴&nbsp;Track&nbsp;Your&nbsp;Grow&nbsp;📜
+                </Text>
+              </Center>
             </Stack>
           </Container>
         </Center>
