@@ -39,6 +39,13 @@ export default function LandingPage({
       fontSize: rem(112),
       fontWeight: 700,
       lineHeight: 0.8,
+      color: "transparent",
+      background: `linear-gradient(to right, ${theme.fn.lighten(theme.colors.orange[6], 0.08)}, ${theme.colors.red[9]}, ${theme.fn.lighten(theme.colors.orange[6], 0.08)})`,
+      WebkitBackgroundClip: "text",
+      transition: "background 300ms ease-in-out",
+      cursor: "default",
+      // height: "4rem", // You might need to adjust this height based on your design
+      // width: "18rem", // You might need to adjust this width based on your design
 
       [theme.fn.smallerThan("lg")]: {
         fontSize: rem(112),
@@ -114,15 +121,15 @@ export default function LandingPage({
                   p={0}
                   order={1}
                   className={classes.title}
-                  variant="gradient"
-                  gradient={{
-                    from: theme.fn.darken(
-                      theme.colors.growgreen[2],
-                      0.2
-                    ),
-                    to: theme.fn.darken(theme.colors.groworange[4], 0),
-                    deg: 90,
-                  }}
+                  // variant="gradient"
+                  // gradient={{
+                  //   from: theme.fn.darken(
+                  //     theme.colors.growgreen[2],
+                  //     0.2
+                  //   ),
+                  //   to: theme.fn.darken(theme.colors.groworange[4], 0),
+                  //   deg: 90,
+                  // }}
                 >
                   GrowAGram
                 </Title>

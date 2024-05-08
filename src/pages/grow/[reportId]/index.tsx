@@ -72,6 +72,8 @@ const PublicReport: NextPage = () => {
   const [updateId, setUpdateId] = useState<string>("");
   const [selectedDate, selectDate] = useState<Date | null>(null);
 
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
   const useStyles = createStyles((theme) => ({
     icon: {
       marginRight: rem(5),
@@ -111,8 +113,6 @@ const PublicReport: NextPage = () => {
     },
   }));
   const { theme, classes } = useStyles();
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
