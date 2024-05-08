@@ -58,11 +58,11 @@ export async function getStaticProps(
     postId: string;
   }>
 ) {
-  const reportId = context.params?.reportId as string;
-  const postId = context.params?.postId as string;
+  const growId = context.params?.reportId as string;
+  const updateId = context.params?.postId as string;
 
   // Prefetching the report from prisma
-  const reportFromDb = await prisma.report.findUnique({
+  const grow = await prisma.report.findUnique({
     include: {
       author: {
         select: { id: true, name: true, image: true },
@@ -130,44 +130,39 @@ export async function getStaticProps(
       },
     },
     where: {
-      id: reportId,
+      id: growId,
     },
   });
 
   // Report not found, handle the error accordingly (e.g., redirect to an error page)
-  if (!reportFromDb) {
+  if (!grow) {
     return {
       notFound: true,
     };
   }
   // Convert all Dates to IsoStrings
-  const newestPostDate = reportFromDb?.posts.reduce(
-    (prevDate, post) => {
-      const postDate = new Date(post.date);
-      return postDate > prevDate ? postDate : prevDate;
-    },
-    new Date(reportFromDb.createdAt)
-  );
+  const newestPostDate = grow?.posts.reduce((prevDate, post) => {
+    const postDate = new Date(post.date);
+    return postDate > prevDate ? postDate : prevDate;
+  }, new Date(grow.createdAt));
   const isoReportFromDb = {
-    ...reportFromDb,
-    createdAt: reportFromDb?.createdAt.toISOString(),
+    ...grow,
+    createdAt: grow?.createdAt.toISOString(),
     updatedAt: newestPostDate
       ? newestPostDate.toISOString()
-      : reportFromDb?.updatedAt.toISOString(),
+      : grow?.updatedAt.toISOString(),
 
-    likes: reportFromDb?.likes.map(
-      ({ id, createdAt, updatedAt, user }) => ({
-        id,
-        userId: user.id,
-        name: user.name,
-        createdAt: createdAt.toISOString(),
-        updatedAt: updatedAt.toISOString(),
-      })
-    ),
+    likes: grow?.likes.map(({ id, createdAt, updatedAt, user }) => ({
+      id,
+      userId: user.id,
+      name: user.name,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
+    })),
 
-    posts: (reportFromDb?.posts || []).map((post) => {
+    posts: (grow?.posts || []).map((post) => {
       const postDate = new Date(post.date);
-      const reportCreatedAt = reportFromDb?.createdAt;
+      const reportCreatedAt = grow?.createdAt;
 
       // Convert both dates to local time
       const localPostDate = new Date(postDate);
@@ -196,6 +191,15 @@ export async function getStaticProps(
         })
       );
 
+      const isoImages = post.images.map(
+        ({ id, cloudUrl, publicId, postOrder }) => ({
+          id,
+          publicId,
+          cloudUrl,
+          postOrder: postOrder == null ? 0 : postOrder,
+        })
+      );
+
       const isoComments = post.comments.map((comment) => ({
         ...comment,
         createdAt: comment.createdAt.toISOString(),
@@ -208,11 +212,12 @@ export async function getStaticProps(
         updatedAt: post.createdAt.toISOString(),
         date: postDate?.toISOString(),
         likes: isoLikes,
+        images: isoImages,
         comments: isoComments,
         growDay,
       };
     }),
-    strains: reportFromDb?.strains || [],
+    strains: grow?.strains || [],
   };
 
   // Fetch translations using next-i18next
@@ -223,13 +228,13 @@ export async function getStaticProps(
 
   console.debug(
     `🏭 (getStaticProps)`,
-    `prefetching Update ${postId} from db`
+    `prefetching Update ${updateId} from db`
   );
 
   return {
     props: {
       report: isoReportFromDb,
-      postId: postId,
+      postId: updateId,
       ...translations,
     },
     revalidate: 1,
@@ -532,7 +537,7 @@ function PublicReportPost(
             responsiveColumnCount={getResponsiveColumnCount}
           />
           <Box ref={targetRef}>
-            <PostCard postId={thisPost.id} reportFromProps={grow} />
+            <PostCard updateId={thisPost.id} grow={grow} />
           </Box>
         </Container>
       </Container>

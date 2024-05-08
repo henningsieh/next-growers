@@ -179,6 +179,15 @@ export const reportRouter = createTRPCRouter({
                       })
                     );
 
+                    const isoImages = post.images.map(
+                      ({ id, cloudUrl, publicId, postOrder }) => ({
+                        id,
+                        publicId,
+                        cloudUrl,
+                        postOrder: postOrder == null ? 0 : postOrder,
+                      })
+                    );
+
                     const isoComments = post.comments.map(
                       (comment) => ({
                         ...comment,
@@ -197,6 +206,7 @@ export const reportRouter = createTRPCRouter({
                       updatedAt: post.createdAt.toISOString(),
                       date: postDate,
                       likes: isoLikes,
+                      images: isoImages,
                       comments: isoComments,
                       growDay,
                     };
@@ -399,6 +409,15 @@ export const reportRouter = createTRPCRouter({
                       })
                     );
 
+                    const isoImages = post.images.map(
+                      ({ id, cloudUrl, publicId, postOrder }) => ({
+                        id,
+                        publicId,
+                        cloudUrl,
+                        postOrder: postOrder == null ? 0 : postOrder,
+                      })
+                    );
+
                     const isoComments = post.comments.map(
                       (comment) => ({
                         ...comment,
@@ -417,6 +436,7 @@ export const reportRouter = createTRPCRouter({
                       updatedAt: post.createdAt.toISOString(),
                       date: postDate,
                       likes: isoLikes,
+                      images: isoImages,
                       comments: isoComments,
                       growDay,
                     };
@@ -603,6 +623,15 @@ export const reportRouter = createTRPCRouter({
             })
           );
 
+          const isoImages = post.images.map(
+            ({ id, cloudUrl, publicId, postOrder }) => ({
+              id,
+              publicId,
+              cloudUrl,
+              postOrder: postOrder == null ? 0 : postOrder,
+            })
+          );
+
           const isoComments = post.comments.map((comment) => ({
             ...comment,
             createdAt: comment.createdAt.toISOString(),
@@ -615,6 +644,7 @@ export const reportRouter = createTRPCRouter({
             updatedAt: post.createdAt.toISOString(),
             date: postDate.toISOString(),
             likes: isoLikes,
+            images: isoImages,
             comments: isoComments,
             growDay,
           };
