@@ -33,10 +33,8 @@ import Underline from "@tiptap/extension-underline";
 import type { Editor } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { env } from "~/env.mjs";
 import {
   defaultErrorMsg,
-  fileUploadErrorMsg,
   httpStatusErrorMsg,
   onlyOnePostPerDayAllowed,
   savePostSuccessfulMsg,
@@ -507,25 +505,9 @@ const PostForm = (props: AddPostProps) => {
                 report={report}
                 images={images || []}
                 setImages={setImages}
-                //cloudUrls={post?.images.map((image) => image.cloudUrl)}
                 setImageIds={setImageIds}
                 maxSize={getFileMaxSizeInBytes()}
                 maxFiles={getFileMaxUpload()}
-                onReject={(files) => {
-                  files.forEach((file) => {
-                    const fileSizeInMB = (
-                      file.file.size /
-                      1024 ** 2
-                    ).toFixed(2);
-                    notifications.show(
-                      fileUploadErrorMsg(
-                        file.file.name,
-                        fileSizeInMB,
-                        env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                      )
-                    );
-                  });
-                }}
               />
 
               <Group position="apart" mt="xl">

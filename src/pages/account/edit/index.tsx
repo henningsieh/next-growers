@@ -12,7 +12,7 @@ import {
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
-import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
@@ -23,8 +23,10 @@ import {
   IconReload,
 } from "@tabler/icons-react";
 import type { ParsedUrlQuery } from "querystring";
+import { env } from "~/env.mjs";
 import {
   filesMaxOneErrorMsg,
+  fileUploadErrorMsg,
   httpStatusErrorMsg,
   setUserimageSuccessfulMsg,
   setUserNameSuccessfulMsg,
@@ -51,6 +53,7 @@ import AccessDenied from "~/components/Atom/AccessDenied";
 import { authOptions } from "~/server/auth";
 
 import { api } from "~/utils/api";
+import { getFileMaxSizeInBytes } from "~/utils/fileUtils";
 import { getFakeAIUsername, handleDrop } from "~/utils/helperUtils";
 import { InputEditProfile } from "~/utils/inputValidation";
 
@@ -134,8 +137,8 @@ const ProtectedEditReport: NextPage = () => {
   const [, setCloudUrl] = useState("");
 
   const setRandomUsername = function (): string {
-    form.setValues({ name: getFakeAIUsername() });
-    return form.values.name;
+    editProfileForm.setValues({ name: getFakeAIUsername() });
+    return editProfileForm.values.name;
   };
 
   const handleDropWrapper = async (files: File[]): Promise<void> => {
@@ -155,15 +158,13 @@ const ProtectedEditReport: NextPage = () => {
         id: session?.user.id as string,
         imageURL: updatedCloudUrl,
       });
-
-      console.debug("User image updated successfully");
     } catch (error) {
       console.debug("Error handling file drop:", error);
       //TODO: Handle errors here
     }
   };
 
-  const form = useForm({
+  const editProfileForm = useForm({
     validate: zodResolver(InputEditProfile),
     initialValues: {
       name: !!session?.user.name ? session.user.name : "",
@@ -226,46 +227,57 @@ const ProtectedEditReport: NextPage = () => {
                 duration: 400,
               }}
             >
-              <Box>
-                <Box
-                  pb="xl"
-                  className="p-4 border-0 rounded-full"
-                  component={Dropzone}
-                  maxFiles={1}
-                  multiple={false}
-                  accept={[
-                    MIME_TYPES.jpeg,
-                    MIME_TYPES.png,
-                    MIME_TYPES.gif,
-                  ]}
-                  onReject={(files) => {
+              <Box
+                pb="xl"
+                className="p-4 border-0 rounded-full"
+                component={Dropzone}
+                maxFiles={1}
+                maxSize={getFileMaxSizeInBytes()}
+                multiple={false}
+                accept={IMAGE_MIME_TYPE}
+                onReject={(files) => {
+                  if (files) {
                     if (files.length > 1) {
                       notifications.show(
                         filesMaxOneErrorMsg(files.length)
                       );
+                    } else if (files.length === 1) {
+                      const file = files[0].file;
+                      const fileSizeInMB = (
+                        file.size /
+                        1024 ** 2
+                      ).toFixed(2);
+                      notifications.show(
+                        fileUploadErrorMsg(
+                          file.name,
+                          fileSizeInMB,
+                          env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
+                        )
+                      );
                     }
-                  }}
-                  onDrop={(files) => {
-                    console.log("accepted files", files);
-                    setIsUploading(true);
-                    void handleDropWrapper(files);
-                  }}
-                  sx={(theme) => ({
-                    backgroundColor:
-                      theme.colorScheme === "dark"
-                        ? theme.colors.dark[6]
-                        : theme.colors.gray[2],
+                  }
+                }}
+                onDrop={(files) => {
+                  console.log("accepted files", files);
+                  setIsUploading(true);
+                  void handleDropWrapper(files);
+                }}
+                sx={(theme) => ({
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[6]
+                      : theme.colors.gray[2],
 
-                    "&[data-accept]": {
-                      backgroundColor: theme.colors.growgreen[5],
-                    },
+                  "&[data-accept]": {
+                    backgroundColor: theme.colors.growgreen[5],
+                  },
 
-                    "&[data-reject]": {
-                      backgroundColor: theme.colors.red[9],
-                    },
-                  })}
-                >
-                  {/* <Group
+                  "&[data-reject]": {
+                    backgroundColor: theme.colors.red[9],
+                  },
+                })}
+              >
+                {/* <Group
                 position="center"
                 spacing="xl"
                 style={{ minHeight: rem(220), pointerEvents: "none" }}
@@ -306,20 +318,19 @@ const ProtectedEditReport: NextPage = () => {
                   </Text>
                 </div>
               </Group> */}
-                  <Image
-                    className="... rounded-full"
-                    height={142}
-                    width={142}
-                    src={
-                      session.user.image
-                        ? session.user.image
-                        : `https://ui-avatars.com/api/?name=${
-                            session.user.name as string
-                          }`
-                    }
-                    alt={`${session.user.name as string}'s Profile Image`}
-                  />
-                </Box>
+                <Image
+                  className="... rounded-full"
+                  height={142}
+                  width={142}
+                  src={
+                    session.user.image
+                      ? session.user.image
+                      : `https://ui-avatars.com/api/?name=${
+                          session.user.name as string
+                        }`
+                  }
+                  alt={`${session.user.name as string}'s Profile Image`}
+                />
               </Box>
             </Tooltip>
 
@@ -353,7 +364,7 @@ const ProtectedEditReport: NextPage = () => {
             <p className="-mr-2 ml-1 text-3xl">👇</p>
           </Box>
           <form
-            onSubmit={form.onSubmit((values) =>
+            onSubmit={editProfileForm.onSubmit((values) =>
               tRPCsetUsername({
                 id: session.user.id,
                 name: values.name,
@@ -365,7 +376,7 @@ const ProtectedEditReport: NextPage = () => {
                 icon={<IconAt />}
                 withAsterisk
                 label="Username"
-                {...form.getInputProps("name")}
+                {...editProfileForm.getInputProps("name")}
                 mt="-xs"
                 rightSection={
                   <Tooltip
@@ -394,7 +405,7 @@ const ProtectedEditReport: NextPage = () => {
                 icon={<IconMail />}
                 withAsterisk
                 label="Email address"
-                {...form.getInputProps("email")}
+                {...editProfileForm.getInputProps("email")}
               />
               <Space h={"md"} />
               <Group position="right">

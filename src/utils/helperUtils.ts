@@ -261,7 +261,6 @@ export const handleDrop = async (
       );
 
       if (data.success) {
-        console.debug("File uploaded successfully", data);
         // setting the image information to the component state
         setImageId(data.imageId);
         setImagePublicId(data.imagePublicId);
