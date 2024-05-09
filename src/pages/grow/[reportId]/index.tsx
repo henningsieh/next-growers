@@ -364,7 +364,7 @@ const PublicReport: NextPage = () => {
                   </Text>
                 </Alert>
               ) : (
-                <PostCard postId={postId} reportFromProps={grow} />
+                <PostCard updateId={postId} reportFromProps={grow} />
               )}
             </>
           )}

@@ -98,12 +98,12 @@ const useStyles = createStyles((theme) => ({
 
 interface PostCardProps {
   reportFromProps: IsoReportWithPostsFromDb;
-  postId: string;
+  updateId: string;
 }
 
 export function PostCard(props: PostCardProps) {
   const { data: session, status } = useSession();
-  const { reportFromProps: report, postId } = props;
+  const { reportFromProps: grow, updateId: updateId } = props;
 
   const theme = useMantineTheme();
   const { classes } = useStyles();
@@ -115,7 +115,7 @@ export function PostCard(props: PostCardProps) {
   const [postHTMLContent, setPostHTMLContent] = useState("");
 
   useEffect(() => {
-    const post = report.posts.find((post) => post.id === postId);
+    const post = grow.posts.find((post) => post.id === updateId);
     if (post) {
       parseAndReplaceAmazonLinks(post.content)
         .then((parsedContent) => {
@@ -128,11 +128,13 @@ export function PostCard(props: PostCardProps) {
           );
         });
     }
-  }, [report, postId]);
+  }, [grow, updateId]);
 
-  if (!postId) {
+  if (!updateId) {
   } else {
-    const post = report.posts.find((post) => post.id === postId);
+    const post: Post | undefined = grow.posts.find(
+      (post) => post.id === updateId
+    );
 
     const postImages = post?.images;
 
@@ -188,10 +190,10 @@ export function PostCard(props: PostCardProps) {
         <Paper p="sm" withBorder pos="relative">
           <Box pos="absolute" m="xs" className="bottom-0 right-0">
             {status === "authenticated" &&
-              session.user.id == report.authorId && (
+              session.user.id == grow.authorId && (
                 <EditPostButton
-                  growId={report.id}
-                  postId={postId}
+                  growId={grow.id}
+                  postId={updateId}
                   buttonLabel={t("common:post-edit-button")}
                 />
               )}
@@ -209,6 +211,7 @@ export function PostCard(props: PostCardProps) {
 
             <Box my={"sm"}>
               <ImagesSlider
+                grow={grow}
                 cloudUrls={
                   postImages?.map((image) => image.cloudUrl) ?? []
                 }
@@ -228,7 +231,7 @@ export function PostCard(props: PostCardProps) {
           </TypographyStylesProvider>
         </Paper>
 
-        <PostComments reportId={report.id} postId={postId} />
+        <PostComments reportId={grow.id} postId={updateId} />
       </>
     );
   }

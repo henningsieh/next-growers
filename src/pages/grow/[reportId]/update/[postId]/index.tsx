@@ -186,6 +186,15 @@ export async function getStaticProps(
         differenceInMs / (1000 * 60 * 60 * 24)
       );
 
+      const isoImages = post.images.map(
+        ({ id, cloudUrl, publicId, postOrder }) => ({
+          id,
+          publicId,
+          cloudUrl,
+          postOrder: postOrder == null ? 0 : postOrder,
+        })
+      );
+
       const isoLikes = post.likes.map(
         ({ id, createdAt, updatedAt, user }) => ({
           id,
@@ -208,6 +217,7 @@ export async function getStaticProps(
         updatedAt: post.createdAt.toISOString(),
         date: postDate?.toISOString(),
         likes: isoLikes,
+        images: isoImages,
         comments: isoComments,
         growDay,
       };
@@ -532,7 +542,7 @@ function PublicReportPost(
             responsiveColumnCount={getResponsiveColumnCount}
           />
           <Box ref={targetRef}>
-            <PostCard postId={thisPost.id} reportFromProps={grow} />
+            <PostCard updateId={thisPost.id} reportFromProps={grow} />
           </Box>
         </Container>
       </Container>

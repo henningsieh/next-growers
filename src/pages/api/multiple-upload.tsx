@@ -1,4 +1,5 @@
 import type { Image } from "@prisma/client";
+import type { UploadApiResponse } from "cloudinary";
 import formidable from "formidable";
 import path from "path";
 
@@ -95,13 +96,16 @@ const handleFileUpload = async (
     file.originalFilename?.split(".")[0] as string
   }`;
 
-  const result = await cloudinary.uploader.upload(file.filepath, {
-    public_id: publicIdWithTimestamp,
-    quality: "auto",
-    fetch_format: "auto",
-    flags: "lossy",
-    invalidate: true,
-  });
+  const result: UploadApiResponse = await cloudinary.uploader.upload(
+    file.filepath,
+    {
+      public_id: publicIdWithTimestamp,
+      quality: "auto",
+      fetch_format: "auto",
+      flags: "lossy",
+      invalidate: true,
+    }
+  );
 
   const image = await prisma.image.create({
     data: {
