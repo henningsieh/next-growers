@@ -371,6 +371,18 @@ const PostForm = (props: AddPostProps) => {
                         min={0}
                         max={2000}
                         {...createPostForm.getInputProps("watt")}
+                        onChange={(value) => {
+                          // If value is an empty string, set it to undefined
+                          if (value === "") {
+                            createPostForm.setFieldValue(
+                              "watt",
+                              undefined
+                            );
+                          } else {
+                            // Otherwise, let useForm handle the value
+                            createPostForm.setFieldValue("watt", value);
+                          }
+                        }}
                         icon={<IconBolt stroke={1.6} size="1.6rem" />}
                       />
                     </Flex>
