@@ -1,4 +1,3 @@
-import DragAndSortGrid from "../DragAndSortGrid/DragAndSortGrid";
 import {
   Box,
   Container,
@@ -20,6 +19,8 @@ import { fileUploadErrorMsg } from "~/messages";
 
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
+
+import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 
