@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import UserAvatar from "./UserAvatar";
 import {
   Blockquote,
   Box,
@@ -10,7 +8,10 @@ import {
   Text,
 } from "@mantine/core";
 
+import Image from "next/image";
 import Link from "next/link";
+
+import UserAvatar from "~/components/Atom/UserAvatar";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -38,10 +39,11 @@ const useStyles = createStyles((theme) => ({
   },
 
   image: {
-    width: "100%",
-    ...theme.fn.cover(),
+    // width: "100%",
+    // ...theme.fn.cover(),
     ref: getStylesRef("image"),
-    backgroundSize: "cover",
+    objectFit: "cover",
+    // backgroundSize: "cover",
     transition: "transform 500ms ease",
   },
 
@@ -135,15 +137,16 @@ export function ImagePreview({
         withBorder
         className={classes.card}
       >
-        <Box
+        <Image
+          fill
+          priority
+          quality={80}
+          src={imageUrl}
+          fetchPriority="high"
+          alt={`Header Image from Grow \"${title}\"`}
           className={classes.image}
-          style={{
-            backgroundImage: `url(${imageUrl})`,
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-          }}
         />
+
         <Box className={classes.overlay} />
 
         {/* Avatar */}
