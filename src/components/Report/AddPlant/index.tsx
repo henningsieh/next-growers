@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Card,
   Center,
   Container,
@@ -9,6 +8,7 @@ import {
   Paper,
   ScrollArea,
   Select,
+  SimpleGrid,
   Text,
   Title,
   Transition,
@@ -16,14 +16,12 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconExternalLink } from "@tabler/icons-react";
 import { decode } from "html-entities";
 import { env } from "~/env.mjs";
 
 import { useEffect, useState } from "react";
 
 import Image from "next/image";
-import Link from "next/link";
 
 import type { BreederFromSeedfinder } from "~/types";
 
@@ -213,264 +211,188 @@ function SelectedStrain({
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
   const mediumScreen = useMediaQuery(
-    `(max-width: ${theme.breakpoints.md})`
+    `(max-width: ${theme.breakpoints.sm})`
   );
 
   return (
-    <Transition
-      mounted={
-        !strainInfosFromSeedfinderAreLoading &&
-        !strainInfosFromSeedfinderHaveErrors &&
-        !!strainInfosFromSeedfinder
-      }
-      transition="fade"
-      duration={500} // Duration of the fade animation in milliseconds
-      timingFunction="ease"
-    >
-      {(styles) => (
-        <Box
-          style={{
-            ...styles,
-            opacity: styles.opacity, // Apply the opacity style for the fading effect
-          }}
+    <>
+      <Paper withBorder p="sm" shadow="sm" radius="md">
+        <Center>
+          {strainInfosFromSeedfinderAreLoading &&
+            !strainInfosFromSeedfinderHaveErrors &&
+            !!!strainInfosFromSeedfinder && (
+              <Loader
+                m="xs"
+                size="md"
+                variant="bars"
+                color="growgreen.4"
+              />
+            )}
+        </Center>
+
+        <Transition
+          mounted={
+            !strainInfosFromSeedfinderAreLoading &&
+            !strainInfosFromSeedfinderHaveErrors &&
+            strainInfosFromSeedfinder != undefined
+          }
+          transition="fade"
+          duration={500} // Duration of the fade animation in milliseconds
+          timingFunction="ease"
         >
-          {strainInfosFromSeedfinder &&
-            strainInfosFromSeedfinder.brinfo && (
-              <Paper withBorder p="lg" shadow="sm" radius="md">
-                <Flex
-                  gap="md"
-                  justify="space-between"
-                  align="flex-start"
-                  direction="row"
-                  wrap="wrap"
-                >
-                  <Card
-                    w="100%"
-                    withBorder
-                    p="xs"
-                    // mih={260}
-                    // className="flex flex-col space-y-4"
-                  >
-                    <Flex
-                      align="flex-start"
-                      justify="space-between"
-                      gap="xs"
-                      direction={mediumScreen ? "column" : "row"}
-                    >
-                      <Box>
-                        <Title order={2} c="groworange.4">
-                          {strainInfosFromSeedfinder.name}
-                        </Title>
-                        <Box mt="xs">
-                          <Flex direction="column" gap="md">
-                            <Box>
-                              <Title order={4}>Type:</Title>
-                              <Text
-                                pl="xs"
-                                fz="sm"
-                                w={360}
-                                bg={
-                                  dark
-                                    ? theme.colors.dark[7]
-                                    : theme.colors.gray[1]
-                                }
-                              >
-                                {strainInfosFromSeedfinder.brinfo.type}
-                              </Text>
-                            </Box>
+          {(styles) => (
+            <SimpleGrid
+              style={{
+                ...styles,
+                opacity: styles.opacity, // Apply the opacity style for the fading effect
+              }}
+              breakpoints={[
+                { maxWidth: "sm", cols: 1 },
+                { minWidth: "sm", cols: 2 },
+              ]}
+            >
+              <Card w="100%" withBorder>
+                <Title order={2} c="groworange.4">
+                  {strainInfosFromSeedfinder?.name}
+                </Title>
+                <Box mt="xs">
+                  <Flex direction="column" gap="md">
+                    <Box>
+                      <Title order={4}>Type:</Title>
+                      <Text
+                        pl="xs"
+                        fz="sm"
+                        bg={
+                          dark
+                            ? theme.colors.dark[7]
+                            : theme.colors.gray[1]
+                        }
+                      >
+                        {strainInfosFromSeedfinder?.brinfo.type}
+                      </Text>
+                    </Box>
 
-                            <Box>
-                              <Title order={4}>CBD:</Title>
-                              <Text
-                                px="xs"
-                                fz="sm"
-                                w={360}
-                                bg={
-                                  dark
-                                    ? theme.colors.dark[7]
-                                    : theme.colors.gray[1]
-                                }
-                              >
-                                {strainInfosFromSeedfinder.brinfo.cbd}
-                              </Text>
-                            </Box>
+                    <Box>
+                      <Title order={4}>CBD:</Title>
+                      <Text
+                        px="xs"
+                        fz="sm"
+                        bg={
+                          dark
+                            ? theme.colors.dark[7]
+                            : theme.colors.gray[1]
+                        }
+                      >
+                        {strainInfosFromSeedfinder?.brinfo.cbd}
+                      </Text>
+                    </Box>
 
-                            <Box>
-                              <Title order={4}>Description:</Title>
-                              <ScrollArea
-                                ml={2}
-                                mr={2}
-                                miw={370}
-                                mah={160}
-                                type="always"
-                                offsetScrollbars
-                                styles={(theme) => ({
-                                  corner: {
-                                    opacity: 1,
-                                    background:
-                                      theme.colorScheme === "dark"
-                                        ? theme.colors.dark[6]
-                                        : theme.white,
-                                  },
+                    <Box>
+                      <Title order={4}>Description:</Title>
+                      <Paper
+                        w="100%"
+                        bg={
+                          theme.colorScheme === "dark"
+                            ? theme.colors.dark[6]
+                            : theme.white
+                        }
+                      >
+                        <ScrollArea
+                          w="100%"
+                          h={160}
+                          type="always"
+                          offsetScrollbars
+                          styles={(theme) => ({
+                            corner: {
+                              opacity: 1,
+                              background:
+                                theme.colorScheme === "dark"
+                                  ? theme.colors.dark[6]
+                                  : theme.white,
+                            },
 
-                                  scrollbar: {
-                                    "&, &:hover": {
-                                      background:
-                                        theme.colorScheme === "dark"
-                                          ? theme.colors.dark[6]
-                                          : theme.white,
-                                    },
+                            scrollbar: {
+                              "&, &:hover": {
+                                background:
+                                  theme.colorScheme === "dark"
+                                    ? theme.colors.dark[6]
+                                    : theme.white,
+                              },
 
-                                    '&[data-orientation="vertical"] .mantine-ScrollArea-thumb':
-                                      {
-                                        backgroundColor:
-                                          theme.colors.groworange[5],
-                                      },
+                              '&[data-orientation="vertical"] .mantine-ScrollArea-thumb':
+                                {
+                                  backgroundColor:
+                                    theme.colors.groworange[5],
+                                },
 
-                                    // '&[data-orientation="horizontal"] .mantine-ScrollArea-thumb':
-                                    //   {
-                                    //     backgroundColor:
-                                    //       theme.colors.blue[6],
-                                    //   },
-                                  },
-                                })}
-                              >
-                                <Box
-                                  fz="sm"
-                                  px="xs"
-                                  bg={
-                                    dark
-                                      ? theme.colors.dark[7]
-                                      : theme.colors.gray[1]
-                                  }
-                                  dangerouslySetInnerHTML={{
-                                    __html: decode(
-                                      strainInfosFromSeedfinder.brinfo
-                                        .descr
-                                    ) as TrustedHTML,
-                                  }}
-                                ></Box>
-                              </ScrollArea>
-                            </Box>
-                          </Flex>
-                        </Box>
-                      </Box>
-                      <Paper p="xs" withBorder>
-                        {picUrl && (
-                          // Render the image only if picUrl is defined
-                          <Flex
-                            gap="xs"
-                            direction={mediumScreen ? "row" : "column"}
-                            align="flex-end"
-                            // justify="flex-end"
-                            wrap="wrap"
-                          >
-                            <Box>
-                              <Title
-                                className=" z-10"
-                                fz="sm"
-                                order={5}
-                                c="groworange.4"
-                              >
-                                {breederName}
-                              </Title>
-                              <Center pos="relative" w={220} h={220}>
-                                <Image
-                                  fill
-                                  src={breederLogoUrl}
-                                  alt={breederName}
-                                />
-                              </Center>
-                            </Box>
-                            <Box mt="xs" pos="relative" w={220} h={220}>
-                              <Image
-                                fill
-                                src={picUrl}
-                                alt={breederName}
-                              />
-                            </Box>
-                          </Flex>
-                        )}
+                              '&[data-orientation="horizontal"] .mantine-ScrollArea-thumb':
+                                {
+                                  backgroundColor: theme.colors.blue[6],
+                                },
+                            },
+                          })}
+                        >
+                          <Box
+                            fz="sm"
+                            px="xs"
+                            bg={
+                              dark
+                                ? theme.colors.dark[7]
+                                : theme.colors.gray[1]
+                            }
+                            dangerouslySetInnerHTML={{
+                              __html: decode(
+                                strainInfosFromSeedfinder?.brinfo.descr
+                              ) as TrustedHTML,
+                            }}
+                          ></Box>
+                        </ScrollArea>
                       </Paper>
-                      {/* <Card mih={200} p={4} withBorder>
-                          {picUrl && (
-                            // Render the image only if picUrl is defined
-                            <>
-                              <Title order={5}>
-                                Breeder: {breederName}
-                              </Title>
-                              <Image
-                                width={140}
-                                // p="xs"
-                                src={breederLogoUrl}
-                                alt={breederName}
-                              />
-                            </>
-                          )}
-                        </Card> */}
-                    </Flex>
+                    </Box>
+                  </Flex>
+                </Box>
+              </Card>
+              <Card withBorder>
+                <Title
+                  className=" z-10"
+                  fz="sm"
+                  order={5}
+                  c="groworange.4"
+                >
+                  {breederName}
+                </Title>
+                <Flex
+                  wrap="wrap"
+                  align={mediumScreen ? "center" : "start"} //center if small
+                  justify="space-between"
+                  gap="xs"
+                  direction={mediumScreen ? "column" : "row"} // column if small
+                >
+                  <Center pos="relative" w={200} h={240}>
+                    <Image
+                      fill
+                      src={breederLogoUrl}
+                      style={{ objectFit: "contain" }}
+                      alt={breederName}
+                    />
+                  </Center>
 
-                    {/* Render other strain information as needed */}
-                    <Flex align="flex-start" justify="flex-start">
-                      <Link
-                        href={
-                          strainInfosFromSeedfinder.links &&
-                          strainInfosFromSeedfinder.links.info
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button
-                          rightIcon={<IconExternalLink size="1rem" />}
-                          className="cursor-pointer"
-                          w={110}
-                          my="xs"
-                          compact
-                        >
-                          More Info
-                        </Button>
-                      </Link>
-                      <Link
-                        href={
-                          strainInfosFromSeedfinder.links &&
-                          strainInfosFromSeedfinder.links.review
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button
-                          rightIcon={<IconExternalLink size="1rem" />}
-                          className="cursor-pointer"
-                          w={110}
-                          my="xs"
-                          ml="xs"
-                          compact
-                        >
-                          Reviews
-                        </Button>
-                      </Link>
-                    </Flex>
-                    {/* Add other links as needed */}
-                  </Card>
-                  {/* <Paper withBorder p="xs" w={200} mih={480}>
-                    <Flex direction="column" gap="md">
-                      <Title order={3}>Breeder: {breederName}</Title>
+                  <Center pos="relative" w={200} h={240}>
+                    {picUrl && (
                       <Image
-                        p="xs"
-                        src={breederLogoUrl}
+                        fill
+                        src={picUrl}
+                        style={{ objectFit: "contain" }}
                         alt={breederName}
                       />
-                    </Flex>
-                    <p>
-                      <strong>Description:</strong>{" "}
-                      {strainInfosFromSeedfinder.brinfo.description}
-                    </p>
-                  </Paper> */}
+                    )}
+                  </Center>
                 </Flex>
-              </Paper>
-            )}
-        </Box>
-      )}
-    </Transition>
+              </Card>
+            </SimpleGrid>
+          )}
+        </Transition>
+      </Paper>
+    </>
   );
 }
