@@ -38,7 +38,7 @@ import { useRouter } from "next/router";
 import AccessDenied from "~/components/Atom/AccessDenied";
 import PostForm from "~/components/Post/PostForm";
 import PostsAccordion from "~/components/Post/PostsAccordion";
-import AddStrains from "~/components/Report/AddPlants";
+import AddPlant from "~/components/Report/AddPlant";
 import { EditReportForm } from "~/components/Report/EditForm";
 
 import { authOptions } from "~/server/auth";
@@ -213,14 +213,15 @@ const ProtectedEditReportDetails: NextPage = () => {
 
               <Tabs.Tab
                 h={smallScreen ? 28 : 40}
-                px={smallScreen ? 4 : "md"}
-                value="addPlants"
+                p={smallScreen ? 2 : "md"}
+                value="addPlant"
                 icon={
-                  <IconPlant size={smallScreen ? "0.8rem" : "1.4rem"} />
+                  <IconPlant size={smallScreen ? "1rem" : "1.4rem"} />
                 }
               >
                 <Title order={1} fz={smallScreen ? rem(13) : "md"}>
-                  {t("common:report-add-strains-headline")}
+                  Pflanzen hinzufügen
+                  {/* {t("common:addpost-headline")} */}
                 </Title>
               </Tabs.Tab>
 
@@ -278,8 +279,9 @@ const ProtectedEditReportDetails: NextPage = () => {
                       />
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="addPlants">
-                      <AddStrains />
+                    <Tabs.Panel value="addPlant">
+                      {/* AddPlant Component */}
+                      <AddPlant />
                     </Tabs.Panel>
 
                     <Tabs.Panel value="addUpdate">

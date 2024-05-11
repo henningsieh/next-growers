@@ -1,115 +1,100 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 
 import {
   createTRPCRouter,
   protectedProcedure,
 } from "~/server/api/trpc";
 
-import type { GetBreedersFromSeedfinderResponse } from "~/types";
+import type {
+  BreedersResponse,
+  StrainInfoFromSeedfinder,
+} from "~/types";
 
 import {
-  InputGetAllBreders,
-  InputGetStrainInfo,
+  InputGetAllBreederFromSeedfinder,
+  InputGetStrainInfoFromSeedfinder,
 } from "~/utils/inputValidation";
 
-type GetBreederStrainsResponse = {
-  [breederName: string]: GetBreedersFromSeedfinderResponse;
-};
+// type StrainInfoFromSeedfinder = {
+//   error: boolean;
+//   name: string;
+//   id: string;
+//   brinfo: {
+//     name: string;
+//     id: string;
+//     type: string;
+//     cbd: string;
+//     description: string;
+//     link: string;
+//     pic: string;
+//     flowering: {
+//       auto: boolean;
+//       days: number;
+//       info: string;
+//     };
+//     descr: string;
+//   };
+//   comments: boolean;
+//   links: {
+//     info: string;
+//     review: string;
+//     upload: {
+//       picture: string;
+//       review: string;
+//       medical: string;
+//     };
+//   };
+//   licence: {
+//     url_cc: string;
+//     url_sf: string;
+//     info: string;
+//   };
+// };
 
-type GetStrainInfoResponse = {
-  error: boolean;
-  name: string;
-  id: string;
-  brinfo: {
-    name: string;
-    id: string;
-    type: string;
-    cbd: string;
-    description: string;
-    link: string;
-    pic: string;
-    flowering: {
-      auto: boolean;
-      days: number;
-      info: string;
-    };
-    descr: string;
-  };
-  comments: boolean;
-  links: {
-    info: string;
-    review: string;
-    upload: {
-      picture: string;
-      review: string;
-      medical: string;
-    };
-  };
-  licence: {
-    url_cc: string;
-    url_sf: string;
-    info: string;
-  };
-};
 export const strainRouter = createTRPCRouter({
-  getBreedersFromSeedfinder: protectedProcedure
-    .input(InputGetAllBreders)
+  getStrainInfoFromSeedfinder: protectedProcedure
+    .input(InputGetStrainInfoFromSeedfinder)
     .query(async ({ input }) => {
-      const { withStrains } = input;
-      const url = `https://en.seedfinder.eu/api/json/ids.json?br=all&strains=${withStrains ? "1" : "0"}&ac=d8fe19486b31da9dbb7a01ee67798991`;
-
       try {
-        const breedersFromSeedfinder = await fetch(url);
-        if (!breedersFromSeedfinder.ok) {
-          throw new Error("Failed to fetch data from the API");
+        // Make an API call to fetch breeders from Seedfinder
+        const response: Response = await fetch(
+          `https://de.seedfinder.eu/api/json/strain.json?br=${input.breederId}&str=${input.strainId}&ac=${env.SEEDFINDER_API_KEY}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch breeders from Seedfinder");
         }
+        // Parse the response JSON
         const data =
-          (await breedersFromSeedfinder.json()) as GetBreedersFromSeedfinderResponse;
-
+          (await response.json()) as StrainInfoFromSeedfinder;
+        // Return the breeders data
         return data;
       } catch (error) {
-        console.error("Error:", error);
+        // Handle any errors
+        console.error("Error fetching breeders:", error);
         throw new Error("Internal server error");
       }
     }),
 
-  getBreederStrains: protectedProcedure
-    .input(z.string())
+  getAllBreederFromSeedfinder: protectedProcedure
+    .input(InputGetAllBreederFromSeedfinder)
     .query(async ({ input }) => {
-      const breederId = input;
-      const url = `https://en.seedfinder.eu/api/json/ids.json?br=${breederId}&strains=1&ac=d8fe19486b31da9dbb7a01ee67798991`;
-
       try {
-        const response = await fetch(url);
+        // Make an API call to fetch breeders from Seedfinder
+        const response: Response = await fetch(
+          `https://en.seedfinder.eu/api/json/ids.json?br=${input.breeder}&strains=${input.strains}&ac=${env.SEEDFINDER_API_KEY}`
+        );
         if (!response.ok) {
-          throw new Error("Failed to fetch data from the API");
+          throw new Error("Failed to fetch breeders from Seedfinder");
         }
-        const data =
-          (await response.json()) as GetBreederStrainsResponse;
-
+        // Parse the response JSON
+        const data = (await response.json()) as BreedersResponse;
+        // Return the breeders data
         return data;
       } catch (error) {
-        console.error("Error:", error);
-        throw new Error("Internal server error");
-      }
-    }),
-
-  getStrainInfo: protectedProcedure
-    .input(InputGetStrainInfo)
-    .query(async ({ input }) => {
-      const { breederId, strainId } = input;
-      const url = `https://en.seedfinder.eu/api/json/strain.json?br=${breederId}&str=${strainId}&ac=d8fe19486b31da9dbb7a01ee67798991`;
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Failed to fetch data from the API");
-        }
-        const data = (await response.json()) as GetStrainInfoResponse;
-
-        return data;
-      } catch (error) {
-        console.error("Error:", error);
+        // Handle any errors
+        console.error("Error fetching breeders:", error);
         throw new Error("Internal server error");
       }
     }),
@@ -118,7 +103,6 @@ export const strainRouter = createTRPCRouter({
    * Get all notifications for a user
    * @Input: userId: String
    */
-  //FIXME: WITH  WORKING SEDDFINDER THIS SHOULD NOT BE NEEDED OR USED
   getAllStrains: protectedProcedure.query(async ({ ctx }) => {
     const strains = await ctx.prisma.cannabisStrain.findMany({
       orderBy: {
@@ -154,4 +138,68 @@ export const strainRouter = createTRPCRouter({
         })
       ); */
   }),
+
+  /**
+   * Mark a notification as read by setting the readAt field to the current date
+   * @Input: notificationId: String
+   */
+  markNotificationAsRead: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const notificationId = input;
+
+      // Check if the notification exists
+      const existingNotification =
+        await ctx.prisma.notification.findFirst({
+          where: {
+            id: notificationId,
+          },
+        });
+      if (!existingNotification) {
+        throw new Error("Notification does not exist");
+      }
+
+      // Check if the user is the owner of the notification
+      if (existingNotification.recipientId !== ctx.session.user.id) {
+        throw new Error("You are not the owner of this notification");
+      }
+
+      // Update the readAt field of the notification
+      try {
+        const updatedNotification =
+          await ctx.prisma.notification.update({
+            where: { id: existingNotification.id },
+            data: {
+              readAt: new Date(),
+            },
+          });
+        return updatedNotification;
+      } catch (error: unknown) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          console.debug(error.message);
+          throw new Error(
+            `Failed to delete notification: ${error.message}`
+          );
+        } else {
+          throw new Error("Failed to delete notification");
+        }
+      }
+    }),
+  /**
+   * Mark all notifications of the session.user as read by setting the readAt field to the current date
+   */
+  markAllNotificationsAsRead: protectedProcedure.mutation(
+    async ({ ctx }) => {
+      // Update the readAt field of all notifications for the user
+      const updatedNotifications =
+        await ctx.prisma.notification.updateMany({
+          where: { recipientId: ctx.session?.user.id },
+          data: {
+            readAt: new Date(),
+          },
+        });
+
+      return updatedNotifications;
+    }
+  ),
 });

@@ -5,6 +5,34 @@ import { Environment, GrowStage } from "~/types";
 
 export const InputLogin = z.string().email("Invalid email address");
 
+export const InputGetStrainInfoFromSeedfinder = z.object({
+  /**
+   * @input br:string
+   * Breeder ID
+   */
+  breederId: z.string().min(1),
+  /**
+   * @input str:string
+   * Strain ID from the seedfinder url's
+   */
+  strainId: z.string().min(1),
+});
+
+export const InputGetAllBreederFromSeedfinder = z.object({
+  /**
+   * @input breeder:string
+   * Selection of breeders. Add all to get a full list, or add the SeedFinder-Breeder-IDs for one ore
+   * more breeders. To get info about more than one breeder, seperate the ids with a "|".
+   * Default is "all".
+   */
+  breeder: z.string().min(1),
+  /**
+   * @input strain:string
+   * 1 will add strain-ids and strain-names to the output.
+   */
+  strains: z.string().min(1),
+});
+
 export const InputSaveUserName = z.object({
   id: z.string().min(1),
   name: z.string().min(5, {
@@ -77,23 +105,13 @@ export const InputEditReportForm = z.object({
         message: `Content must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
-  strains: z.array(z.string()).min(0, {
-    // min(0), giving setStrain a own Page or Form!
+  strains: z.array(z.string()).min(1, {
     message: "Report must have at least 1 strain",
   }),
   environment: z.enum(
     Object.keys(Environment) as [keyof typeof Environment]
   ),
   createdAt: z.date(),
-});
-
-export const InputGetAllBreders = z.object({
-  withStrains: z.boolean(),
-});
-
-export const InputGetStrainInfo = z.object({
-  breederId: z.string(),
-  strainId: z.string(),
 });
 
 export const InputGetReports = z.object({

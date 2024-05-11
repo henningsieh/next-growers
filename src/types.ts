@@ -79,25 +79,6 @@ export interface SplitObject {
   searchstring: string;
 }
 
-export type MantineSelectData = {
-  value: string;
-  label: string;
-}[];
-
-type SeedfinderStrain = {
-  [strainId: string]: string;
-};
-
-export type SeedfinderBreeder = {
-  name: string;
-  logo: string;
-  strains: SeedfinderStrain[];
-};
-
-export type GetBreedersFromSeedfinderResponse = {
-  [key: string]: SeedfinderBreeder;
-};
-
 export type NotificationEventMap =
   | "REPORT_CREATED" //TODO: NOTIFY user.followers
   | "POST_CREATED" //TODO: NOTIFY report.followers
@@ -130,9 +111,52 @@ export interface LightswattsDataPoint {
   watt: number;
 }
 
-export interface Breeder {
-  image: string;
-  label: string;
-  value: string;
-  // description: string;
-}
+export type BreederFromSeedfinder = {
+  name: string;
+  logo: string;
+  strains: StrainFromSeedfinder;
+};
+
+export type BreedersResponse = {
+  [breederName: string]: BreederFromSeedfinder;
+};
+
+export type StrainFromSeedfinder = {
+  [strainName: string]: string;
+};
+
+export type StrainInfoFromSeedfinder = {
+  error: boolean;
+  name: string;
+  id: string;
+  brinfo: {
+    name: string;
+    id: string;
+    type: string;
+    cbd: string;
+    description: string;
+    link: string;
+    pic: string;
+    flowering: {
+      auto: boolean;
+      days: number;
+      info: string;
+    };
+    descr: string;
+  };
+  comments: boolean;
+  links: {
+    info: string;
+    review: string;
+    upload: {
+      picture: string;
+      review: string;
+      medical: string;
+    };
+  };
+  licence: {
+    url_cc: string;
+    url_sf: string;
+    info: string;
+  };
+};

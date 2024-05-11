@@ -1,4 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { env } from "~/env.mjs";
 
 import { type GetServerSidePropsContext } from "next";
 import {
@@ -52,38 +53,30 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID
-        ? process.env.GOOGLE_CLIENT_ID
-        : "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET
-        ? process.env.GOOGLE_CLIENT_SECRET
-        : "",
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
 
     TwitterProvider({
-      clientId: process.env.TWITTER_API_KEY
-        ? process.env.TWITTER_API_KEY
-        : "",
-      clientSecret: process.env.TWITTER_API_KEY_SECRET
-        ? process.env.TWITTER_API_KEY_SECRET
-        : "",
+      clientId: env.TWITTER_API_KEY,
+      clientSecret: env.TWITTER_API_KEY_SECRET,
       allowDangerousEmailAccountLinking: true,
     }),
 
     EmailProvider({
-      from: process.env.EMAIL_FROM,
+      from: env.EMAIL_FROM,
       server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
+        host: env.EMAIL_SERVER_HOST,
+        port: env.EMAIL_SERVER_PORT,
         auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
+          user: env.EMAIL_SERVER_USER,
+          pass: env.EMAIL_SERVER_PASSWORD,
         },
       },
 
       // LOG VERIFYLINK TO CONSOLE IN DEVELOPMENT MODE ONLY
-      ...(process.env.NODE_ENV !== "production"
+      ...(env.NODE_ENV !== "production"
         ? {
             sendVerificationRequest({ url }) {
               console.log("LOGIN LINK", url);

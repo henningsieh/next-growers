@@ -324,6 +324,14 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               }),
             },
 
+            Select: {
+              styles: () => ({
+                input: {
+                  cursor: "default",
+                },
+              }),
+            },
+
             Input: {
               styles: (theme) => ({
                 input: {

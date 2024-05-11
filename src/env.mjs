@@ -34,6 +34,8 @@ export const env = createEnv({
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
     CLOUDINARY_NAME: z.string().min(1),
+
+    SEEDFINDER_API_KEY: z.string().min(32),
   },
 
   /**
@@ -45,6 +47,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_AUTH_TOKEN: z.string().min(1),
     NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE: z.string().min(1),
     NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1),
+    NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL: z.string().url(),
   },
 
   /**
@@ -68,6 +71,9 @@ export const env = createEnv({
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    SEEDFINDER_API_KEY: process.env.SEEDFINDER_API_KEY,
+    NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL:
+      process.env.NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL,
     NEXT_PUBLIC_SENTRY_AUTH_TOKEN:
       process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN,
     NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE:
