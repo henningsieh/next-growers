@@ -49,11 +49,44 @@ export const postRouter = createTRPCRouter({
       // return updatedPost;
 
       // Delete the post
-      await ctx.prisma.post.delete({
+      const deletedPost = await ctx.prisma.post.delete({
         where: {
           id,
         },
       });
+
+      // Update the `updated_at` field of the connected report to the
+      // newest/youngest Post.date of all Posts of the connected report
+
+      // Find all posts associated with the report
+      const reportId = deletedPost.reportId;
+      const allConnectedPosts = await ctx.prisma.post.findMany({
+        where: {
+          reportId,
+        },
+        orderBy: {
+          date: "desc", // Order by date in descending order to get the newest date first
+        },
+        select: {
+          date: true,
+        },
+      });
+
+      // Find the newest date among all posts
+      const newestDateOfallConnectedPosts =
+        allConnectedPosts.length > 0 ? allConnectedPosts[0].date : null;
+
+      // Update the `updated_at` field of the connected report
+      if (newestDateOfallConnectedPosts) {
+        await ctx.prisma.report.update({
+          where: {
+            id: reportId,
+          },
+          data: {
+            updatedAt: newestDateOfallConnectedPosts,
+          },
+        });
+      }
 
       // Update the `updated_at` field of the connected report to the
       // newest/youngest Post.date of all Posts of the connected report
@@ -92,7 +125,7 @@ export const postRouter = createTRPCRouter({
       // Optionally, you can return a success message or some indicator of the deletion
       return {
         success: true,
-        deletedPost: post,
+        deletedPost,
       };
     }),
 
@@ -229,11 +262,11 @@ export const postRouter = createTRPCRouter({
         // Check if watt is defined and not null or undefined
         if (watt !== undefined && watt !== null) {
           await ctx.prisma.lightWatts.upsert({
-            where: { postId: id },
+            where: { postId: post.id },
             update: { watt },
             create: {
               watt,
-              post: { connect: { id } },
+              post: { connect: { id: post.id } },
             },
           });
         }
