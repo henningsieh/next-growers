@@ -9,10 +9,8 @@ type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type GetIsoReportWithPostsFromDbOutput =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
-
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
-
 export interface IsoReportCardProps {
   report: IsoReportWithPostsFromDb;
   setSearchString?: Dispatch<SetStateAction<string>>;

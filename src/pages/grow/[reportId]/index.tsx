@@ -67,10 +67,9 @@ export const getServerSideProps: GetServerSideProps = async (
  */
 const PublicReport: NextPage = () => {
   const router = useRouter();
+  const growId = router.query.reportId as string;
 
-  const [postId, setPostId] = useState<string>("");
-
-  const queryReportId = router.query.reportId as string;
+  const [updateId, setUpdateId] = useState<string>("");
   const [selectedDate, selectDate] = useState<Date | null>(null);
 
   const { colorScheme } = useMantineColorScheme();
@@ -142,7 +141,7 @@ const PublicReport: NextPage = () => {
     isLoading: reportIsLoading,
     isError: reportHasErrors,
     error: error,
-  } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId, {
+  } = api.reports.getIsoReportWithPostsFromDb.useQuery(growId, {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
@@ -243,7 +242,7 @@ const PublicReport: NextPage = () => {
       // });
 
       selectDate(new Date(matchingPost.date));
-      setPostId(matchingPost.id);
+      setUpdateId(matchingPost.id);
       const newUrl = `/grow/${grow.id}/update/${matchingPost.id}`;
       void router.push({ pathname: newUrl }, undefined, {
         scroll: false,
@@ -364,7 +363,7 @@ const PublicReport: NextPage = () => {
                   </Text>
                 </Alert>
               ) : (
-                <PostCard updateId={postId} reportFromProps={grow} />
+                <PostCard updateId={updateId} grow={grow} />
               )}
             </>
           )}

@@ -1,4 +1,3 @@
-import DragAndSortGrid from "../DragAndSortGrid/DragAndSortGrid";
 import {
   Box,
   Container,
@@ -13,11 +12,15 @@ import {
 } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { notifications } from "@mantine/notifications";
 import { IconCamera } from "@tabler/icons-react";
+import { env } from "~/env.mjs";
+import { fileUploadErrorMsg } from "~/messages";
 
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
-import type { FileRejection } from "react-dropzone";
+
+import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 
@@ -41,12 +44,9 @@ interface ImageUploaderProps {
       }[]
     >
   >;
-  //cloudUrls: string[] | undefined;
-  setImageIds: Dispatch<SetStateAction<string[]>>;
   maxFiles?: number;
   maxSize?: number;
-
-  onReject?(fileRejections: FileRejection[]): void;
+  setImageIds: Dispatch<SetStateAction<string[]>>;
 }
 
 const ImageUploader = ({
@@ -56,7 +56,6 @@ const ImageUploader = ({
   setImageIds,
   maxFiles,
   maxSize,
-  onReject,
 }: ImageUploaderProps) => {
   const [isUploading, setIsUploading] = useState(false);
 
@@ -64,16 +63,11 @@ const ImageUploader = ({
 
   const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
     setIsUploading(true);
-    // setFiles(fileWithPath);
-
-    // handleMultipleDrop calls the /api/multi-upload endpoint
     handleMultipleDrop(
       fileWithPath,
       report,
       setImages,
       setImageIds,
-      // setImagePublicIds,
-      //setCloudUrls,
       setIsUploading
     ).catch((error) => {
       console.debug(error);
@@ -97,7 +91,21 @@ const ImageUploader = ({
                   onDrop={handleMultipleDropWrapper}
                   maxFiles={maxFiles}
                   maxSize={maxSize}
-                  onReject={onReject}
+                  onReject={(files) => {
+                    files.forEach((file) => {
+                      const fileSizeInMB = (
+                        file.file.size /
+                        1024 ** 2
+                      ).toFixed(2);
+                      notifications.show(
+                        fileUploadErrorMsg(
+                          file.file.name,
+                          fileSizeInMB,
+                          env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
+                        )
+                      );
+                    });
+                  }}
                   sx={(theme) => ({
                     fontSize: theme.fontSizes.lg,
                     fontWeight: "bolder",

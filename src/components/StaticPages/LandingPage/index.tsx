@@ -3,9 +3,9 @@ import {
   Center,
   Container,
   createStyles,
+  Divider,
   Grid,
   Group,
-  Paper,
   rem,
   Stack,
   Text,
@@ -39,6 +39,13 @@ export default function LandingPage({
       fontSize: rem(112),
       fontWeight: 700,
       lineHeight: 0.8,
+      color: "transparent",
+      background: `linear-gradient(to right, ${theme.fn.lighten(theme.colors.orange[7], 0.1)}, ${theme.colors.red[8]}, ${theme.fn.lighten(theme.colors.orange[6], 0.1)})`,
+      WebkitBackgroundClip: "text",
+      transition: "background 300ms ease-in-out",
+      cursor: "default",
+      // height: "4rem", // You might need to adjust this height based on your design
+      // width: "18rem", // You might need to adjust this width based on your design
 
       [theme.fn.smallerThan("lg")]: {
         fontSize: rem(112),
@@ -53,12 +60,15 @@ export default function LandingPage({
       },
     },
     subTitle: {
-      // fontFamily: `'Lato', sans-serif`,
       fontSize: rem(54),
       fontWeight: 900,
       lineHeight: 1.5,
+      fontFamily: `'Roboto Slab', sans-serif`,
+      color: theme.colors.growgreen[3],
+
       textShadow: dark
-        ? `2px 3px 6px rgba(255, 83, 34, 0.8)`
+        ? // ? `2px 3px 6px rgba(255, 83, 34, 0.8)`
+          `2px 3px 6px rgba(29, 75, 20, 0.8)`
         : `2px 3px 6px rgba(29, 75, 20, 0.8)`,
 
       [theme.fn.smallerThan("lg")]: {
@@ -108,29 +118,32 @@ export default function LandingPage({
       >
         <Center>
           <Container p={0} m={0}>
-            <Paper py="xs">
-              <Stack m="xl">
-                <Title
-                  p={0}
-                  order={1}
-                  className={classes.title}
-                  variant="gradient"
-                  gradient={{
-                    from: theme.fn.darken(
-                      theme.colors.growgreen[2],
-                      0.2
-                    ),
-                    to: theme.fn.darken(theme.colors.groworange[4], 0),
-                    deg: 90,
-                  }}
-                >
-                  GrowAGram
-                </Title>
-                <Title order={2} className={classes.subTitle}>
-                  🪴&nbsp;Track&nbsp;Your&nbsp;Grow!&nbsp;📜
-                </Title>
-              </Stack>
-            </Paper>
+            <Stack m={0} spacing="xs" className="overflow-visible">
+              <Title
+                pt="xs"
+                ff={`'Grandstander', sans-serif`}
+                p={0}
+                order={1}
+                className={classes.title}
+                // variant="gradient"
+                // gradient={{
+                //   from: theme.fn.darken(
+                //     theme.colors.growgreen[2],
+                //     0.2
+                //   ),
+                //   to: theme.fn.darken(theme.colors.groworange[4], 0),
+                //   deg: 90,
+                // }}
+              >
+                GrowAGram
+              </Title>{" "}
+              <Divider m={0} color="growgreen.4" size="lg" />
+              <Center>
+                <Text className={classes.subTitle}>
+                  🪴&nbsp;Track&nbsp;Your&nbsp;Grow&nbsp;📜
+                </Text>
+              </Center>
+            </Stack>
           </Container>
         </Center>
 

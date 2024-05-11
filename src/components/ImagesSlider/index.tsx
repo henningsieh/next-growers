@@ -53,8 +53,8 @@ const ImagesSlider = (props: ImagesSliderProps) => {
     <Card className={classes.card} radius="sm" p={0} m={0} withBorder>
       <Modal
         className="content-center"
-        fullScreen={/*largeScreen ? false :*/ true}
-        withCloseButton={largeScreen ? false : true}
+        fullScreen
+        withCloseButton
         opened={opened}
         onClose={close}
         size="100%"

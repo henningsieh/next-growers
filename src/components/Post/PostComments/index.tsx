@@ -90,11 +90,11 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface CommentsProps {
-  reportId: string;
-  postId: string;
+  growId: string;
+  updateId: string;
 }
 
-const PostComments = ({ reportId, postId }: CommentsProps) => {
+const PostComments = ({ growId, updateId }: CommentsProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
@@ -110,7 +110,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   const { data: comments, isLoading } =
     api.comments.getCommentsByPostId.useQuery({
-      postId: postId,
+      postId: updateId,
     });
 
   const { data: session, status } = useSession();
@@ -127,7 +127,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     initialValues: {
       id: undefined,
       isResponseTo: "",
-      postId: postId,
+      postId: updateId,
       content: "",
     },
   });
@@ -141,9 +141,9 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   };
 
   useEffect(() => {
-    newCommentForm.setFieldValue("postId", postId);
+    newCommentForm.setFieldValue("postId", updateId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postId]);
+  }, [updateId]);
 
   // Prepare TipTap Editor for comment content
   const editor = useEditor({
@@ -227,7 +227,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       >
         <UserComment
           editor={editor}
-          reportId={reportId}
+          reportId={growId}
           isResponse=""
           comment={comment}
           setNewOpen={setNewOpen}
@@ -247,7 +247,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
             <UserComment
               editor={editor}
-              reportId={reportId}
+              reportId={growId}
               isResponse={comment.id} // Assuming this is the ID of the parent comment
               comment={response as Comment}
               setNewOpen={setNewOpen}
@@ -341,7 +341,6 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                       }
                       userName={session?.user.name as string}
                       avatarRadius={42}
-                      tailwindMarginTop={false}
                     />
                     <Box>
                       <Text fz="sm">

@@ -97,13 +97,13 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface PostCardProps {
-  reportFromProps: IsoReportWithPostsFromDb;
+  grow: IsoReportWithPostsFromDb;
   updateId: string;
 }
 
 export function PostCard(props: PostCardProps) {
   const { data: session, status } = useSession();
-  const { reportFromProps: grow, updateId: updateId } = props;
+  const { grow, updateId } = props;
 
   const theme = useMantineTheme();
   const { classes } = useStyles();
@@ -115,9 +115,11 @@ export function PostCard(props: PostCardProps) {
   const [postHTMLContent, setPostHTMLContent] = useState("");
 
   useEffect(() => {
-    const post = grow.posts.find((post) => post.id === updateId);
-    if (post) {
-      parseAndReplaceAmazonLinks(post.content)
+    const growUpdate = grow.posts.find(
+      (update) => update.id === updateId
+    );
+    if (growUpdate) {
+      parseAndReplaceAmazonLinks(growUpdate.content)
         .then((parsedContent) => {
           setPostHTMLContent(parsedContent);
         })
@@ -231,7 +233,7 @@ export function PostCard(props: PostCardProps) {
           </TypographyStylesProvider>
         </Paper>
 
-        <PostComments reportId={grow.id} postId={updateId} />
+        <PostComments growId={grow.id} updateId={updateId} />
       </>
     );
   }
