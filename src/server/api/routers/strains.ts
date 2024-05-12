@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { env } from "~/env.mjs";
@@ -15,45 +16,45 @@ import type {
 import {
   InputGetAllBreederFromSeedfinder,
   InputGetStrainInfoFromSeedfinder,
+  InputSavePlantToGrow,
 } from "~/utils/inputValidation";
 
-// type StrainInfoFromSeedfinder = {
-//   error: boolean;
-//   name: string;
-//   id: string;
-//   brinfo: {
-//     name: string;
-//     id: string;
-//     type: string;
-//     cbd: string;
-//     description: string;
-//     link: string;
-//     pic: string;
-//     flowering: {
-//       auto: boolean;
-//       days: number;
-//       info: string;
-//     };
-//     descr: string;
-//   };
-//   comments: boolean;
-//   links: {
-//     info: string;
-//     review: string;
-//     upload: {
-//       picture: string;
-//       review: string;
-//       medical: string;
-//     };
-//   };
-//   licence: {
-//     url_cc: string;
-//     url_sf: string;
-//     info: string;
-//   };
-// };
-
 export const strainRouter = createTRPCRouter({
+  savePlantToGrow: protectedProcedure
+    .input(InputSavePlantToGrow)
+    .query(({ ctx, input }) => {
+      console.debug(input);
+
+      const {
+        growId,
+        strainId,
+        name,
+        type,
+        cbd,
+        description,
+        flowering_days,
+        flowering_info,
+        flowering_automatic,
+        seedfinder_ext_url,
+        breederId,
+        breeder_name,
+        breeder_description,
+        breeder_website_url,
+      } = input;
+
+      try {
+        console.debug(input);
+      } catch (error) {
+        // Handle any errors
+        console.error("Error fetching breeders:", error);
+        throw new Error("Internal server error");
+      }
+    }),
+
+  /**
+   * @input input: {     breederId: string;     strainId: string; }
+   * @return data: StrainInfoFromSeedfinder
+   */
   getStrainInfoFromSeedfinder: protectedProcedure
     .input(InputGetStrainInfoFromSeedfinder)
     .query(async ({ input }) => {
@@ -77,6 +78,10 @@ export const strainRouter = createTRPCRouter({
       }
     }),
 
+  /**
+   * @input input: {     breeder: string;     strains: string; }
+   * @return data: StrainInfoFromSeedfinder
+   */
   getAllBreederFromSeedfinder: protectedProcedure
     .input(InputGetAllBreederFromSeedfinder)
     .query(async ({ input }) => {
