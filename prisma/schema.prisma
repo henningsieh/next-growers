@@ -125,8 +125,7 @@ model SeedfinderStrain {
   breeder_website_url String // strainInfosFromSeedfinder.brinfo.link
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  reports             Report[] // A Strain grows in many Report
-  Plant               Plant[]
+  plants              Plant[]
 
   @@unique(fields: [strainId, breederId])
   @@index([strainId, breederId])
@@ -141,24 +140,22 @@ model Plant {
 }
 
 model Report {
-  id                 String            @id @default(cuid())
-  title              String
-  image              Image?
-  description        String
-  environment        Environment?
-  plants             Plant[]
-  posts              Post[] // A Report may have many Posts
-  likes              Like[] // A Report may have many Likes
-  Notification       Notification[]
-  contests           Contest[] // A Report may participate in many Contests
-  products           Product[] // A Report may have many Products
-  strains            CannabisStrain[] // A Report may have many CannabisStrains
-  author             User              @relation(fields: [authorId], references: [id])
-  authorId           String // A Report has one Author
-  SeedfinderStrain   SeedfinderStrain? @relation(fields: [seedfinderStrainId], references: [id])
-  seedfinderStrainId String?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  id           String           @id @default(cuid())
+  title        String
+  image        Image?
+  description  String
+  environment  Environment?
+  plants       Plant[]
+  posts        Post[] // A Report may have many Posts
+  likes        Like[] // A Report may have many Likes
+  Notification Notification[]
+  contests     Contest[] // A Report may participate in many Contests
+  products     Product[] // A Report may have many Products
+  strains      CannabisStrain[] // A Report may have many CannabisStrains
+  author       User             @relation(fields: [authorId], references: [id])
+  authorId     String // A Report has one Author
+  reatedAt     DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@index([authorId], name: "authorId_idx")
 }
