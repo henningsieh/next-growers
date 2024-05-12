@@ -125,7 +125,7 @@ model SeedfinderStrain {
   breeder_website_url String // strainInfosFromSeedfinder.brinfo.link
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-  plants              Plant[]
+  Plant               Plant[]
 
   @@unique(fields: [strainId, breederId])
   @@index([strainId, breederId])
@@ -141,21 +141,21 @@ model Plant {
 
 model Report {
   id           String           @id @default(cuid())
+  author       User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId     String // A Report has one Author
   title        String
   image        Image?
   description  String
   environment  Environment?
-  plants       Plant[]
   posts        Post[] // A Report may have many Posts
   likes        Like[] // A Report may have many Likes
-  Notification Notification[]
   contests     Contest[] // A Report may participate in many Contests
   products     Product[] // A Report may have many Products
   strains      CannabisStrain[] // A Report may have many CannabisStrains
-  author       User             @relation(fields: [authorId], references: [id])
-  authorId     String // A Report has one Author
-  reatedAt     DateTime         @default(now())
+  Notification Notification[]
+  createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
+  Plant        Plant[]
 
   @@index([authorId], name: "authorId_idx")
 }
@@ -184,10 +184,12 @@ model Post {
 }
 
 model LightWatts {
-  id     String @id @default(cuid())
-  watt   Float
-  post   Post   @relation(fields: [postId], references: [id])
-  postId String
+  id   String @id @default(cuid())
+  watt Float // Represents the wattage value
+
+  // Optional one-to-one relation to Post
+  post   Post?   @relation(fields: [postId], references: [id])
+  postId String? // A LightWatts may be associated with one Post
 
   @@unique([postId])
 }
@@ -231,19 +233,22 @@ enum TypeOf {
 }
 
 model Comment {
-  id             String         @id @default(cuid())
-  content        String         @db.VarChar(10000)
-  responses      Comment[]      @relation("CommentAnswers")
-  isResponseTo   Comment?       @relation("CommentAnswers", fields: [isResponseToId], references: [id])
+  id      String @id @default(cuid())
+  content String @db.VarChar(10000)
+
+  responses      Comment[] @relation("CommentAnswers")
+  isResponseTo   Comment?  @relation("CommentAnswers", fields: [isResponseToId], references: [id])
   isResponseToId String?
-  author         User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  authorId       String? // One User has many Comments
-  post           Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId         String? // One Post has many Comments
-  Notification   Notification[]
-  likes          Like[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+
+  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String // One User has many Comments
+  post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String? // One Post has many Comments
+
+  Notification Notification[]
+  likes        Like[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model Company {
@@ -267,23 +272,24 @@ model Contest {
 }
 
 model Account {
-  id                 String   @id @default(cuid())
+  id                 String  @id @default(cuid())
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  oauth_token        String?  @db.Text // needed if using the old Twitter OAuth 1.0 provider.
-  oauth_token_secret String?  @db.Text // needed if using the old Twitter OAuth 1.0 provider.
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  oauth_token        String? @db.Text // needed if using the old Twitter OAuth 1.0 provider.
+  oauth_token_secret String? @db.Text // needed if using the old Twitter OAuth 1.0 provider.
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String? @db.Text
   session_state      String?
-  userId             String // One User has many Accounts
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+
+  userId    String // One User has many Accounts
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([provider, providerAccountId])
 }
@@ -292,10 +298,11 @@ model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   expires      DateTime
-  userId       String // One User has many Sessions
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+
+  userId    String // One User has many Sessions
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
