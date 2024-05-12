@@ -115,8 +115,8 @@ model SeedfinderStrain {
   type                String //strainInfosFromSeedfinder.brinfo.type
   cbd                 String // strainInfosFromSeedfinder.brinfo.cbd
   description         String // strainInfosFromSeedfinder.brinfo.descr
-  flowering_days      Boolean // strainInfosFromSeedfinder.brinfo.flowering.days
-  flowering_info      Boolean // strainInfosFromSeedfinder.brinfo.flowering.info
+  flowering_days      Int // strainInfosFromSeedfinder.brinfo.flowering.days
+  flowering_info      String // strainInfosFromSeedfinder.brinfo.flowering.info
   flowering_automatic Boolean // strainInfosFromSeedfinder.brinfo.flowering.auto
   seedfinder_ext_url  String // strainInfosFromSeedfinder.links.info
   breederId           String // strainInfosFromSeedfinder.brinfo.id
