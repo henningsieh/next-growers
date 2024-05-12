@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 
@@ -22,9 +23,7 @@ import {
 export const strainRouter = createTRPCRouter({
   savePlantToGrow: protectedProcedure
     .input(InputSavePlantToGrow)
-    .query(({ ctx, input }) => {
-      console.debug(input);
-
+    .mutation(async ({ ctx, input }) => {
       const {
         growId,
         strainId,
@@ -43,11 +42,87 @@ export const strainRouter = createTRPCRouter({
       } = input;
 
       try {
-        console.debug(input);
-      } catch (error) {
-        // Handle any errors
-        console.error("Error fetching breeders:", error);
-        throw new Error("Internal server error");
+        const existingReport = await ctx.prisma.report.findUnique({
+          where: {
+            id: growId,
+          },
+        });
+
+        if (!existingReport) {
+          throw new Error("This grow was not found");
+        }
+
+        if (ctx.session.user.id != existingReport.authorId) {
+          throw new Error("You are not authorized to edit this report");
+        }
+
+        // CREATE OR UPDATE seedfinderStrain IN DB
+        const seedfinderStrain =
+          await ctx.prisma.seedfinderStrain.upsert({
+            where: { strainId_breederId: { strainId, breederId } }, // Define unique identifier
+            create: {
+              // Data to create if not found
+              strainId,
+              breederId,
+              name,
+              type,
+              cbd,
+              description,
+              flowering_days,
+              flowering_info,
+              flowering_automatic,
+              seedfinder_ext_url,
+              breeder_name,
+              breeder_description,
+              breeder_website_url,
+            },
+            update: {
+              // Data to update if found
+              // strainId,
+              // breederId,
+              name,
+              type,
+              cbd,
+              description,
+              flowering_days,
+              flowering_info,
+              flowering_automatic,
+              seedfinder_ext_url,
+              breeder_name,
+              breeder_description,
+              breeder_website_url,
+            },
+          });
+
+        // CREATE PLANT AND CONNECT TO seedfinderStrain
+        const plant = await ctx.prisma.plant.create({
+          data: {
+            reportId: growId,
+            seedfinderStrainId: seedfinderStrain.id,
+          },
+          include: { seedfinderStrain: true },
+        });
+
+        console.debug(plant);
+      } catch (error: unknown) {
+        //FIXME: CONFLICT never possible on upsert mutations
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          if (error.code === "P2002") {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: error.message,
+              cause: error.cause,
+            });
+          }
+        } else if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error.message,
+            cause: error,
+          });
+        } else {
+          throw new Error("Internal server error");
+        }
       }
     }),
 

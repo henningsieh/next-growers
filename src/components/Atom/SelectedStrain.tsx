@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Box,
   Button,
@@ -46,6 +45,16 @@ export default function SelectedStrain({
   breederLogoUrl: string;
 }) {
   const {
+    mutate: tRPCsavePlantToGrow,
+    isLoading: isSavingPlantToGrow,
+    // isError: savePlantToGrow
+  } = api.strains.savePlantToGrow.useMutation({
+    onMutate: () => {
+      console.debug("START strains.savePlantToGrow.useMutation");
+    },
+  });
+
+  const {
     data: strainInfosFromSeedfinder,
     isLoading: strainInfosFromSeedfinderAreLoading,
     isError: strainInfosFromSeedfinderHaveErrors,
@@ -89,22 +98,45 @@ export default function SelectedStrain({
     validate: zodResolver(InputSavePlantToGrow),
     initialValues: {
       growId: growid,
-      strainId: strainInfosFromSeedfinder?.id,
-      name: strainInfosFromSeedfinder?.name,
-      type: strainInfosFromSeedfinder?.brinfo.type,
-      cbd: strainInfosFromSeedfinder?.brinfo.cbd,
-      description: strainInfosFromSeedfinder?.brinfo.descr,
-      flowering_days:
-        strainInfosFromSeedfinder?.brinfo.flowering.days || 0,
-      flowering_info: strainInfosFromSeedfinder?.brinfo.flowering.info,
-      flowering_automatic:
-        strainInfosFromSeedfinder?.brinfo.flowering.auto || false,
-      seedfinder_ext_url: strainInfosFromSeedfinder?.links.info,
-      breederId: strainInfosFromSeedfinder?.brinfo.id,
-      breeder_name: strainInfosFromSeedfinder?.brinfo.name,
-      breeder_description:
-        strainInfosFromSeedfinder?.brinfo.description,
-      breeder_website_url: strainInfosFromSeedfinder?.brinfo.link,
+      strainId: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder.id
+        : "",
+      name: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder.name
+        : "",
+      type: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder.brinfo.type
+        : "",
+      cbd: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder.brinfo.cbd
+        : "",
+      description: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder.brinfo.descr
+        : "",
+      flowering_days: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder.brinfo.flowering.days
+        : 0,
+      flowering_info: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder?.brinfo.flowering.info
+        : "",
+      flowering_automatic: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder?.brinfo.flowering.auto
+        : false,
+      seedfinder_ext_url: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder?.links.info
+        : "",
+      breederId: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder?.brinfo.id
+        : "",
+      breeder_name: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder?.brinfo.name
+        : "",
+      breeder_description: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder?.brinfo.description
+        : "",
+      breeder_website_url: strainInfosFromSeedfinder
+        ? strainInfosFromSeedfinder?.brinfo.link
+        : "",
     },
   });
 
@@ -162,13 +194,15 @@ export default function SelectedStrain({
                 <form
                   onSubmit={savePlantToGrowForm.onSubmit(
                     (strainDataFormValues) => {
-                      console.debug({ strainDataFormValues });
+                      //console.debug({ strainDataFormValues });
+                      tRPCsavePlantToGrow(strainDataFormValues);
                       //   handleSubmit(values);
                     },
                     handleErrors
                   )}
                 >
                   <Button
+                    loading={isSavingPlantToGrow}
                     variant="filled"
                     color="growgreen"
                     type="submit"
