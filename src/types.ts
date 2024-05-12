@@ -127,13 +127,14 @@ export type StrainFromSeedfinder = {
 
 export type StrainInfoFromSeedfinder = {
   error: boolean;
-  name: string;
   id: string;
+  name: string;
   brinfo: {
-    name: string;
     id: string;
+    name: string;
     type: string;
     cbd: string;
+    descr: string;
     description: string;
     link: string;
     pic: string;
@@ -142,7 +143,6 @@ export type StrainInfoFromSeedfinder = {
       days: number;
       info: string;
     };
-    descr: string;
   };
   comments: boolean;
   links: {
