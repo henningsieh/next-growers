@@ -5,6 +5,46 @@ import { Environment, GrowStage } from "~/types";
 
 export const InputLogin = z.string().email("Invalid email address");
 
+export const InputSetReportPlantForm = z.object({
+  strainId: z.string().min(1, {
+    message: "strainId name must be set",
+  }),
+  name: z.string().min(1, {
+    message: "Strain name must be set",
+  }),
+  type: z.string().min(1, {
+    message: "Strain type must be set",
+  }),
+  cbd: z.string().min(1, {
+    message: "CBD info must be set",
+  }),
+  description: z.string().min(1, {
+    message: "Strain description must be set",
+  }),
+  flowering_days: z.number().min(1, {
+    message: "Strain flowering days must be set",
+  }),
+  flowering_info: z.string().min(1, {
+    message: "Strain flowering info must be set",
+  }),
+  flowering_automatic: z.boolean(),
+  seedfinder_ext_url: z.string().min(1, {
+    message: "Seedfinder strain URL must be set",
+  }),
+  breederId: z.string().min(1, {
+    message: "breederId must be set",
+  }),
+  breeder_name: z.string().min(1, {
+    message: "Breeder name must be set",
+  }),
+  breeder_description: z.string().min(1, {
+    message: "Breeder description must be set",
+  }),
+  breeder_website_url: z.string().min(1, {
+    message: "Breeder website URL must be set",
+  }),
+});
+
 export const InputGetStrainInfoFromSeedfinder = z.object({
   /**
    * @input br:string
