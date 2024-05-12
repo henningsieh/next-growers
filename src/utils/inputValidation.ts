@@ -5,10 +5,21 @@ import { Environment, GrowStage } from "~/types";
 
 export const InputLogin = z.string().email("Invalid email address");
 
-export const InputSetReportPlantForm = z.object({
-  strainId: z.string().min(1, {
-    message: "strainId name must be set",
-  }),
+export const InputSavePlantToGrow = z.object({
+  growId: z
+    .string({
+      required_error: "growId must be set",
+    })
+    .min(1, {
+      message: "growId must be set",
+    }),
+  strainId: z
+    .string({
+      required_error: "strainId must be set",
+    })
+    .min(1, {
+      message: "strainId must be set",
+    }),
   name: z.string().min(1, {
     message: "Strain name must be set",
   }),
@@ -31,9 +42,13 @@ export const InputSetReportPlantForm = z.object({
   seedfinder_ext_url: z.string().min(1, {
     message: "Seedfinder strain URL must be set",
   }),
-  breederId: z.string().min(1, {
-    message: "breederId must be set",
-  }),
+  breederId: z
+    .string({
+      required_error: "breederId must be set",
+    })
+    .min(1, {
+      message: "breederId must be set",
+    }),
   breeder_name: z.string().min(1, {
     message: "Breeder name must be set",
   }),

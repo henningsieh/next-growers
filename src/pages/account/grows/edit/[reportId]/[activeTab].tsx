@@ -281,7 +281,7 @@ const ProtectedEditReportDetails: NextPage = () => {
 
                     <Tabs.Panel value="addPlant">
                       {/* AddPlant Component */}
-                      <AddPlant />
+                      <AddPlant growId={grow.id} />
                     </Tabs.Panel>
 
                     <Tabs.Panel value="addUpdate">

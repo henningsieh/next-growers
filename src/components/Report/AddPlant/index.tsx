@@ -52,7 +52,11 @@ const elements = [
   },
 ];
 
-const AddPlant = () => {
+interface AddPlantProps {
+  growId: string;
+}
+
+const AddPlant = ({ growId }: AddPlantProps) => {
   const [breedersSelectData, setBreedersSelectData] =
     useState<MantineSelectData>([]);
   const [selectedBreederId, setSelectedBreederId] = useState<
@@ -301,6 +305,7 @@ const AddPlant = () => {
 
       {selectedBreeder && selectedBreederId && selectedStrainId && (
         <SelectedStrain
+          growid={growId}
           breederId={selectedBreederId}
           breederName={selectedBreeder.name}
           breederLogoUrl={`${env.NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL}${selectedBreeder.logo}`}

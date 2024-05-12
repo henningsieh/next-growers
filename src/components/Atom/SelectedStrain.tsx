@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Box,
   Button,
@@ -21,7 +22,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconExternalLink } from "@tabler/icons-react";
 import { decode } from "html-entities";
-import { defaultErrorMsg } from "~/messages";
+import { httpStatusErrorMsg } from "~/messages";
 
 import { useEffect } from "react";
 
@@ -29,18 +30,20 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { api } from "~/utils/api";
-import { InputSetReportPlantForm } from "~/utils/inputValidation";
+import { InputSavePlantToGrow } from "~/utils/inputValidation";
 
 export default function SelectedStrain({
+  growid,
+  strainId,
   breederId,
   breederName,
   breederLogoUrl,
-  strainId,
 }: {
+  growid: string;
+  strainId: string;
   breederId: string;
   breederName: string;
   breederLogoUrl: string;
-  strainId: string;
 }) {
   const {
     data: strainInfosFromSeedfinder,
@@ -58,7 +61,9 @@ export default function SelectedStrain({
   // Inside the SelectedStrain component
   useEffect(() => {
     if (strainInfosFromSeedfinder) {
-      setReportPlantForm.setValues({
+      console.debug(growid);
+      savePlantToGrowForm.setValues({
+        growId: growid,
         strainId: strainInfosFromSeedfinder.id,
         name: strainInfosFromSeedfinder.name,
         type: strainInfosFromSeedfinder.brinfo.type,
@@ -76,13 +81,14 @@ export default function SelectedStrain({
         breeder_website_url: strainInfosFromSeedfinder.brinfo.link,
       });
     }
-    // MantineForm `setReportPlantForm` as a dependency lets useEffect freak out!
+    // MantineForm `savePlantToGrowForm` as a dependency lets useEffect freak out!
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [strainInfosFromSeedfinder]);
 
-  const setReportPlantForm = useForm({
-    validate: zodResolver(InputSetReportPlantForm),
+  const savePlantToGrowForm = useForm({
+    validate: zodResolver(InputSavePlantToGrow),
     initialValues: {
+      growId: growid,
       strainId: strainInfosFromSeedfinder?.id,
       name: strainInfosFromSeedfinder?.name,
       type: strainInfosFromSeedfinder?.brinfo.type,
@@ -102,9 +108,11 @@ export default function SelectedStrain({
     },
   });
 
-  const handleErrors = (errors: typeof setReportPlantForm.errors) => {
+  const handleErrors = (errors: typeof savePlantToGrowForm.errors) => {
     Object.keys(errors).forEach((key) => {
-      notifications.show(defaultErrorMsg(errors[key] as string));
+      notifications.show(
+        httpStatusErrorMsg(errors[key] as string, 422)
+      );
     });
   };
 
@@ -152,12 +160,8 @@ export default function SelectedStrain({
             {strainInfosFromSeedfinder && (
               <Flex align="center" justify="flex-end">
                 <form
-                  onSubmit={setReportPlantForm.onSubmit(
+                  onSubmit={savePlantToGrowForm.onSubmit(
                     (strainDataFormValues) => {
-                      setReportPlantForm.setFieldValue(
-                        "strainId",
-                        strainInfosFromSeedfinder.id
-                      );
                       console.debug({ strainDataFormValues });
                       //   handleSubmit(values);
                     },
