@@ -141,9 +141,12 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
       })
       .nullable(),
     watt: z.number().optional(),
-    growStage: z
-      .enum(Object.keys(GrowStage) as [keyof typeof GrowStage])
-      .nullable(),
+    growStage: z.enum(
+      Object.keys(GrowStage) as [keyof typeof GrowStage],
+      {
+        required_error: "Grow stage must be set",
+      }
+    ),
     content: z.string(),
     images: z.array(
       z.object({
