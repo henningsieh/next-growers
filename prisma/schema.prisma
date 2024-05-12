@@ -137,6 +137,7 @@ model Plant {
   reportId           String
   seedfinderStrain   SeedfinderStrain @relation(fields: [seedfinderStrainId], references: [id], onDelete: Cascade, onUpdate: Cascade) // A Report may have many Strains
   seedfinderStrainId String
+  plantName          String           @default("")
 }
 
 model Report {
