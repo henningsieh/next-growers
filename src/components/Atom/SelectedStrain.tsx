@@ -60,7 +60,7 @@ export default function SelectedStrain({
     async onSuccess(result, _plant) {
       console.debug("SUCCESS strains.savePlantToGrow.useMutation");
       console.debug(result);
-      // api.strains.getAllPlantsByReportId.
+      //refresh content of allPlantsInGrow table
       await trpc.strains.getAllPlantsByReportId.refetch();
     },
     onError(error, plant) {

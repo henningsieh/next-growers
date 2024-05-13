@@ -25,7 +25,7 @@ import {
 } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import SelectedStrain from "~/components/Atom/SelectedStrain";
 
@@ -42,7 +42,11 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   const smallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.sm})`
   );
+  const trpc = api.useUtils();
 
+  const [opened, setOpened] = useState(false);
+  const [plantsInGrow, setPlantsInGrow] = useState<JSX.Element[]>([]);
+  const [plantIdToDelete, setPlantIdToDelete] = useState<string>();
   const [breedersSelectData, setBreedersSelectData] =
     useState<MantineSelectData>([]);
   const [selectedBreederId, setSelectedBreederId] = useState<
@@ -56,9 +60,6 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   const [selectedBreeder, setSelectedBreeder] = useState<
     BreederFromSeedfinder | undefined
   >(undefined);
-
-  // Inside your component function
-  const [plantsInGrow, setPlantsInGrow] = useState<JSX.Element[]>([]);
 
   // FETCH allBreederFromSeedfinder
   const {
@@ -74,6 +75,18 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       refetchOnWindowFocus: false,
     }
   );
+
+  const {
+    mutate: tRPCdeletePlantById,
+    isLoading: tRPCdeletePlantByIdIsLoading,
+  } = api.strains.deletePlantById.useMutation({
+    async onSuccess(result, _plant) {
+      console.debug("SUCCESS strains.savePlantToGrow.useMutation");
+      console.debug(result);
+      //refresh content of allPlantsInGrow table
+      await trpc.strains.getAllPlantsByReportId.refetch();
+    },
+  });
 
   // Initialize elements array
   const allPlantsInGrowMemo = useMemo(() => {
@@ -102,6 +115,31 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     allPlantsInGrowHaveErrors,
   ]);
 
+  const handleDeletePlant = useCallback(
+    (plantId: string) => {
+      // Trigger the deletePlantMutation with the provided plantId
+      setPlantIdToDelete(plantId);
+      tRPCdeletePlantById({ plantId });
+    },
+    [setPlantIdToDelete, tRPCdeletePlantById]
+  );
+
+  // FETCH allBreederFromSeedfinder
+  const {
+    data: allBreederFromSeedfinder,
+    isLoading: allBreederFromSeedfinderAreLoading,
+    isError: allBreederFromSeedfinderHaveErrors,
+    error: allBreederFromSeedfinderError,
+  } = api.strains.getAllBreederFromSeedfinder.useQuery(
+    { breeder: "all", strains: "1" },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  // BUILD PlantsInGrow TABLE ROWS
   useEffect(() => {
     const rows = allPlantsInGrowMemo.map((element) => (
       <tr key={element.id}>
@@ -109,11 +147,16 @@ const AddPlant = ({ growId }: AddPlantProps) => {
           <Flex justify="flex-start">
             {/* DELETE BUTTON */}
             <ActionIcon
+              loading={
+                plantIdToDelete === element.id &&
+                tRPCdeletePlantByIdIsLoading
+              }
               p={2}
               color="red.7"
               variant="outline"
               size={30}
               title="delete this plant"
+              onClick={() => handleDeletePlant(element.id)} // Call handleDeletePlant on click
             >
               <IconPlantOff size={20} />
             </ActionIcon>
@@ -146,24 +189,15 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       </tr>
     ));
     setPlantsInGrow(rows);
-  }, [allPlantsInGrowMemo, smallScreen]);
+  }, [
+    plantIdToDelete,
+    allPlantsInGrowMemo,
+    tRPCdeletePlantByIdIsLoading,
+    smallScreen,
+    handleDeletePlant,
+  ]);
 
-  // FETCH allBreederFromSeedfinder
-  const {
-    data: allBreederFromSeedfinder,
-    isLoading: allBreederFromSeedfinderAreLoading,
-    isError: allBreederFromSeedfinderHaveErrors,
-    error: allBreederFromSeedfinderError,
-  } = api.strains.getAllBreederFromSeedfinder.useQuery(
-    { breeder: "all", strains: "1" },
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
-
-  // BUILD BreedersSelectData II DATA AVAILABLE
+  // BUILD BreedersSelectData
   useEffect(() => {
     if (
       !allBreederFromSeedfinderAreLoading &&
@@ -190,7 +224,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     allBreederFromSeedfinderHaveErrors,
   ]);
 
-  // BUILD StrainsSelectData IF DATA AVAILABLE
+  // BUILD StrainsSelectData
   useEffect(() => {
     if (
       selectedBreederId &&
@@ -211,8 +245,6 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       setStrainsSelectData([]);
     }
   }, [selectedBreederId, allBreederFromSeedfinder]);
-
-  const [opened, setOpened] = useState(false);
 
   return (
     <Container py="xl" px={0} className="flex flex-col space-y-4">

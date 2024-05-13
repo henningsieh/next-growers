@@ -159,6 +159,65 @@ export const strainRouter = createTRPCRouter({
       }
     }),
 
+  deletePlantById: protectedProcedure
+    .input(z.object({ plantId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { plantId } = input;
+
+      try {
+        // Check if the plant exists
+        const plant = await ctx.prisma.plant.findUnique({
+          where: {
+            id: plantId,
+          },
+          include: {
+            report: true,
+          },
+        });
+
+        if (!plant) {
+          throw new Error("Plant not found");
+        }
+
+        // Check if the user is authorized to delete the plant
+        if (ctx.session.user.id !== plant.report.authorId) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not authorized to delete this plant",
+          });
+        }
+
+        // Delete the plant
+        const deletedPlant = await ctx.prisma.plant.delete({
+          where: {
+            id: plantId,
+          },
+        });
+
+        return {
+          success: true,
+          message: "Plant deleted successfully",
+          deletedPlant,
+        };
+      } catch (error: unknown) {
+        // Handle errors
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error.message,
+            cause: error.cause,
+          });
+          console.error(error);
+        } else if (error instanceof TRPCError) {
+          throw new TRPCError(error);
+          console.error(error);
+        } else {
+          throw new Error(`Internal server error`);
+          console.error(error);
+        }
+      }
+    }),
+
   /**
    * @input input: {     breederId: string;     strainId: string; }
    * @return data: StrainInfoFromSeedfinder
