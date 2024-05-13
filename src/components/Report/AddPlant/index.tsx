@@ -25,7 +25,7 @@ import {
 } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import SelectedStrain from "~/components/Atom/SelectedStrain";
 
@@ -33,28 +33,16 @@ import type { BreederFromSeedfinder, MantineSelectData } from "~/types";
 
 import { api } from "~/utils/api";
 
-const elements = [
-  {
-    id: "qwoeufzgqweicuzgqweoicuzv1", //plantId
-    strainName: "Auto Chocolate Cream", // strainInfosFromSeedfinder.name
-    breeder_name: "Linda Seeds",
-    flowering_days: 63,
-    automatic: false,
-  },
-  {
-    id: "qwoeufzgqweicuzgqweoicuzv2", //plantId
-    strainName: "Auto 00 Kush", // strainInfosFromSeedfinder.name
-    breeder_name: "00 Seeds Bank",
-    flowering_days: 75,
-    automatic: true,
-  },
-];
-
 interface AddPlantProps {
   growId: string;
 }
 
 const AddPlant = ({ growId }: AddPlantProps) => {
+  const theme = useMantineTheme();
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
+
   const [breedersSelectData, setBreedersSelectData] =
     useState<MantineSelectData>([]);
   const [selectedBreederId, setSelectedBreederId] = useState<
@@ -69,6 +57,99 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     BreederFromSeedfinder | undefined
   >(undefined);
 
+  // Inside your component function
+  const [plantsInGrow, setPlantsInGrow] = useState<JSX.Element[]>([]);
+
+  // FETCH allBreederFromSeedfinder
+  const {
+    data: allPlantsInGrow,
+    isLoading: allPlantsInGrowAreLoading,
+    isError: allPlantsInGrowHaveErrors,
+    error: _allPlantsInGrowError,
+  } = api.strains.getAllPlantsByReportId.useQuery(
+    { reportId: growId },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  // Initialize elements array
+  const allPlantsInGrowMemo = useMemo(() => {
+    const p: {
+      id: string;
+      strainName: string;
+      breeder_name: string;
+      flowering_days: number;
+      automatic: boolean;
+    }[] = [];
+    if (!allPlantsInGrowAreLoading && !allPlantsInGrowHaveErrors) {
+      allPlantsInGrow.forEach((plant) => {
+        p.push({
+          id: plant.id,
+          strainName: plant.seedfinderStrain.name,
+          breeder_name: plant.seedfinderStrain.breeder_name,
+          flowering_days: plant.seedfinderStrain.flowering_days,
+          automatic: plant.seedfinderStrain.flowering_automatic,
+        });
+      });
+    }
+    return p;
+  }, [
+    allPlantsInGrow,
+    allPlantsInGrowAreLoading,
+    allPlantsInGrowHaveErrors,
+  ]);
+
+  useEffect(() => {
+    const rows = allPlantsInGrowMemo.map((element) => (
+      <tr key={element.id}>
+        <td>
+          <Flex justify="flex-start">
+            {/* DELETE BUTTON */}
+            <ActionIcon
+              p={2}
+              color="red.7"
+              variant="outline"
+              size={30}
+              title="delete this plant"
+            >
+              <IconPlantOff size={20} />
+            </ActionIcon>
+          </Flex>
+        </td>
+        <td>{element.strainName}</td>
+
+        {!smallScreen && <td>{element.breeder_name}</td>}
+
+        <td>
+          <TextInput
+            // size="sm"
+            w="100%"
+            withAsterisk
+            placeholder="give name"
+            rightSection={
+              <ActionIcon
+                variant="filled"
+                size="sm"
+                title="save plant name"
+                color="growgreen.4"
+              >
+                <IconDeviceFloppy />
+              </ActionIcon>
+            }
+          />
+        </td>
+        {/* <td>{element.flowering_days}</td>
+      <td>{element.automatic ? "yes" : "no"}</td> */}
+      </tr>
+    ));
+    setPlantsInGrow(rows);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allPlantsInGrowMemo]);
+
+  // FETCH allBreederFromSeedfinder
   const {
     data: allBreederFromSeedfinder,
     isLoading: allBreederFromSeedfinderAreLoading,
@@ -83,6 +164,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     }
   );
 
+  // BUILD BreedersSelectData II DATA AVAILABLE
   useEffect(() => {
     if (
       !allBreederFromSeedfinderAreLoading &&
@@ -109,6 +191,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     allBreederFromSeedfinderHaveErrors,
   ]);
 
+  // BUILD StrainsSelectData IF DATA AVAILABLE
   useEffect(() => {
     if (
       selectedBreederId &&
@@ -129,54 +212,6 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       setStrainsSelectData([]);
     }
   }, [selectedBreederId, allBreederFromSeedfinder]);
-
-  const theme = useMantineTheme();
-  const smallScreen = useMediaQuery(
-    `(max-width: ${theme.breakpoints.sm})`
-  );
-
-  const rows = elements.map((element) => (
-    <tr key={element.id}>
-      <td>
-        <Flex justify="flex-start">
-          {/* // DELETE BUTTON */}
-          <ActionIcon
-            p={2}
-            color="red.7"
-            variant="outline"
-            size={30}
-            title="delete this plant"
-          >
-            <IconPlantOff size={20} />
-          </ActionIcon>
-        </Flex>
-      </td>
-      <td>{element.strainName}</td>
-
-      {!smallScreen && <td>{element.breeder_name}</td>}
-
-      <td>
-        <TextInput
-          // size="sm"
-          w="100%"
-          withAsterisk
-          placeholder="give name"
-          rightSection={
-            <ActionIcon
-              variant="filled"
-              size="sm"
-              title="save plant name"
-              color="growgreen.4"
-            >
-              <IconDeviceFloppy />
-            </ActionIcon>
-          }
-        />
-      </td>
-      {/* <td>{element.flowering_days}</td>
-      <td>{element.automatic ? "yes" : "no"}</td> */}
-    </tr>
-  ));
 
   const [opened, setOpened] = useState(false);
 
@@ -211,7 +246,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
                   <Popover.Target>
                     <ThemeIcon
                       onMouseOver={() => setOpened(true)}
-                      // onMouseLeave={() => setOpened(true)}
+                      onMouseLeave={() => setOpened(false)}
                       ml={10}
                       mt={-8}
                       variant="default"
@@ -237,7 +272,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
               <th>Automatic</th> */}
             </tr>
           </thead>
-          <tbody>{rows}</tbody>
+          <tbody>{plantsInGrow}</tbody>
         </Table>
         {/* </Card> */}
       </Paper>

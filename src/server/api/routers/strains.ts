@@ -29,7 +29,13 @@ export const strainRouter = createTRPCRouter({
         where: {
           id: input.reportId,
         },
-        include: { plants: true },
+        include: {
+          plants: {
+            include: {
+              seedfinderStrain: true,
+            },
+          },
+        },
       });
 
       // CHECK IF GROW IS AVAILABLE
@@ -127,7 +133,10 @@ export const strainRouter = createTRPCRouter({
           include: { seedfinderStrain: true },
         });
 
-        console.debug(plant);
+        return {
+          success: true,
+          plant,
+        };
       } catch (error: unknown) {
         //FIXME: CONFLICT never possible on upsert mutations
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

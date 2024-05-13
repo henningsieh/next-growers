@@ -162,3 +162,29 @@ export type StrainInfoFromSeedfinder = {
     info: string;
   };
 };
+
+//NOT USED
+export type Plant = {
+  id: string;
+  reportId: string;
+  seedfinderStrainId: string;
+  plantName: string;
+  seedfinderStrain: {
+    id: string;
+    strainId: string;
+    name: string;
+    type: string;
+    cbd: string;
+    description: string;
+    flowering_days: number;
+    flowering_info: string;
+    flowering_automatic: boolean;
+    seedfinder_ext_url: string;
+    breederId: string;
+    breeder_name: string;
+    breeder_description: string;
+    breeder_website_url: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+};

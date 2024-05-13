@@ -47,17 +47,27 @@ export default function SelectedStrain({
   breederName: string;
   breederLogoUrl: string;
 }) {
+  const trpc = api.useUtils();
   const {
     mutate: tRPCsavePlantToGrow,
     isLoading: savePlantToGrowIsLoading,
     //isError: savePlantToGrowHasErrors
   } = api.strains.savePlantToGrow.useMutation({
-    onMutate: () => {
+    onMutate: (plant) => {
       console.debug("START strains.savePlantToGrow.useMutation");
+      console.debug(plant);
     },
-    onSuccess(_data, _variables, _context) {},
-    onSettled(_data, _variables, _context, _error) {},
-    onError(_error, _variables, _context) {},
+    async onSuccess(result, _plant) {
+      console.debug("SUCCESS strains.savePlantToGrow.useMutation");
+      console.debug(result);
+      // api.strains.getAllPlantsByReportId.
+      await trpc.strains.getAllPlantsByReportId.refetch();
+    },
+    onError(error, plant) {
+      console.error("ERROR strains.savePlantToGrow.useMutation");
+      console.error(plant);
+      console.error(error);
+    },
   });
 
   const {
@@ -420,6 +430,7 @@ export default function SelectedStrain({
                             src={breederLogoUrl}
                             style={{ objectFit: "contain" }}
                             alt={breederName}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         </Center>
 
@@ -430,6 +441,7 @@ export default function SelectedStrain({
                               src={strainImageUrl}
                               style={{ objectFit: "contain" }}
                               alt={breederName}
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                           )}
                         </Center>
