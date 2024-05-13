@@ -2,7 +2,16 @@
 const config = {
   rules: {
     "@typescript-eslint/consistent-type-imports": "warn",
-    "@typescript-eslint/no-unused-vars": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        args: "all",
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      },
+    ],
   },
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint"],
@@ -12,18 +21,18 @@ const config = {
   ],
   overrides: [
     {
+      files: ["*.ts", "*.tsx"],
       extends: [
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
       ],
-      files: ["*.ts", "*.tsx"],
       parserOptions: {
         project: "tsconfig.json",
       },
     },
   ],
-  parserOptions: {
-    project: "./tsconfig.json",
-  },
+  // parserOptions: {
+  //   project: "./tsconfig.json",
+  // },
 };
 
 module.exports = config;

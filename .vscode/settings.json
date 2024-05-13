@@ -1,10 +1,15 @@
 {
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "git.enableSmartCommit": true,
+  "workbench.iconTheme": "vscode-icons",
   "workbench.editor.labelFormat": "short",
-  "explorer.compactFolders": false,
-  "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "always",
-    "source.organizeImports": "explicit"
-  }
+  "editor.formatOnSave": true,
+  "explorer.compactFolders": false
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll": "always",
+  //   "source.organizeImports": "explicit"
+  // },
 }
