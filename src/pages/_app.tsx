@@ -151,7 +151,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             Accordion: {
               styles: (
                 theme,
-                params: AccordionStylesParams & {
+                _params: AccordionStylesParams & {
                   color: MantineColor;
                 },
                 { variant }
@@ -225,8 +225,8 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
 
             ActionIcon: {
               styles: (
-                theme,
-                params: ActionIconStylesParams,
+                _theme,
+                _params: ActionIconStylesParams,
                 { variant }
               ) => ({
                 defaultProps: {
