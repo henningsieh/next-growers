@@ -3,12 +3,12 @@ import {
   Card,
   Center,
   Container,
+  Divider,
   Flex,
   Loader,
   Paper,
   Popover,
   Select,
-  Space,
   Table,
   Text,
   TextInput,
@@ -29,11 +29,9 @@ import { useEffect, useState } from "react";
 
 import SelectedStrain from "~/components/Atom/SelectedStrain";
 
-import type { BreederFromSeedfinder } from "~/types";
+import type { BreederFromSeedfinder, MantineSelectData } from "~/types";
 
 import { api } from "~/utils/api";
-
-type MantineSelectData = { value: string; label: string }[];
 
 const elements = [
   {
@@ -183,7 +181,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   const [opened, setOpened] = useState(false);
 
   return (
-    <Container py="xl" px={0} className="flex flex-col space-y-2">
+    <Container py="xl" px={0} className="flex flex-col space-y-4">
       <Paper withBorder p="sm">
         <Title order={3}>Current plants in your grow</Title>
         {/* <Card> */}
@@ -243,7 +241,13 @@ const AddPlant = ({ growId }: AddPlantProps) => {
         </Table>
         {/* </Card> */}
       </Paper>
-      <Space h="xl" />
+
+      <Divider
+        py="md"
+        label="Add new Strain as a Plant"
+        labelPosition="center"
+      />
+
       <Paper mih={180} withBorder p="sm" className="z-10">
         <Title order={3}>Add new plants to your grow</Title>
         {allBreederFromSeedfinderAreLoading && (

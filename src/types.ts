@@ -106,6 +106,8 @@ export enum Environment {
   OUTDOOR = "Outdoor 🌦️",
 }
 
+export type MantineSelectData = { value: string; label: string }[];
+
 export interface LightswattsDataPoint {
   date: Date;
   watt: number;

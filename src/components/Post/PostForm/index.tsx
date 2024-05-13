@@ -48,7 +48,11 @@ import { useRouter } from "next/router";
 import EmojiPicker from "~/components/Atom/EmojiPicker";
 import ImageUploader from "~/components/ImageUploader";
 
-import type { IsoReportWithPostsFromDb, Post } from "~/types";
+import type {
+  IsoReportWithPostsFromDb,
+  MantineSelectData,
+  Post,
+} from "~/types";
 import { GrowStage } from "~/types";
 
 import { api } from "~/utils/api";
@@ -191,6 +195,13 @@ const PostForm = (props: AddPostProps) => {
     },
   });
 
+  const growStageSelectData: MantineSelectData = Object.keys(
+    GrowStage
+  ).map((key) => ({
+    value: key,
+    label: GrowStage[key as keyof typeof GrowStage],
+  }));
+
   function handleSubmit(values: {
     date: Date;
     day: number;
@@ -332,11 +343,7 @@ const PostForm = (props: AddPostProps) => {
                         className="w-full"
                         label="Grow stage"
                         description="Actual grow stage"
-                        data={Object.keys(GrowStage).map((key) => ({
-                          value: key,
-                          label:
-                            GrowStage[key as keyof typeof GrowStage],
-                        }))}
+                        data={growStageSelectData}
                         withAsterisk
                         {...createPostForm.getInputProps("growStage")}
                         icon={<IconPlant stroke={1.6} size="1.4rem" />}

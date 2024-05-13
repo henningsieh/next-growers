@@ -42,7 +42,7 @@ import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
-import type { EditReportFormProps } from "~/types";
+import type { EditReportFormProps, MantineSelectData } from "~/types";
 import { Environment } from "~/types";
 
 import { api } from "~/utils/api";
@@ -112,19 +112,18 @@ export function EditReportForm({
     reportfromProps.image?.cloudUrl as string
   );
 
-  // const trpc = api.useUtils();
+  const growstartdatePlaceholder = t(
+    "common:report-form-growstartdate-placeholder"
+  );
+  const strainsPlaceholder = t(
+    "common:report-form-strains-placeholder"
+  );
 
-  const submitEditReportForm = (values: {
-    id: string;
-    title: string;
-    imageId: string;
-    description: string;
-    strains: string[];
-    environment: keyof typeof Environment;
-    createdAt: Date;
-  }) => {
-    tRPCsaveReport(values);
-  };
+  // Update "imageId" state, if "imageId" form field value changes
+  useEffect(() => {
+    editReportForm.setFieldValue("imageId", imageId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageId]);
 
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
     {
@@ -171,6 +170,25 @@ export function EditReportForm({
     },
   });
 
+  const environmentSelectData: MantineSelectData = Object.keys(
+    Environment
+  ).map((key) => ({
+    value: key,
+    label: Environment[key as keyof typeof Environment],
+  }));
+
+  const handleSubmit = (values: {
+    id: string;
+    title: string;
+    imageId: string;
+    description: string;
+    strains: string[];
+    environment: keyof typeof Environment;
+    createdAt: Date;
+  }) => {
+    tRPCsaveReport(values);
+  };
+
   const handleErrors = (errors: typeof editReportForm.errors) => {
     Object.keys(errors).forEach((key) => {
       notifications.show(
@@ -178,12 +196,6 @@ export function EditReportForm({
       );
     });
   };
-
-  // Update "imageId" state, if "imageId" form field value changes
-  useEffect(() => {
-    editReportForm.setFieldValue("imageId", imageId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageId]);
 
   const handleDropWrapper = (files: File[]): void => {
     // handleDrop calls the/api/upload endpoint
@@ -199,14 +211,6 @@ export function EditReportForm({
       console.debug(error);
     });
   };
-
-  const growstartdatePlaceholder = t(
-    "common:report-form-growstartdate-placeholder"
-  );
-  const strainsPlaceholder = t(
-    "common:report-form-strains-placeholder"
-  );
-
   return (
     <>
       {reportfromProps && (
@@ -344,7 +348,7 @@ export function EditReportForm({
           <Paper m={0} p="sm" withBorder>
             <form
               onSubmit={editReportForm.onSubmit((values) => {
-                submitEditReportForm(values);
+                handleSubmit(values);
               }, handleErrors)}
             >
               <Box className="space-y-2">
@@ -373,10 +377,7 @@ export function EditReportForm({
                   description={t(
                     "common:report-form-environment-description"
                   )}
-                  data={Object.keys(Environment).map((key) => ({
-                    value: key,
-                    label: Environment[key as keyof typeof Environment],
-                  }))}
+                  data={environmentSelectData}
                   withAsterisk
                   {...editReportForm.getInputProps("environment")}
                   className="w-full"
