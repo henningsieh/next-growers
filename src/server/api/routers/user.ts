@@ -42,7 +42,7 @@ export const userRouter = createTRPCRouter({
         });
 
         const result = {
-          success: "true",
+          success: true,
           user,
         };
         return result;

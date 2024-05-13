@@ -62,7 +62,7 @@ const useStyles = createStyles((theme) => ({
 
   content: {
     width: "100%",
-    height: "105%",
+    height: "100%",
     position: "relative",
     display: "flex",
     flexDirection: "column",
