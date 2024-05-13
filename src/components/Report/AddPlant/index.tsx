@@ -146,8 +146,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       </tr>
     ));
     setPlantsInGrow(rows);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allPlantsInGrowMemo]);
+  }, [allPlantsInGrowMemo, smallScreen]);
 
   // FETCH allBreederFromSeedfinder
   const {
