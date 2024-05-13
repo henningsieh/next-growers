@@ -185,9 +185,10 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   return (
     <Container py="xl" px={0} className="flex flex-col space-y-2">
       <Paper withBorder p="sm">
-        <Title order={2}>Current plants in your grow</Title>
+        <Title order={3}>Current plants in your grow</Title>
         {/* <Card> */}
         <Table
+          mt="xs"
           striped
           withBorder
           fontSize="sm"
@@ -244,7 +245,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       </Paper>
       <Space h="xl" />
       <Paper mih={180} withBorder p="sm" className="z-10">
-        <Title order={2}>Add new plants to your grow</Title>
+        <Title order={3}>Add new plants to your grow</Title>
         {allBreederFromSeedfinderAreLoading && (
           <Center>
             <Loader

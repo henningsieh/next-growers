@@ -7,6 +7,7 @@ import { env } from "~/env.mjs";
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 
 import type {
@@ -21,6 +22,27 @@ import {
 } from "~/utils/inputValidation";
 
 export const strainRouter = createTRPCRouter({
+  getAllPlantsByReportId: publicProcedure
+    .input(z.object({ reportId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const existingReport = await ctx.prisma.report.findUnique({
+        where: {
+          id: input.reportId,
+        },
+        include: { plants: true },
+      });
+
+      // CHECK IF GROW IS AVAILABLE
+      if (!existingReport) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "This grow was not found",
+        });
+      } else {
+        return existingReport.plants;
+      }
+    }),
+
   savePlantToGrow: protectedProcedure
     .input(InputSavePlantToGrow)
     .mutation(async ({ ctx, input }) => {
@@ -48,15 +70,17 @@ export const strainRouter = createTRPCRouter({
           },
         });
 
+        // CHECK IF GROW IS AVAILABLE
         if (!existingReport) {
           throw new Error("This grow was not found");
         }
 
+        // CHECK IF SESSION USER IS AUTHOR OF GROW
         if (ctx.session.user.id != existingReport.authorId) {
           throw new Error("You are not authorized to edit this report");
         }
 
-        // CREATE OR UPDATE seedfinderStrain IN DB
+        // CREATE OR UPDATE seedfinderStrain
         const seedfinderStrain =
           await ctx.prisma.seedfinderStrain.upsert({
             where: { strainId_breederId: { strainId, breederId } }, // Define unique identifier

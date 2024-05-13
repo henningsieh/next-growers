@@ -19,7 +19,10 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconExternalLink } from "@tabler/icons-react";
+import {
+  IconDeviceFloppy,
+  IconExternalLink,
+} from "@tabler/icons-react";
 import { decode } from "html-entities";
 import { httpStatusErrorMsg } from "~/messages";
 
@@ -46,12 +49,15 @@ export default function SelectedStrain({
 }) {
   const {
     mutate: tRPCsavePlantToGrow,
-    isLoading: isSavingPlantToGrow,
-    // isError: savePlantToGrow
+    isLoading: savePlantToGrowIsLoading,
+    //isError: savePlantToGrowHasErrors
   } = api.strains.savePlantToGrow.useMutation({
     onMutate: () => {
       console.debug("START strains.savePlantToGrow.useMutation");
     },
+    onSuccess(_data, _variables, _context) {},
+    onSettled(_data, _variables, _context, _error) {},
+    onError(_error, _variables, _context) {},
   });
 
   const {
@@ -150,8 +156,8 @@ export default function SelectedStrain({
 
   const strainImageUrl = strainInfosFromSeedfinder?.brinfo?.pic;
 
-  const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
   const dark = colorScheme === "dark";
   const mediumScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.sm})`
@@ -194,15 +200,14 @@ export default function SelectedStrain({
                 <form
                   onSubmit={savePlantToGrowForm.onSubmit(
                     (strainDataFormValues) => {
-                      //console.debug({ strainDataFormValues });
                       tRPCsavePlantToGrow(strainDataFormValues);
-                      //   handleSubmit(values);
                     },
                     handleErrors
                   )}
                 >
                   <Button
-                    loading={isSavingPlantToGrow}
+                    leftIcon={<IconDeviceFloppy size="1.1rem" />}
+                    loading={savePlantToGrowIsLoading}
                     variant="filled"
                     color="growgreen"
                     type="submit"

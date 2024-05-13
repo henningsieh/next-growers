@@ -148,6 +148,7 @@ model Report {
   image        Image?
   description  String
   environment  Environment?
+  plants       Plant[]
   posts        Post[] // A Report may have many Posts
   likes        Like[] // A Report may have many Likes
   contests     Contest[] // A Report may participate in many Contests
@@ -156,7 +157,6 @@ model Report {
   Notification Notification[]
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
-  Plant        Plant[]
 
   @@index([authorId], name: "authorId_idx")
 }
