@@ -1,6 +1,6 @@
 import { Box, Container, Title } from "@mantine/core";
 
-import type { GetServerSideProps } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (
   },
 });
 
-export default function ProtectedMyAccount() {
+const ProtectedMyAccount: NextPage = () => {
   const pageTitle = "Your Account Settings";
 
   const { data: session } = useSession();
@@ -63,4 +63,5 @@ export default function ProtectedMyAccount() {
       </Container>
     </>
   );
-}
+};
+export default ProtectedMyAccount;

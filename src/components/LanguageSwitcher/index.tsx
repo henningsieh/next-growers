@@ -31,8 +31,7 @@ const LanguageSwitcher: NextPage = () => {
             label: (
               <Center p={2}>
                 <Image
-                  height={22}
-                  width={24}
+                  className={"w-6 h-4"}
                   src={deFlag as string}
                   alt="German Language Flag"
                 />
@@ -44,8 +43,7 @@ const LanguageSwitcher: NextPage = () => {
             label: (
               <Center p={2}>
                 <Image
-                  height={22}
-                  width={24}
+                  className={"w-6 h-4"}
                   src={usFlag as string}
                   alt="English Language Flag"
                 />
@@ -60,7 +58,7 @@ const LanguageSwitcher: NextPage = () => {
             : theme.fn.lighten(theme.colors.growgreen[4], 0.7)
         }
         onChange={() =>
-          void router.push(router.pathname, router.asPath, {
+          void router.replace(router.pathname, router.asPath, {
             locale: i18n.language === "de" ? "en" : "de",
           })
         }

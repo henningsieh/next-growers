@@ -8,18 +8,19 @@ import {
   LoadingOverlay,
   Paper,
   rem,
-  Space,
   Text,
   Title,
   Transition,
-  useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
-import { IconTextWrap, IconX } from "@tabler/icons-react";
+import { IconMessagePlus, IconX } from "@tabler/icons-react";
+import { BulletList } from "@tiptap/extension-bullet-list";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
+import { ListItem } from "@tiptap/extension-list-item";
 import SubScript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import TextAlign from "@tiptap/extension-text-align";
@@ -43,37 +44,64 @@ import EmojiPicker from "~/components/Atom/EmojiPicker";
 import UserAvatar from "~/components/Atom/UserAvatar";
 import { UserComment } from "~/components/User/Comment";
 
-import { Locale } from "~/types";
+import { type Comment, Locale } from "~/types";
 
 import { api } from "~/utils/api";
 import { sanatizeDateString } from "~/utils/helperUtils";
 import { InputEditCommentForm } from "~/utils/inputValidation";
 
-interface CommentsProps {
-  reportId: string;
-  postId: string;
-}
-
 const useStyles = createStyles((theme) => ({
-  button: {
-    [theme.fn.smallerThan("md")]: {
-      padding: rem(5),
-      height: rem(20),
-      // width: rem(140),
-      fontSize: 12,
-    },
+  responses: {
+    scrollPaddingTop: "60px",
+    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
+      ? rem(120)
+      : rem(30),
+    position: "relative",
+    // overflow: "hidden",
+  },
+  treeBackground: {
+    margin: 0,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
+    borderRadius: theme.radius.sm,
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
+      ? rem(72)
+      : 0,
+    width: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
+      ? rem(40)
+      : theme.spacing.xl, // Adjust the width of the tree structure
+
+    background:
+      theme.colorScheme === "dark"
+        ? theme.fn.linearGradient(
+            90,
+            theme.colors.dark[8],
+            theme.colors.growgreen[5]
+          )
+        : theme.fn.linearGradient(
+            90,
+            theme.white,
+            theme.colors.growgreen[3]
+          ),
   },
 }));
 
-const PostComments = ({ reportId, postId }: CommentsProps) => {
+interface CommentsProps {
+  growId: string;
+  updateId: string;
+}
+
+const PostComments = ({ growId, updateId }: CommentsProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
   const trpc = api.useUtils();
 
-  const theme = useMantineTheme();
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
 
   const [isSaving, setIsSaving] = useState(false);
   const [newOpen, setNewOpen] = useState(false);
@@ -82,12 +110,16 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
 
   const { data: comments, isLoading } =
     api.comments.getCommentsByPostId.useQuery({
-      postId: postId,
+      postId: updateId,
     });
 
   const { data: session, status } = useSession();
 
   const commentsRef = useRef<HTMLElement[]>([]);
+
+  const smallScreen = useMediaQuery(
+    `(max-width: ${theme.breakpoints.sm})`
+  );
 
   const newCommentForm = useForm({
     validate: zodResolver(InputEditCommentForm),
@@ -95,7 +127,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     initialValues: {
       id: undefined,
       isResponseTo: "",
-      postId: postId,
+      postId: updateId,
       content: "",
     },
   });
@@ -109,9 +141,9 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
   };
 
   useEffect(() => {
-    newCommentForm.setFieldValue("postId", postId);
+    newCommentForm.setFieldValue("postId", updateId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postId]);
+  }, [updateId]);
 
   // Prepare TipTap Editor for comment content
   const editor = useEditor({
@@ -135,6 +167,16 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
         types: ["heading", "paragraph"],
         alignments: ["left", "center", "justify"],
       }),
+      BulletList.configure({
+        HTMLAttributes: {
+          itemTypeName: "List",
+        },
+      }),
+      ListItem.configure({
+        HTMLAttributes: {
+          itemTypeName: "List.Item",
+        },
+      }),
     ],
     content: newCommentForm.values.content,
     onUpdate: ({ editor }) => {
@@ -142,10 +184,39 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     },
   });
 
+  const [commentHashId, setCommentHashId] = useState("");
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    const extractedHashId = hash.slice(1);
+    setCommentHashId(extractedHashId);
+    // Timeout before finding the corresponding comment's HTML element
+    setTimeout(() => {
+      const commentElement = document.getElementById(commentHashId);
+
+      // Scroll to the comment if it exists
+      // if (commentElement) {
+      //   commentElement.scrollIntoView({ behavior: "smooth" });
+      // }
+
+      // Scroll to the comment if it exists
+      if (commentElement) {
+        const topOffset = 60; // Your desired top offset
+        const top =
+          commentElement.getBoundingClientRect().top +
+          window.scrollY -
+          topOffset;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }, 100); // Adjust the timeout as needed
+  }, [commentHashId, comments]);
+
   const userComments = comments?.map((comment) => {
     return (
       <Box
-        mt="lg"
+        sx={() => ({
+          scrollPaddingTop: "60px",
+        })}
         key={comment.id}
         id={comment.id}
         ref={(ref) => {
@@ -156,12 +227,34 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
       >
         <UserComment
           editor={editor}
-          reportId={reportId}
+          reportId={growId}
           isResponse=""
           comment={comment}
           setNewOpen={setNewOpen}
           newCommentForm={newCommentForm}
         />
+        {/* Map over comment.responses and wrap each UserComment */}
+        {comment.responses.map((response) => (
+          <Box
+            id={response.id}
+            key={response.id}
+            className={classes.responses}
+          >
+            {/* Conditionally render the tree background only for the current comment */}
+            {commentHashId == response.id && (
+              <div className={classes.treeBackground}></div>
+            )}
+
+            <UserComment
+              editor={editor}
+              reportId={growId}
+              isResponse={comment.id} // Assuming this is the ID of the parent comment
+              comment={response as Comment}
+              setNewOpen={setNewOpen}
+              newCommentForm={newCommentForm}
+            />
+          </Box>
+        ))}
       </Box>
     );
   });
@@ -196,27 +289,23 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
     <Box>
       {status !== "loading" && isLoading && <p>loading comments...</p>}
       {status === "authenticated" && (
-        <>
-          <Group m={4} position="apart">
-            <Title order={2}>{t("common:comments-headline")}</Title>
+        <Box p="xs">
+          <Group m={1} position="apart">
+            <Title order={3}>{t("common:comments-headline")}</Title>
 
             <Button
               sx={(theme) => ({
                 [theme.fn.smallerThan("sm")]: {
                   padding: rem(5),
                   height: rem(26),
-                  // width: rem(140),
-                  fontSize: 16,
                   fontWeight: "normal",
                 },
               })}
-              fz="md"
+              fz={smallScreen ? "sm" : "lg"}
               variant="filled"
               color={!newOpen ? "growgreen" : "dark"}
               leftIcon={
-                <IconTextWrap
-                  size={theme.fn.smallerThan("sm") ? 16 : 22}
-                />
+                <IconMessagePlus size={smallScreen ? 16 : 22} />
               }
               title={!newOpen ? "add new comment" : "close form"}
               onClick={() => {
@@ -252,7 +341,6 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                       }
                       userName={session?.user.name as string}
                       avatarRadius={42}
-                      tailwindMarginTop={false}
                     />
                     <Box>
                       <Text fz="sm">
@@ -278,6 +366,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                         title="reset form and close"
                         onClick={() => {
                           setNewOpen(false);
+                          editor?.commands.clearContent();
                           newCommentForm.reset();
                         }}
                         m={0}
@@ -330,7 +419,10 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
                         color: "growgreen.3",
                       }}
                     />
-                    <RichTextEditor editor={editor}>
+                    <RichTextEditor
+                      editor={editor}
+                      withTypographyStyles={false}
+                    >
                       <RichTextEditor.Toolbar p="xs">
                         <RichTextEditor.ControlsGroup>
                           <EmojiPicker editor={editor as Editor} />
@@ -403,7 +495,7 @@ const PostComments = ({ reportId, postId }: CommentsProps) => {
               </Paper>
             )}
           </Transition>
-        </>
+        </Box>
       )}
 
       {userComments}

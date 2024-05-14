@@ -1,15 +1,12 @@
-import {
-  Blockquote,
-  Box,
-  Card,
-  createStyles,
-  rem,
-} from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { EditReportMenu } from "../Card";
+import { Box, Card, createStyles, rem } from "@mantine/core";
 
-import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
-import UserAvatar from "~/components/Atom/UserAvatar";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+
+import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import type { IsoReportWithPostsFromDb } from "~/types";
 
@@ -24,8 +21,8 @@ const useStyles = createStyles((theme) => ({
     }`,
   },
   cite: {
-    fontFamily: `'Roboto Slab', sans-serif`,
-    fontSize: "1.2rem",
+    fontFamily: `'Lato', sans-serif`,
+    fontSize: "3.2rem",
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
     // width: "100%",
   },
@@ -43,62 +40,80 @@ interface ReportHeaderProps {
 export function ReportHeader({
   report,
   image,
-  avatar,
-  name,
-  description,
+  // name,
+  // description,
 }: // stats, //FIXME: not needed
 ReportHeaderProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { classes, theme } = useStyles();
 
-  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
-  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  const router = useRouter();
 
-  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
-  const getResponsiveHeaderImageHeight = xs
-    ? 140
-    : sm
-      ? 140
-      : md
-        ? 220
-        : lg
-          ? 220
-          : xl
-            ? 220
-            : 220;
+  const { data: session, status } = useSession();
 
   return (
-    <Card withBorder pt={0} radius="sm" className={classes.card}>
-      <Link title="back to Grow" href={`/grow/${report.id}`}>
-        <Card.Section
-          sx={{
-            backgroundSize: "cover",
-            backgroundImage: `url(${image})`,
-            backgroundPosition: "center",
-            height: getResponsiveHeaderImageHeight,
-          }}
+    <Card withBorder radius="sm" className={classes.card}>
+      {/* <Link title="back to Grow" href={`/grow/${report.id}`}> */}
+      {/* HEADER IMAGE */}
+      <Card.Section pos="relative">
+        {/*// Session buttons */}
+        {status === "authenticated" &&
+          !!report &&
+          session.user.id == report.authorId && (
+            <Box p={8} pos="absolute" className="z-20 top-1 right-1">
+              <EditReportMenu
+                reportId={report.id}
+                labelEditGrow={t("common:report-edit-button")}
+                labelAddUpdate={t("common:addpost-headline")}
+              />
+            </Box>
+          )}
+        <ImagePreview
+          publicLink={`/grow/${report.id}`}
+          imageUrl={image}
+          title={report.title}
+          description={report.description}
+          authorName={report.author.name as string}
+          authorImageUrl={
+            report.author.image
+              ? report.author.image
+              : `https://ui-avatars.com/api/?name=${
+                  report.author.name as string
+                }`
+          }
+          views={0}
+          comments={0}
         />
-      </Link>
-      <UserAvatar
+      </Card.Section>
+      {/* <Card.Section
+        sx={{
+          backgroundSize: "cover",
+          backgroundImage: `url(${image})`,
+          backgroundPosition: "center",
+          height: getResponsiveHeaderImageHeight,
+        }}
+      /> */}
+      {/* </Link> */}
+      {/* <UserAvatar
         imageUrl={avatar}
         userName={name}
         avatarRadius={180}
         tailwindMarginTop={true}
-      />
+      /> */}
       {/* 
       <Text ta="center" fz="lg" fw={500} mt="sm">
         {name}
       </Text> */}
       {/* Cite blockquote */}
       {/* <Center> */}
-      <Box p="sm" className="-m-5">
-        {/* Blockquote */}
+      {/* <Box p="sm" bg={"blue"} className="-m-5 absolute ">
         <Blockquote p="xs" className={classes.cite} cite={name}>
           {description}
         </Blockquote>
-      </Box>
+      </Box> */}
       {/* </Center> */}
       {/* 
       <Text ta="center" fz="sm" c="dimmed">

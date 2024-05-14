@@ -1,5 +1,6 @@
 import {
   Box,
+  Center,
   Container,
   createStyles,
   Loader,
@@ -59,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async (
  * @param props: { trpcState: DehydratedState, reportId: string }
  * @returns HTML Component
  */
-const ProtectedEditReportDetails: NextPage = () => {
+const ProtectedEditPost: NextPage = () => {
   const router = useRouter();
   const queryReportId = router.query.reportId as string;
   const queryPostId = router.query.postId as string;
@@ -101,7 +102,12 @@ const ProtectedEditReportDetails: NextPage = () => {
     error: reportError,
   } = api.reports.getIsoReportWithPostsFromDb.useQuery(queryReportId);
 
-  if (reportIsLoading) return <Loader color="growgreen.4" />;
+  if (reportIsLoading)
+    return (
+      <Center>
+        <Loader size="xl" m="xl" color="growgreen.4" />
+      </Center>
+    );
   if (reportHasErrors) {
     notifications.show(
       httpStatusErrorMsg(
@@ -120,7 +126,7 @@ const ProtectedEditReportDetails: NextPage = () => {
   const reportTitle = `${report.title}`;
 
   const queryPost = report?.posts.find(
-    (post: Post) => post.id === queryPostId
+    (post) => post.id === queryPostId
   );
 
   return !!!queryPost ? (
@@ -139,7 +145,9 @@ const ProtectedEditReportDetails: NextPage = () => {
       <Container size="xl" className="flex flex-col space-y-2">
         {/* // Header with Title */}
         {reportIsLoading ? (
-          <Loader /> // Render Loader component if reportIsLoading is true
+          <Center>
+            <Loader size="xl" m="xl" color="growgreen.4" />
+          </Center>
         ) : (
           <Box className="flex items-center justify-start pt-2">
             <Link
@@ -180,4 +188,4 @@ const ProtectedEditReportDetails: NextPage = () => {
   );
 };
 
-export default ProtectedEditReportDetails;
+export default ProtectedEditPost;

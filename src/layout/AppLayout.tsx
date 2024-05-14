@@ -10,6 +10,7 @@ import {
   Group,
   Header,
   HoverCard,
+  Image,
   Overlay,
   rem,
   ScrollArea,
@@ -25,14 +26,13 @@ import {
   IconMapPin,
   IconMessageCircle,
 } from "@tabler/icons-react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+import CookieConsentBanner from "~/components/Atom/CookieConsent";
 import LanguageSwitcher from "~/components/LanguageSwitcher";
 import LightDarkButton from "~/components/LightDarkButton";
 import Notifications from "~/components/User/Notifications";
@@ -124,7 +124,11 @@ const useStyles = createStyles((theme) => ({
       backgroundColor:
         theme.colorScheme === "dark"
           ? theme.colors.dark[7]
-          : theme.colors.gray[0],
+          : theme.colors.growgreen[3],
+      color:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[7]
+          : theme.white,
     }),
 
     "&:active": theme.activeStyles,
@@ -235,7 +239,7 @@ export default function RootLayout({
 
   const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
-      bg={dark ? "dark.5" : "growgreen.4"}
+      bg={dark ? "dark.5" : "gray.2"}
       onClick={() => openUrlInNewTab(item.url)}
       className={classes.subLink}
       key={item.title}
@@ -287,9 +291,10 @@ export default function RootLayout({
             </Box>
             <Link href="/grows">
               <Image
-                width={86}
-                height={44}
-                quality={95}
+                mb="xs"
+                width={75}
+                height={50}
+                // quality={100}
                 alt="GrowAGram Logo"
                 src="/grow-a-gram-high-resolution-logo.webp"
               />
@@ -464,10 +469,10 @@ export default function RootLayout({
       <Overlay className={classes.overlay} opacity={1} />
 
       {/* Content */}
-      <Box className="relative mt-16 mb-16">
-        {children}
-        <SpeedInsights />
-      </Box>
+      <Box className="relative mt-16 pb-16">{children}</Box>
+
+      {/* CookieConsent */}
+      <CookieConsentBanner />
 
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (

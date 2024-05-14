@@ -10,7 +10,10 @@ import Image from "next/image";
 
 import { PostImagesCarousel } from "~/components/ImageCarousel";
 
+import type { IsoReportWithPostsFromDb } from "~/types";
+
 interface ImagesSliderProps {
+  grow: IsoReportWithPostsFromDb;
   cloudUrls: string[];
 }
 
@@ -29,6 +32,7 @@ const ImagesSlider = (props: ImagesSliderProps) => {
   // const { t } = useTranslation(activeLocale);
 
   const { cloudUrls } = props;
+
   const { classes, theme } = useStyles();
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -48,8 +52,9 @@ const ImagesSlider = (props: ImagesSliderProps) => {
   return (
     <Card className={classes.card} radius="sm" p={0} m={0} withBorder>
       <Modal
-        fullScreen={largeScreen ? false : true}
-        withCloseButton={largeScreen ? false : true}
+        className="content-center"
+        fullScreen
+        withCloseButton
         opened={opened}
         onClose={close}
         size="100%"

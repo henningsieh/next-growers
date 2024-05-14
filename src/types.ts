@@ -9,10 +9,8 @@ type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type GetIsoReportWithPostsFromDbOutput =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
-
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
-
 export interface IsoReportCardProps {
   report: IsoReportWithPostsFromDb;
   setSearchString?: Dispatch<SetStateAction<string>>;
@@ -27,17 +25,6 @@ type getCommentsByPostIdOutput =
   RouterOutput["comments"]["getCommentsByPostId"];
 export type Comments = getCommentsByPostIdOutput;
 export type Comment = getCommentsByPostIdOutput[number];
-
-export type PostDbInput = {
-  date: Date;
-  title: string;
-  growStage: keyof typeof GrowStage;
-  lightHoursPerDay: number | null;
-  images: string[];
-  content: string;
-  reportId: string;
-  authorId: string;
-};
 
 type getAllNotificationsOutput =
   RouterOutput["notifications"]["getNotificationsByUserId"];
@@ -117,4 +104,9 @@ export enum GrowStage {
 export enum Environment {
   INDOOR = "Indoor 💡",
   OUTDOOR = "Outdoor 🌦️",
+}
+
+export interface LightswattsDataPoint {
+  date: Date;
+  watt: number;
 }

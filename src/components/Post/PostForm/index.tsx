@@ -12,13 +12,14 @@ import {
   Space,
   TextInput,
 } from "@mantine/core";
-import { DateInput, DatePickerInput } from "@mantine/dates";
+import { DateInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
 import {
-  IconBulb,
+  IconBolt,
   IconCalendarEvent,
+  IconClock,
   IconDeviceFloppy,
   IconNumber,
   IconPlant,
@@ -32,9 +33,8 @@ import Underline from "@tiptap/extension-underline";
 import type { Editor } from "@tiptap/react";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { env } from "~/env.mjs";
 import {
-  fileUploadErrorMsg,
+  defaultErrorMsg,
   httpStatusErrorMsg,
   onlyOnePostPerDayAllowed,
   savePostSuccessfulMsg,
@@ -48,11 +48,7 @@ import { useRouter } from "next/router";
 import EmojiPicker from "~/components/Atom/EmojiPicker";
 import ImageUploader from "~/components/ImageUploader";
 
-import type {
-  IsoReportWithPostsFromDb,
-  Post,
-  PostDbInput,
-} from "~/types";
+import type { IsoReportWithPostsFromDb, Post } from "~/types";
 import { GrowStage } from "~/types";
 
 import { api } from "~/utils/api";
@@ -71,21 +67,25 @@ const prefillHTMLContent =
   "<h1>Ich bin eine Überschrift</h1><hr/><p>RichTextEditor is designed to be as simple as possible to bring a familiar editing experience to regular users.</p>";
 
 const PostForm = (props: AddPostProps) => {
-  const { isoReport: report, post } = props;
-  const [imageIds, setImageIds] = useState<string[]>([]);
-
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  // const { colorScheme } = useMantineColorScheme();
-  // const dark = colorScheme === "dark";
+  const { isoReport: report, post } = props;
+  const [imageIds, setImageIds] = useState<string[]>([]);
+  const [images, setImages] = useState(
+    [...(post?.images || [])].sort((a, b) => {
+      const orderA = a.postOrder ?? 0;
+      const orderB = b.postOrder ?? 0;
+      return orderA - orderB;
+    })
+  );
 
   // Update "images" form field value, if "imageIds" state changes
   useEffect(() => {
-    createPostForm.setFieldValue("images", imageIds);
+    createPostForm.setFieldValue("images", images);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageIds]);
+  }, [images]);
 
   // Prepare WISIWIG Editior
   const editor = useEditor({
@@ -121,49 +121,62 @@ const PostForm = (props: AddPostProps) => {
       },
       // If the mutation fails,
       // use the context returned from onMutate to roll back
-      //FIXME: decide server side, which error on conflict
-      onError: (err, newReport, context) => {
-        notifications.show(onlyOnePostPerDayAllowed);
-        if (!context) return;
+      onError: (error, badNewPost) => {
+        if (error.data) {
+          if (error.data.code === "CONFLICT") {
+            notifications.show(onlyOnePostPerDayAllowed);
+          } else {
+            notifications.show(
+              httpStatusErrorMsg(error.message, error.data?.httpStatus)
+            );
+          }
+        } else {
+          notifications.show(defaultErrorMsg(error.message));
+        }
+        console.debug("error", error);
+        console.debug("badNewPost", badNewPost);
       },
       onSuccess: async (newPost) => {
         notifications.show(savePostSuccessfulMsg);
         setImageIds([]);
-        createPostForm.setFieldValue("images", imageIds);
-        await trpc.reports.getIsoReportWithPostsFromDb.refetch();
-        // Navigate to the new report page
+        // createPostForm.setFieldValue("images", imageIds);
+        await trpc.reports.getIsoReportWithPostsFromDb.refetch(); // When navigating to the new page
         void router.push(
-          `/${activeLocale as string}/grow/${newPost.reportId}/update/${newPost.id}`
+          {
+            pathname: `/${activeLocale as string}/grow/${newPost?.reportId}/update/${newPost?.id}`,
+          },
+          undefined,
+          { scroll: true }
         );
       },
       // Always refetch after error or success:
       onSettled: () => {
         setImageIds([]);
-        createPostForm.setFieldValue("images", imageIds);
+        // createPostForm.setFieldValue("images", imageIds);
         console.log("END posts.createPost.useMutation");
       },
     });
 
   if (report == null) return null;
-  const reportStartDate = new Date(report.createdAt);
-  reportStartDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   const currentDate = new Date();
+  const reportCreatedAt = new Date(report.createdAt);
+
+  reportCreatedAt.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
-  currentDate.setDate(currentDate.getDate());
+
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Set today's time to 00:00:00
 
   const growDay = post
     ? post.growDay
     : Math.floor(
-        (currentDate.getTime() - reportStartDate.getTime()) /
-          (1000 * 60 * 60 * 24) +
-          1
+        (currentDate.getTime() - reportCreatedAt.getTime()) /
+          (1000 * 60 * 60 * 24)
       );
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const createPostForm = useForm({
-    validate: zodResolver(InputCreatePostForm(reportStartDate)),
+    validate: zodResolver(InputCreatePostForm(reportCreatedAt)),
     validateInputOnChange: true,
     initialValues: {
       id: post ? post.id : "",
@@ -173,7 +186,8 @@ const PostForm = (props: AddPostProps) => {
       content: post ? post.content : prefillHTMLContent,
       growStage: post ? post.growStage : undefined,
       lightHoursPerDay: post ? (post.lightHoursPerDay as number) : 0,
-      images: imageIds,
+      watt: post && post.LightWatts ? post.LightWatts.watt : undefined,
+      images: images.map(({ id, postOrder }) => ({ id, postOrder })),
     },
   });
 
@@ -184,7 +198,10 @@ const PostForm = (props: AddPostProps) => {
     content: string;
     growStage: keyof typeof GrowStage | undefined;
     lightHoursPerDay: number;
-    images: string[];
+    images: {
+      id: string;
+      postOrder: number;
+    }[];
   }) {
     // Omitting the 'day' field, will not be saved
     type PostFormValuesWithoutDay = Omit<typeof values, "day">;
@@ -192,9 +209,9 @@ const PostForm = (props: AddPostProps) => {
     const editorHtml = editor?.getHTML() as string;
     postFormValues.content = editorHtml;
 
-    const savePost: PostDbInput = {
+    const savePost = {
       ...postFormValues,
-      images: imageIds,
+      images: images,
       growStage: postFormValues.growStage as keyof typeof GrowStage,
       reportId: report?.id || (post?.reportId as string),
       authorId: report?.authorId || (post?.authorId as string),
@@ -213,12 +230,7 @@ const PostForm = (props: AddPostProps) => {
 
   return (
     <>
-      <Container
-        pl={0}
-        pr={0}
-        pt="xl"
-        className="flex w-full flex-col space-y-2"
-      >
+      <Container py="xl" px={0} className="flex flex-col space-y-">
         <Paper m={0} p="sm" withBorder>
           <form
             onSubmit={createPostForm.onSubmit((values) => {
@@ -247,12 +259,12 @@ const PostForm = (props: AddPostProps) => {
                       align="baseline"
                     >
                       <DateInput
+                        className="w-full"
                         label={t("common:post-updatedate")}
                         description={t(
                           "common:addpost-updatedatedescription"
                         )}
                         valueFormat="MMMM DD, YYYY HH:mm"
-                        className="w-full"
                         icon={
                           <IconCalendarEvent
                             stroke={1.6}
@@ -266,7 +278,7 @@ const PostForm = (props: AddPostProps) => {
                           createPostForm.setFieldValue("date", newDate);
                           const timeDifferenceDays = Math.floor(
                             (selectedDate.getTime() -
-                              reportStartDate.getTime()) /
+                              reportCreatedAt.getTime()) /
                               (1000 * 60 * 60 * 24)
                           );
                           createPostForm.setFieldValue(
@@ -276,11 +288,11 @@ const PostForm = (props: AddPostProps) => {
                         }}
                       />
                       <NumberInput
+                        w={232}
                         label={t("common:post-addform-growday")}
                         description={t(
                           "common:post-addform-growdaydescription"
                         )}
-                        w={232}
                         placeholder="1"
                         icon={<IconNumber stroke={1.6} size="1.8rem" />}
                         withAsterisk
@@ -293,13 +305,11 @@ const PostForm = (props: AddPostProps) => {
                           if (!growDayOffSet && growDayOffSet != 0)
                             return; // prevent error if changed to empty string
 
-                          const newPostDate = new Date(reportStartDate);
+                          const newPostDate = new Date(reportCreatedAt);
                           newPostDate.setUTCDate(
                             newPostDate.getUTCDate() + growDayOffSet
                           );
-                          console.debug(newPostDate);
                           newPostDate.setHours(0); //  setUTCHours(22, 0, 0, 0);
-                          console.debug(newPostDate);
                           createPostForm.setFieldValue(
                             "date",
                             newPostDate
@@ -319,6 +329,7 @@ const PostForm = (props: AddPostProps) => {
                       align="baseline"
                     >
                       <Select
+                        className="w-full"
                         label="Grow stage"
                         description="Actual grow stage"
                         data={Object.keys(GrowStage).map((key) => ({
@@ -328,37 +339,72 @@ const PostForm = (props: AddPostProps) => {
                         }))}
                         withAsterisk
                         {...createPostForm.getInputProps("growStage")}
-                        className="w-full"
                         icon={<IconPlant stroke={1.6} size="1.4rem" />}
                       />
+                    </Flex>
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={12} md={6} lg={6} xl={6}>
+                    <Flex
+                      justify="flex-start"
+                      className="space-x-2"
+                      align="baseline"
+                    >
                       <NumberInput
+                        className="w-full"
                         label={t("common:post-addform-lighthours")}
                         description={t(
                           "common:post-addform-lighthoursdescription"
                         )}
                         withAsterisk
-                        w={232}
                         min={0}
                         max={24}
                         {...createPostForm.getInputProps(
                           "lightHoursPerDay"
                         )}
-                        icon={<IconBulb stroke={1.6} size="1.6rem" />}
+                        icon={<IconClock stroke={1.6} size="1.6rem" />}
+                      />
+                      <NumberInput
+                        w={232}
+                        label="Watt"
+                        description="LED"
+                        // withAsterisk
+                        min={0}
+                        max={2000}
+                        {...createPostForm.getInputProps("watt")}
+                        onChange={(value) => {
+                          // If value is an empty string, set it to undefined
+                          if (value === "") {
+                            createPostForm.setFieldValue(
+                              "watt",
+                              undefined
+                            );
+                          } else {
+                            // Otherwise, let useForm handle the value
+                            createPostForm.setFieldValue("watt", value);
+                          }
+                        }}
+                        icon={<IconBolt stroke={1.6} size="1.6rem" />}
+                      />
+                    </Flex>
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Flex
+                      justify="flex-start"
+                      className="space-x-2"
+                      align="baseline"
+                    >
+                      <TextInput
+                        className="w-full"
+                        label="Title for this update"
+                        description="Every must have a text title, which is also used as HTML page title."
+                        withAsterisk
+                        placeholder="Title of this Update"
+                        {...createPostForm.getInputProps("title")}
                       />
                     </Flex>
                   </Grid.Col>
                 </Grid>
               </Box>
-
-              <Space h="lg" />
-
-              <TextInput
-                label="Title for this update"
-                description="Every must have a text title, which is also used as HTML page title."
-                withAsterisk
-                placeholder="Title of this Update"
-                {...createPostForm.getInputProps("title")}
-              />
               <TextInput
                 hidden
                 {...createPostForm.getInputProps("content")}
@@ -469,25 +515,11 @@ const PostForm = (props: AddPostProps) => {
 
               <ImageUploader
                 report={report}
-                cloudUrls={post?.images.map((image) => image.cloudUrl)}
+                images={images || []}
+                setImages={setImages}
                 setImageIds={setImageIds}
                 maxSize={getFileMaxSizeInBytes()}
                 maxFiles={getFileMaxUpload()}
-                onReject={(files) => {
-                  files.forEach((file) => {
-                    const fileSizeInMB = (
-                      file.file.size /
-                      1024 ** 2
-                    ).toFixed(2);
-                    notifications.show(
-                      fileUploadErrorMsg(
-                        file.file.name,
-                        fileSizeInMB,
-                        env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                      )
-                    );
-                  });
-                }}
               />
 
               <Group position="apart" mt="xl">

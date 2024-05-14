@@ -10,7 +10,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
 // import { useRouter } from "next/router";
-import TechStack from "~/components/StaticPages/Technology";
+import Technology from "~/components/StaticPages/Technology";
 
 /** PUBLIC STATIC PAGE with translations
  * getStaticProps (Static Site Generation)
@@ -47,7 +47,7 @@ const PublicTechStackPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <TechStack />
+      <Technology />
     </>
   );
 };

@@ -1,21 +1,21 @@
-import {
-  ColorSchemeProvider,
-  MantineProvider,
-  rem,
-} from "@mantine/core";
 import type {
   AccordionStylesParams,
+  ActionIconStylesParams,
   ButtonStylesParams,
   ColorScheme,
   MantineTheme,
   NotificationStylesParams,
+} from "@mantine/core";
+import {
+  ColorSchemeProvider,
+  MantineProvider,
+  rem,
 } from "@mantine/core";
 import { DatesProvider } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import type { MantineColor } from "@mantine/styles";
 import RootLayout from "~/layout/AppLayout";
-import "~/styles/emojiPickerStyles.css";
 import "~/styles/globals.css";
 
 import type { Session } from "next-auth";
@@ -25,6 +25,7 @@ import type { AppType } from "next/app";
 import { useRouter } from "next/router";
 
 import Loading from "~/components/Atom/Loading";
+import { RouterTransition } from "~/components/RouterTransition";
 
 import { api } from "~/utils/api";
 import { useRouteLoader } from "~/utils/routeLoader";
@@ -92,7 +93,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           colorScheme,
           fontFamily: `'Lato', sans-serif`,
           headings: {
-            fontFamily: `'Open Sans', sans-serif`,
+            fontFamily: `'Grandstander', sans-serif`,
             sizes: {
               h1: { fontSize: "1.48rem" },
               h2: { fontSize: "1.36rem" },
@@ -150,7 +151,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
             Accordion: {
               styles: (
                 theme,
-                params: AccordionStylesParams & {
+                _params: AccordionStylesParams & {
                   color: MantineColor;
                 },
                 { variant }
@@ -167,7 +168,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     backgroundColor:
                       variant === "contained"
                         ? theme.colorScheme === "dark"
-                          ? theme.colors.growgreen[8]
+                          ? theme.colors.growgreen[6]
                           : theme.colors.growgreen[2]
                         : undefined,
                   },
@@ -178,17 +179,27 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     variant === "contained"
                       ? theme.colorScheme === "dark"
                         ? theme.colors.dark[7]
-                        : theme.fn.lighten(
-                            theme.colors.growgreen[4],
-                            0.7
-                          )
-                      : undefined,
+                        : theme.colors.gray[2]
+                      : // : theme.fn.lighten(
+                        //     theme.colors.growgreen[4],
+                        //     0.7
+                        //   )
+                        undefined,
 
                   // border: `${rem(1)} solid #ededed`,
 
                   // styles added to expanded item
                   "&[data-active]": {
-                    backgroundColor: "transparent",
+                    backgroundColor:
+                      variant === "contained"
+                        ? theme.colorScheme === "dark"
+                          ? "transparent"
+                          : theme.white
+                        : // : theme.fn.lighten(
+                          //     theme.colors.growgreen[4],
+                          //     0.7
+                          //   )
+                          undefined,
                   },
                 },
 
@@ -210,6 +221,21 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   xl: 1440, // 116em x 16px
                 },
               },
+            },
+
+            ActionIcon: {
+              styles: (
+                _theme,
+                _params: ActionIconStylesParams,
+                { variant }
+              ) => ({
+                defaultProps: {
+                  variant: { variant },
+                },
+                root: {
+                  cursor: "default",
+                },
+              }),
             },
 
             Button: {
@@ -241,7 +267,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   backgroundColor:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? theme.colors[params.color || "dark"][5]
+                        ? theme.colors[params.color || "dark"][6]
                         : theme.colors[params.color || "growgreen"][4]
                       : undefined,
 
@@ -249,7 +275,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     backgroundColor:
                       variant === "filled"
                         ? theme.colorScheme === "dark"
-                          ? theme.colors[params.color || "growgreen"][6]
+                          ? theme.colors[params.color || "dark"][5]
                           : theme.colors[params.color || "growgreen"][5]
                         : undefined,
                   },
@@ -374,41 +400,33 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               // whiteSpace: "nowrap",
               fontSize: "0.96em",
             },
-            ul: {
-              fontSize: "0.72em",
-              paddingLeft: "1.5em",
-            },
-            "ul li": {
-              fontSize: "1.3em",
+
+            "ul li, ol li": {
+              fontSize: "1rem",
               position: "relative",
               paddingLeft: "1em",
+              counterIncrement: "list-counter",
+              marginTop: "0 !important", // Explicitly set margin to 0
             },
-            "ul li p": {
+
+            "ul li p,  ol li p": {
               fontSize: "1em",
               position: "relative",
               paddingLeft: "1em",
+              marginBottom: "0 !important", // Explicitly set margin to 0
             },
+
             "ul li::before": {
               content: '""',
               position: "absolute",
-              top: "0.66em",
+              top: "0.6em",
               left: 0,
               width: "0.5em",
               height: "0.5em",
               borderRadius: "50%",
               backgroundColor: theme.colors.growgreen[4], // Change the color to match your theme
             },
-            "ol li": {
-              position: "relative",
-              paddingLeft: "1em",
-              marginBottom: "0.5em",
-              counterIncrement: "list-counter",
-            },
-            "ol li p": {
-              fontSize: "1em",
-              position: "relative",
-              paddingLeft: "1em",
-            },
+
             "ol li::before": {
               content: "counter(list-counter)",
               position: "absolute",
@@ -417,6 +435,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
               fontWeight: "bold",
               color: theme.colors.growgreen[4], // Change the color to match your theme
             },
+
             "*, *::before, *::after": {
               boxSizing: "border-box",
             },
@@ -428,12 +447,13 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           // },
         }}
       >
+        <RouterTransition />
         <SessionProvider session={session}>
-          <Loading isLoading={isLoading} />
           <Notifications limit={5} position="top-center" />
 
           <DatesProvider settings={{ locale: router.locale }}>
             <RootLayout>
+              <Loading isLoading={isLoading} />
               <Component {...pageProps} />
             </RootLayout>
           </DatesProvider>

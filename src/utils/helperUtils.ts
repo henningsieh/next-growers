@@ -1,3 +1,4 @@
+import type { AxiosResponse } from "axios";
 import axios from "axios";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
@@ -5,11 +6,12 @@ import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import type {
   ImageUploadResponse,
   IsoReportWithPostsFromDb,
-  Locale,
+  LightswattsDataPoint,
   MultiUploadResponse,
   Notification,
   SplitObject,
 } from "~/types";
+import { Locale } from "~/types";
 
 export function compareDatesWithoutTime(date1: Date, date2: Date) {
   const date1Clone = new Date(date1);
@@ -226,7 +228,7 @@ export function sanatizeDateString(
     minute: withTime ? "numeric" : undefined,
   };
 
-  if (locale === "en") {
+  if (locale === Locale.EN) {
     // international date
     const intlFormatter = new Intl.DateTimeFormat("en-US", options);
     const internationalDate = intlFormatter.format(reportStartDate); // "May 11, 2023"
@@ -259,7 +261,6 @@ export const handleDrop = async (
       );
 
       if (data.success) {
-        console.debug("File uploaded successfully", data);
         // setting the image information to the component state
         setImageId(data.imageId);
         setImagePublicId(data.imagePublicId);
@@ -286,9 +287,17 @@ export const handleDrop = async (
 export const handleMultipleDrop = async (
   files: File[],
   report: IsoReportWithPostsFromDb,
+  setImages: Dispatch<
+    SetStateAction<
+      {
+        id: string;
+        publicId: string;
+        cloudUrl: string;
+        postOrder: number;
+      }[]
+    >
+  >,
   setImageIds: Dispatch<SetStateAction<string[]>>,
-  setImagePublicIds: Dispatch<SetStateAction<string[]>>,
-  setCloudUrls: Dispatch<SetStateAction<string[]>>,
   setIsUploading: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
   try {
@@ -310,14 +319,35 @@ export const handleMultipleDrop = async (
           ...prevImageIds,
           ...data.imageIds,
         ]);
-        setImagePublicIds((prevImagePublicIds) => [
-          ...prevImagePublicIds,
-          ...data.imagePublicIds,
+        // interface MultiUploadResponse {
+        //   success: boolean;
+        //   imageIds: string[];
+        //   imagePublicIds: string[];
+        //   cloudUrls: string[];
+        // }
+        //   setImages: Dispatch<
+        //   SetStateAction<
+        //     {
+        //       id: string;
+        //       publicId: string;
+        //       cloudUrl: string;
+        //       postOrder: number;
+        //     }[]
+        //   >>,
+        setImages((prevImages) => [
+          ...prevImages,
+          ...data.cloudUrls.map((cloudUrl, index) => ({
+            id: data.imageIds[index], // Assuming imageIds correspond to cloudUrls in order
+            publicId: data.imagePublicIds[index], // Assuming imagePublicIds correspond to cloudUrls in order
+            cloudUrl,
+            postOrder: 0, // You may adjust this according to your logic
+          })),
         ]);
-        setCloudUrls((prevCloudUrls) => [
-          ...prevCloudUrls,
-          ...data.cloudUrls,
-        ]);
+
+        // setCloudUrls((prevCloudUrls) => [
+        //   ...prevCloudUrls,
+        //   ...data.cloudUrls,
+        // ]);
       } else {
         throw new Error("File uploaded NOT successfully");
       }
@@ -328,4 +358,78 @@ export const handleMultipleDrop = async (
     console.debug(error);
     throw new Error("Error uploading file");
   }
+};
+
+// Preprocess the data to include intermediate points
+export function processLightwattsData(
+  lightWatts: LightswattsDataPoint[] | undefined
+) {
+  const processedData: LightswattsDataPoint[] = [];
+
+  if (!!!lightWatts || lightWatts.length == 0) {
+    return null;
+  } else {
+    for (let i = 0; i < lightWatts.length - 1; i++) {
+      const currentDate = lightWatts[i].date;
+      const nextDate = lightWatts[i + 1].date;
+      const currentDateValue = lightWatts[i].watt;
+
+      processedData.push(lightWatts[i]);
+
+      const daysDiff =
+        (nextDate.getTime() - currentDate.getTime()) /
+        (1000 * 60 * 60 * 24);
+      for (let j = 1; j < daysDiff; j++) {
+        const interpolatedDate = new Date(
+          currentDate.getTime() + j * (1000 * 60 * 60 * 24)
+        );
+        processedData.push({
+          date: interpolatedDate,
+          watt: currentDateValue,
+        });
+      }
+    }
+    // Fill in additional interpolated dates up to today with the last known value
+    const lastDataPoint = lightWatts[lightWatts.length - 1];
+    const today = new Date();
+    const daysDiffToToday =
+      (today.getTime() - lastDataPoint.date.getTime()) /
+      (1000 * 60 * 60 * 24);
+    for (let i = 0; i <= daysDiffToToday; i++) {
+      const interpolatedDate = new Date(
+        lastDataPoint.date.getTime() + i * (1000 * 60 * 60 * 24)
+      );
+      processedData.push({
+        date: interpolatedDate,
+        watt: lastDataPoint.watt,
+      });
+    }
+
+    return processedData;
+  }
+}
+
+export const parseAndReplaceAmazonLinks = async (
+  content: string
+): Promise<string> => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(content, "text/html");
+
+  const links = doc.querySelectorAll('a[href^="https://amzn.to"]');
+
+  for (const link of links) {
+    const shortenedUrl = link.getAttribute("href");
+    try {
+      const response: AxiosResponse<{ resolvedUrl: string }> =
+        await axios.get(
+          `/api/resolveAmazonUrl?shortenedUrl=${shortenedUrl as string}&newTag=growagram-21`
+        );
+      const resolvedUrl = response.data.resolvedUrl;
+      link.setAttribute("href", resolvedUrl);
+    } catch (error) {
+      console.error("Error resolving Amazon URL:", error);
+    }
+  }
+
+  return doc.documentElement.innerHTML;
 };

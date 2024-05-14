@@ -191,9 +191,9 @@ export default function SortingPanel({
         onClick={handleToggleDesc}
       >
         {desc ? (
-          <IconSortDescending2 stroke={1.8} size="1.4rem" />
+          <IconSortDescending2 stroke={1.8} size="1.2rem" />
         ) : (
-          <IconSortAscending2 stroke={1.8} size="1.4rem" />
+          <IconSortAscending2 stroke={1.8} size="1.2rem" />
         )}
       </Button>
     </Box>

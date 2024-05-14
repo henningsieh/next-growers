@@ -140,13 +140,20 @@ export const InputCreatePostForm: (reportStartDate: Date) => ZodType = (
         invalid_type_error: "(h) must be set, may be 0",
       })
       .nullable(),
-
-    growStage: z
-      .enum(Object.keys(GrowStage) as [keyof typeof GrowStage])
-      .nullable(),
-
+    watt: z.number().optional(),
+    growStage: z.enum(
+      Object.keys(GrowStage) as [keyof typeof GrowStage],
+      {
+        required_error: "Grow stage must be set",
+      }
+    ),
     content: z.string(),
-    images: z.array(z.string()),
+    images: z.array(
+      z.object({
+        id: z.string(),
+        postOrder: z.number().nullable(),
+      })
+    ),
   });
 };
 
@@ -155,9 +162,15 @@ export const InputCreatePostServer = z.object({
   date: z.date(),
   title: z.string().min(1),
   lightHoursPerDay: z.number().nullable(),
+  watt: z.number().optional(),
   growStage: z.enum(Object.keys(GrowStage) as [keyof typeof GrowStage]),
   content: z.string().min(1),
   reportId: z.string().min(1),
   authorId: z.string().min(1),
-  images: z.array(z.string()),
+  images: z.array(
+    z.object({
+      id: z.string(),
+      postOrder: z.number().nullable(),
+    })
+  ),
 });

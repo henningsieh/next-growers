@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 
 import PostForm from "~/components/Post/PostForm";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
+import type { IsoReportWithPostsFromDb, Post } from "~/types";
 import { Locale } from "~/types";
 
 import { sanatizeDateString } from "~/utils/helperUtils";
@@ -72,35 +72,11 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
                   </Box>
                 </Group>
               </Accordion.Control>{" "}
-              <Accordion.Panel mx={-8}>
-                {/* <Flex
-                  gap="md"
-                  justify="space-between"
-                  align="center"
-                  direction="row"
-                  wrap="wrap"
-                  sx={() => ({
-                    display: "inline-flex", // or "inline-flex"
-                  })}
-                > */}
-                <Title pl="xs" order={1}>
+              <Accordion.Panel>
+                <Title p="xs" order={1}>
                   {t("common:post-edit-headline")}{" "}
                 </Title>
-                {/* 
-                  <PostDeleteButton
-                    postId={post.id}
-                    alertTitle={t("common:post-delete-warning")}
-                    alertText={t("common:user-msg-question-continue")}
-                    labelDeletePostButton={t(
-                      "common:post-delete-button"
-                    )}
-                    labelCloseButton={t(
-                      "common:app-notifications-close-button"
-                    )}
-                  />
-                </Flex> */}
-
-                <PostForm isoReport={isoReport} post={post} />
+                <PostForm isoReport={isoReport} post={post as Post} />
               </Accordion.Panel>
             </Accordion.Item>
           ))}

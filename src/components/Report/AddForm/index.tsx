@@ -22,10 +22,9 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { defaultErrorMsg, httpStatusErrorMsg } from "~/messages";
+import { httpStatusErrorMsg } from "~/messages";
 
-import { useEffect, useRef } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { User } from "next-auth";
 import { useRouter } from "next/router";
@@ -113,14 +112,21 @@ export function CreateReportForm({
     },
     // If the mutation fails, use the context
     // returned from onMutate to roll back
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onError: (error, _newReport) => {
-      notifications.show(defaultErrorMsg(error.message));
+    onError: (error) => {
+      notifications.show(
+        httpStatusErrorMsg(error.message, error.data?.httpStatus)
+      );
       console.error({ error });
     },
     onSuccess: (newReportDB) => {
       // Navigate to the new report page
-      void router.push(`/account/edit/grow/${newReportDB.id}#editGrow`);
+      void router.push(
+        {
+          pathname: `/account/grows/edit/${newReportDB.id}/editGrow`,
+        },
+        undefined,
+        { scroll: true }
+      );
     },
     // Always refetch after error or success:
     onSettled: () => {
@@ -160,6 +166,7 @@ export function CreateReportForm({
           <>
             {/* // Image Preview */}
             <Box className="relative" px={0}>
+              asecvpiub wpczuvb
               <Box className="absolute right-2 top-2 z-50 flex justify-end">
                 <ActionIcon
                   title="delete this image"

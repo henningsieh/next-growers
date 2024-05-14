@@ -3,12 +3,12 @@ import {
   Box,
   Center,
   createStyles,
+  Flex,
   Paper,
   Transition,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconHeart } from "@tabler/icons-react";
-import { IconHeartFilled } from "@tabler/icons-react";
+import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import {
   createLikeErrorMsg,
   dislikeSuccessfulMsg,
@@ -186,7 +186,10 @@ const LikeHeart = (props: LikeHeartProps) => {
   return (
     <>
       {!isError && !isLoading && (
-        <Box>
+        <Flex pl="xs" gap={2}>
+          <Center fz="sm" p={0} m={0}>
+            {itemLikes?.length}
+          </Center>
           <Box mt={2} ml={2} className="relative">
             <ActionIcon
               size={30}
@@ -246,10 +249,7 @@ const LikeHeart = (props: LikeHeartProps) => {
               </Transition>
             )}
           </Box>
-          <Center fz="sm" p={0} m={0}>
-            {itemLikes?.length}
-          </Center>
-        </Box>
+        </Flex>
       )}
     </>
   );

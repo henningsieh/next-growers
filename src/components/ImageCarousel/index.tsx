@@ -3,14 +3,15 @@ import {
   Box,
   createStyles,
   getStylesRef,
-  Image,
   useMantineTheme,
 } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import type { EmblaCarouselType } from "embla-carousel-react";
 
+import Image from "next/image";
+
 interface CardProps {
-  images: string[];
+  images: (string | null)[];
   initialSlide: number;
   largeScreen: boolean;
   setEmbla: React.Dispatch<
@@ -46,10 +47,16 @@ export function PostImagesCarousel({
         style={{
           display: "flex",
           alignItems: "center",
-          height: "86vh",
+          justifyContent: "center",
+          height: largeScreen ? "96vh" : "86vh",
         }}
       >
-        <Image fit="contain" height="86vh" alt="alt" src={url} />
+        <Image
+          fill
+          alt="alt"
+          src={url as string}
+          className="object-contain"
+        />
       </Box>
     </Carousel.Slide>
   ));

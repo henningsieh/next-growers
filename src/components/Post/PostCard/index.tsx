@@ -1,44 +1,38 @@
+import PostComments from "../PostComments";
 import {
-  Alert,
   Box,
-  Card,
-  Center,
   createStyles,
   getStylesRef,
   Group,
   Paper,
   rem,
-  Space,
   Text,
   TypographyStylesProvider,
   useMantineTheme,
 } from "@mantine/core";
-// import { useMediaQuery } from "@mantine/hooks";
-import {
-  IconCalendar,
-  IconClock,
-  IconEye,
-  IconHome,
-} from "@tabler/icons-react";
 
+// import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
+import EditPostButton from "~/components/Atom/EditPostButton";
 import LikeHeart from "~/components/Atom/LikeHeart";
 import ImagesSlider from "~/components/ImagesSlider";
-import PostComments from "~/components/Post/PostComments";
 
 import type { Post } from "~/types";
 import {
-  Environment,
   GrowStage,
   type IsoReportWithPostsFromDb,
+  Locale,
 } from "~/types";
-import { Locale } from "~/types";
 
-import { sanatizeDateString } from "~/utils/helperUtils";
+import {
+  parseAndReplaceAmazonLinks,
+  sanatizeDateString,
+} from "~/utils/helperUtils";
 
 const useStyles = createStyles((theme) => ({
   carousel: {
@@ -85,14 +79,6 @@ const useStyles = createStyles((theme) => ({
     textTransform: "uppercase",
   },
 
-  icon: {
-    marginRight: rem(5),
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[2]
-        : theme.colors.gray[5],
-  },
-
   importedhtmlcontent: {
     margin: 0,
     padding: 0,
@@ -111,12 +97,16 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface PostCardProps {
-  report: IsoReportWithPostsFromDb;
-  postId: string | undefined;
+  grow: IsoReportWithPostsFromDb;
+  updateId: string;
 }
 
 export function PostCard(props: PostCardProps) {
-  const { report, postId } = props;
+  const { data: session, status } = useSession();
+  const { grow, updateId } = props;
+
+  const theme = useMantineTheme();
+  const { classes } = useStyles();
 
   const router = useRouter();
   const { locale: activeLocale } = router;
@@ -125,110 +115,30 @@ export function PostCard(props: PostCardProps) {
   const [postHTMLContent, setPostHTMLContent] = useState("");
 
   useEffect(() => {
-    const post = report.posts.find((post) => post.id === postId);
-    if (post) {
-      setPostHTMLContent(post.content);
-    }
-  }, [report, postId]);
-
-  const { classes } = useStyles();
-  const theme = useMantineTheme();
-  /* 
-  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
-  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
-  const xl = useMediaQuery(`(max-width: ${theme.breakpoints.xl})`);
-  */ /* 
-  const getResponsiveImageHeight = xs
-    ? 460
-    : sm
-    ? 700
-    : md
-    ? 900
-    : lg
-    ? 1180
-    : 1390;
- */
-  const reportBasicData = [
-    {
-      label: sanatizeDateString(
-        report?.createdAt,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN,
-        false,
-        false
-      ),
-      icon: IconCalendar,
-    },
-    {
-      label:
-        Environment[report.environment as keyof typeof Environment],
-      icon: IconHome,
-    },
-    {
-      label: "1468",
-      icon: IconEye,
-    },
-    {
-      label: sanatizeDateString(
-        report?.updatedAt,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN,
-        false,
-        false
-      ),
-      icon: IconClock,
-    },
-  ];
-
-  const reportBasics = reportBasicData.map((growBasic) => (
-    <Center key={growBasic.label}>
-      <growBasic.icon
-        size="1.05rem"
-        className={classes.icon}
-        stroke={1.6}
-      />
-      <Text size="xs"> {growBasic.label} </Text>
-    </Center>
-  ));
-
-  if (!postId) {
-    return (
-      <>
-        <Alert p={16} bg={theme.colors.green[9]} variant="filled">
-          <Text mx="auto">
-            Select an Update (Grow Day) from calendar!☝️
-          </Text>
-        </Alert>
-        <Card p="sm" radius="sm" withBorder>
-          <Text fz="sm" c="dimmed" className={classes.section}>
-            Grow Informations
-          </Text>
-          <Group position="apart" spacing="xs">
-            {reportBasics}
-          </Group>
-        </Card>
-      </>
+    const growUpdate = grow.posts.find(
+      (update) => update.id === updateId
     );
+    if (growUpdate) {
+      parseAndReplaceAmazonLinks(growUpdate.content)
+        .then((parsedContent) => {
+          setPostHTMLContent(parsedContent);
+        })
+        .catch((error) => {
+          console.error(
+            "Error parsing and replacing Amazon links:",
+            error
+          );
+        });
+    }
+  }, [grow, updateId]);
+
+  if (!updateId) {
   } else {
-    const post = report.posts.find((post) => post.id === postId);
+    const post: Post | undefined = grow.posts.find(
+      (post) => post.id === updateId
+    );
 
     const postImages = post?.images;
-
-    // sort postImages ascending by publicId (publicId format: "timespamp_[original_filename]]")
-    if (postImages) {
-      postImages.sort((a, b) => {
-        const publicIdA = a.publicId;
-        const publicIdB = b.publicId;
-
-        if (publicIdA < publicIdB) {
-          return -1;
-        }
-        if (publicIdA > publicIdB) {
-          return 1;
-        }
-        return 0;
-      });
-    }
 
     const postBasicData = {
       // FIXME: this is fake data
@@ -254,6 +164,11 @@ export function PostCard(props: PostCardProps) {
           title: t("common:post-lighthperday"),
           value: post?.lightHoursPerDay,
         },
+        // FIXME: take the last valid watt value from past posts, not value from this post
+        // {
+        //   title: "Watt",
+        //   value: post?.LightWatts?.watt,
+        // },
         {
           title: "Growth Stage",
           value: GrowStage[post?.growStage as keyof typeof GrowStage],
@@ -274,28 +189,37 @@ export function PostCard(props: PostCardProps) {
 
     return (
       <>
-        <Paper
-          bg={
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[7]
-              : theme.colors.gray[2]
-          }
-          p="sm"
-          withBorder
-        >
-          <Group position="apart">
-            <Text fw={700} fz="xl">
-              {post?.title}
-            </Text>
-            <LikeHeart itemToLike={post as Post} itemType={"Post"} />
-          </Group>
-          <Box my={"sm"}>
-            <ImagesSlider
-              cloudUrls={
-                postImages?.map((image) => image.cloudUrl) ?? []
-              }
-            />
+        <Paper p="sm" withBorder pos="relative">
+          <Box pos="absolute" m="xs" className="bottom-0 right-0">
+            {status === "authenticated" &&
+              session.user.id == grow.authorId && (
+                <EditPostButton
+                  growId={grow.id}
+                  postId={updateId}
+                  buttonLabel={t("common:post-edit-button")}
+                />
+              )}
           </Box>
+          <Paper>
+            <Group pb={theme.spacing.xs} position="apart">
+              <Text fw={700} fz="xl">
+                {post?.title}
+              </Text>
+              <LikeHeart itemToLike={post as Post} itemType={"Post"} />
+            </Group>
+            <Group position="apart" pt="sm" className={classes.section}>
+              {postData}
+            </Group>
+
+            <Box my={"sm"}>
+              <ImagesSlider
+                grow={grow}
+                cloudUrls={
+                  postImages?.map((image) => image.cloudUrl) ?? []
+                }
+              />
+            </Box>
+          </Paper>
           <TypographyStylesProvider>
             <Paper
               fz={16}
@@ -306,25 +230,10 @@ export function PostCard(props: PostCardProps) {
                 __html: postHTMLContent as TrustedHTML,
               }}
             />
-            <Group position="apart" px={2} className={classes.section}>
-              {postData}
-            </Group>
           </TypographyStylesProvider>
         </Paper>
 
-        <PostComments reportId={report.id} postId={postId} />
-
-        <Space h="xs" />
-        <Group px="sm" position="apart" className={classes.section}>
-          <Text fz="sm" c="dimmed">
-            Grow data:
-          </Text>
-          <Text fz="md">{report.title}</Text>
-          <LikeHeart itemToLike={report} itemType={"Report"} />
-        </Group>
-        <Group px="sm" position="apart" spacing="xs">
-          {reportBasics}
-        </Group>
+        <PostComments growId={grow.id} updateId={updateId} />
       </>
     );
   }

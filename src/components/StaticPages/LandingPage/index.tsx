@@ -1,11 +1,13 @@
 import {
-  Box,
   Button,
+  Center,
   Container,
   createStyles,
+  Divider,
   Grid,
   Group,
   rem,
+  Stack,
   Text,
   Title,
   useMantineColorScheme,
@@ -14,6 +16,7 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { LoginModal } from "~/components/Atom/LoginModal";
@@ -26,35 +29,23 @@ interface LandingPageProps {
 }
 
 export default function LandingPage({
-  topLikeReports: isoReports,
+  topLikeReports: topLikeReports,
 }: LandingPageProps) {
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-
   const useStyles = createStyles((theme) => ({
-    container: {
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "top",
-      alignItems: "center",
-      paddingTop: theme.spacing.md,
-      position: "relative",
-
-      // [theme.fn.smallerThan("sm")]: {
-      //   // height: rem(900),
-      //   // flexDirection: "column",
-      //   //justifyContent: "center",
-      //   //paddingBottom: `calc(${theme.spacing.xl} * 3)`,
-      // },
-    },
-
     title: {
       fontFamily: `'Roboto Slab', sans-serif`,
       fontSize: rem(112),
       fontWeight: 700,
       lineHeight: 0.8,
-      paddingTop: 12,
-      paddingBottom: 12,
+      color: "transparent",
+      background: `linear-gradient(to right, ${theme.fn.lighten(theme.colors.orange[7], 0.1)}, ${theme.colors.red[8]}, ${theme.fn.lighten(theme.colors.orange[6], 0.1)})`,
+      WebkitBackgroundClip: "text",
+      transition: "background 300ms ease-in-out",
+      cursor: "default",
+      // height: "4rem", // You might need to adjust this height based on your design
+      // width: "18rem", // You might need to adjust this width based on your design
 
       [theme.fn.smallerThan("lg")]: {
         fontSize: rem(112),
@@ -69,15 +60,16 @@ export default function LandingPage({
       },
     },
     subTitle: {
-      // fontFamily: `'Lato', sans-serif`,
       fontSize: rem(54),
       fontWeight: 900,
       lineHeight: 1.5,
-      paddingTop: 12,
-      paddingBottom: 12,
+      fontFamily: `'Roboto Slab', sans-serif`,
+      color: theme.colors.growgreen[3],
+
       textShadow: dark
-        ? `2px 3px 6px rgba(255, 83, 34, 0.8)`
-        : `1px 2px 2px rgba(29, 75, 20, 0.9)`,
+        ? // ? `2px 3px 6px rgba(255, 83, 34, 0.8)`
+          `2px 3px 6px rgba(29, 75, 20, 0.8)`
+        : `2px 3px 6px rgba(29, 75, 20, 0.8)`,
 
       [theme.fn.smallerThan("lg")]: {
         fontSize: rem(54),
@@ -103,11 +95,11 @@ export default function LandingPage({
       },
     },
   }));
-
   const { classes, theme } = useStyles();
   const smallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.lg})`
   );
+
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
@@ -119,133 +111,153 @@ export default function LandingPage({
     <>
       <LoginModal opened={opened} close={close} />
 
-      <Box>
-        <Container
-          mb={"xl"}
-          pb={"xl"}
-          size="xl"
-          className={classes.container}
-        >
-          <Text
-            className={classes.title}
-            variant="gradient"
-            gradient={{
-              from: theme.fn.lighten(theme.colors.growgreen[4], 0.01),
-              to: theme.fn.darken(theme.colors.groworange[4], 0.01),
-              deg: 90,
-            }}
-          >
-            GrowAGram
-          </Text>
+      {/* // Main Content Container */}
+      <Container
+        size="xl"
+        className="flex w-full flex-col justify-center space-y-2"
+      >
+        <Center>
+          <Container p={0} m={0}>
+            <Stack m={0} spacing="xs" className="overflow-visible">
+              <Title
+                pt="xs"
+                ff={`'Grandstander', sans-serif`}
+                p={0}
+                order={1}
+                className={classes.title}
+                // variant="gradient"
+                // gradient={{
+                //   from: theme.fn.darken(
+                //     theme.colors.growgreen[2],
+                //     0.2
+                //   ),
+                //   to: theme.fn.darken(theme.colors.groworange[4], 0),
+                //   deg: 90,
+                // }}
+              >
+                GrowAGram
+              </Title>{" "}
+              <Divider m={0} color="growgreen.4" size="lg" />
+              <Center>
+                <Text className={classes.subTitle}>
+                  🪴&nbsp;Track&nbsp;Your&nbsp;Grow&nbsp;📜
+                </Text>
+              </Center>
+            </Stack>
+          </Container>
+        </Center>
 
-          <Title order={2} className={classes.subTitle}>
-            🪴 Track Your Grow! 📜
-          </Title>
-
-          {smallScreen && (
-            <Group position="center">
+        {smallScreen && (
+          <Group p="sm" position="center">
+            <Link href={"/grows"}>
               <Button
                 variant="default"
-                onClick={() => {
-                  void router.push("/grows");
-                }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
               >
                 {t("common:landing-button-allgrows")} 🔎
               </Button>
-
-              <Button
-                variant="default"
-                onClick={() => {
-                  status === "authenticated"
-                    ? void router.push("/account/grows/create")
-                    : open();
-                }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+            </Link>
+            <Button
+              variant="default"
+              onClick={() => {
+                status === "authenticated"
+                  ? void router.push(
+                      {
+                        pathname: "/account/grows/create",
+                      },
+                      undefined,
+                      { scroll: true }
+                    )
+                  : open();
+              }}
+              className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-1000 ease-in-out 
               from-teal-700  via-green-600  to-emerald-800 
               hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
-              >
-                {t("common:usermenu-addnewgrow")} ⛏️
-              </Button>
-            </Group>
-          )}
+            >
+              {t("common:usermenu-addnewgrow")} ⛏️
+            </Button>
+          </Group>
+        )}
 
-          {/* <Flex justify="flex-end" align="center"> */}
-          {/* LOOP OVER REPORTS topLikeReports */}
-          <Grid gutter="xs">
-            {/* LOOP OVER REPORTS */}
-            {isoReports.length
-              ? isoReports.map((isoReport) => {
-                  return (
-                    <Grid.Col
-                      className="scale-90"
-                      key={isoReport.id}
-                      xs={12}
-                      sm={6}
-                      md={4}
-                      lg={3}
-                      xl={3}
-                    >
-                      <ReportCard report={isoReport} />
-                    </Grid.Col>
-                  );
-                })
-              : null}
-          </Grid>
+        {/* <Flex justify="flex-end" align="center"> */}
+        {/* LOOP OVER REPORTS topLikeReports */}
+        <Grid gutter="xs">
+          {/* LOOP OVER REPORTS */}
+          {topLikeReports.length
+            ? topLikeReports.map((isoReport) => {
+                return (
+                  <Grid.Col
+                    key={isoReport.id}
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    lg={3}
+                    xl={3}
+                  >
+                    <ReportCard report={isoReport} />
+                  </Grid.Col>
+                );
+              })
+            : null}
+        </Grid>
 
-          {!smallScreen && (
-            <Group position="center">
+        {!smallScreen && (
+          <Group mt="xl" p="sm" position="center">
+            <Link href={"/grows"}>
               <Button
                 variant="default"
-                onClick={() => {
-                  void router.push("/grows");
-                }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+                className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
               >
                 {t("common:landing-button-allgrows")} 🔎
               </Button>
+            </Link>
 
-              <Button
-                variant="default"
-                onClick={() => {
-                  status === "authenticated"
-                    ? void router.push("/account/grows/create")
-                    : open();
-                }}
-                className="text-lg uppercase cursor-default my-4 h-12 w-72 
+            <Button
+              variant="default"
+              onClick={() => {
+                status === "authenticated"
+                  ? void router.push(
+                      {
+                        pathname: "/account/grows/create",
+                      },
+                      undefined,
+                      { scroll: true }
+                    )
+                  : open();
+              }}
+              className="text-lg uppercase cursor-default h-12 w-72 
               bg-gradient-to-r transition duration-1000 ease-in-out 
               from-teal-700  via-green-600  to-emerald-800 
               hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
-              >
-                {t("common:usermenu-addnewgrow")} ⛏️
-              </Button>
-            </Group>
-          )}
+            >
+              {t("common:usermenu-addnewgrow")} ⛏️
+            </Button>
+          </Group>
+        )}
 
-          <Text className={classes.description} size="xl" mt="xl">
-            {t("common:landing-text-top1")}
-          </Text>
+        <Text className={classes.description} size="xl" mt="xl">
+          {t("common:landing-text-top1")}
+        </Text>
 
-          <Text className={classes.description} size="xl" mt="sm">
-            {t("common:landing-text-top3")}
-          </Text>
+        <Text className={classes.description} size="xl" mt="sm">
+          {t("common:landing-text-top3")}
+        </Text>
 
-          <Text className={classes.description} size="xl" mt="xl">
-            {t("common:landing-text-top2")}
-          </Text>
+        <Text className={classes.description} size="xl" mt="xl">
+          {t("common:landing-text-top2")}
+        </Text>
 
-          <Text className={classes.description} size="md" mt="xl">
-            {t("common:landing-text-bottom")}
-          </Text>
-        </Container>
-      </Box>
+        <Text className={classes.description} size="md" mt="xl">
+          {t("common:landing-text-bottom")}
+        </Text>
+      </Container>
     </>
   );
 }

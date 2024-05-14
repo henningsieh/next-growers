@@ -20,10 +20,10 @@ import { notifications } from "@mantine/notifications";
 import { RichTextEditor } from "@mantine/tiptap";
 import {
   IconEdit,
+  IconEditOff,
   IconMessageForward,
   IconTrashX,
 } from "@tabler/icons-react";
-import { IconEditOff } from "@tabler/icons-react";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import Subscript from "@tiptap/extension-subscript";
@@ -68,12 +68,6 @@ const useStyles = createStyles((theme) => ({
       : rem(4),
     paddingTop: theme.spacing.sm,
     fontSize: theme.fontSizes.sm,
-  },
-
-  responses: {
-    paddingLeft: useMediaQuery(`(min-width: ${theme.breakpoints.md})`)
-      ? rem(120)
-      : rem(30),
   },
 
   content: {
@@ -155,30 +149,26 @@ export function UserComment({
 
   const { mutate: tRPCdeleteComment } =
     api.comments.deleteCommentById.useMutation({
-      onMutate: (newCommentDB) => {
+      onMutate: (/*newCommentDB*/) => {
         console.debug(
           "START api.comments.deleteCommentById.useMutation"
         );
         setIsSaving(true);
-        console.log("newCommentDB", newCommentDB);
       },
       // If the mutation fails, use the context
       // returned from onMutate to roll back
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onError: (error, _comment) => {
+      onError: (error) => {
         notifications.show(defaultErrorMsg(error.message));
         console.error({ error });
       },
       onSuccess: async () => {
         await trpc.comments.invalidate();
         notifications.show(commentDeletedSuccessfulMsg);
-        // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {
         setIsSaving(false);
-        console.log("END api.comments.deleteCommentById.useMutation");
+        console.debug("END api.comments.deleteCommentById.useMutation");
       },
     });
 
@@ -200,13 +190,11 @@ export function UserComment({
           postId: newReportDB.postId as string,
         });
         setIsEditing(false);
-        // Navigate to the new report page
-        // void router.push(`/account/reports/${newReportDB.id}`);
       },
       // Always refetch after error or success:
       onSettled: () => {
         setIsSaving(false);
-        console.log("END api.reports.create.useMutation");
+        console.debug("END api.reports.create.useMutation");
       },
     });
 
@@ -260,10 +248,6 @@ export function UserComment({
     const fetchHtml = async () => {
       try {
         const html = await renderMarkDownToHtml(comment.content);
-
-        console.debug("html", html);
-        console.debug("comment.content", comment.content);
-
         setCommentHtml(html || comment.content);
       } catch (error) {
         console.error(error);
@@ -278,8 +262,8 @@ export function UserComment({
     <>
       <Paper
         withBorder
+        my="xs"
         p="sm"
-        pt="xs"
         radius="md"
         className={classes.comment}
       >
@@ -295,7 +279,6 @@ export function UserComment({
               }
               userName={comment.author.name as string}
               avatarRadius={largeScreen ? 42 : 32}
-              tailwindMarginTop={false}
             />
             <Box>
               <Text fz={largeScreen ? "sm" : "xs"}>
@@ -353,7 +336,7 @@ export function UserComment({
                     onClick={() => tRPCdeleteComment(comment.id)}
                     className=" cursor-default"
                     variant="filled"
-                    color="red"
+                    color="red.9"
                   >
                     <IconTrashX size="1.4rem" stroke={1.2} />
                   </ActionIcon>
@@ -396,7 +379,7 @@ export function UserComment({
 
                 newCommentEditor?.commands.setContent(`
 
-                ${activeLocale === "en" ? "fron:" : "von"}: <a href=${senderLink}>${comment.author.name as string} #${comment.id}</a>
+                ${activeLocale === "en" ? "from" : "von"}: <a href=${senderLink}>${comment.author.name as string} #${comment.id}</a>
                   <blockquote>${comment.content}</blockquote>
                   <p></p>`);
               }}
@@ -502,7 +485,6 @@ export function UserComment({
                   [theme.fn.smallerThan("sm")]: {
                     padding: rem(5),
                     height: rem(26),
-                    // width: rem(140),
                     fontSize: 14,
                     fontWeight: "normal",
                   },
@@ -518,22 +500,6 @@ export function UserComment({
           </form>
         )}
       </Paper>
-
-      {/* Display responses */}
-      <Box className={classes.responses}>
-        {comment.responses.map((response) => (
-          <Box id={response.id} key={response.id}>
-            <UserComment
-              editor={newCommentEditor}
-              reportId={reportId}
-              isResponse={comment.id}
-              comment={response as Comment}
-              setNewOpen={setNewOpen}
-              newCommentForm={newCommentForm}
-            />
-          </Box>
-        ))}
-      </Box>
     </>
   );
 }
