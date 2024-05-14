@@ -58,6 +58,7 @@ const ImageUploader = ({
   setImages,
   setImageIds,
   maxFiles,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxSize,
 }: ImageUploaderProps) => {
   const [isUploading, setIsUploading] = useState(false);
@@ -65,7 +66,6 @@ const ImageUploader = ({
   const theme = useMantineTheme();
 
   const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
-    setIsUploading(true);
     handleMultipleDrop(
       fileWithPath,
       report,
@@ -73,7 +73,7 @@ const ImageUploader = ({
       setImageIds,
       setIsUploading
     ).catch((error) => {
-      console.debug(error);
+      console.error(error);
     });
   };
 
@@ -94,7 +94,7 @@ const ImageUploader = ({
                   accept={IMAGE_MIME_TYPE}
                   onDrop={handleMultipleDropWrapper}
                   maxFiles={maxFiles}
-                  maxSize={maxSize}
+                  //maxSize={maxSize}
                   onReject={(files) => {
                     files.forEach((file) => {
                       const fileSizeInMB = (

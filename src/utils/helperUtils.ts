@@ -3,11 +3,12 @@ import axios from "axios";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
+// import { env } from "~/env.mjs";
 import type {
+  CloudinaryResonse,
   ImageUploadResponse,
   IsoReportWithPostsFromDb,
   LightswattsDataPoint,
-  MultiUploadResponse,
   Notification,
   SplitObject,
 } from "~/types";
@@ -286,8 +287,8 @@ export const handleDrop = async (
 
 export const handleMultipleDrop = async (
   files: File[],
-  report: IsoReportWithPostsFromDb,
-  setImages: Dispatch<
+  _report: IsoReportWithPostsFromDb,
+  _setImages: Dispatch<
     SetStateAction<
       {
         id: string;
@@ -297,60 +298,93 @@ export const handleMultipleDrop = async (
       }[]
     >
   >,
-  setImageIds: Dispatch<SetStateAction<string[]>>,
+  _setImageIds: Dispatch<SetStateAction<string[]>>,
   setIsUploading: Dispatch<SetStateAction<boolean>>
 ): Promise<void> => {
+  const url =
+    "https://api.cloudinary.com/v1_1/" + "dgcydirlu" + "/image/upload";
+
+  const cloudinarySignatureResponse = await fetch(
+    "/api/cloudinarySign"
+  );
+
+  const cloudinarySignature =
+    (await cloudinarySignatureResponse.json()) as {
+      cloud_name: string;
+      api_key: string;
+      signature: string;
+      timestamp: string;
+      transformation: string;
+      folder: string;
+    };
+
+  console.debug(
+    "cloudinarySignatureResponse",
+    cloudinarySignatureResponse
+  );
+  console.debug("cloudinarySignature", cloudinarySignature);
+
   try {
     setIsUploading(true);
 
     for (const file of files) {
       const formData = new FormData();
-      formData.append("images", file, `${file.name}`);
-      formData.append("ownerId", report.authorId);
 
-      const { data }: { data: MultiUploadResponse } = await axios.post(
-        "/api/multiple-upload",
-        formData
+      formData.append("file", file);
+      formData.append("api_key", cloudinarySignature.api_key);
+      formData.append("signature", cloudinarySignature.signature);
+      formData.append("timestamp", cloudinarySignature.timestamp);
+      formData.append(
+        "transformation",
+        cloudinarySignature.transformation
       );
+      formData.append("folder", cloudinarySignature.folder);
 
-      if (data.success) {
-        // Add the image information to the component state
-        setImageIds((prevImageIds) => [
-          ...prevImageIds,
-          ...data.imageIds,
-        ]);
-        // interface MultiUploadResponse {
-        //   success: boolean;
-        //   imageIds: string[];
-        //   imagePublicIds: string[];
-        //   cloudUrls: string[];
-        // }
-        //   setImages: Dispatch<
-        //   SetStateAction<
-        //     {
-        //       id: string;
-        //       publicId: string;
-        //       cloudUrl: string;
-        //       postOrder: number;
-        //     }[]
-        //   >>,
-        setImages((prevImages) => [
-          ...prevImages,
-          ...data.cloudUrls.map((cloudUrl, index) => ({
-            id: data.imageIds[index], // Assuming imageIds correspond to cloudUrls in order
-            publicId: data.imagePublicIds[index], // Assuming imagePublicIds correspond to cloudUrls in order
-            cloudUrl,
-            postOrder: 0, // You may adjust this according to your logic
-          })),
-        ]);
+      await fetch(url, {
+        method: "POST",
+        body: formData,
+      })
+        .then((body) => {
+          console.debug("body", body);
+          if (body.ok) console.debug("TRUE");
+          return body.text();
+        })
+        .then((data) => {
+          const cloudinaryResonse = JSON.parse(
+            data
+          ) as CloudinaryResonse;
 
-        // setCloudUrls((prevCloudUrls) => [
-        //   ...prevCloudUrls,
-        //   ...data.cloudUrls,
-        // ]);
-      } else {
-        throw new Error("File uploaded NOT successfully");
-      }
+          console.debug(cloudinaryResonse.secure_url);
+          //const str = JSON.stringify(JSON.parse(data), null, 4);
+          //document.getElementById("formdata").innerHTML += str;
+        });
+
+      // LOOP POST IMAGES
+      // formData.append("images", file, `${file.name}`);
+      // formData.append("ownerId", report.authorId);
+      // const response: MultiUploadResponse = await axios.post(
+      //   "/api/multiple-upload", // HERE IMAGES GET POSTED TO VERCEL BACKEND!
+      //   formData
+      // );
+
+      // if (response.success) {
+      //   // Add the image information to the component state
+      //   setImageIds((prevImageIds) => [
+      //     ...prevImageIds,
+      //     ...response.imageIds,
+      //   ]);
+      //   setImages((prevImages) => [
+      //     ...prevImages,
+      //     ...response.cloudUrls.map((cloudUrl, index) => ({
+      //       id: response.imageIds[index], // Assuming imageIds correspond to cloudUrls in order
+      //       publicId: response.imagePublicIds[index], // Assuming imagePublicIds correspond to cloudUrls in order
+      //       cloudUrl,
+      //       postOrder: 0, // You may adjust this according to your logic
+      //     })),
+      //   ]);
+      // } else {
+      //   throw new Error("File uploaded NOT successfully");
+      // }
     }
 
     setIsUploading(false);

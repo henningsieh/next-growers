@@ -1,4 +1,3 @@
-import styles from "../styles/Home.module.css";
 import { generateSignature } from "../utils/generateSignature";
 
 import { useState } from "react";
@@ -6,7 +5,10 @@ import { useState } from "react";
 declare global {
   interface Window {
     cloudinary: {
-      createUploadWidget(options: any, callback: any): UploadWidget; // Specify the return type
+      createUploadWidget(
+        options: unknown,
+        callback: unknown
+      ): UploadWidget; // Specify the return type
       // Add other cloudinary methods if needed
     };
   }
@@ -28,7 +30,7 @@ export function ImageUpload() {
         apiKey: process.env.NEXT_PUBLIC_API_KEY,
         resourceType: "image",
       },
-      (error: any, result: { event: string; info: any }) => {
+      (error: unknown, result: { event: string; info: unknown }) => {
         if (!error && result && result.event === "success") {
           console.log("Done! Here is the image info: ", result.info);
           setIsImageUploaded(true);
