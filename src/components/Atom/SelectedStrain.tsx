@@ -206,26 +206,29 @@ export default function SelectedStrain({
             }}
           >
             {strainInfosFromSeedfinder && (
-              <Flex align="center" justify="flex-end">
-                <form
-                  onSubmit={savePlantToGrowForm.onSubmit(
-                    (strainDataFormValues) => {
-                      tRPCsavePlantToGrow(strainDataFormValues);
-                    },
-                    handleErrors
-                  )}
-                >
+              <form
+                onSubmit={savePlantToGrowForm.onSubmit(
+                  (strainDataFormValues) => {
+                    tRPCsavePlantToGrow(strainDataFormValues);
+                  },
+                  handleErrors
+                )}
+              >
+                <Flex align="center" justify="flex-end">
                   <Button
-                    leftIcon={<IconDeviceFloppy size="1.1rem" />}
+                    w={380}
+                    fz="lg"
+                    fullWidth={mediumScreen}
+                    leftIcon={<IconDeviceFloppy size="1.4rem" />}
                     loading={savePlantToGrowIsLoading}
                     variant="filled"
                     color="growgreen"
                     type="submit"
                   >
-                    Add this Plant to your Grow
+                    Add Strain as Plant to Grow
                   </Button>
-                </form>
-              </Flex>
+                </Flex>
+              </form>
             )}
             <Space h="md" />
             <SimpleGrid
@@ -379,12 +382,6 @@ export default function SelectedStrain({
                                 ) as TrustedHTML,
                               }}
                             ></Box>
-                            <Box>
-                              {
-                                strainInfosFromSeedfinder.brinfo
-                                  .description
-                              }
-                            </Box>
                           </ScrollArea>
                         </Paper>
                       </Box>
