@@ -101,7 +101,7 @@ const handleFileUpload = async (
     {
       public_id: publicIdWithTimestamp,
       quality: "auto",
-      fetch_format: "auto",
+      width: 2000,
       flags: "lossy",
       invalidate: true,
     }
