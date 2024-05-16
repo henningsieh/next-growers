@@ -11,13 +11,13 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import type { FileWithPath } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
   IconCloudUpload,
   IconDownload,
-  IconFileAlert,
   IconFileArrowRight,
   IconTrashXFilled,
   IconX,
@@ -27,12 +27,15 @@ import { httpStatusErrorMsg } from "~/messages";
 import { useEffect, useRef, useState } from "react";
 
 import type { User } from "next-auth";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
+import type { CloudinaryResonse } from "~/types";
+
 import { api } from "~/utils/api";
-import { handleDrop } from "~/utils/helperUtils";
+import { handleMultipleDrop } from "~/utils/helperUtils";
 import { InputCreateReportForm } from "~/utils/inputValidation";
 
 interface AddFormProps {
@@ -76,35 +79,15 @@ export function CreateReportForm({
   textContinueButton,
 }: AddFormProps) {
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
   const [isUploading, setIsUploading] = useState(false);
   const [imageId, setImageId] = useState("");
-  const [, setImagePublicId] = useState("");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [cloudUrl, setCloudUrl] = useState("");
-
-  // Update "imageId" state, if "imageId" form field value changes
-  useEffect(() => {
-    createReportForm.setFieldValue("imageId", imageId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageId]);
-
-  const handleDropWrapper = (files: File[]): void => {
-    setIsUploading(true);
-
-    // handleDrop calls the /api/upload endpoint
-    handleDrop(
-      files,
-      setImageId,
-      setImagePublicId,
-      setCloudUrl,
-      setIsUploading
-    ).catch((error) => {
-      console.debug(error);
-    });
-  };
 
   const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
     onMutate: () => {
@@ -152,6 +135,68 @@ export function CreateReportForm({
     });
   };
 
+  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
+    useState<CloudinaryResonse[]>([]);
+
+  const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
+    {
+      onError: (error) => {
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.shape?.code)
+        );
+        console.error(error);
+      },
+      onSuccess: (newImage) => {
+        setImagesUploadedToCloudinary([]);
+
+        if (!!newImage) {
+          setCloudUrl(newImage.cloudUrl);
+          createReportForm.setFieldValue("imageId", newImage.id);
+        }
+      },
+      onSettled: (_newImage) => {
+        // indicate that saving process is ready:
+        setIsSaving(false);
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (status === "authenticated" && !isUploading) {
+      // Save new images to db
+      void imagesUploadedToCloudinary.map((image) => {
+        tRPCcreateImage({
+          cloudUrl: image.secure_url,
+          publicId: image.public_id,
+          ownerId: session.user.id,
+        });
+      });
+    }
+  }, [
+    imagesUploadedToCloudinary,
+    isUploading,
+    session?.user.id,
+    status,
+    tRPCcreateImage,
+  ]);
+
+  const handleMultipleDropWrapper = async (
+    fileWithPath: FileWithPath[]
+  ) => {
+    setIsUploading(true);
+    setIsSaving(true); //controlls upload inactive overlay
+
+    const result = await handleMultipleDrop(
+      fileWithPath,
+      setImagesUploadedToCloudinary
+    ).catch((error) => {
+      console.error(error);
+    });
+
+    setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
+
+    console.debug(result);
+  };
   return (
     <>
       <Container
@@ -166,7 +211,6 @@ export function CreateReportForm({
           <>
             {/* // Image Preview */}
             <Box className="relative" px={0}>
-              asecvpiub wpczuvb
               <Box className="absolute right-2 top-2 z-50 flex justify-end">
                 <ActionIcon
                   title="delete this image"
@@ -202,36 +246,25 @@ export function CreateReportForm({
           /* // Dropzone */
           <Box className={classes.wrapper}>
             <LoadingOverlay
-              visible={isUploading}
+              visible={isSaving}
               transitionDuration={600}
               overlayBlur={2}
             />
             <Dropzone
+              accept={IMAGE_MIME_TYPE}
               className={classes.dropzone}
               h={rem(280)}
               multiple={false} // only one image for now!
               openRef={openReference}
-              onDrop={handleDropWrapper}
-              maxSize={4500000} // Vercel production environment post size limit which is 4.500.000 byte
-              accept={[MIME_TYPES.jpeg, MIME_TYPES.png, MIME_TYPES.gif]}
+              onDrop={(files) => {
+                void handleMultipleDropWrapper(files);
+              }}
               onReject={(files) => {
-                if (files[0]) {
-                  const fileSizeInBytes = files[0].file.size;
-                  const fileSizeInMB = (
-                    fileSizeInBytes /
-                    1024 ** 2
-                  ).toFixed(2);
-                  notifications.show({
-                    title: "Error",
-                    message:
-                      "File size of " +
-                      fileSizeInMB +
-                      " MB exceeds the allowed maximum of ≈ 4.28 MB (4.394 KB, 4.500.000 B)!",
-                    color: "red",
-                    icon: <IconFileAlert />,
-                    loading: false,
-                  });
-                }
+                files.forEach((file) => {
+                  notifications.show(
+                    httpStatusErrorMsg(file.file.name, 500)
+                  );
+                });
               }}
             >
               <Box style={{ pointerEvents: "none" }}>

@@ -97,23 +97,6 @@ export function EditReportForm({
   const [cloudUrl, setCloudUrl] = useState(
     reportfromProps.image?.cloudUrl as string
   );
-  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
-    useState<CloudinaryResonse[]>([]);
-
-  // const trpc = api.useUtils();
-
-  const submitEditReportForm = (values: {
-    id: string;
-    title: string;
-    imageId: string;
-    description: string;
-    strains: string[];
-    environment: keyof typeof Environment;
-    createdAt: Date;
-  }) => {
-    tRPCsaveReport(values);
-  };
-
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
     {
       onMutate: () => {
@@ -163,6 +146,9 @@ export function EditReportForm({
       );
     });
   };
+
+  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
+    useState<CloudinaryResonse[]>([]);
 
   const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
     {
@@ -288,7 +274,6 @@ export function EditReportForm({
                 onDrop={(files) => {
                   void handleMultipleDropWrapper(files);
                 }}
-                maxSize={4500000} // Vercel production environment post size limit which is 4.500.000 byte
                 onReject={(files) => {
                   files.forEach((file) => {
                     notifications.show(
@@ -296,9 +281,6 @@ export function EditReportForm({
                     );
                   });
                 }}
-                // onChange={(e) => {
-                //   console.debug(e.currentTarget);
-                // }}
               >
                 <Box style={{ pointerEvents: "none" }}>
                   <Group position="center">
@@ -357,7 +339,7 @@ export function EditReportForm({
           <Paper m={0} p="sm" withBorder>
             <form
               onSubmit={editReportForm.onSubmit((values) => {
-                submitEditReportForm(values);
+                tRPCsaveReport(values);
               }, handleErrors)}
             >
               <Box className="space-y-2">
