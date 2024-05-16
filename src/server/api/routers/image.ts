@@ -47,11 +47,7 @@ export const imageRouter = createTRPCRouter({
     .input(InputCreateImage)
     .mutation(async ({ ctx, input }) => {
       try {
-        const {
-          cloudUrl,
-          ownerId,
-          publicId, // Include the images field in the input
-        } = input;
+        const { cloudUrl, ownerId, publicId } = input;
 
         if (ownerId != ctx.session.user.id) {
           throw new Error(

@@ -8,7 +8,6 @@ import type {
   CloudinaryResonse,
   CloudinarySignature,
   ImageUploadResponse,
-  IsoReportWithPostsFromDb,
   LightswattsDataPoint,
   Notification,
   SplitObject,
@@ -288,20 +287,8 @@ export const handleDrop = async (
 
 export const handleMultipleDrop = async (
   files: File[],
-  _report: IsoReportWithPostsFromDb,
-  _setImages: Dispatch<
-    SetStateAction<
-      {
-        id: string;
-        publicId: string;
-        cloudUrl: string;
-        postOrder: number;
-      }[]
-    >
-  >,
   setIsUploading: Dispatch<SetStateAction<boolean>>,
   setCloudinaryImages: Dispatch<SetStateAction<CloudinaryResonse[]>>
-  //_setImageIds: Dispatch<SetStateAction<string[]>>,
 ): Promise<void> => {
   const url =
     "https://api.cloudinary.com/v1_1/" + "dgcydirlu" + "/image/upload";
@@ -342,25 +329,9 @@ export const handleMultipleDrop = async (
       ) as CloudinaryResonse;
 
       setCloudinaryImages((prev) => [...prev, cloudinaryResponse]);
-
-      // Add the image information to the component state
-      // setImageIds((prevImageIds) => [
-      //   ...prevImageIds,
-      //   image.id, // 'image' is possibly 'undefined' !!!
-      // ]);
-      // setImages((prevImages) => [
-      //   ...prevImages,
-      //   //   add new image here
-      //   {
-      //     id: image.id,
-      //     publicId: image.publicId,
-      //     cloudUrl: image.cloudUrl,
-      //     postOrder: i++,
-      //   },
-      // ]);
     }
 
-    setIsUploading(false);
+    setIsUploading(false); //triggers tRPCcreateImage in ImageUploader!
   } catch (error) {
     console.error("Error uploading file:", error);
     throw new Error("Error uploading file");

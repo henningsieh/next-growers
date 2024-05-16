@@ -12,7 +12,7 @@ import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
 import { env } from "~/env.mjs";
-import { defaultErrorMsg, fileUploadErrorMsg } from "~/messages";
+import { fileUploadErrorMsg, httpStatusErrorMsg } from "~/messages";
 
 import {
   type Dispatch,
@@ -26,8 +26,7 @@ import { useSession } from "next-auth/react";
 import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 
 import type {
-  CloudinaryResonse,
-  IsoReportWithPostsFromDb,
+  CloudinaryResonse, // IsoReportWithPostsFromDb,
 } from "~/types";
 
 import { api } from "~/utils/api";
@@ -35,7 +34,7 @@ import { api } from "~/utils/api";
 import { handleMultipleDrop } from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
-  report: IsoReportWithPostsFromDb;
+  //report: IsoReportWithPostsFromDb;
   images: {
     id: string;
     publicId: string;
@@ -61,7 +60,7 @@ interface ImageUploaderProps {
 }
 
 export default function ImageUploader({
-  report,
+  //report,
   images,
   setImages,
   //setImageIds,
@@ -81,26 +80,19 @@ export default function ImageUploader({
 
   const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
     {
-      onMutate: () => {
-        setIsSaving(true);
-      },
-      // If the mutation fails, use the context
-      // returned from onMutate to roll back
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onError: (error, _comment) => {
-        notifications.show(defaultErrorMsg(error.message));
+      onError: (error) => {
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.shape?.code)
+        );
+        console.error(error);
       },
       onSuccess: (newImage) => {
+        // Set ImagesToUpload to an empty array
         setImagesToUploadToCloudinary([]);
-        console.debug(newImage!.id);
-        // setImageIds
-        // !!newImage &&
-        //   setImageIds((prevImageIds) => [...prevImageIds, newImage.id]);
-        //  setImages
+
         !!newImage &&
           setImages((prevImages) => [
             ...prevImages,
-            //   add new image here
             {
               id: newImage.id,
               publicId: newImage.publicId,
@@ -108,16 +100,9 @@ export default function ImageUploader({
               postOrder: !!newImage.postOrder ? newImage.postOrder : 0,
             },
           ]);
-
-        // notifications.show(commentSuccessfulMsg);
-        // newCommentForm.reset();
-        // editor?.commands.setContent("");
-        // await trpc.comments.getCommentsByPostId.fetch({
-        //   postId: newImage.postId as string,
-        // });
       },
-      // Always refetch after error or success:
       onSettled: (_newImage) => {
+        // indicate that saving process is ready:
         setIsSaving(false);
       },
     }
@@ -125,6 +110,7 @@ export default function ImageUploader({
 
   useEffect(() => {
     if (status === "authenticated" && !isUploading) {
+      // Save new images to db
       void imagesToUploadToCloudinary.map((image) => {
         tRPCcreateImage({
           cloudUrl: image.secure_url,
@@ -137,20 +123,17 @@ export default function ImageUploader({
     imagesToUploadToCloudinary,
     isUploading,
     session?.user.id,
-    // setImageIds,
-    setImages,
     status,
+    setImages,
     tRPCcreateImage,
   ]);
 
   const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
+    setIsSaving(true);
     handleMultipleDrop(
       fileWithPath,
-      report,
-      setImages,
       setIsUploading,
       setImagesToUploadToCloudinary
-      //setImageIds,
     ).catch((error) => {
       console.error(error);
     });
@@ -183,7 +166,7 @@ export default function ImageUploader({
           </Group> */}
           <Box>
             <Box className="relative">
-              <LoadingOverlay visible={isUploading || isSaving} />
+              <LoadingOverlay visible={isSaving} />
               <Box>
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}

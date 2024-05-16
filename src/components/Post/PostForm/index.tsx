@@ -517,7 +517,7 @@ const PostForm = (props: AddPostProps) => {
               </RichTextEditor>
 
               <ImageUploader
-                report={report}
+                //report={report}
                 images={images || []}
                 setImages={setImages}
                 setImageIds={setImageIds}
