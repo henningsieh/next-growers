@@ -52,10 +52,7 @@ import type { IsoReportWithPostsFromDb, Post } from "~/types";
 import { GrowStage } from "~/types";
 
 import { api } from "~/utils/api";
-import {
-  getFileMaxSizeInBytes,
-  getFileMaxUpload,
-} from "~/utils/fileUtils";
+import { getFileMaxUpload } from "~/utils/helperUtils";
 import { InputCreatePostForm } from "~/utils/inputValidation";
 
 interface AddPostProps {
@@ -517,14 +514,11 @@ const PostForm = (props: AddPostProps) => {
               </RichTextEditor>
 
               <ImageUploader
-                //report={report}
                 images={images || []}
                 setImages={setImages}
                 setImageIds={setImageIds}
-                //setCloudinaryImages={setCloudinaryImages}
                 isUploading={isUploading}
                 setIsUploading={setIsUploading}
-                maxSize={getFileMaxSizeInBytes()}
                 maxFiles={getFileMaxUpload()}
               />
 

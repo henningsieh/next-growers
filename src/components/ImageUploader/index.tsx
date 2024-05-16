@@ -11,8 +11,7 @@ import {
 import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
-import { env } from "~/env.mjs";
-import { fileUploadErrorMsg, httpStatusErrorMsg } from "~/messages";
+import { httpStatusErrorMsg } from "~/messages";
 
 import {
   type Dispatch,
@@ -52,24 +51,17 @@ interface ImageUploaderProps {
     >
   >;
   maxFiles?: number;
-  maxSize?: number;
   setImageIds: Dispatch<SetStateAction<string[]>>;
-  //setCloudinaryImages: Dispatch<SetStateAction<CloudinaryResonse[]>>;
   isUploading: boolean;
   setIsUploading: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function ImageUploader({
-  //report,
   images,
   setImages,
-  //setImageIds,
-  //setCloudinaryImages,
   isUploading,
   setIsUploading,
   maxFiles,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  maxSize,
 }: ImageUploaderProps) {
   const { data: session, status } = useSession();
   const _theme = useMantineTheme();
@@ -123,7 +115,6 @@ export default function ImageUploader({
     isUploading,
     session?.user.id,
     status,
-    setImages,
     tRPCcreateImage,
   ]);
 
@@ -180,19 +171,10 @@ export default function ImageUploader({
                     void handleMultipleDropWrapper(files);
                   }}
                   maxFiles={maxFiles}
-                  //maxSize={maxSize}
                   onReject={(files) => {
                     files.forEach((file) => {
-                      const fileSizeInMB = (
-                        file.file.size /
-                        1024 ** 2
-                      ).toFixed(2);
                       notifications.show(
-                        fileUploadErrorMsg(
-                          file.file.name,
-                          fileSizeInMB,
-                          env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                        )
+                        httpStatusErrorMsg(file.file.name, 500)
                       );
                     });
                   }}

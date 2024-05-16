@@ -17,7 +17,7 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import type { FileWithPath } from "@mantine/dropzone";
-import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
@@ -29,12 +29,7 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { env } from "~/env.mjs";
-import {
-  fileUploadErrorMsg,
-  httpStatusErrorMsg,
-  saveGrowSuccessfulMsg,
-} from "~/messages";
+import { httpStatusErrorMsg, saveGrowSuccessfulMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 
@@ -285,6 +280,7 @@ export function EditReportForm({
                 overlayBlur={2}
               />
               <Dropzone
+                accept={IMAGE_MIME_TYPE}
                 className={classes.dropzone}
                 h={rem(280)}
                 multiple={false} // only one header image!
@@ -293,26 +289,12 @@ export function EditReportForm({
                   void handleMultipleDropWrapper(files);
                 }}
                 maxSize={4500000} // Vercel production environment post size limit which is 4.500.000 byte
-                accept={[
-                  MIME_TYPES.jpeg,
-                  MIME_TYPES.png,
-                  MIME_TYPES.gif,
-                ]}
                 onReject={(files) => {
-                  if (files[0]) {
-                    const fileSizeInBytes = files[0].file.size;
-                    const fileSizeInMB = (
-                      fileSizeInBytes /
-                      1024 ** 2
-                    ).toFixed(2);
+                  files.forEach((file) => {
                     notifications.show(
-                      fileUploadErrorMsg(
-                        files[0].file.name,
-                        fileSizeInMB,
-                        env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                      )
+                      httpStatusErrorMsg(file.file.name, 500)
                     );
-                  }
+                  });
                 }}
                 // onChange={(e) => {
                 //   console.debug(e.currentTarget);

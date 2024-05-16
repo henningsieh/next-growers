@@ -431,3 +431,7 @@ export const parseAndReplaceAmazonLinks = async (
 
   return doc.documentElement.innerHTML;
 };
+
+export function getFileMaxUpload(): number {
+  return parseInt(env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES);
+}

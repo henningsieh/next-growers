@@ -23,10 +23,7 @@ import {
   IconReload,
 } from "@tabler/icons-react";
 import type { ParsedUrlQuery } from "querystring";
-import { env } from "~/env.mjs";
 import {
-  filesMaxOneErrorMsg,
-  fileUploadErrorMsg,
   httpStatusErrorMsg,
   setUserimageSuccessfulMsg,
   setUserNameSuccessfulMsg,
@@ -52,10 +49,9 @@ import AccessDenied from "~/components/Atom/AccessDenied";
 
 import { authOptions } from "~/server/auth";
 
-import { CloudinaryResonse } from "~/types";
+import type { CloudinaryResonse } from "~/types";
 
 import { api } from "~/utils/api";
-import { getFileMaxSizeInBytes } from "~/utils/fileUtils";
 import {
   handleDrop as _handleDrop,
   getFakeAIUsername,
@@ -155,6 +151,7 @@ const ProtectedEditReport: NextPage = () => {
       ).catch((error) => {
         console.error(error);
       });
+
       tRPCsetUserImage({
         id: session?.user.id as string,
         imageURL: result?.cloudUrls[0] as string,
@@ -231,39 +228,20 @@ const ProtectedEditReport: NextPage = () => {
             >
               <Box>
                 <Dropzone
+                  accept={IMAGE_MIME_TYPE}
                   pb="xl"
                   className="p-4 border-0 rounded-full"
-                  //component={Dropzone}
-                  maxFiles={1}
-                  maxSize={getFileMaxSizeInBytes()}
                   multiple={false}
-                  accept={IMAGE_MIME_TYPE}
-                  onReject={(files) => {
-                    if (files) {
-                      if (files.length > 1) {
-                        notifications.show(
-                          filesMaxOneErrorMsg(files.length)
-                        );
-                      } else if (files.length === 1) {
-                        const file = files[0].file;
-                        const fileSizeInMB = (
-                          file.size /
-                          1024 ** 2
-                        ).toFixed(2);
-                        notifications.show(
-                          fileUploadErrorMsg(
-                            file.name,
-                            fileSizeInMB,
-                            env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                          )
-                        );
-                      }
-                    }
-                  }}
+                  maxFiles={1}
                   onDrop={(files) => {
-                    console.log("accepted files", files);
-
                     void handleDropWrapper(files);
+                  }}
+                  onReject={(files) => {
+                    files.forEach((file) => {
+                      notifications.show(
+                        httpStatusErrorMsg(file.file.name, 500)
+                      );
+                    });
                   }}
                   sx={(theme) => ({
                     backgroundColor:
