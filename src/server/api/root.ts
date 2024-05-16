@@ -1,6 +1,6 @@
-import { cloudinaryRouter } from "./routers/cloudinary";
 import { commentRouter } from "./routers/comment";
 import { exampleRouter } from "./routers/example";
+import { imageRouter } from "./routers/image";
 import { lightWattsRouter } from "./routers/lightWatts";
 import { likeRouter } from "./routers/like";
 import { notificationRouter } from "./routers/notification";
@@ -25,7 +25,7 @@ export const appRouter = createTRPCRouter({
   posts: postRouter,
   lightwatts: lightWattsRouter,
   comments: commentRouter,
-  cloudinary: cloudinaryRouter,
+  image: imageRouter,
 });
 
 // export type definition of API

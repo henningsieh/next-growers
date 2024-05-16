@@ -51,6 +51,14 @@ export interface ImageUploadResponse {
   imagePublicId: string;
   cloudUrl: string;
 }
+export interface CloudinarySignature {
+  cloud_name: string;
+  api_key: string;
+  signature: string;
+  timestamp: string;
+  transformation: string;
+  folder: string;
+}
 
 export interface CloudinaryResonse {
   asset_id: string;

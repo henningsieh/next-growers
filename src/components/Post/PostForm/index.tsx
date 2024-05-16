@@ -72,6 +72,9 @@ const PostForm = (props: AddPostProps) => {
   const { t } = useTranslation(activeLocale);
 
   const { isoReport: report, post } = props;
+
+  const [isUploading, setIsUploading] = useState(false);
+
   const [imageIds, setImageIds] = useState<string[]>([]);
   const [images, setImages] = useState(
     [...(post?.images || [])].sort((a, b) => {
@@ -518,6 +521,9 @@ const PostForm = (props: AddPostProps) => {
                 images={images || []}
                 setImages={setImages}
                 setImageIds={setImageIds}
+                //setCloudinaryImages={setCloudinaryImages}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
                 maxSize={getFileMaxSizeInBytes()}
                 maxFiles={getFileMaxUpload()}
               />

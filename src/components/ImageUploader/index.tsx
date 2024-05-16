@@ -1,32 +1,37 @@
-import { ImageUpload } from "../ImageUpload";
 import {
   Box,
   Container,
-  Group,
   LoadingOverlay,
   Paper,
   rem,
   Space,
   Text,
-  Title,
   useMantineTheme,
 } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
-import { IconCamera } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
-import { fileUploadErrorMsg } from "~/messages";
+import { defaultErrorMsg, fileUploadErrorMsg } from "~/messages";
 
-import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+
+import { useSession } from "next-auth/react";
 
 import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
+import type {
+  CloudinaryResonse,
+  IsoReportWithPostsFromDb,
+} from "~/types";
 
+import { api } from "~/utils/api";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { generateSignature } from "~/utils/generateSignature";
 import { handleMultipleDrop } from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
@@ -50,45 +55,135 @@ interface ImageUploaderProps {
   maxFiles?: number;
   maxSize?: number;
   setImageIds: Dispatch<SetStateAction<string[]>>;
+  //setCloudinaryImages: Dispatch<SetStateAction<CloudinaryResonse[]>>;
+  isUploading: boolean;
+  setIsUploading: Dispatch<SetStateAction<boolean>>;
 }
 
-const ImageUploader = ({
+export default function ImageUploader({
   report,
   images,
   setImages,
-  setImageIds,
+  //setImageIds,
+  //setCloudinaryImages,
+  isUploading,
+  setIsUploading,
   maxFiles,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxSize,
-}: ImageUploaderProps) => {
-  const [isUploading, setIsUploading] = useState(false);
+}: ImageUploaderProps) {
+  const { data: session, status } = useSession();
+  const _theme = useMantineTheme();
 
-  const theme = useMantineTheme();
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [imagesToUploadToCloudinary, setImagesToUploadToCloudinary] =
+    useState<CloudinaryResonse[]>([]);
+
+  const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
+    {
+      onMutate: () => {
+        setIsSaving(true);
+      },
+      // If the mutation fails, use the context
+      // returned from onMutate to roll back
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (error, _comment) => {
+        notifications.show(defaultErrorMsg(error.message));
+      },
+      onSuccess: (newImage) => {
+        setImagesToUploadToCloudinary([]);
+        console.debug(newImage!.id);
+        // setImageIds
+        // !!newImage &&
+        //   setImageIds((prevImageIds) => [...prevImageIds, newImage.id]);
+        //  setImages
+        !!newImage &&
+          setImages((prevImages) => [
+            ...prevImages,
+            //   add new image here
+            {
+              id: newImage.id,
+              publicId: newImage.publicId,
+              cloudUrl: newImage.cloudUrl,
+              postOrder: !!newImage.postOrder ? newImage.postOrder : 0,
+            },
+          ]);
+
+        // notifications.show(commentSuccessfulMsg);
+        // newCommentForm.reset();
+        // editor?.commands.setContent("");
+        // await trpc.comments.getCommentsByPostId.fetch({
+        //   postId: newImage.postId as string,
+        // });
+      },
+      // Always refetch after error or success:
+      onSettled: (_newImage) => {
+        setIsSaving(false);
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (status === "authenticated" && !isUploading) {
+      void imagesToUploadToCloudinary.map((image) => {
+        tRPCcreateImage({
+          cloudUrl: image.secure_url,
+          publicId: image.public_id,
+          ownerId: session.user.id,
+        });
+      });
+    }
+  }, [
+    imagesToUploadToCloudinary,
+    isUploading,
+    session?.user.id,
+    // setImageIds,
+    setImages,
+    status,
+    tRPCcreateImage,
+  ]);
 
   const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
     handleMultipleDrop(
       fileWithPath,
       report,
       setImages,
-      setImageIds,
-      setIsUploading
+      setIsUploading,
+      setImagesToUploadToCloudinary
+      //setImageIds,
     ).catch((error) => {
       console.error(error);
     });
   };
 
   return (
-    <Container p={0} size="md">
-      <ImageUpload />
+    <Container mt="sm" p={0} size="md">
+      <Box
+        fz={"lg"}
+        fw={"normal"}
+        color="#00ff00"
+        sx={(theme) => ({
+          // backgroundColor:
+          //   theme.colorScheme === "dark"
+          //     ? "rgba(0, 0, 0, 0)"
+          //     : "rgba(255, 255, 255, .66)",
+          color:
+            theme.colorScheme === "dark"
+              ? theme.colors.growgreen[4]
+              : theme.colors.growgreen[6],
+        })}
+      >
+        Images
+      </Box>
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
-          <Group position="left">
+          {/* <Group position="left">
             <IconCamera color={theme.colors.growgreen[4]} />
             <Title order={4}>Append images</Title>
-          </Group>
+          </Group> */}
           <Box>
             <Box className="relative">
-              <LoadingOverlay visible={isUploading} />
+              <LoadingOverlay visible={isUploading || isSaving} />
               <Box>
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}
@@ -158,6 +253,4 @@ const ImageUploader = ({
       </Paper>
     </Container>
   );
-};
-
-export default ImageUploader;
+}

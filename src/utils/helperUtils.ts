@@ -6,6 +6,7 @@ import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 // import { env } from "~/env.mjs";
 import type {
   CloudinaryResonse,
+  CloudinarySignature,
   ImageUploadResponse,
   IsoReportWithPostsFromDb,
   LightswattsDataPoint,
@@ -298,8 +299,9 @@ export const handleMultipleDrop = async (
       }[]
     >
   >,
-  _setImageIds: Dispatch<SetStateAction<string[]>>,
-  setIsUploading: Dispatch<SetStateAction<boolean>>
+  setIsUploading: Dispatch<SetStateAction<boolean>>,
+  setCloudinaryImages: Dispatch<SetStateAction<CloudinaryResonse[]>>
+  //_setImageIds: Dispatch<SetStateAction<string[]>>,
 ): Promise<void> => {
   const url =
     "https://api.cloudinary.com/v1_1/" + "dgcydirlu" + "/image/upload";
@@ -309,20 +311,7 @@ export const handleMultipleDrop = async (
   );
 
   const cloudinarySignature =
-    (await cloudinarySignatureResponse.json()) as {
-      cloud_name: string;
-      api_key: string;
-      signature: string;
-      timestamp: string;
-      transformation: string;
-      folder: string;
-    };
-
-  console.debug(
-    "cloudinarySignatureResponse",
-    cloudinarySignatureResponse
-  );
-  console.debug("cloudinarySignature", cloudinarySignature);
+    (await cloudinarySignatureResponse.json()) as CloudinarySignature;
 
   try {
     setIsUploading(true);
@@ -340,56 +329,40 @@ export const handleMultipleDrop = async (
       );
       formData.append("folder", cloudinarySignature.folder);
 
-      await fetch(url, {
+      const response = await fetch(url, {
         method: "POST",
         body: formData,
-      })
-        .then((body) => {
-          console.debug("body", body);
-          if (body.ok) console.debug("TRUE");
-          return body.text();
-        })
-        .then((data) => {
-          const cloudinaryResonse = JSON.parse(
-            data
-          ) as CloudinaryResonse;
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
-          console.debug(cloudinaryResonse.secure_url);
-          //const str = JSON.stringify(JSON.parse(data), null, 4);
-          //document.getElementById("formdata").innerHTML += str;
-        });
+      const cloudinaryResponse = JSON.parse(
+        await response.text()
+      ) as CloudinaryResonse;
 
-      // LOOP POST IMAGES
-      // formData.append("images", file, `${file.name}`);
-      // formData.append("ownerId", report.authorId);
-      // const response: MultiUploadResponse = await axios.post(
-      //   "/api/multiple-upload", // HERE IMAGES GET POSTED TO VERCEL BACKEND!
-      //   formData
-      // );
+      setCloudinaryImages((prev) => [...prev, cloudinaryResponse]);
 
-      // if (response.success) {
-      //   // Add the image information to the component state
-      //   setImageIds((prevImageIds) => [
-      //     ...prevImageIds,
-      //     ...response.imageIds,
-      //   ]);
-      //   setImages((prevImages) => [
-      //     ...prevImages,
-      //     ...response.cloudUrls.map((cloudUrl, index) => ({
-      //       id: response.imageIds[index], // Assuming imageIds correspond to cloudUrls in order
-      //       publicId: response.imagePublicIds[index], // Assuming imagePublicIds correspond to cloudUrls in order
-      //       cloudUrl,
-      //       postOrder: 0, // You may adjust this according to your logic
-      //     })),
-      //   ]);
-      // } else {
-      //   throw new Error("File uploaded NOT successfully");
-      // }
+      // Add the image information to the component state
+      // setImageIds((prevImageIds) => [
+      //   ...prevImageIds,
+      //   image.id, // 'image' is possibly 'undefined' !!!
+      // ]);
+      // setImages((prevImages) => [
+      //   ...prevImages,
+      //   //   add new image here
+      //   {
+      //     id: image.id,
+      //     publicId: image.publicId,
+      //     cloudUrl: image.cloudUrl,
+      //     postOrder: i++,
+      //   },
+      // ]);
     }
 
     setIsUploading(false);
   } catch (error) {
-    console.debug(error);
+    console.error("Error uploading file:", error);
     throw new Error("Error uploading file");
   }
 };
