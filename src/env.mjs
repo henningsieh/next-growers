@@ -30,7 +30,6 @@ export const env = createEnv({
     EMAIL_SERVER_USER: z.string().min(1),
     EMAIL_SERVER_PASSWORD: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
-
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
   },
@@ -42,7 +41,6 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_CLOUDINARY_NAME: z.string().min(1),
-
     NEXT_PUBLIC_SENTRY_AUTH_TOKEN: z.string().min(1),
     NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1),
   },
