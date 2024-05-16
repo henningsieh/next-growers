@@ -39,7 +39,7 @@ const handler: NextApiHandler = async (
       );
 
       res.json({
-        cloud_name: env.NEXT_PUBLIC_CLOUDINARY_NAME,
+        cloud_name: env.CLOUDINARY_NAME,
         api_key: env.CLOUDINARY_API_KEY,
         signature: signature,
         timestamp: timestamp,
