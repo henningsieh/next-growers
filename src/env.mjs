@@ -33,7 +33,6 @@ export const env = createEnv({
 
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
-    CLOUDINARY_NAME: z.string().min(1),
   },
 
   /**
@@ -42,6 +41,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
+    NEXT_PUBLIC_CLOUDINARY_NAME: z.string().min(1),
+
     NEXT_PUBLIC_SENTRY_AUTH_TOKEN: z.string().min(1),
     NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE: z.string().min(1),
     NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1),
@@ -67,7 +68,8 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    NEXT_PUBLIC_CLOUDINARY_NAME:
+      process.env.NEXT_PUBLIC_CLOUDINARY_NAME,
     NEXT_PUBLIC_SENTRY_AUTH_TOKEN:
       process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN,
     NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE:
