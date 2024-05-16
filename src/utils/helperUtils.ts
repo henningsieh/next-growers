@@ -1,13 +1,15 @@
 import type { AxiosResponse } from "axios";
 import axios from "axios";
+import { env } from "~/env.mjs";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
+// import { env } from "~/env.mjs";
 import type {
+  CloudinaryResonse,
+  CloudinarySignature,
   ImageUploadResponse,
-  IsoReportWithPostsFromDb,
   LightswattsDataPoint,
-  MultiUploadResponse,
   Notification,
   SplitObject,
 } from "~/types";
@@ -286,77 +288,73 @@ export const handleDrop = async (
 
 export const handleMultipleDrop = async (
   files: File[],
-  report: IsoReportWithPostsFromDb,
-  setImages: Dispatch<
-    SetStateAction<
-      {
-        id: string;
-        publicId: string;
-        cloudUrl: string;
-        postOrder: number;
-      }[]
-    >
-  >,
-  setImageIds: Dispatch<SetStateAction<string[]>>,
-  setIsUploading: Dispatch<SetStateAction<boolean>>
-): Promise<void> => {
-  try {
-    setIsUploading(true);
+  setImagesUploadedToCloudinary: Dispatch<
+    SetStateAction<CloudinaryResonse[]>
+  >
+): Promise<{
+  success: boolean;
+  message: string;
+  cloudUrls: string[];
+}> => {
+  const url =
+    "https://api.cloudinary.com/v1_1/" +
+    env.NEXT_PUBLIC_CLOUDINARY_NAME +
+    "/image/upload";
 
+  const cloudinarySignatureResponse = await fetch(
+    "/api/cloudinary-signature"
+  );
+
+  const cloudinarySignature =
+    (await cloudinarySignatureResponse.json()) as CloudinarySignature;
+
+  const cloudUrls: string[] = [];
+
+  try {
     for (const file of files) {
       const formData = new FormData();
-      formData.append("images", file, `${file.name}`);
-      formData.append("ownerId", report.authorId);
 
-      const { data }: { data: MultiUploadResponse } = await axios.post(
-        "/api/multiple-upload",
-        formData
+      formData.append("file", file);
+      formData.append("api_key", cloudinarySignature.api_key);
+      formData.append("signature", cloudinarySignature.signature);
+      formData.append("timestamp", cloudinarySignature.timestamp);
+      formData.append(
+        "transformation",
+        cloudinarySignature.transformation
       );
+      formData.append("folder", cloudinarySignature.folder);
 
-      if (data.success) {
-        // Add the image information to the component state
-        setImageIds((prevImageIds) => [
-          ...prevImageIds,
-          ...data.imageIds,
-        ]);
-        // interface MultiUploadResponse {
-        //   success: boolean;
-        //   imageIds: string[];
-        //   imagePublicIds: string[];
-        //   cloudUrls: string[];
-        // }
-        //   setImages: Dispatch<
-        //   SetStateAction<
-        //     {
-        //       id: string;
-        //       publicId: string;
-        //       cloudUrl: string;
-        //       postOrder: number;
-        //     }[]
-        //   >>,
-        setImages((prevImages) => [
-          ...prevImages,
-          ...data.cloudUrls.map((cloudUrl, index) => ({
-            id: data.imageIds[index], // Assuming imageIds correspond to cloudUrls in order
-            publicId: data.imagePublicIds[index], // Assuming imagePublicIds correspond to cloudUrls in order
-            cloudUrl,
-            postOrder: 0, // You may adjust this according to your logic
-          })),
-        ]);
-
-        // setCloudUrls((prevCloudUrls) => [
-        //   ...prevCloudUrls,
-        //   ...data.cloudUrls,
-        // ]);
-      } else {
-        throw new Error("File uploaded NOT successfully");
+      const response = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
+
+      const cloudinaryResponse = JSON.parse(
+        await response.text()
+      ) as CloudinaryResonse;
+
+      setImagesUploadedToCloudinary((prev) => [
+        ...prev,
+        cloudinaryResponse,
+      ]);
+      cloudUrls.push(cloudinaryResponse.secure_url);
     }
 
-    setIsUploading(false);
+    return {
+      success: true,
+      message: "Upload was successful",
+      cloudUrls,
+    };
   } catch (error) {
-    console.debug(error);
-    throw new Error("Error uploading file");
+    console.error("Error uploading file:", error);
+    return {
+      success: false,
+      message: "Error uploading file",
+      cloudUrls,
+    };
   }
 };
 
@@ -433,3 +431,7 @@ export const parseAndReplaceAmazonLinks = async (
 
   return doc.documentElement.innerHTML;
 };
+
+export function getFileMaxUpload(): number {
+  return parseInt(env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES);
+}

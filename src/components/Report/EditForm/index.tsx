@@ -16,7 +16,8 @@ import {
   TextInput,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
+import type { FileWithPath } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { useForm, zodResolver } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
@@ -28,25 +29,21 @@ import {
   IconTrashXFilled,
   IconX,
 } from "@tabler/icons-react";
-import { env } from "~/env.mjs";
-import {
-  fileUploadErrorMsg,
-  httpStatusErrorMsg,
-  saveGrowSuccessfulMsg,
-} from "~/messages";
+import { httpStatusErrorMsg, saveGrowSuccessfulMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 
+import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
-import type { EditReportFormProps } from "~/types";
+import type { CloudinaryResonse, EditReportFormProps } from "~/types";
 import { Environment } from "~/types";
 
 import { api } from "~/utils/api";
-import { handleDrop } from "~/utils/helperUtils";
+import { handleMultipleDrop } from "~/utils/helperUtils";
 import { InputEditReportForm } from "~/utils/inputValidation";
 
 const useStyles = createStyles((theme) => ({
@@ -86,6 +83,8 @@ export function EditReportForm({
   user: user,
 }: EditReportFormProps) {
   const router = useRouter();
+  const { data: session, status } = useSession();
+
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
@@ -93,48 +92,17 @@ export function EditReportForm({
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isUploading, setIsUploading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [report, setReport] = useState(reportfromProps);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reportTitle, setReportTitle] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [reportDescription, setReportDescription] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imageId, setImageId] = useState(
-    reportfromProps.image?.id as string
-  );
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [imagePublicId, setImagePublicId] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const [cloudUrl, setCloudUrl] = useState(
     reportfromProps.image?.cloudUrl as string
   );
-
-  // const trpc = api.useUtils();
-
-  const submitEditReportForm = (values: {
-    id: string;
-    title: string;
-    imageId: string;
-    description: string;
-    strains: string[];
-    environment: keyof typeof Environment;
-    createdAt: Date;
-  }) => {
-    tRPCsaveReport(values);
-  };
-
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
     {
       onMutate: () => {
         console.debug("START api.reports.saveReport.useMutation");
       },
-      // FIXME: If the mutation fails, use the
-      // context returned from onMutate to roll back
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onError: (error, report) => {
+      onError: (error) => {
         notifications.show(
           httpStatusErrorMsg(error.message, error.data?.httpStatus)
         );
@@ -150,7 +118,6 @@ export function EditReportForm({
           { scroll: true }
         );
       },
-      // Always refetch after error or success:
       onSettled: () => {
         console.debug("END api.reports.saveReport.useMutation");
       },
@@ -161,13 +128,14 @@ export function EditReportForm({
     validate: zodResolver(InputEditReportForm),
     validateInputOnChange: true,
     initialValues: {
-      id: report?.id,
-      title: report?.title,
-      imageId: imageId,
-      description: report?.description,
-      createdAt: new Date(report?.createdAt), // new Date(),// Add the createdAt field with the current date
-      strains: report.strains.map((strain) => strain.id),
-      environment: report.environment as keyof typeof Environment,
+      id: reportfromProps.id,
+      title: reportfromProps.title,
+      imageId: reportfromProps.image?.id as string,
+      description: reportfromProps.description,
+      createdAt: new Date(reportfromProps.createdAt), // new Date(),// Add the createdAt field with the current date
+      strains: reportfromProps.strains.map((strain) => strain.id),
+      environment:
+        reportfromProps.environment as keyof typeof Environment,
     },
   });
 
@@ -179,25 +147,67 @@ export function EditReportForm({
     });
   };
 
-  // Update "imageId" state, if "imageId" form field value changes
-  useEffect(() => {
-    editReportForm.setFieldValue("imageId", imageId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [imageId]);
+  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
+    useState<CloudinaryResonse[]>([]);
 
-  const handleDropWrapper = (files: File[]): void => {
-    // handleDrop calls the/api/upload endpoint
+  const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
+    {
+      onError: (error) => {
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.shape?.code)
+        );
+        console.error(error);
+      },
+      onSuccess: (newImage) => {
+        setImagesUploadedToCloudinary([]);
+
+        if (!!newImage) {
+          setCloudUrl(newImage.cloudUrl);
+          editReportForm.setFieldValue("imageId", newImage.id);
+        }
+      },
+      onSettled: (_newImage) => {
+        // indicate that saving process is ready:
+        setIsSaving(false);
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (status === "authenticated" && !isUploading) {
+      // Save new images to db
+      void imagesUploadedToCloudinary.map((image) => {
+        tRPCcreateImage({
+          cloudUrl: image.secure_url,
+          publicId: image.public_id,
+          ownerId: session.user.id,
+        });
+      });
+    }
+  }, [
+    imagesUploadedToCloudinary,
+    isUploading,
+    session?.user.id,
+    status,
+    tRPCcreateImage,
+  ]);
+
+  const handleMultipleDropWrapper = async (
+    fileWithPath: FileWithPath[]
+  ) => {
     setIsUploading(true);
-    handleDrop(
-      files,
-      setImageId,
-      setImagePublicId,
-      setCloudUrl,
-      setIsUploading
+    setIsSaving(true); //controlls upload inactive overlay
+
+    const result = await handleMultipleDrop(
+      fileWithPath,
+      setImagesUploadedToCloudinary
     ).catch((error) => {
-      // ERROR 500 IN PRODUCTION BROWSER CONSOLE???
-      console.debug(error);
+      console.error(error);
     });
+
+    setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
+
+    console.debug(result);
   };
 
   const growstartdatePlaceholder = t(
@@ -220,7 +230,7 @@ export function EditReportForm({
                   <ActionIcon
                     title="delete this image"
                     onClick={() => {
-                      setImageId("");
+                      // setImageId("");
                       setCloudUrl("");
                     }}
                     color="red"
@@ -243,7 +253,7 @@ export function EditReportForm({
                   }
                   title={editReportForm.values.title}
                   description={editReportForm.values.description}
-                  publicLink={`/grow/${report.id}`}
+                  publicLink={`/grow/${reportfromProps.id}`}
                 />
               </Box>
             </>
@@ -251,41 +261,26 @@ export function EditReportForm({
             /*// Dropzone */
             <Box className={classes.wrapper}>
               <LoadingOverlay
-                visible={isUploading}
+                visible={isSaving}
                 transitionDuration={600}
                 overlayBlur={2}
               />
               <Dropzone
+                accept={IMAGE_MIME_TYPE}
                 className={classes.dropzone}
                 h={rem(280)}
                 multiple={false} // only one header image!
                 openRef={openReference}
-                onDrop={handleDropWrapper}
-                maxSize={4500000} // Vercel production environment post size limit which is 4.500.000 byte
-                accept={[
-                  MIME_TYPES.jpeg,
-                  MIME_TYPES.png,
-                  MIME_TYPES.gif,
-                ]}
-                onReject={(files) => {
-                  if (files[0]) {
-                    const fileSizeInBytes = files[0].file.size;
-                    const fileSizeInMB = (
-                      fileSizeInBytes /
-                      1024 ** 2
-                    ).toFixed(2);
-                    notifications.show(
-                      fileUploadErrorMsg(
-                        files[0].file.name,
-                        fileSizeInMB,
-                        env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                      )
-                    );
-                  }
+                onDrop={(files) => {
+                  void handleMultipleDropWrapper(files);
                 }}
-                // onChange={(e) => {
-                //   console.debug(e.currentTarget);
-                // }}
+                onReject={(files) => {
+                  files.forEach((file) => {
+                    notifications.show(
+                      httpStatusErrorMsg(file.file.name, 500)
+                    );
+                  });
+                }}
               >
                 <Box style={{ pointerEvents: "none" }}>
                   <Group position="center">
@@ -344,7 +339,7 @@ export function EditReportForm({
           <Paper m={0} p="sm" withBorder>
             <form
               onSubmit={editReportForm.onSubmit((values) => {
-                submitEditReportForm(values);
+                tRPCsaveReport(values);
               }, handleErrors)}
             >
               <Box className="space-y-2">

@@ -52,10 +52,7 @@ import type { IsoReportWithPostsFromDb, Post } from "~/types";
 import { GrowStage } from "~/types";
 
 import { api } from "~/utils/api";
-import {
-  getFileMaxSizeInBytes,
-  getFileMaxUpload,
-} from "~/utils/fileUtils";
+import { getFileMaxUpload } from "~/utils/helperUtils";
 import { InputCreatePostForm } from "~/utils/inputValidation";
 
 interface AddPostProps {
@@ -72,6 +69,9 @@ const PostForm = (props: AddPostProps) => {
   const { t } = useTranslation(activeLocale);
 
   const { isoReport: report, post } = props;
+
+  const [isUploading, setIsUploading] = useState(false);
+
   const [imageIds, setImageIds] = useState<string[]>([]);
   const [images, setImages] = useState(
     [...(post?.images || [])].sort((a, b) => {
@@ -514,11 +514,11 @@ const PostForm = (props: AddPostProps) => {
               </RichTextEditor>
 
               <ImageUploader
-                report={report}
                 images={images || []}
                 setImages={setImages}
                 setImageIds={setImageIds}
-                maxSize={getFileMaxSizeInBytes()}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
                 maxFiles={getFileMaxUpload()}
               />
 
