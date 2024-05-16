@@ -75,7 +75,7 @@ export default function ImageUploader({
   const _theme = useMantineTheme();
 
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [imagesToUploadToCloudinary, setImagesToUploadToCloudinary] =
+  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
     useState<CloudinaryResonse[]>([]);
 
   const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
@@ -87,8 +87,7 @@ export default function ImageUploader({
         console.error(error);
       },
       onSuccess: (newImage) => {
-        // Set ImagesToUpload to an empty array
-        setImagesToUploadToCloudinary([]);
+        setImagesUploadedToCloudinary([]);
 
         !!newImage &&
           setImages((prevImages) => [
@@ -111,7 +110,7 @@ export default function ImageUploader({
   useEffect(() => {
     if (status === "authenticated" && !isUploading) {
       // Save new images to db
-      void imagesToUploadToCloudinary.map((image) => {
+      void imagesUploadedToCloudinary.map((image) => {
         tRPCcreateImage({
           cloudUrl: image.secure_url,
           publicId: image.public_id,
@@ -120,7 +119,7 @@ export default function ImageUploader({
       });
     }
   }, [
-    imagesToUploadToCloudinary,
+    imagesUploadedToCloudinary,
     isUploading,
     session?.user.id,
     status,
@@ -128,15 +127,22 @@ export default function ImageUploader({
     tRPCcreateImage,
   ]);
 
-  const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
-    setIsSaving(true);
-    handleMultipleDrop(
+  const handleMultipleDropWrapper = async (
+    fileWithPath: FileWithPath[]
+  ) => {
+    setIsUploading(true);
+    setIsSaving(true); //controlls upload inactive overlay
+
+    const result = await handleMultipleDrop(
       fileWithPath,
-      setIsUploading,
-      setImagesToUploadToCloudinary
+      setImagesUploadedToCloudinary
     ).catch((error) => {
       console.error(error);
     });
+
+    setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
+
+    console.debug(result);
   };
 
   return (
@@ -170,7 +176,9 @@ export default function ImageUploader({
               <Box>
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}
-                  onDrop={handleMultipleDropWrapper}
+                  onDrop={(files) => {
+                    void handleMultipleDropWrapper(files);
+                  }}
                   maxFiles={maxFiles}
                   //maxSize={maxSize}
                   onReject={(files) => {

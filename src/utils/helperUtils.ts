@@ -1,5 +1,6 @@
 import type { AxiosResponse } from "axios";
 import axios from "axios";
+import { env } from "~/env.mjs";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
@@ -287,22 +288,29 @@ export const handleDrop = async (
 
 export const handleMultipleDrop = async (
   files: File[],
-  setIsUploading: Dispatch<SetStateAction<boolean>>,
-  setCloudinaryImages: Dispatch<SetStateAction<CloudinaryResonse[]>>
-): Promise<void> => {
+  setImagesUploadedToCloudinary: Dispatch<
+    SetStateAction<CloudinaryResonse[]>
+  >
+): Promise<{
+  success: boolean;
+  message: string;
+  cloudUrls: string[];
+}> => {
   const url =
-    "https://api.cloudinary.com/v1_1/" + "dgcydirlu" + "/image/upload";
+    "https://api.cloudinary.com/v1_1/" +
+    env.CLOUDINARY_NAME +
+    "/image/upload";
 
   const cloudinarySignatureResponse = await fetch(
-    "/api/cloudinarySign"
+    "/api/cloudinary-signature"
   );
 
   const cloudinarySignature =
     (await cloudinarySignatureResponse.json()) as CloudinarySignature;
 
-  try {
-    setIsUploading(true);
+  const cloudUrls: string[] = [];
 
+  try {
     for (const file of files) {
       const formData = new FormData();
 
@@ -328,13 +336,25 @@ export const handleMultipleDrop = async (
         await response.text()
       ) as CloudinaryResonse;
 
-      setCloudinaryImages((prev) => [...prev, cloudinaryResponse]);
+      setImagesUploadedToCloudinary((prev) => [
+        ...prev,
+        cloudinaryResponse,
+      ]);
+      cloudUrls.push(cloudinaryResponse.secure_url);
     }
 
-    setIsUploading(false); //triggers tRPCcreateImage in ImageUploader!
+    return {
+      success: true,
+      message: "Upload was successful",
+      cloudUrls,
+    };
   } catch (error) {
     console.error("Error uploading file:", error);
-    throw new Error("Error uploading file");
+    return {
+      success: false,
+      message: "Error uploading file",
+      cloudUrls,
+    };
   }
 };
 

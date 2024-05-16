@@ -25,18 +25,11 @@ const handler: NextApiHandler = async (
     res.status(401).json({ error: "You are not authorized" });
   } else {
     try {
-      // Parse the body and specify its type
-      // const body = JSON.parse(req.body as string) as {
-      //   paramsToSign: SignApiOptions;
-      // };
-      // const { paramsToSign } = body;
-
       const timestamp = Math.round(new Date().getTime() / 1000);
       const api_secret = env.CLOUDINARY_API_SECRET;
       const transformation = "w_2000,h_2000,c_limit,q_auto";
       const folder = "growagram/user_uploads";
       const signature = cloudinary.utils.api_sign_request(
-        //paramsToSign,
         {
           timestamp: timestamp,
           transformation: transformation,

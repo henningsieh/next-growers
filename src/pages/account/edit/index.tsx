@@ -52,9 +52,15 @@ import AccessDenied from "~/components/Atom/AccessDenied";
 
 import { authOptions } from "~/server/auth";
 
+import { CloudinaryResonse } from "~/types";
+
 import { api } from "~/utils/api";
 import { getFileMaxSizeInBytes } from "~/utils/fileUtils";
-import { getFakeAIUsername, handleDrop } from "~/utils/helperUtils";
+import {
+  handleDrop as _handleDrop,
+  getFakeAIUsername,
+  handleMultipleDrop,
+} from "~/utils/helperUtils";
 import { InputEditProfile } from "~/utils/inputValidation";
 
 /** PROTECTED DYNAMIC PAGE with translations
@@ -131,37 +137,33 @@ const ProtectedEditReport: NextPage = () => {
 
   const [isUploading, setIsUploading] = useState(isLoadingSetUserImage);
 
-  //FIXME: the user image upload is a bit hacky, states are not used but needed for function interface
-  const [, setImageId] = useState("");
-  const [, setImagePublicId] = useState("");
-  const [, setCloudUrl] = useState("");
-
   const setRandomUsername = function (): string {
     editProfileForm.setValues({ name: getFakeAIUsername() });
     return editProfileForm.values.name;
   };
 
+  const [_imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
+    useState<CloudinaryResonse[]>([]);
+
   const handleDropWrapper = async (files: File[]): Promise<void> => {
     setIsUploading(true);
 
     try {
-      // Call handleDrop asynchronously and wait for it to finish
-      const updatedCloudUrl = await handleDrop(
+      const result = await handleMultipleDrop(
         files,
-        setImageId,
-        setImagePublicId,
-        setCloudUrl,
-        setIsUploading
-      );
-
+        setImagesUploadedToCloudinary
+      ).catch((error) => {
+        console.error(error);
+      });
       tRPCsetUserImage({
         id: session?.user.id as string,
-        imageURL: updatedCloudUrl,
+        imageURL: result?.cloudUrls[0] as string,
       });
     } catch (error) {
-      console.debug("Error handling file drop:", error);
-      //TODO: Handle errors here
+      console.error("Error handling file drop:", error);
     }
+
+    setIsUploading(false);
   };
 
   const editProfileForm = useForm({
@@ -227,110 +229,71 @@ const ProtectedEditReport: NextPage = () => {
                 duration: 400,
               }}
             >
-              <Box
-                pb="xl"
-                className="p-4 border-0 rounded-full"
-                component={Dropzone}
-                maxFiles={1}
-                maxSize={getFileMaxSizeInBytes()}
-                multiple={false}
-                accept={IMAGE_MIME_TYPE}
-                onReject={(files) => {
-                  if (files) {
-                    if (files.length > 1) {
-                      notifications.show(
-                        filesMaxOneErrorMsg(files.length)
-                      );
-                    } else if (files.length === 1) {
-                      const file = files[0].file;
-                      const fileSizeInMB = (
-                        file.size /
-                        1024 ** 2
-                      ).toFixed(2);
-                      notifications.show(
-                        fileUploadErrorMsg(
-                          file.name,
-                          fileSizeInMB,
-                          env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                        )
-                      );
+              <Box>
+                <Dropzone
+                  pb="xl"
+                  className="p-4 border-0 rounded-full"
+                  //component={Dropzone}
+                  maxFiles={1}
+                  maxSize={getFileMaxSizeInBytes()}
+                  multiple={false}
+                  accept={IMAGE_MIME_TYPE}
+                  onReject={(files) => {
+                    if (files) {
+                      if (files.length > 1) {
+                        notifications.show(
+                          filesMaxOneErrorMsg(files.length)
+                        );
+                      } else if (files.length === 1) {
+                        const file = files[0].file;
+                        const fileSizeInMB = (
+                          file.size /
+                          1024 ** 2
+                        ).toFixed(2);
+                        notifications.show(
+                          fileUploadErrorMsg(
+                            file.name,
+                            fileSizeInMB,
+                            env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
+                          )
+                        );
+                      }
                     }
-                  }
-                }}
-                onDrop={(files) => {
-                  console.log("accepted files", files);
-                  setIsUploading(true);
-                  void handleDropWrapper(files);
-                }}
-                sx={(theme) => ({
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[6]
-                      : theme.colors.gray[2],
+                  }}
+                  onDrop={(files) => {
+                    console.log("accepted files", files);
 
-                  "&[data-accept]": {
-                    backgroundColor: theme.colors.growgreen[5],
-                  },
+                    void handleDropWrapper(files);
+                  }}
+                  sx={(theme) => ({
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[6]
+                        : theme.colors.gray[2],
 
-                  "&[data-reject]": {
-                    backgroundColor: theme.colors.red[9],
-                  },
-                })}
-              >
-                {/* <Group
-                position="center"
-                spacing="xl"
-                style={{ minHeight: rem(220), pointerEvents: "none" }}
-              >
-                <Dropzone.Accept>
-                  <IconUpload
-                    size="3.2rem"
-                    stroke={1.5}
-                    color={
-                      theme.colors[theme.primaryColor][
-                        theme.colorScheme === "dark" ? 4 : 6
-                      ]
+                    "&[data-accept]": {
+                      backgroundColor: theme.colors.growgreen[5],
+                    },
+
+                    "&[data-reject]": {
+                      backgroundColor: theme.colors.red[9],
+                    },
+                  })}
+                >
+                  <Image
+                    className="... rounded-full"
+                    height={142}
+                    width={142}
+                    src={
+                      session.user.image
+                        ? session.user.image
+                        : `https://ui-avatars.com/api/?name=${
+                            session.user.name as string
+                          }`
                     }
+                    alt={`${session.user.name as string}'s Profile Image`}
                   />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX
-                    size="3.2rem"
-                    stroke={1.5}
-                    color={
-                      theme.colors.red[
-                        theme.colorScheme === "dark" ? 4 : 6
-                      ]
-                    }
-                  />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconPhoto size="3.2rem" stroke={1.5} />
-                </Dropzone.Idle>
-
-                <div>
-                  <Text size="xl" inline>
-                    Drag images here or click to select files
-                  </Text>
-                  <Text size="sm" color="dimmed" inline mt={7}>
-                    Attach as many files as you like, each file should
-                    not exceed 5mb
-                  </Text>
-                </div>
-              </Group> */}
-                <Image
-                  className="... rounded-full"
-                  height={142}
-                  width={142}
-                  src={
-                    session.user.image
-                      ? session.user.image
-                      : `https://ui-avatars.com/api/?name=${
-                          session.user.name as string
-                        }`
-                  }
-                  alt={`${session.user.name as string}'s Profile Image`}
-                />
+                </Dropzone>
               </Box>
             </Tooltip>
 
@@ -410,6 +373,7 @@ const ProtectedEditReport: NextPage = () => {
               <Space h={"md"} />
               <Group position="right">
                 <Button
+                  miw={200}
                   loading={isLoadingSetUsername}
                   type="submit"
                   title="save profile"
