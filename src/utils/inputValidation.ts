@@ -257,3 +257,9 @@ export const InputCreatePostServer = z.object({
     })
   ),
 });
+
+export const InputCreateImage = z.object({
+  ownerId: z.string(),
+  cloudUrl: z.string(),
+  publicId: z.string(),
+});

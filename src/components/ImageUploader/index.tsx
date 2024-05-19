@@ -1,33 +1,39 @@
 import {
   Box,
   Container,
-  Group,
   LoadingOverlay,
   Paper,
   rem,
   Space,
   Text,
-  Title,
   useMantineTheme,
 } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
-import { IconCamera } from "@tabler/icons-react";
-import { env } from "~/env.mjs";
-import { fileUploadErrorMsg } from "~/messages";
+import { httpStatusErrorMsg } from "~/messages";
 
-import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
+import {
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+
+import { useSession } from "next-auth/react";
 
 import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
+import type {
+  CloudinaryResonse, // IsoReportWithPostsFromDb,
+} from "~/types";
 
+import { api } from "~/utils/api";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { handleMultipleDrop } from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
-  report: IsoReportWithPostsFromDb;
+  //report: IsoReportWithPostsFromDb;
   images: {
     id: string;
     publicId: string;
@@ -45,64 +51,130 @@ interface ImageUploaderProps {
     >
   >;
   maxFiles?: number;
-  maxSize?: number;
   setImageIds: Dispatch<SetStateAction<string[]>>;
+  isUploading: boolean;
+  setIsUploading: Dispatch<SetStateAction<boolean>>;
 }
 
-const ImageUploader = ({
-  report,
+export default function ImageUploader({
   images,
   setImages,
-  setImageIds,
+  isUploading,
+  setIsUploading,
   maxFiles,
-  maxSize,
-}: ImageUploaderProps) => {
-  const [isUploading, setIsUploading] = useState(false);
+}: ImageUploaderProps) {
+  const { data: session, status } = useSession();
+  const _theme = useMantineTheme();
 
-  const theme = useMantineTheme();
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
+    useState<CloudinaryResonse[]>([]);
 
-  const handleMultipleDropWrapper = (fileWithPath: FileWithPath[]) => {
+  const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
+    {
+      onError: (error) => {
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.shape?.code)
+        );
+        console.error(error);
+      },
+      onSuccess: (newImage) => {
+        setImagesUploadedToCloudinary([]);
+
+        !!newImage &&
+          setImages((prevImages) => [
+            ...prevImages,
+            {
+              id: newImage.id,
+              publicId: newImage.publicId,
+              cloudUrl: newImage.cloudUrl,
+              postOrder: !!newImage.postOrder ? newImage.postOrder : 0,
+            },
+          ]);
+      },
+      onSettled: (_newImage) => {
+        // indicate that saving process is ready:
+        setIsSaving(false);
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (status === "authenticated" && !isUploading) {
+      // Save new images to db
+      void imagesUploadedToCloudinary.map((image) => {
+        tRPCcreateImage({
+          cloudUrl: image.secure_url,
+          publicId: image.public_id,
+          ownerId: session.user.id,
+        });
+      });
+    }
+  }, [
+    imagesUploadedToCloudinary,
+    isUploading,
+    session?.user.id,
+    status,
+    tRPCcreateImage,
+  ]);
+
+  const handleMultipleDropWrapper = async (
+    fileWithPath: FileWithPath[]
+  ) => {
     setIsUploading(true);
-    handleMultipleDrop(
+    setIsSaving(true); //controlls upload inactive overlay
+
+    const result = await handleMultipleDrop(
       fileWithPath,
-      report,
-      setImages,
-      setImageIds,
-      setIsUploading
+      setImagesUploadedToCloudinary
     ).catch((error) => {
-      console.debug(error);
+      console.error(error);
     });
+
+    setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
+
+    console.debug(result);
   };
 
   return (
-    <Container p={0} size="md">
+    <Container mt="sm" p={0} size="md">
+      <Box
+        fz={"lg"}
+        fw={"normal"}
+        color="#00ff00"
+        sx={(theme) => ({
+          // backgroundColor:
+          //   theme.colorScheme === "dark"
+          //     ? "rgba(0, 0, 0, 0)"
+          //     : "rgba(255, 255, 255, .66)",
+          color:
+            theme.colorScheme === "dark"
+              ? theme.colors.growgreen[4]
+              : theme.colors.growgreen[6],
+        })}
+      >
+        Images
+      </Box>
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
-          <Group position="left">
+          {/* <Group position="left">
             <IconCamera color={theme.colors.growgreen[4]} />
             <Title order={4}>Append images</Title>
-          </Group>
+          </Group> */}
           <Box>
             <Box className="relative">
-              <LoadingOverlay visible={isUploading} />
+              <LoadingOverlay visible={isSaving} />
               <Box>
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}
-                  onDrop={handleMultipleDropWrapper}
+                  onDrop={(files) => {
+                    void handleMultipleDropWrapper(files);
+                  }}
                   maxFiles={maxFiles}
-                  maxSize={maxSize}
                   onReject={(files) => {
                     files.forEach((file) => {
-                      const fileSizeInMB = (
-                        file.file.size /
-                        1024 ** 2
-                      ).toFixed(2);
                       notifications.show(
-                        fileUploadErrorMsg(
-                          file.file.name,
-                          fileSizeInMB,
-                          env.NEXT_PUBLIC_FILE_UPLOAD_MAX_SIZE
-                        )
+                        httpStatusErrorMsg(file.file.name, 500)
                       );
                     });
                   }}
@@ -154,6 +226,4 @@ const ImageUploader = ({
       </Paper>
     </Container>
   );
-};
-
-export default ImageUploader;
+}
