@@ -216,8 +216,9 @@ export default function SelectedStrain({
               >
                 <Flex align="center" justify="flex-end">
                   <Button
-                    w={380}
-                    fz="lg"
+                    fz={!mediumScreen ? "md" : "sm"}
+                    w={!mediumScreen ? 280 : undefined}
+                    compact={mediumScreen}
                     fullWidth={mediumScreen}
                     leftIcon={<IconDeviceFloppy size="1.4rem" />}
                     loading={savePlantToGrowIsLoading}

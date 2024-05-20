@@ -160,9 +160,9 @@ export const InputEditReportForm = z.object({
         message: `Content must have max 64 letters. ${val.length + 1} letters given.`,
       })
     ),
-  strains: z.array(z.string()).min(1, {
-    message: "Report must have at least 1 strain",
-  }),
+  // strains: z.array(z.string()).min(1, {
+  //   message: "Report must have at least 1 strain",
+  // }),
   environment: z.enum(
     Object.keys(Environment) as [keyof typeof Environment]
   ),

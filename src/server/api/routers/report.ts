@@ -769,21 +769,21 @@ export const reportRouter = createTRPCRouter({
       } else if (existingReport != null) {
         // build report data
         const {
-          strains: newStrainIds,
+          //strains: newStrainIds,
           createdAt,
           imageId,
           ...reportData
         } = input;
 
-        // Extract connected strain IDs from the database
-        const connectedStrainIds = existingReport.strains.map(
-          (strain) => strain.id
-        );
+        // // Extract connected strain IDs from the database
+        // const connectedStrainIds = existingReport.strains.map(
+        //   (strain) => strain.id
+        // );
 
-        // Find IDs to disconnect
-        const strainIdsToDisconnect = connectedStrainIds.filter(
-          (id) => !newStrainIds.includes(id)
-        );
+        // // Find IDs to disconnect
+        // const strainIdsToDisconnect = connectedStrainIds.filter(
+        //   (id) => !newStrainIds.includes(id)
+        // );
 
         // Fetch the current updatedAt value to be able to let it unchanged
         const currentReport = (await ctx.prisma.report.findUnique({
@@ -800,14 +800,14 @@ export const reportRouter = createTRPCRouter({
         const data = {
           ...reportData,
           authorId: ctx.session.user.id,
-          strains: {
-            disconnect: strainIdsToDisconnect.map((strainId) => ({
-              id: strainId,
-            })),
-            connect: newStrainIds.map((strainId) => ({
-              id: strainId,
-            })),
-          },
+          // strains: {
+          //   disconnect: strainIdsToDisconnect.map((strainId) => ({
+          //     id: strainId,
+          //   })),
+          //   connect: newStrainIds.map((strainId) => ({
+          //     id: strainId,
+          //   })),
+          // },
           image: {
             connect: {
               id: imageId,

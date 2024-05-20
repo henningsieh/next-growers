@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Box,
+  Button,
   Card,
   Center,
   Container,
@@ -15,6 +16,7 @@ import {
   TextInput,
   ThemeIcon,
   Title,
+  Tooltip,
   Transition,
   useMantineColorScheme,
   useMantineTheme,
@@ -23,7 +25,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import {
   IconDeviceFloppy,
   IconInfoCircle,
-  IconPlantOff,
+  IconTrashFilled,
 } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
@@ -65,6 +67,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     BreederFromSeedfinder | undefined
   >(undefined);
 
+  // Initialize deletePlant function
   const {
     mutate: tRPCdeletePlantById,
     isLoading: tRPCdeletePlantByIdIsLoading,
@@ -76,6 +79,14 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       await trpc.strains.getAllPlantsByReportId.refetch();
     },
   });
+
+  const handleDeletePlant = useCallback(
+    (plantId: string) => {
+      setPlantIdToDelete(plantId); // needed for button disabled and loading states
+      tRPCdeletePlantById({ plantId });
+    },
+    [setPlantIdToDelete, tRPCdeletePlantById]
+  );
 
   // FETCH getAllPlantsByReportId
   const {
@@ -92,9 +103,9 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     }
   );
 
-  // Initialize elements array
+  // Initialize plants array
   const allPlantsInGrowMemo = useMemo(() => {
-    const p: {
+    const plants: {
       id: string;
       strainName: string;
       breeder_name: string;
@@ -103,7 +114,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     }[] = [];
     if (!allPlantsInGrowAreLoading && !allPlantsInGrowHaveErrors) {
       allPlantsInGrow.forEach((plant) => {
-        p.push({
+        plants.push({
           id: plant.id,
           strainName: plant.seedfinderStrain.name,
           breeder_name: plant.seedfinderStrain.breeder_name,
@@ -112,36 +123,12 @@ const AddPlant = ({ growId }: AddPlantProps) => {
         });
       });
     }
-    return p;
+    return plants;
   }, [
     allPlantsInGrow,
     allPlantsInGrowAreLoading,
     allPlantsInGrowHaveErrors,
   ]);
-
-  const handleDeletePlant = useCallback(
-    (plantId: string) => {
-      // Trigger the deletePlantMutation with the provided plantId
-      setPlantIdToDelete(plantId);
-      tRPCdeletePlantById({ plantId });
-    },
-    [setPlantIdToDelete, tRPCdeletePlantById]
-  );
-
-  // FETCH allBreederFromSeedfinder
-  const {
-    data: allBreederFromSeedfinder,
-    isLoading: allBreederFromSeedfinderAreLoading,
-    isError: allBreederFromSeedfinderHaveErrors,
-    error: allBreederFromSeedfinderError,
-  } = api.strains.getAllBreederFromSeedfinder.useQuery(
-    { breeder: "all", strains: "1" },
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
 
   // BUILD PlantsInGrow TABLE ROWS
   useEffect(() => {
@@ -158,24 +145,27 @@ const AddPlant = ({ growId }: AddPlantProps) => {
             withAsterisk
             placeholder="give name"
             rightSection={
-              <ActionIcon
-                size="sm"
-                color="growgreen.4"
-                variant="filled"
-                title="save plant name"
-              >
-                <IconDeviceFloppy />
-              </ActionIcon>
+              <Tooltip label="comming soon!">
+                <ActionIcon
+                  size="sm"
+                  color="growgreen.4"
+                  variant="filled"
+                  title="save plant name"
+                >
+                  <IconDeviceFloppy />
+                </ActionIcon>
+              </Tooltip>
             }
           />
         </td>
-        <td>
+        <td className="w-24">
           <Flex justify="flex-end">
             {/* DELETE BUTTON */}
-            <ActionIcon
+            <Button
               size="sm"
-              color="red.7"
-              variant="filled"
+              c="red.7"
+              color={theme.white}
+              variant="default"
               title="delete this plant"
               loading={
                 plantIdToDelete === element.id &&
@@ -185,11 +175,11 @@ const AddPlant = ({ growId }: AddPlantProps) => {
                 plantIdToDelete !== element.id &&
                 tRPCdeletePlantByIdIsLoading
               }
-              p={2}
+              p={4}
               onClick={() => handleDeletePlant(element.id)} // Call handleDeletePlant on click
             >
-              <IconPlantOff size={20} />
-            </ActionIcon>
+              <IconTrashFilled size={20} /> Delete
+            </Button>
           </Flex>
         </td>
       </tr>
@@ -201,7 +191,23 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     tRPCdeletePlantByIdIsLoading,
     smallScreen,
     handleDeletePlant,
+    theme.white,
   ]);
+
+  // FETCH allBreederFromSeedfinder
+  const {
+    data: allBreederFromSeedfinder,
+    isLoading: allBreederFromSeedfinderAreLoading,
+    isError: allBreederFromSeedfinderHaveErrors,
+    error: allBreederFromSeedfinderError,
+  } = api.strains.getAllBreederFromSeedfinder.useQuery(
+    { breeder: "all", strains: "1" },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   // BUILD BreedersSelectData
   useEffect(() => {
@@ -300,7 +306,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
                     </Popover.Target>
                     <Popover.Dropdown p={4} bg="growgreen.4">
                       <Card p="xs">
-                        <Text size="sm">
+                        <Text c="dimmed" size="sm">
                           You can give each plant its own name so that
                           you can easily identify and recognize it
                           later. <br />

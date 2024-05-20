@@ -6,8 +6,7 @@ import {
   createStyles,
   Grid,
   Group,
-  LoadingOverlay,
-  MultiSelect,
+  LoadingOverlay, // MultiSelect,
   Paper,
   rem,
   Select,
@@ -33,6 +32,7 @@ import { httpStatusErrorMsg, saveGrowSuccessfulMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 
+import type { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
@@ -41,8 +41,8 @@ import { ImagePreview } from "~/components/Atom/ImagePreview";
 
 import type {
   CloudinaryResonse,
-  EditReportFormProps,
-  MantineSelectData,
+  IsoReportWithPostsFromDb,
+  MantineSelectData, // Strains,
 } from "~/types";
 import { Environment } from "~/types";
 
@@ -81,18 +81,27 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+interface EditReportFormProps {
+  user: User;
+  report: IsoReportWithPostsFromDb;
+  // strains: Strains | undefined;
+}
+
 export function EditReportForm({
   report: reportfromProps,
-  strains: allStrains,
+  // strains: allStrains,
   user: user,
 }: EditReportFormProps) {
   const router = useRouter();
+
+  const isNewReport = router.query.newReport as unknown as boolean;
+  console.debug(isNewReport ? "yay" : "nay");
   const { data: session, status } = useSession();
 
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const [strainsSarchValue, onSttrinsSearchChange] = useState("");
+  //const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
@@ -113,13 +122,17 @@ export function EditReportForm({
       },
       onSuccess: (savedReport) => {
         notifications.show(saveGrowSuccessfulMsg);
-        // Navigate to the report page
+        // Navigate to the edit strains page if isNewReport===true
         void router.push(
           {
-            pathname: `/${activeLocale as string}/grow/${savedReport?.id as string}`,
+            pathname: isNewReport
+              ? `/account/grows/edit/${savedReport?.id as string}/addPlant`
+              : `/grow/${savedReport?.id as string}`,
+
+            //query: router.query
           },
-          undefined,
-          { scroll: true }
+          undefined, //router.asPath,
+          { scroll: true, locale: activeLocale }
         );
       },
       onSettled: () => {
@@ -137,7 +150,7 @@ export function EditReportForm({
       imageId: reportfromProps.image?.id as string,
       description: reportfromProps.description,
       createdAt: new Date(reportfromProps.createdAt), // new Date(),// Add the createdAt field with the current date
-      strains: reportfromProps.strains.map((strain) => strain.id),
+      // strains: reportfromProps.strains.map((strain) => strain.id),
       environment:
         reportfromProps.environment as keyof typeof Environment,
     },
@@ -224,9 +237,9 @@ export function EditReportForm({
   const growstartdatePlaceholder = t(
     "common:report-form-growstartdate-placeholder"
   );
-  const strainsPlaceholder = t(
-    "common:report-form-strains-placeholder"
-  );
+  // const strainsPlaceholder = t(
+  //   "common:report-form-strains-placeholder"
+  // );
 
   return (
     <>
@@ -374,23 +387,28 @@ export function EditReportForm({
                   withAsterisk
                   {...editReportForm.getInputProps("title")}
                 />
-                <Select
-                  label={t("common:report-form-environment-label")}
-                  description={t(
-                    "common:report-form-environment-description"
-                  )}
-                  data={environmentSelectData}
-                  withAsterisk
-                  {...editReportForm.getInputProps("environment")}
-                  className="w-full"
-                  icon={<IconHome size="1.2rem" />}
-                />
                 <Grid gutter="sm">
-                  <Grid.Col xs={12} sm={4} md={4} lg={4} xl={4}>
-                    {/* <DatesProvider settings={{ locale: activeLocale }}> */}
+                  <Grid.Col xs={12} sm={7} md={8} lg={8} xl={8}>
+                    <Select
+                      label={t("common:report-form-environment-label")}
+                      description={t(
+                        "common:report-form-environment-description"
+                      )}
+                      data={environmentSelectData}
+                      withAsterisk
+                      {...editReportForm.getInputProps("environment")}
+                      className="w-full"
+                      icon={<IconHome size="1.2rem" />}
+                    />
+                  </Grid.Col>
+                  <Grid.Col xs={12} sm={5} md={4} lg={4} xl={4}>
                     <DatePickerInput
-                      label="Grow start date:"
-                      description="'Created at' date of your Grow"
+                      label={t(
+                        "common:report-form-growstartdate-label"
+                      )}
+                      description={t(
+                        "common:report-form-growstartdate-description"
+                      )}
                       // valueFormat="MMMM DD, YYYY HH:mm"
                       maxDate={new Date()}
                       // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
@@ -405,27 +423,25 @@ export function EditReportForm({
                         );
                       }}
                     />
-                    {/* </DatesProvider> */}
-                  </Grid.Col>
-                  <Grid.Col xs={12} sm={8} md={8} lg={8} xl={8}>
-                    {allStrains && (
+
+                    {/* {allStrains && (
                       <MultiSelect
-                        label={t("common:report-form-strains-label")}
-                        description={t(
-                          "common:report-form-strains-description"
-                        )}
-                        placeholder={strainsPlaceholder}
-                        {...editReportForm.getInputProps("strains")}
-                        data={allStrains.map((strain) => ({
-                          value: strain.id,
-                          label: strain.name,
-                        }))}
-                        searchable
-                        searchValue={strainsSarchValue}
-                        onSearchChange={onSttrinsSearchChange}
-                        nothingFound="Nothing found"
-                      />
-                    )}
+                         label={t("common:report-form-strains-label")}
+                         description={t(
+                             "common:report-form-strains-description"
+                       )}
+                         placeholder={strainsPlaceholder}
+                         {...editReportForm.getInputProps("strains")}
+                         data={allStrains.map((strain) => ({
+                             value: strain.id,
+                           label: strain.name,
+                       }))}
+                         searchable
+                         searchValue={strainsSarchValue}
+                         onSearchChange={onSttrinsSearchChange}
+                         nothingFound="Nothing found"
+                       />
+                    )} */}
                   </Grid.Col>
                 </Grid>
 
@@ -440,7 +456,9 @@ export function EditReportForm({
                       <IconDeviceFloppy stroke={2.2} size="1.4rem" />
                     }
                   >
-                    {t("common:report-save-button")}
+                    {isNewReport
+                      ? t("common:report-save-new-button")
+                      : t("common:report-save-button")}
                   </Button>
                 </Group>
               </Box>

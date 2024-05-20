@@ -3,8 +3,6 @@ import type { inferRouterOutputs } from "@trpc/server";
 
 import type { Dispatch, SetStateAction } from "react";
 
-import type { User } from "next-auth";
-
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type GetIsoReportWithPostsFromDbOutput =
@@ -38,12 +36,6 @@ export type Strain = getAllStrainsOutput[number];
 type getLikesByItemIdOutput = RouterOutput["like"]["getLikesByItemId"];
 export type Likes = getLikesByItemIdOutput;
 export type Like = getLikesByItemIdOutput[number];
-
-export interface EditReportFormProps {
-  user: User;
-  report: IsoReportWithPostsFromDb;
-  strains: Strains | undefined;
-}
 
 export interface ImageUploadResponse {
   success: boolean;

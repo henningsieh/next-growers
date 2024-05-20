@@ -26,6 +26,7 @@ import { httpStatusErrorMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 
+//import { useTranslation } from "react-i18next";
 import type { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -80,6 +81,8 @@ export function CreateReportForm({
 }: AddFormProps) {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { locale: activeLocale } = router;
+  //const { t } = useTranslation(activeLocale);
 
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
@@ -102,13 +105,14 @@ export function CreateReportForm({
       console.error({ error });
     },
     onSuccess: (newReportDB) => {
-      // Navigate to the new report page
+      // Navigate to the edit report page
       void router.push(
         {
-          pathname: `/account/grows/edit/${newReportDB.id}/editGrow`,
+          pathname: `/account/grows/edit/${newReportDB.id}/editGrow?newReport=true`,
+          //query: router.query
         },
-        undefined,
-        { scroll: true }
+        undefined, //router.asPath,
+        { scroll: true, locale: activeLocale }
       );
     },
     // Always refetch after error or success:

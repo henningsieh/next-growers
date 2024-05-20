@@ -56,7 +56,7 @@
   "report-form-environment-label": "Environment",
   "report-form-environment-description": "Choose where your plants grow here!",
   "report-form-growstartdate-label": "Start date of your grow",
-  "report-form-growstartdate-description": "Select the date your grow log starts here.",
+  "report-form-growstartdate-description": "Select here when your grow starts",
   "report-form-strains-label": "Strains",
   "report-form-strains-description": "Select all strains or crops of your grow here.",
   "report-form-strains-placeholder": "Select at least 1 strain or crop",

@@ -116,15 +116,15 @@ const ProtectedEditReportDetails: NextPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  const {
-    data: strains,
-    isLoading: strainsAreLoading,
-    isError: strainsHaveErrors,
-  } = api.strains.getAllStrains.useQuery(undefined, {
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+  // const {
+  //   data: strains,
+  //   isLoading: strainsAreLoading,
+  //   isError: strainsHaveErrors,
+  // } = api.strains.getAllStrains.useQuery(undefined, {
+  //   refetchOnMount: false,
+  //   refetchOnReconnect: false,
+  //   refetchOnWindowFocus: false,
+  // });
 
   if (reportIsLoading)
     return (
@@ -258,7 +258,7 @@ const ProtectedEditReportDetails: NextPage = () => {
               <LoadingOverlay
                 visible={
                   reportIsLoading ||
-                  strainsAreLoading ||
+                  // strainsAreLoading ||
                   sessionIsLoading
                 }
                 transitionDuration={600}
@@ -266,15 +266,15 @@ const ProtectedEditReportDetails: NextPage = () => {
               />
 
               {status === "authenticated" &&
+                // !strainsAreLoading &&
+                // !strainsHaveErrors &&
                 !reportIsLoading &&
-                !reportHasErrors &&
-                !strainsAreLoading &&
-                !strainsHaveErrors && (
+                !reportHasErrors && (
                   <>
                     <Tabs.Panel value="editGrow">
                       <EditReportForm
                         report={grow}
-                        strains={strains}
+                        // strains={strains}
                         user={session.user}
                       />
                     </Tabs.Panel>
