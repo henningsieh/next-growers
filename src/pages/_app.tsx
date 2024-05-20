@@ -159,14 +159,14 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 control: {
                   fontWeight: "lighter",
                   color:
-                    variant === "contained"
+                    variant === "contained" || variant === "separated"
                       ? theme.colorScheme === "dark"
                         ? "white"
                         : theme.black
                       : undefined,
                   "&:hover": {
                     backgroundColor:
-                      variant === "contained"
+                      variant === "contained" || variant === "separated"
                         ? theme.colorScheme === "dark"
                           ? theme.colors.growgreen[6]
                           : theme.colors.growgreen[2]
@@ -261,8 +261,8 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                   boxShadow:
                     variant === "filled"
                       ? theme.colorScheme === "dark"
-                        ? `0 0 0px 1px ${theme.colors[params.color || theme.primaryColor][2]}`
-                        : `0 0 0px 1px ${theme.colors[params.color || "gray"][6]}`
+                        ? `0 0 0px 1px ${theme.colors[params.color || "dark"][4]}`
+                        : `0 0 0px 1px ${theme.colors[params.color || "gray"][4]}`
                       : undefined,
                   backgroundColor:
                     variant === "filled"
@@ -320,6 +320,14 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                     theme.colorScheme === "dark"
                       ? "rgba(0, 0, 0, .3)"
                       : "rgba(255, 255, 255, .66)",
+                },
+              }),
+            },
+
+            Select: {
+              styles: () => ({
+                input: {
+                  cursor: "default",
                 },
               }),
             },
