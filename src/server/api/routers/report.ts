@@ -88,6 +88,32 @@ export const reportRouter = createTRPCRouter({
                 cloudUrl: true,
               },
             },
+            plants: {
+              select: {
+                id: true,
+                plantName: true,
+                seedfinderStrain: {
+                  select: {
+                    id: true,
+                    name: true,
+                    picture_url: true,
+                    strainId: true,
+                    breeder_name: true,
+                    breeder_logo_url: true,
+                    breederId: true,
+                    type: true,
+                    cbd: true,
+                    description: true,
+                    flowering_days: true,
+                    flowering_info: true,
+                    flowering_automatic: true,
+                    seedfinder_ext_url: true,
+                    breeder_description: true,
+                    breeder_website_url: true,
+                  },
+                },
+              },
+            },
             strains: {
               select: {
                 id: true,
@@ -318,6 +344,32 @@ export const reportRouter = createTRPCRouter({
                 cloudUrl: true,
               },
             },
+            plants: {
+              select: {
+                id: true,
+                plantName: true,
+                seedfinderStrain: {
+                  select: {
+                    id: true,
+                    name: true,
+                    picture_url: true,
+                    strainId: true,
+                    breeder_name: true,
+                    breeder_logo_url: true,
+                    breederId: true,
+                    type: true,
+                    cbd: true,
+                    description: true,
+                    flowering_days: true,
+                    flowering_info: true,
+                    flowering_automatic: true,
+                    seedfinder_ext_url: true,
+                    breeder_description: true,
+                    breeder_website_url: true,
+                  },
+                },
+              },
+            },
             strains: {
               select: {
                 id: true,
@@ -496,6 +548,32 @@ export const reportRouter = createTRPCRouter({
               id: true,
               publicId: true,
               cloudUrl: true,
+            },
+          },
+          plants: {
+            select: {
+              id: true,
+              plantName: true,
+              seedfinderStrain: {
+                select: {
+                  id: true,
+                  name: true,
+                  picture_url: true,
+                  strainId: true,
+                  breeder_name: true,
+                  breeder_logo_url: true,
+                  breederId: true,
+                  type: true,
+                  cbd: true,
+                  description: true,
+                  flowering_days: true,
+                  flowering_info: true,
+                  flowering_automatic: true,
+                  seedfinder_ext_url: true,
+                  breeder_description: true,
+                  breeder_website_url: true,
+                },
+              },
             },
           },
           strains: {

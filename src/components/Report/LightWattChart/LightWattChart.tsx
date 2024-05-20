@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Paper,
+  Title,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
@@ -108,23 +109,29 @@ export function LightWattChart({
 
     return (
       processedData && (
-        <Paper
-          withBorder
-          sx={(theme) => ({
-            overflow: "hidden",
-            borderRadius: theme.radius.sm,
-          })}
-        >
-          <Chart
-            chartType="SteppedAreaChart"
-            // height="400px"
-            data={[
-              ["Date", "Watt"],
-              ...processedData.map(({ date, watt }) => [date, watt]),
-            ]}
-            options={options}
-          />
-        </Paper>
+        <>
+          <Title p="sm" order={3}>
+            My Statistics
+          </Title>
+          <Paper
+            withBorder
+            sx={(theme) => ({
+              overflow: "hidden",
+              borderRadius: theme.radius.sm,
+            })}
+          >
+            {" "}
+            <Chart
+              chartType="SteppedAreaChart"
+              // height="400px"
+              data={[
+                ["Date", "Watt"],
+                ...processedData.map(({ date, watt }) => [date, watt]),
+              ]}
+              options={options}
+            />
+          </Paper>
+        </>
       )
     );
   }

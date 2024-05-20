@@ -146,9 +146,7 @@ export function ImagePreview({
           alt={`Header Image from Grow \"${title}\"`}
           className={classes.image}
         />
-
         <Box className={classes.overlay} />
-
         {/* Avatar */}
         <Box pos="absolute" ml={-10} pt={24} className="z-20">
           <UserAvatar
@@ -157,7 +155,6 @@ export function ImagePreview({
             avatarRadius={42}
           />
         </Box>
-
         {/* Cite blockquote */}
         <Box pos="absolute" m={-20}>
           {/* Blockquote */}
@@ -165,50 +162,35 @@ export function ImagePreview({
             {description}
           </Blockquote>
         </Box>
-
         <Box className={classes.content}>
           {/* Title */}
           <Text size="lg" className={classes.title} weight={500}>
             {title}
           </Text>
         </Box>
+        {/* <Group position="apart" spacing="xs">
+          <Text size="sm" className={classes.author}>
+            {authorName}
+          </Text>
+
+          <Group spacing="lg">
+            <Center>
+              <Text size="sm" className={classes.bodyText}>
+                {views}
+              </Text>
+              <IconEye size="1.2rem" stroke={2.2} color="gray.4" />
+            </Center>
+            <Center>
+              <Text size="sm" className={classes.bodyText}>
+                {comments}
+              </Text>
+              <IconMessageCircle size="1rem" stroke={2.2} color="red" />
+            </Center>
+          </Group>
+        </Group> */}
       </Card>
     </Link>
   );
-}
-
-{
-  /* Subline */
-}
-{
-  /* <Group position="apart" spacing="xs">
-            <Text size="sm" className={classes.author}>
-              {authorName}
-            </Text>
-
-            <Group spacing="lg">
-              <Center>
-                <Text size="sm" className={classes.bodyText}>
-                  {views}
-                </Text>
-                <IconEye
-                  size="1.2rem"
-                  stroke={2.2}
-                  color={theme.colors.gray[4]}
-                />
-              </Center>
-              <Center>
-                <Text size="sm" className={classes.bodyText}>
-                  {comments}
-                </Text>
-                <IconMessageCircle
-                  size="1rem"
-                  stroke={2.2}
-                  color={theme.colors.gray[4]}
-                />
-              </Center>
-            </Group>
-          </Group> */
 }
 
 {

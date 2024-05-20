@@ -112,6 +112,7 @@ model SeedfinderStrain {
   id                  String   @id @default(cuid())
   strainId            String // strainInfosFromSeedfinder.id
   name                String // strainInfosFromSeedfinder.name
+  picture_url         String // strainInfosFromSeedfinder.brinfo.pic
   type                String //strainInfosFromSeedfinder.brinfo.type
   cbd                 String // strainInfosFromSeedfinder.brinfo.cbd
   description         String // strainInfosFromSeedfinder.brinfo.descr
@@ -121,6 +122,7 @@ model SeedfinderStrain {
   seedfinder_ext_url  String // strainInfosFromSeedfinder.links.info
   breederId           String // strainInfosFromSeedfinder.brinfo.id
   breeder_name        String // strainInfosFromSeedfinder.brinfo.name
+  breeder_logo_url    String // selectedBreeder.logo
   breeder_description String // strainInfosFromSeedfinder.brinfo.description
   breeder_website_url String // strainInfosFromSeedfinder.brinfo.link
   createdAt           DateTime @default(now())

@@ -4,9 +4,11 @@ import {
   Center,
   Container,
   createStyles,
+  Flex,
   Group,
   Loader,
   rem,
+  Space,
   Text,
   Title,
   useMantineColorScheme,
@@ -35,6 +37,7 @@ import { PostCard } from "~/components/Post/PostCard";
 import PostDatepicker from "~/components/Post/PostDatepicker";
 import { ReportHeader } from "~/components/Report/Header";
 import { LightWattChart } from "~/components/Report/LightWattChart/LightWattChart";
+import Plants from "~/components/Report/Plants";
 
 import { Environment, Locale } from "~/types";
 
@@ -260,6 +263,8 @@ const PublicReport: NextPage = () => {
     grow.author?.name as string
   } | GrowAGram`;
 
+  console.debug(grow.plants);
+
   return (
     <>
       <Head>
@@ -371,26 +376,32 @@ const PublicReport: NextPage = () => {
       </Container>
 
       <Container size="xl" className="flex flex-col space-y-2">
-        <Group px="sm" position="apart" className={classes.section}>
-          <Title py="sm" order={3}>
-            Grow
-          </Title>
-          <Text fz="md">{grow.title}</Text>
+        <Flex
+          align="center"
+          px="sm"
+          justify="space-between"
+          className={classes.section}
+        >
+          <Title order={1}>Grow Details</Title>
+          <Text p="md" fz="md">
+            {grow.title}
+          </Text>
           <LikeHeart itemToLike={grow} itemType={"Report"} />
-        </Group>
+        </Flex>
 
-        <Group mt="xl" position="apart" spacing="xs">
-          {reportBasics}
-        </Group>
+        <Plants plants={grow.plants} />
 
-        <Title p="sm" order={4}>
-          Grow Statistics
-        </Title>
+        <Space h="md" />
+
         <LightWattChart
           repordId={grow.id}
           reportStartDate={new Date(grow.createdAt)}
           dateOfnewestPost={dateOfnewestPost}
         />
+
+        <Group mt="xl" position="apart" spacing="xs">
+          {reportBasics}
+        </Group>
       </Container>
     </>
   );

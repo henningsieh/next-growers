@@ -143,7 +143,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
             // size="sm"
             w="100%"
             withAsterisk
-            placeholder="give name"
+            placeholder="each plant has its own name"
             rightSection={
               <Tooltip label="comming soon!">
                 <ActionIcon
@@ -162,23 +162,27 @@ const AddPlant = ({ growId }: AddPlantProps) => {
           <Flex justify="flex-end">
             {/* DELETE BUTTON */}
             <Button
+              w={90}
+              px={0}
               size="sm"
-              c="red.7"
-              color={theme.white}
-              variant="default"
+              compact
+              //c={theme.colors.red[7]}
+              color="red"
+              variant="filled"
               title="delete this plant"
               loading={
                 plantIdToDelete === element.id &&
                 tRPCdeletePlantByIdIsLoading
               }
-              disabled={
-                plantIdToDelete !== element.id &&
-                tRPCdeletePlantByIdIsLoading
-              }
-              p={4}
+              // disabled={
+              //   plantIdToDelete !== element.id &&
+              //   tRPCdeletePlantByIdIsLoading
+              // }
+              leftIcon={<IconTrashFilled size={18} />}
               onClick={() => handleDeletePlant(element.id)} // Call handleDeletePlant on click
             >
-              <IconTrashFilled size={20} /> Delete
+              {" "}
+              Delete
             </Button>
           </Flex>
         </td>
@@ -287,7 +291,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
                     opened={opened}
                     onChange={setOpened}
                     width={200}
-                    position="bottom-start"
+                    position="top"
                     withArrow
                     shadow="md"
                   >
@@ -308,9 +312,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
                       <Card p="xs">
                         <Text c="dimmed" size="sm">
                           You can give each plant its own name so that
-                          you can easily identify and recognize it
-                          later. <br />
-                          This is optional!
+                          you can easily identify it later. <br />
                         </Text>
                       </Card>
                     </Popover.Dropdown>

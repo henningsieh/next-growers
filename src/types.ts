@@ -9,10 +9,6 @@ type GetIsoReportWithPostsFromDbOutput =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
-export interface IsoReportCardProps {
-  report: IsoReportWithPostsFromDb;
-  setSearchString?: Dispatch<SetStateAction<string>>;
-}
 
 type getPostsByReportIdOutput =
   RouterOutput["posts"]["getPostsByReportId"];
@@ -186,28 +182,25 @@ export type StrainInfoFromSeedfinder = {
   };
 };
 
-//NOT USED
 export type Plant = {
-  id: string;
-  reportId: string;
-  seedfinderStrainId: string;
-  plantName: string;
   seedfinderStrain: {
+    type: string;
+    description: string;
+    name: string;
+    picture_url: string;
     id: string;
     strainId: string;
-    name: string;
-    type: string;
     cbd: string;
-    description: string;
     flowering_days: number;
     flowering_info: string;
     flowering_automatic: boolean;
     seedfinder_ext_url: string;
     breederId: string;
     breeder_name: string;
+    breeder_logo_url: string;
     breeder_description: string;
     breeder_website_url: string;
-    createdAt: Date;
-    updatedAt: Date;
   };
+  id: string;
+  plantName: string;
 };

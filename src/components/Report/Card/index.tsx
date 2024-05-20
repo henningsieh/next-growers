@@ -25,6 +25,8 @@ import {
   IconPlant,
 } from "@tabler/icons-react";
 
+import type { Dispatch, SetStateAction } from "react";
+
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -33,7 +35,7 @@ import { useRouter } from "next/router";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
-import type { IsoReportCardProps } from "~/types";
+import type { IsoReportWithPostsFromDb } from "~/types";
 import { Locale } from "~/types";
 
 import { sanatizeDateString } from "~/utils/helperUtils";
@@ -117,6 +119,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+interface IsoReportCardProps {
+  report: IsoReportWithPostsFromDb;
+  setSearchString?: Dispatch<SetStateAction<string>>;
+}
+
 export default function ReportCard({
   report: isoReport,
   setSearchString,
@@ -195,13 +202,32 @@ export default function ReportCard({
   //     },
   //   });
 
-  const reportStrains = isoReport.strains.map((strainBadge) => (
-    <Box key={strainBadge.id}>
+  // Create a Set to keep track of unique strains
+  const uniqueStrainIds = new Set();
+  const uniqueStrains = isoReport.plants.filter((plant) => {
+    // If the current seedfinderStrain ID is not in the Set, add it and return true to keep the plant
+    if (!uniqueStrainIds.has(plant.seedfinderStrain.id)) {
+      uniqueStrainIds.add(plant.seedfinderStrain.id);
+      return true;
+    }
+    // If the current seedfinderStrain ID is already in the Set, return false to filter out the plant
+    return false;
+  });
+
+  const plantBadges = uniqueStrains.map((plant) => (
+    <Tooltip
+      key={plant.id}
+      label={plant.seedfinderStrain.breeder_name}
+      color="pink"
+      position="top-end"
+      withArrow
+      arrowPosition="center"
+    >
       <Badge
         className="cursor-pointer"
         onClick={() => {
           setSearchString &&
-            setSearchString(`strain:"${strainBadge.name}"`);
+            setSearchString(`strain:"${plant.seedfinderStrain.name}"`);
         }}
         variant="gradient"
         gradient={{
@@ -213,10 +239,42 @@ export default function ReportCard({
         mx={0}
         leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
       >
-        {strainBadge.name}
+        {plant.seedfinderStrain.name}
       </Badge>
-    </Box>
+    </Tooltip>
   ));
+
+  // Intitialize plantBadges elemet array
+  //   <Box key={strainBadge.id}>
+  //     <Badge
+  //       className="cursor-pointer"
+  //       onClick={() => {
+  //         setSearchString &&
+  //           setSearchString(`strain:"${strainBadge.name}"`);
+  //       }}
+  //       variant="gradient"
+  //       gradient={{
+  //         from: theme.colors.dark[4],
+  //         to: theme.colors.green[9],
+  //       }}
+  //       fz={"0.66rem"}
+  //       px={3}
+  //       mx={0}
+  //       leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
+  //     >
+  //       {strainBadge.name}
+  //     </Badge>
+  //   </Box>
+  // ));
+
+  // Initialize the total comment count
+  let totalCommentCount = 0;
+
+  // Iterate over each post in the isoReport
+  isoReport.posts.forEach((post) => {
+    // Add the number of comments in the current post to the total comment count
+    totalCommentCount += post.comments.length;
+  });
 
   return (
     <Paper withBorder p={0} m={0} radius="sm" className={classes.card}>
@@ -247,7 +305,7 @@ export default function ReportCard({
                   isoReport.author?.name as string
                 }`
           }
-          comments={42}
+          comments={totalCommentCount}
           views={183}
         />
       </Card.Section>
@@ -256,10 +314,9 @@ export default function ReportCard({
       <Card.Section className={classes.section}>
         <Flex align="flex-start" justify="space-between">
           {/* Strains */}
-
-          <ScrollArea maw={260} h={42}>
+          <ScrollArea className="overflow-visible" maw={260} h={42}>
             <Flex py={4} gap="xs">
-              {reportStrains}
+              {plantBadges}
             </Flex>
           </ScrollArea>
 

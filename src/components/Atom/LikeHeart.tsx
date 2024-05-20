@@ -194,7 +194,7 @@ const LikeHeart = (props: LikeHeartProps) => {
             <ActionIcon
               size={30}
               // title="Give props to the Grower"
-              variant="default"
+              variant="transparent"
               className="cursor-default"
               onMouseEnter={() => void setShowLikes(true)}
               onMouseLeave={() => void setShowLikes(false)}
