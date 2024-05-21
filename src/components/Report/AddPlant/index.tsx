@@ -1,36 +1,28 @@
 import {
-  ActionIcon,
+  Alert,
   Box,
   Button,
-  Card,
   Center,
   Container,
   Divider,
   Flex,
   Loader,
   Paper,
-  Popover,
   Select,
   Table,
-  Text,
-  TextInput,
-  ThemeIcon,
   Title,
-  Tooltip,
   Transition,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
-import {
-  IconDeviceFloppy,
-  IconInfoCircle,
-  IconTrashFilled,
-} from "@tabler/icons-react";
+import { IconPlantOff, IconTrashFilled } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+
+import { useRouter } from "next/router";
 
 import SelectedStrain from "~/components/Atom/SelectedStrain";
 
@@ -44,6 +36,8 @@ interface AddPlantProps {
 }
 
 const AddPlant = ({ growId }: AddPlantProps) => {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
@@ -52,6 +46,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   );
   const trpc = api.useUtils();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [opened, setOpened] = useState(false);
   const [plantsInGrow, setPlantsInGrow] = useState<JSX.Element[]>([]);
   const [plantIdToDelete, setPlantIdToDelete] = useState<string>();
@@ -74,9 +69,11 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     mutate: tRPCdeletePlantById,
     isLoading: tRPCdeletePlantByIdIsLoading,
   } = api.strains.deletePlantById.useMutation({
-    async onSuccess(result, _plant) {
-      console.debug("SUCCESS strains.savePlantToGrow.useMutation");
-      console.debug(result);
+    onMutate: (_plantId) => {
+      console.debug("START strains.deletePlantById.useMutation");
+    },
+    async onSuccess(_result, _plant) {
+      console.debug("SUCCESS strains.deletePlantById.useMutation");
       //refresh content of allPlantsInGrow table
       await trpc.strains.getAllPlantsByReportId.refetch();
     },
@@ -134,6 +131,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     allPlantsInGrowHaveErrors,
   ]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const savePlantNameForm = useForm({
     validate: zodResolver(InputSavePlantName),
     validateInputOnChange: true,
@@ -151,7 +149,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
 
         {!smallScreen && <td>{plant.breeder_name}</td>}
 
-        <td>
+        {/* <td>
           <TextInput
             type="text"
             {...savePlantNameForm.getInputProps("plantId")}
@@ -182,7 +180,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
             {...savePlantNameForm.getInputProps("plantName")}
             value={plant.plantName}
           />
-        </td>
+        </td> */}
         <td className="w-24">
           <Flex justify="flex-end">
             {/* DELETE BUTTON */}
@@ -214,6 +212,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       </tr>
     ));
     setPlantsInGrow(rows);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     plantIdToDelete,
     allPlantsInGrowMemo,
@@ -221,7 +220,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     smallScreen,
     handleDeletePlant,
     theme.white,
-    savePlantNameForm,
+    // savePlantNameForm,
   ]);
 
   // FETCH allBreederFromSeedfinder
@@ -296,7 +295,11 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       className="flex flex-col space-y-4"
     >
       <Paper mih={160} withBorder p="sm">
-        <Title order={3}>Current plants in your grow</Title>
+        <Title order={3}>
+          {activeLocale === "de"
+            ? "Aktuelle Pflanzen in deinem Grow"
+            : "Current plants in your grow"}
+        </Title>
 
         <Box className="relative">
           <Table
@@ -309,9 +312,14 @@ const AddPlant = ({ growId }: AddPlantProps) => {
           >
             <thead>
               <tr>
-                <th>Strain name</th>
-                {!smallScreen && <th>Breeder name</th>}
-                <th>
+                <th>{activeLocale === "de" ? "Sorte" : "Strain"}</th>
+
+                {!smallScreen && (
+                  <th>
+                    {activeLocale === "de" ? "Züchter" : "Breeder"}
+                  </th>
+                )}
+                {/* <th>
                   Plant Name
                   <Popover
                     opened={opened}
@@ -343,7 +351,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
                       </Card>
                     </Popover.Dropdown>
                   </Popover>
-                </th>
+                </th> */}
                 <th>&nbsp;</th>
               </tr>
             </thead>
@@ -365,6 +373,19 @@ const AddPlant = ({ growId }: AddPlantProps) => {
               )}
             </Transition>
           </Table>
+          {!allPlantsInGrowAreLoading && plantsInGrow.length === 0 && (
+            <Alert
+              icon={<IconPlantOff size="1rem" />}
+              title={activeLocale === "de" ? "Schade!" : "Bummer!"}
+              color="red"
+              variant="outline"
+            >
+              {activeLocale === "de"
+                ? "Dein Grow hat noch keine Pflanzen!"
+                : "Your Grow has no plants yet!"}
+            </Alert>
+          )}
+
           {allPlantsInGrowAreLoading && (
             <Box className="absolute top-6 left-0 right-0">
               <Center>
@@ -385,7 +406,11 @@ const AddPlant = ({ growId }: AddPlantProps) => {
         size="md"
         labelPosition="center"
         // color={dark ? "groworange.4" : "groworange.6"}
-        label="Add new Strains as Plants to your Grow"
+        label={
+          activeLocale === "de"
+            ? "Sorte als neue Pflanze zum Grow hinzufügen"
+            : "Add Strain as a new Plant to your Grow"
+        }
         labelProps={{
           color: dark ? "growgreen.4" : "growgreen.8",
           fz: smallScreen ? "sm" : "lg",
@@ -394,7 +419,12 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       />
 
       <Paper mih={180} withBorder p="sm" className="z-10">
-        <Title order={3}>Add new plants to your grow</Title>
+        <Title order={3}>
+          {activeLocale === "de"
+            ? "Neue Pflanze hinzufügen"
+            : "Add new plant to your grow"}
+        </Title>
+
         {allBreederFromSeedfinderAreLoading && (
           <Center>
             <Loader
@@ -418,7 +448,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
               data={breedersSelectData}
               placeholder="Select a breeder"
               size="sm"
-              label="Breeder"
+              label={activeLocale === "de" ? "Züchter" : "Breeder"}
               searchable
               clearable
               onChange={(value) => {
@@ -445,7 +475,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
               data={strainsSelectData}
               placeholder="Select a strain"
               size="sm"
-              label="Strain"
+              label={activeLocale === "de" ? "Sorte" : "Strain"}
               searchable
               clearable
               value={selectedStrainId}

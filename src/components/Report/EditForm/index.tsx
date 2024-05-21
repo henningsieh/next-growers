@@ -95,7 +95,6 @@ export function EditReportForm({
   const router = useRouter();
 
   const isNewReport = router.query.newReport as unknown as boolean;
-  console.debug(isNewReport ? "yay" : "nay");
   const { data: session, status } = useSession();
 
   const { locale: activeLocale } = router;

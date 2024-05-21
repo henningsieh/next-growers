@@ -30,6 +30,7 @@ import { useEffect } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
 import { InputSavePlantToGrow } from "~/utils/inputValidation";
@@ -47,19 +48,20 @@ export default function SelectedStrain({
   breederName: string;
   breederLogoUrl: string;
 }) {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+
   const trpc = api.useUtils();
   const {
     mutate: tRPCsavePlantToGrow,
     isLoading: savePlantToGrowIsLoading,
     //isError: savePlantToGrowHasErrors
   } = api.strains.savePlantToGrow.useMutation({
-    onMutate: (plant) => {
+    onMutate: (_plant) => {
       console.debug("START strains.savePlantToGrow.useMutation");
-      console.debug(plant);
     },
-    async onSuccess(result, _plant) {
+    async onSuccess(_result, _plant) {
       console.debug("SUCCESS strains.savePlantToGrow.useMutation");
-      console.debug(result);
       //refresh content of allPlantsInGrow table
       await trpc.strains.getAllPlantsByReportId.refetch();
     },
@@ -86,7 +88,6 @@ export default function SelectedStrain({
   // Inside the SelectedStrain component
   useEffect(() => {
     if (strainInfosFromSeedfinder) {
-      console.debug(growid);
       savePlantToGrowForm.setValues({
         growId: growid,
         strainId: strainInfosFromSeedfinder.id,
@@ -214,7 +215,6 @@ export default function SelectedStrain({
               <form
                 onSubmit={savePlantToGrowForm.onSubmit(
                   (strainDataFormValues) => {
-                    console.debug(strainDataFormValues);
                     tRPCsavePlantToGrow(strainDataFormValues);
                   },
                   handleErrors
@@ -232,7 +232,9 @@ export default function SelectedStrain({
                     color="growgreen"
                     type="submit"
                   >
-                    Add Strain as Plant to Grow
+                    {activeLocale === "de"
+                      ? "Sorte als Pflanze hinzufügen"
+                      : "Add Strain as Plant to Grow"}
                   </Button>
                 </Flex>
               </form>

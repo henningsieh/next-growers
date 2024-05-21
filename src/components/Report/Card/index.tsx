@@ -204,7 +204,7 @@ export default function ReportCard({
 
   // Create a Set to keep track of unique strains
   const uniqueStrainIds = new Set();
-  const uniqueStrains = isoReport.plants.filter((plant) => {
+  const uniqueStrains = isoReport.plants?.filter((plant) => {
     // If the current seedfinderStrain ID is not in the Set, add it and return true to keep the plant
     if (!uniqueStrainIds.has(plant.seedfinderStrain.id)) {
       uniqueStrainIds.add(plant.seedfinderStrain.id);
@@ -214,7 +214,7 @@ export default function ReportCard({
     return false;
   });
 
-  const plantBadges = uniqueStrains.map((plant) => (
+  const plantBadges = uniqueStrains?.map((plant) => (
     <Tooltip
       key={plant.id}
       label={plant.seedfinderStrain.breeder_name}
@@ -318,6 +318,30 @@ export default function ReportCard({
             <Flex py={4} gap="xs">
               {plantBadges}
             </Flex>
+
+            {plantBadges.length === 0 &&
+            session?.user.id === isoReport.authorId ? (
+              <Link
+                href={`/account/grows/edit/${isoReport.id}/addPlant`}
+              >
+                <Button
+                  compact
+                  variant="filled"
+                  color="groworange"
+                  className="cursor-pointer"
+                >
+                  {activeLocale === "de"
+                    ? "Wählen deine Sorten aus!"
+                    : "Select your Strains now!"}
+                </Button>
+              </Link>
+            ) : (
+              <Badge>
+                {activeLocale === "de"
+                  ? "keine Sorten ausgewählt"
+                  : "no strains selected"}
+              </Badge>
+            )}
           </ScrollArea>
 
           {/* LikeHeart */}
