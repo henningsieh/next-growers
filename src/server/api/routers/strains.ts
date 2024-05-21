@@ -18,6 +18,7 @@ import type {
 import {
   InputGetAllBreederFromSeedfinder,
   InputGetStrainInfoFromSeedfinder,
+  InputSavePlantName,
   InputSavePlantToGrow,
 } from "~/utils/inputValidation";
 
@@ -156,6 +157,66 @@ export const strainRouter = createTRPCRouter({
             code: "INTERNAL_SERVER_ERROR",
             message: error.message,
             cause: error,
+          });
+        } else {
+          throw new Error("Internal server error");
+        }
+      }
+    }),
+
+  savePlantName: protectedProcedure
+    .input(InputSavePlantName)
+    .mutation(async ({ ctx, input }) => {
+      const { plantId, plantName } = input;
+
+      try {
+        // Find the plant by id
+        const existingPlant = await ctx.prisma.plant.findUnique({
+          where: {
+            id: plantId,
+          },
+          include: {
+            report: true,
+          },
+        });
+
+        // Check if the plant exists
+        if (!existingPlant) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Plant not found",
+          });
+        }
+
+        // Check if the session user is the author of the report associated with the plant
+        if (ctx.session.user.id !== existingPlant.report.authorId) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not authorized to edit this plant",
+          });
+        }
+
+        // Update the plantName
+        const updatedPlant = await ctx.prisma.plant.update({
+          where: {
+            id: plantId,
+          },
+          data: {
+            plantName,
+          },
+        });
+
+        return {
+          success: true,
+          plant: updatedPlant,
+        };
+      } catch (error: unknown) {
+        // Handle Prisma errors
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: `${error.name}: ${error.message}`,
+            cause: error.cause?.cause,
           });
         } else {
           throw new Error("Internal server error");

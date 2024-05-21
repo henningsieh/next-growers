@@ -176,7 +176,7 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                 item: {
                   // styles added to all items
                   backgroundColor:
-                    variant === "contained"
+                    variant === "contained" || variant === "separated"
                       ? theme.colorScheme === "dark"
                         ? theme.colors.dark[7]
                         : theme.colors.gray[2]
@@ -186,12 +186,10 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
                         //   )
                         undefined,
 
-                  // border: `${rem(1)} solid #ededed`,
-
                   // styles added to expanded item
                   "&[data-active]": {
                     backgroundColor:
-                      variant === "contained"
+                      variant === "contained" || variant === "separated"
                         ? theme.colorScheme === "dark"
                           ? "transparent"
                           : theme.white

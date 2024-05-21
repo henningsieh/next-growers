@@ -42,18 +42,15 @@ export default function Plants({ plants }: Props) {
         My Plants
       </Title>
       <Accordion
-        chevronSize={36}
-        chevron={<IconCannabis />}
         radius="sm"
         variant="separated"
         bottom={100}
         transitionDuration={420}
-        // value={postIsOpen}
-        // onChange={setPostIsOpen}
+        chevronSize={36}
+        chevron={<IconCannabis />}
       >
         {plants.map((plant, key) => (
           <Accordion.Item value={plant.id} key={key}>
-            {/* <Paper p="md" withBorder> */}
             <Accordion.Control icon={<Box fz={28}>🪴</Box>} py={0}>
               <Title mt={8} order={2} c={theme.colors.groworange[5]}>
                 {plant.plantName && `${plant.plantName} | `}
@@ -291,7 +288,6 @@ export default function Plants({ plants }: Props) {
                 </Card>
               </SimpleGrid>
             </Accordion.Panel>
-            {/* </Paper> */}
           </Accordion.Item>
         ))}
       </Accordion>

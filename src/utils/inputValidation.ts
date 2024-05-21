@@ -5,6 +5,11 @@ import { Environment, GrowStage } from "~/types";
 
 export const InputLogin = z.string().email("Invalid email address");
 
+export const InputSavePlantName = z.object({
+  plantId: z.string(),
+  plantName: z.string(),
+});
+
 export const InputSavePlantToGrow = z.object({
   growId: z
     .string({

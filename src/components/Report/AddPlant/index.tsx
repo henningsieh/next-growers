@@ -21,6 +21,7 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import {
   IconDeviceFloppy,
@@ -36,6 +37,7 @@ import SelectedStrain from "~/components/Atom/SelectedStrain";
 import type { BreederFromSeedfinder, MantineSelectData } from "~/types";
 
 import { api } from "~/utils/api";
+import { InputSavePlantName } from "~/utils/inputValidation";
 
 interface AddPlantProps {
   growId: string;
@@ -107,6 +109,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   const allPlantsInGrowMemo = useMemo(() => {
     const plants: {
       id: string;
+      plantName: string;
       strainName: string;
       breeder_name: string;
       flowering_days: number;
@@ -116,6 +119,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       allPlantsInGrow.forEach((plant) => {
         plants.push({
           id: plant.id,
+          plantName: plant.plantName,
           strainName: plant.seedfinderStrain.name,
           breeder_name: plant.seedfinderStrain.breeder_name,
           flowering_days: plant.seedfinderStrain.flowering_days,
@@ -130,15 +134,29 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     allPlantsInGrowHaveErrors,
   ]);
 
+  const savePlantNameForm = useForm({
+    validate: zodResolver(InputSavePlantName),
+    validateInputOnChange: true,
+    initialValues: {
+      plantName: null,
+      plantId: "",
+    },
+  });
+
   // BUILD PlantsInGrow TABLE ROWS
   useEffect(() => {
-    const rows = allPlantsInGrowMemo.map((element) => (
-      <tr key={element.id}>
-        <td>{element.strainName}</td>
+    const rows = allPlantsInGrowMemo.map((plant) => (
+      <tr key={plant.id}>
+        <td>{plant.strainName}</td>
 
-        {!smallScreen && <td>{element.breeder_name}</td>}
+        {!smallScreen && <td>{plant.breeder_name}</td>}
 
         <td>
+          <TextInput
+            type="text"
+            {...savePlantNameForm.getInputProps("plantId")}
+            value={plant.id}
+          />
           <TextInput
             // size="sm"
             w="100%"
@@ -151,11 +169,18 @@ const AddPlant = ({ growId }: AddPlantProps) => {
                   color="growgreen.4"
                   variant="filled"
                   title="save plant name"
+                  onClick={(event) => {
+                    console.debug(event.target);
+                    // I need to console.debug the value of
+                    // value={plant.id} and value={plant.plantName} here!!??
+                  }}
                 >
                   <IconDeviceFloppy />
                 </ActionIcon>
               </Tooltip>
             }
+            {...savePlantNameForm.getInputProps("plantName")}
+            value={plant.plantName}
           />
         </td>
         <td className="w-24">
@@ -171,7 +196,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
               variant="filled"
               title="delete this plant"
               loading={
-                plantIdToDelete === element.id &&
+                plantIdToDelete === plant.id &&
                 tRPCdeletePlantByIdIsLoading
               }
               // disabled={
@@ -179,7 +204,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
               //   tRPCdeletePlantByIdIsLoading
               // }
               leftIcon={<IconTrashFilled size={18} />}
-              onClick={() => handleDeletePlant(element.id)} // Call handleDeletePlant on click
+              onClick={() => handleDeletePlant(plant.id)} // Call handleDeletePlant on click
             >
               {" "}
               Delete
@@ -196,6 +221,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
     smallScreen,
     handleDeletePlant,
     theme.white,
+    savePlantNameForm,
   ]);
 
   // FETCH allBreederFromSeedfinder

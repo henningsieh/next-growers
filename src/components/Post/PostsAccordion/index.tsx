@@ -8,8 +8,6 @@ import {
   Title,
 } from "@mantine/core";
 
-import { useState } from "react";
-
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
@@ -29,7 +27,7 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const [postIsOpen, setPostIsOpen] = useState<string | null>(null);
+  // const [postIsOpen, setPostIsOpen] = useState<string | null>(null);
 
   return (
     <Container
@@ -44,8 +42,8 @@ const PostsAccordion = ({ report: isoReport }: PostsAccordionProps) => {
         chevronSize={11}
         bottom={100}
         transitionDuration={420}
-        value={postIsOpen}
-        onChange={setPostIsOpen}
+        // value={postIsOpen}
+        // onChange={setPostIsOpen}
       >
         {!!isoReport &&
           isoReport.posts.map((post) => (
