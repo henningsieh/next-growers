@@ -315,12 +315,11 @@ export default function ReportCard({
         <Flex align="flex-start" justify="space-between">
           {/* Strains */}
           <ScrollArea className="overflow-visible" maw={260} h={42}>
-            <Flex py={4} gap="xs">
-              {plantBadges}
-            </Flex>
-
-            {plantBadges.length === 0 &&
-            session?.user.id === isoReport.authorId ? (
+            {plantBadges && plantBadges.length !== 0 ? (
+              <Flex py={4} gap="xs">
+                {plantBadges}
+              </Flex>
+            ) : session?.user.id === isoReport.authorId ? (
               <Link
                 href={`/account/grows/edit/${isoReport.id}/addPlant`}
               >
