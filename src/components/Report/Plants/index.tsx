@@ -54,8 +54,9 @@ export default function Plants({ plants }: Props) {
             <Accordion.Control icon={<Box fz={28}>🪴</Box>} py={0}>
               <Title mt={8} order={2} c={theme.colors.groworange[5]}>
                 {plant.plantName && `${plant.plantName} | `}
-                Strain: {plant.seedfinderStrain.name}
-                {/* {plant.plantName && ` | Name: ${plant.plantName}`} */}
+                {plant.seedfinderStrain.name}
+                {plant.seedfinderStrain.breeder_name &&
+                  ` | ${plant.seedfinderStrain.breeder_name}`}
               </Title>
             </Accordion.Control>
             <Accordion.Panel>

@@ -98,7 +98,8 @@ export const strainRouter = createTRPCRouter({
               strainId,
               breederId,
               name,
-              picture_url,
+              picture_url:
+                typeof picture_url !== "boolean" ? picture_url : "",
               type,
               cbd,
               description,
@@ -116,6 +117,8 @@ export const strainRouter = createTRPCRouter({
               // strainId,
               // breederId,
               name,
+              picture_url:
+                typeof picture_url !== "boolean" ? picture_url : "",
               type,
               cbd,
               description,
@@ -124,6 +127,7 @@ export const strainRouter = createTRPCRouter({
               flowering_automatic,
               seedfinder_ext_url,
               breeder_name,
+              breeder_logo_url,
               breeder_description,
               breeder_website_url,
             },
@@ -293,7 +297,7 @@ export const strainRouter = createTRPCRouter({
       try {
         // Make an API call to fetch breeders from Seedfinder
         const response: Response = await fetch(
-          `https://de.seedfinder.eu/api/json/strain.json?br=${input.breederId}&str=${input.strainId}&ac=${env.SEEDFINDER_API_KEY}`
+          `https://en.seedfinder.eu/api/json/strain.json?br=${input.breederId}&str=${input.strainId}&ac=${env.SEEDFINDER_API_KEY}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch breeders from Seedfinder");

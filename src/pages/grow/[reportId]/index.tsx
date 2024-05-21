@@ -263,8 +263,6 @@ const PublicReport: NextPage = () => {
     grow.author?.name as string
   } | GrowAGram`;
 
-  console.debug(grow.plants);
-
   return (
     <>
       <Head>

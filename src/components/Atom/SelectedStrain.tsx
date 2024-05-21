@@ -165,12 +165,10 @@ export default function SelectedStrain({
   const handleErrors = (errors: typeof savePlantToGrowForm.errors) => {
     Object.keys(errors).forEach((key) => {
       notifications.show(
-        httpStatusErrorMsg(errors[key] as string, 422)
+        httpStatusErrorMsg(`${key}: ${errors[key] as string} `, 422)
       );
     });
   };
-
-  const strainImageUrl = strainInfosFromSeedfinder?.brinfo?.pic;
 
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
@@ -448,15 +446,19 @@ export default function SelectedStrain({
                         </Center>
 
                         <Center pos="relative" w={200} h={200}>
-                          {strainImageUrl && (
-                            <Image
-                              fill
-                              src={strainImageUrl}
-                              style={{ objectFit: "contain" }}
-                              alt={breederName}
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                          )}
+                          {strainInfosFromSeedfinder &&
+                            !!strainInfosFromSeedfinder.brinfo.pic && (
+                              <Image
+                                fill
+                                src={
+                                  strainInfosFromSeedfinder.brinfo
+                                    .pic as string
+                                }
+                                style={{ objectFit: "contain" }}
+                                alt={breederName}
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                              />
+                            )}
                         </Center>
                       </Flex>
                     </Box>

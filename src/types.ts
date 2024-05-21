@@ -158,7 +158,7 @@ export type StrainInfoFromSeedfinder = {
     descr: string;
     description: string;
     link: string;
-    pic: string;
+    pic: string | boolean;
     flowering: {
       auto: boolean;
       days: number;

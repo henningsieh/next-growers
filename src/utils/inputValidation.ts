@@ -28,7 +28,7 @@ export const InputSavePlantToGrow = z.object({
   name: z.string().min(1, {
     message: "Strain name must be set",
   }),
-  picture_url: z.string(),
+  picture_url: z.union([z.string(), z.boolean()]),
   type: z.string().min(1, {
     message: "Strain type must be set",
   }),
