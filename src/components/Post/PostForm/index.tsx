@@ -64,8 +64,7 @@ interface AddPostProps {
   post: Post | null;
 }
 
-const prefillHTMLContent =
-  "<h1>Ich bin eine Überschrift</h1><hr/><p>RichTextEditor is designed to be as simple as possible to bring a familiar editing experience to regular users.</p>";
+const prefillHTMLContent = "<h1></h1><hr/><p>...</p>";
 
 const PostForm = (props: AddPostProps) => {
   const router = useRouter();
