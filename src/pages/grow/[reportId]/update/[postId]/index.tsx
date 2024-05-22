@@ -582,10 +582,6 @@ function PublicReportPost(
           <LikeHeart itemToLike={grow} itemType={"Report"} />
         </Group>
 
-        <Title p="sm" order={4}>
-          Grow Statistics
-        </Title>
-
         <LightWattChart
           repordId={grow.id}
           reportStartDate={new Date(grow.createdAt)}
