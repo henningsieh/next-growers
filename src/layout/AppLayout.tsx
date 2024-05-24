@@ -33,6 +33,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import CookieConsentBanner from "~/components/Atom/CookieConsent";
+import { Footer } from "~/components/Atom/Footer";
 import LanguageSwitcher from "~/components/LanguageSwitcher";
 import LightDarkButton from "~/components/LightDarkButton";
 import Notifications from "~/components/User/Notifications";
@@ -237,6 +238,26 @@ export default function RootLayout({
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
+  const links = [
+    {
+      link: "/imprint",
+      label: t("common:app-impressum-contact-label"),
+    },
+    {
+      link: "/privacy",
+      label: t("common:app-impressum-privacy-label"),
+    },
+  ];
+
+  const items = links.map((link) => (
+    <Link key={link.label} href={link.link}>
+      <Text c="dimmed" lh={1} size="sm">
+        {link.label}
+      </Text>
+    </Link>
+  ));
+
+  console.debug(items);
   const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
       bg={dark ? "dark.5" : "gray.2"}
@@ -470,6 +491,8 @@ export default function RootLayout({
 
       {/* Content */}
       <Box className="relative mt-16 pb-16">{children}</Box>
+
+      <Footer items={items} />
 
       {/* CookieConsent */}
       <CookieConsentBanner />
