@@ -251,7 +251,7 @@ export default function RootLayout({
 
   const footerCenterItems = footerLinks.map((link) => (
     <Link key={link.label} href={link.link}>
-      <Text c="dimmed" lh={1} size="sm">
+      <Text lh={1} size="md">
         {link.label}
       </Text>
     </Link>

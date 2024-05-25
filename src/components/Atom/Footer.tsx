@@ -67,6 +67,7 @@ export function Footer({ items: footerLinks }: FooterProps) {
         </Flex>
 
         <Group className={classes.links}>{footerLinks}</Group>
+
         <Flex gap="sm" justify="flex-end" wrap="nowrap">
           <Link target="_blank" href={env.NEXT_PUBLIC_TWITTERX_URL}>
             <ActionIcon
