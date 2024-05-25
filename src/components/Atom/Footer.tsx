@@ -1,12 +1,11 @@
 import {
   ActionIcon,
+  Box,
   createStyles,
   Flex,
-  Group,
   rem,
   ThemeIcon,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import {
   IconBrandInstagram,
   IconBrandTwitter,
@@ -18,7 +17,8 @@ import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   footer: {
-    marginBottom: rem(40),
+    paddingTop: rem(24),
+    marginBottom: rem(42),
     borderTop: `${rem(1)} solid ${
       theme.colorScheme === "dark"
         ? theme.colors.dark[4]
@@ -26,21 +26,13 @@ const useStyles = createStyles((theme) => ({
     }`,
   },
 
-  inner: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: theme.spacing.md,
-  },
-
   links: {
-    marginTop: useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
-      ? theme.spacing.lg
-      : undefined,
-
-    marginBottom: useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
-      ? theme.spacing.sm
-      : undefined,
+    // marginTop: useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
+    //   ? theme.spacing.lg
+    //   : undefined,
+    // marginBottom: useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
+    //   ? theme.spacing.sm
+    //   : undefined,
   },
 }));
 // Define the type for the props
@@ -50,12 +42,17 @@ interface FooterProps {
 
 // Define the Footer component with the correct props type
 export function Footer({ items: footerLinks }: FooterProps) {
-  const { classes, theme: _theme } = useStyles();
+  const { classes, theme: theme } = useStyles();
 
   return (
-    <div className={classes.footer}>
-      <div className={classes.inner}>
-        <Flex align="center" gap="xs">
+    <Box className={classes.footer}>
+      <Flex
+        p={theme.spacing.xs}
+        align="center"
+        gap={theme.spacing.md}
+        justify="space-evenly"
+      >
+        <Flex align="center" justify="center" gap="xs">
           <ThemeIcon>
             <Image
               src={"/favicon-32x32.png"}
@@ -66,7 +63,14 @@ export function Footer({ items: footerLinks }: FooterProps) {
           </ThemeIcon>
         </Flex>
 
-        <Group className={classes.links}>{footerLinks}</Group>
+        <Flex
+          gap="sm"
+          justify="center"
+          wrap="wrap"
+          className={classes.links}
+        >
+          {footerLinks}
+        </Flex>
 
         <Flex gap="sm" justify="flex-end" wrap="nowrap">
           <Link target="_blank" href={env.NEXT_PUBLIC_TWITTERX_URL}>
@@ -104,7 +108,7 @@ export function Footer({ items: footerLinks }: FooterProps) {
             </ActionIcon>
           </Link>
         </Flex>
-      </div>
-    </div>
+      </Flex>
+    </Box>
   );
 }

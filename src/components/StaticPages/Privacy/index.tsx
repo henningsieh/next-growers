@@ -2,10 +2,8 @@ import {
   Box,
   Container,
   createStyles,
-  Image,
   rem,
   Title,
-  useMantineColorScheme,
 } from "@mantine/core";
 
 import { useTranslation } from "next-i18next";
@@ -29,12 +27,12 @@ const useStyles = createStyles((theme) => ({
     paddingBottom: 12,
 
     [theme.fn.smallerThan("sm")]: {
-      fontSize: rem(42),
+      fontSize: rem(36),
       lineHeight: 1.2,
     },
 
     [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(36),
+      fontSize: rem(24),
       lineHeight: 1.3,
     },
   },
@@ -67,13 +65,13 @@ const Privacy: React.FC<PrivacyProps> = ({ htmlContent }) => {
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
+  // const { colorScheme } = useMantineColorScheme();
+  // const dark = colorScheme === "dark";
 
   return (
-    <Container size="lg" className={classes.container}>
+    <Container size="lg" pt="xl">
       {/* Sticky Image */}
-      <Image
+      {/* <Image
         width={90}
         height={140}
         src={
@@ -83,7 +81,7 @@ const Privacy: React.FC<PrivacyProps> = ({ htmlContent }) => {
         }
         className={classes.stickyImage}
         alt="Datenschutz-Siegel"
-      />
+      /> */}
       {/* Title */}
       <Title className={classes.title}>
         {t("common:app-impressum-privacy-label")}
@@ -91,33 +89,9 @@ const Privacy: React.FC<PrivacyProps> = ({ htmlContent }) => {
 
       {/* Content */}
       <Box
-        className="prose"
+        className="prose overflow-hidden"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
-
-      {/* Global Styles */}
-      <style jsx global>{`
-        .prose,
-        .prose a,
-        .prose h1,
-        .prose h2,
-        .prose h3,
-        .prose h4,
-        .prose h5,
-        .prose h6 {
-          max-width: none; /* or max-width: unset; */
-          color: inherit;
-        }
-        .prose a {
-          text-decoration: underline;
-        }
-        .prose li {
-          list-style-type: none;
-        }
-        ul.prose li::before {
-          content: "" !important; /* Set content to empty string */
-        }
-      `}</style>
     </Container>
   );
 };

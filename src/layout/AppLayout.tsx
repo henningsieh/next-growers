@@ -241,7 +241,7 @@ export default function RootLayout({
   const footerLinks = [
     {
       link: "/imprint",
-      label: t("common:app-impressum-contact-label"),
+      label: t("common:app-impressum-imprint-label"),
     },
     {
       link: "/privacy",
@@ -251,7 +251,7 @@ export default function RootLayout({
 
   const footerCenterItems = footerLinks.map((link) => (
     <Link key={link.label} href={link.link}>
-      <Text lh={1} size="md">
+      <Text lh={0.6} size="md">
         {link.label}
       </Text>
     </Link>

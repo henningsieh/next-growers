@@ -1,8 +1,9 @@
-import { appTitle } from "~/pages/_document";
+import { appTitle } from "../_document";
+import fs from "fs";
+import path from "path";
 
 import { useTranslation } from "react-i18next";
 
-// import { useTranslation } from "react-i18next";
 import type {
   GetStaticProps,
   GetStaticPropsContext,
@@ -10,10 +11,10 @@ import type {
 } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
-import { useRouter } from "next/router";
 
-// import { useRouter } from "next/router";
 import Imprint from "~/components/StaticPages/Imprint";
+
+import type { Locale } from "~/types";
 
 /** PUBLIC STATIC PAGE with translations
  * getStaticProps (Static Site Generation)
@@ -23,38 +24,53 @@ import Imprint from "~/components/StaticPages/Imprint";
  */
 export const getStaticProps: GetStaticProps = async (
   context: GetStaticPropsContext
-) => ({
-  props: {
-    ...(await serverSideTranslations(context.locale as string, [
-      "common",
-    ])),
-  },
-});
+) => {
+  // Access the locale/language from the context object
+  const locale: Locale = context.locale as Locale;
+
+  const privacyHtmlFilePath = path.join(
+    process.cwd(),
+    "src",
+    "components",
+    "StaticPages",
+    "Imprint",
+    `index_${locale}.html`
+  );
+  const privacyHtmlContent = fs.readFileSync(
+    privacyHtmlFilePath,
+    "utf8"
+  );
+
+  return {
+    props: {
+      ...(await serverSideTranslations(context.locale as string, [
+        "common",
+      ])),
+      htmlContent: privacyHtmlContent,
+    },
+  };
+};
 
 /**
- * @name ContactPage
+ * @name PrivacyPage
  * @returns NextPage
  */
-const PublicContactPage: NextPage = () => {
-  const router = useRouter();
-  const { locale: activeLocale } = router;
-  const { t } = useTranslation(activeLocale);
+const PublicPrivacyPage: NextPage<{ htmlContent: string }> = ({
+  htmlContent,
+}) => {
+  const { t } = useTranslation();
 
-  const pageTitle = t("common:app-impressum-privacy-label");
+  const pageTitle = t("common:app-impressum-imprint-label");
 
   return (
     <>
       <Head>
-        <title>{`${pageTitle}  | ${appTitle}`}</title>
-        <meta
-          name="description"
-          content={`${pageTitle}  | ${appTitle}`}
-        />
+        <title>{`${pageTitle} | ${appTitle}`}</title>
+        <meta name="description" content={pageTitle} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <Imprint />
+      <Imprint htmlContent={htmlContent} />
     </>
   );
 };
-export default PublicContactPage;
+export default PublicPrivacyPage;

@@ -1,84 +1,99 @@
-import { Box, Container, Space, Title } from "@mantine/core";
+import {
+  Box,
+  Container,
+  createStyles,
+  rem,
+  Title,
+} from "@mantine/core";
 
-import Link from "next/link";
+import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
-function Imprint() {
+const useStyles = createStyles((theme) => ({
+  container: {
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "top",
+    alignItems: "center",
+    paddingTop: theme.spacing.lg,
+  },
+
+  title: {
+    fontSize: rem(48),
+    fontWeight: 900,
+    lineHeight: 1.1,
+    paddingTop: 12,
+    paddingBottom: 12,
+
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(36),
+      lineHeight: 1.2,
+    },
+
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(24),
+      lineHeight: 1.3,
+    },
+  },
+
+  description: {
+    textAlign: "center",
+
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: theme.fontSizes.md,
+    },
+  },
+
+  // Styles for the sticky image
+  stickyImage: {
+    position: "fixed",
+    top: 64,
+    right: theme.spacing.md,
+    zIndex: 999, // Ensure it's above other content
+  },
+}));
+
+interface PrivacyProps {
+  htmlContent: string;
+}
+
+const Imprint: React.FC<PrivacyProps> = ({ htmlContent }) => {
+  const { classes } = useStyles();
+
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
+  // const { colorScheme } = useMantineColorScheme();
+  // const dark = colorScheme === "dark";
+
   return (
     <Container size="md" pt="xl">
-      <Title order={1}>Impressum</Title>
-      <Box>
-        {"Benjamin Klein - "}
-        <Link target="_blank" href={"https://webkult.de/"}>
-          webkult.de
-        </Link>
-        <br />
-        Kleine Dorfstraße 5
-        <br />
-        38312 Börßum
-      </Box>
-
-      <Space h="xl" />
-      <Title order={2}>Kontakt</Title>
-      <Box>
-        {/* Telefon: +4961814985597
-        <br /> */}
-        E-Mail: support@growagram.com
-      </Box>
-
-      {/* <Space h="xl" />
-      <Title order={2}>Umsatzsteuer-ID</Title>
-      <Box>
-        Umsatzsteuer-Identifikationsnummer gemäß § 27 a
-        Umsatzsteuergesetz:
-        <br />
-        DE279588258
-      </Box> */}
-
-      <Space h="xl" />
-      <Title order={2}>Redaktionell verantwortlich</Title>
-      <Box>
-        {"Benjamin Klein - "}
-        <Link target="_blank" href={"https://webkult.de/"}>
-          webkult.de
-        </Link>
-        <br />
-        Kleine Dorfstraße 5
-        <br />
-        38312 Börßum
-      </Box>
-
-      <Space h="xl" />
-      <Title order={2}>
-        Verbraucherstreitbeilegung / Universalschlichtungsstelle
+      {/* Sticky Image */}
+      {/* <Image
+        width={90}
+        height={140}
+        src={
+          dark
+            ? "/datenschutz-siegel-dark-vertical-small.png"
+            : "/datenschutz-siegel-light-vertical-small.png"
+        }
+        className={classes.stickyImage}
+        alt="Datenschutz-Siegel"
+      /> */}
+      {/* Title */}
+      <Title className={classes.title}>
+        {t("common:app-impressum-imprint-label")}
       </Title>
-      <Box>
-        Wir sind nicht bereit oder verpflichtet, an
-        Streitbeilegungsverfahren vor einer
-        Verbraucherschlichtungsstelle teilzunehmen.
-      </Box>
 
-      <Space h="xl" />
-      <Title order={2}>
-        Zentrale Kontaktstelle nach dem Digital Services Act - DSA
-        (Verordnung (EU) 2022/265)
-      </Title>
-      <Box>
-        Die für den Kontakt zur Verfügung stehenden Sprachen sind:
-        Deutsch, Englisch (german, english). Unsere zentrale
-        Kontaktstelle für Nutzer und Behörden nach Art. 11, 12 DSA
-        erreichen Sie wie folgt:
-      </Box>
-      <Box>E-Mail: support@growagram.com</Box>
-
-      <Space h="xl" />
-      <Box fz={10}>
-        Quelle:{" "}
-        <a href="https://www.e-recht24.de/impressum-generator.html">
-          https://www.e-recht24.de/impressum-generator.html
-        </a>
-      </Box>
+      {/* Content */}
+      <Box
+        className="prose overflow-hidden"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+      />
     </Container>
   );
-}
+};
 
 export default Imprint;

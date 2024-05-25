@@ -2,6 +2,8 @@ import { appTitle } from "../_document";
 import fs from "fs";
 import path from "path";
 
+import { useTranslation } from "react-i18next";
+
 import type {
   GetStaticProps,
   GetStaticPropsContext,
@@ -25,8 +27,6 @@ export const getStaticProps: GetStaticProps = async (
 ) => {
   // Access the locale/language from the context object
   const locale: Locale = context.locale as Locale;
-
-  console.debug("LOCALE: ", locale);
 
   const privacyHtmlFilePath = path.join(
     process.cwd(),
@@ -52,25 +52,25 @@ export const getStaticProps: GetStaticProps = async (
 };
 
 /**
- * @name HowToPage
+ * @name PrivacyPage
  * @returns NextPage
  */
-const PublicContactPage: NextPage<{ htmlContent: string }> = ({
+const PublicPrivacyPage: NextPage<{ htmlContent: string }> = ({
   htmlContent,
 }) => {
+  const { t } = useTranslation();
+
+  const pageTitle = t("common:app-impressum-privacy-label");
+
   return (
     <>
       <Head>
-        <title>{`Howto / Manual | ${appTitle}`}</title>
-        <meta
-          name="description"
-          content="Manual: How does this GrowAGram thing work? Learn everything about authentication, fulltext and strain search, security and your privacy."
-        />
+        <title>{`${pageTitle} | ${appTitle}`}</title>
+        <meta name="description" content={pageTitle} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <Privacy htmlContent={htmlContent} />
     </>
   );
 };
-export default PublicContactPage;
+export default PublicPrivacyPage;
