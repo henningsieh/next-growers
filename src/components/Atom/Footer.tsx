@@ -6,10 +6,7 @@ import {
   rem,
   ThemeIcon,
 } from "@mantine/core";
-import {
-  IconBrandInstagram,
-  IconBrandTwitter,
-} from "@tabler/icons-react";
+import { IconBrandInstagram, IconBrandX } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
 import Image from "next/image";
@@ -81,7 +78,7 @@ export function Footer({ items: footerLinks }: FooterProps) {
               variant="default"
               radius="xl"
             >
-              <IconBrandTwitter
+              <IconBrandX
                 style={{ width: rem(18), height: rem(18) }}
                 stroke={1.5}
               />
