@@ -196,7 +196,7 @@ export const TechnologiesData = [
   },
   {
     icon: IconBrandJavascript,
-    title: "Javascript Framwork",
+    title: "Javascript Framework",
     description:
       "Unsere eigene Software im Backend basiert auf dem Open-Source Javascript React-Framework Next.JS.",
     href: "https://nextjs.org",
