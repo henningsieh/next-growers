@@ -238,7 +238,7 @@ export default function RootLayout({
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
-  const links = [
+  const footerLinks = [
     {
       link: "/imprint",
       label: t("common:app-impressum-contact-label"),
@@ -249,7 +249,7 @@ export default function RootLayout({
     },
   ];
 
-  const items = links.map((link) => (
+  const footerCenterItems = footerLinks.map((link) => (
     <Link key={link.label} href={link.link}>
       <Text c="dimmed" lh={1} size="sm">
         {link.label}
@@ -257,7 +257,6 @@ export default function RootLayout({
     </Link>
   ));
 
-  console.debug(items);
   const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
       bg={dark ? "dark.5" : "gray.2"}
@@ -492,7 +491,7 @@ export default function RootLayout({
       {/* Content */}
       <Box className="relative mt-16 pb-16">{children}</Box>
 
-      <Footer items={items} />
+      <Footer items={footerCenterItems} />
 
       {/* CookieConsent */}
       <CookieConsentBanner />

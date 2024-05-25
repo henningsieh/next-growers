@@ -1,3 +1,14 @@
+// import { useRouter } from "next/router";
+// import Privacy from "~/components/StaticPages/Privacy";
+import {
+  Box,
+  Container,
+  createStyles,
+  rem,
+  Title,
+} from "@mantine/core";
+import fs from "fs";
+import path from "path";
 import { appTitle } from "~/pages/_document";
 
 import { useTranslation } from "react-i18next";
@@ -12,9 +23,6 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-// import { useRouter } from "next/router";
-import Privacy from "~/components/StaticPages/Privacy";
-
 /** PUBLIC STATIC PAGE with translations
  * getStaticProps (Static Site Generation)
  *
@@ -23,24 +31,62 @@ import Privacy from "~/components/StaticPages/Privacy";
  */
 export const getStaticProps: GetStaticProps = async (
   context: GetStaticPropsContext
-) => ({
-  props: {
-    ...(await serverSideTranslations(context.locale as string, [
-      "common",
-    ])),
+) => {
+  const privacyHtmlFilePath = path.join(
+    process.cwd(),
+    "src",
+    "components",
+    "StaticPages",
+    "Privacy",
+    "index.html"
+  );
+  const privacyHtmlContent = fs.readFileSync(
+    privacyHtmlFilePath,
+    "utf8"
+  );
+
+  return {
+    props: {
+      ...(await serverSideTranslations(context.locale as string, [
+        "common",
+      ])),
+      htmlContent: privacyHtmlContent,
+    },
+  };
+};
+
+const useStyles = createStyles((theme) => ({
+  title: {
+    fontWeight: "bold",
+    textAlign: "center",
+    fontFamily: `'Roboto Slab', sans-serif`,
+    paddingTop: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+    fontSize: rem(34),
+    [theme.fn.smallerThan("lg")]: {
+      fontSize: rem(28),
+      // textAlign: "left",
+    },
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(19),
+      textAlign: "left",
+    },
   },
-});
+}));
 
 /**
  * @name ContactPage
  * @returns NextPage
  */
-const PublicContactPage: NextPage = () => {
+const PublicContactPage: NextPage<{ htmlContent: string }> = ({
+  htmlContent,
+}) => {
   const router = useRouter();
+  const { classes } = useStyles();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const pageTitle = t("common:app-impressum-contact-label");
+  const pageTitle = t("common:app-impressum-privacy-label");
 
   return (
     <>
@@ -52,9 +98,23 @@ const PublicContactPage: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Container size="md" className="space-y-4 ">
+        <Title order={1} className={classes.title}>
+          {pageTitle}
+        </Title>
+        <Box
+          className="prose-lg prose-underline"
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
+        />
 
-      <Privacy />
+        <style jsx global>{`
+          .prose a {
+            text-decoration: underline;
+          }
+        `}</style>
+      </Container>
     </>
   );
 };
+
 export default PublicContactPage;

@@ -32,10 +32,11 @@ import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   title: {
-    fontFamily: `'Roboto Slab', sans-serif`,
     fontWeight: "bold",
-    marginBottom: theme.spacing.md,
     textAlign: "center",
+    fontFamily: `'Roboto Slab', sans-serif`,
+    paddingTop: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
     fontSize: rem(34),
     [theme.fn.smallerThan("lg")]: {
       fontSize: rem(28),
