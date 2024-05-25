@@ -2,8 +2,10 @@ import {
   Box,
   Container,
   createStyles,
+  Image,
   rem,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 
 import { useTranslation } from "next-i18next";
@@ -44,6 +46,14 @@ const useStyles = createStyles((theme) => ({
       fontSize: theme.fontSizes.md,
     },
   },
+
+  // Styles for the sticky image
+  stickyImage: {
+    position: "fixed",
+    top: 64,
+    right: theme.spacing.md,
+    zIndex: 999, // Ensure it's above other content
+  },
 }));
 
 interface PrivacyProps {
@@ -57,17 +67,35 @@ const Privacy: React.FC<PrivacyProps> = ({ htmlContent }) => {
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
   return (
     <Container size="lg" className={classes.container}>
+      {/* Sticky Image */}
+      <Image
+        width={90}
+        height={140}
+        src={
+          dark
+            ? "/datenschutz-siegel-dark-vertical-small.png"
+            : "/datenschutz-siegel-light-vertical-small.png"
+        }
+        className={classes.stickyImage}
+        alt="Datenschutz-Siegel"
+      />
+      {/* Title */}
       <Title className={classes.title}>
         {t("common:app-impressum-privacy-label")}
       </Title>
 
+      {/* Content */}
       <Box
         className="prose"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
 
+      {/* Global Styles */}
       <style jsx global>{`
         .prose,
         .prose a,
@@ -82,6 +110,12 @@ const Privacy: React.FC<PrivacyProps> = ({ htmlContent }) => {
         }
         .prose a {
           text-decoration: underline;
+        }
+        .prose li {
+          list-style-type: none;
+        }
+        ul.prose li::before {
+          content: "" !important; /* Set content to empty string */
         }
       `}</style>
     </Container>
