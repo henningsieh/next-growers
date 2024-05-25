@@ -1,4 +1,5 @@
 import { createGetInitialProps } from "@mantine/next";
+import { env } from "~/env.mjs";
 
 import Document, { Head, Html, Main, NextScript } from "next/document";
 
@@ -12,7 +13,7 @@ export default class _Document extends Document {
         <Head>
           <meta
             name="google-site-verification"
-            content="bH2eAtmFdOW_32cssgRst8T_QiJxJa825XfCpiFZYsc"
+            content={env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION}
           />
           <meta name="seedfinderverification" content="Open Sesame!" />
           <link rel="manifest" href="/site.webmanifest" />
