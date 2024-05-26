@@ -340,12 +340,12 @@ export default function RootLayout({
             <Link href="/info/tech-stack" className={classes.link}>
               Technologie
             </Link>
-            <Link
+            {/* <Link
               href="/how-to-manual-anleitung-wie-geht-das"
               className={classes.link}
             >
               {t("common:app-headermenu-how-to")}
-            </Link>
+            </Link> */}
             <HoverCard
               width={600}
               position="bottom"
@@ -406,7 +406,9 @@ export default function RootLayout({
           </Group>
           <Group>
             <Box>
-              <SteadyButton />
+              <SteadyButton
+                buttonTitle={t("common:app-steady-button-title")}
+              />
             </Box>
             {/* Does not fit in mobile portrait mode display */}
             <Box className={classes.hiddenIfSmallerThanXs}>
@@ -462,12 +464,12 @@ export default function RootLayout({
           <Link href="/info/tech-stack" className={classes.link}>
             Technologie
           </Link>
-          <Link
+          {/* <Link
             href="/how-to-manual-anleitung-wie-geht-das"
             className={classes.link}
           >
             {t("common:app-headermenu-how-to")}
-          </Link>
+          </Link> */}
           <UnstyledButton
             className={classes.link}
             onClick={handleUnstyledButtonClick}
