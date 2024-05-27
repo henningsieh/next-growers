@@ -283,6 +283,7 @@ export const reportRouter = createTRPCRouter({
     .input(InputGetReports)
     .query(({ ctx, input }) => {
       const { orderBy, desc, search } = input;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { searchstring, strain } = splitSearchString(search);
       return ctx.prisma.report
         .findMany({
@@ -309,15 +310,15 @@ export const reportRouter = createTRPCRouter({
                 },
               },
             ],
-            strains: {
-              //FIXME: workaround for hiding "unready" (without strains) reports
-              some: {
-                name: {
-                  contains: strain,
-                  mode: "insensitive",
-                },
-              },
-            },
+            // strains: {
+            //   //FIXME: workaround for hiding "unready" (without strains) reports
+            //   some: {
+            //     name: {
+            //       contains: strain,
+            //       mode: "insensitive",
+            //     },
+            //   },
+            // },
             /* 
             strains: strain
               ? {
