@@ -113,7 +113,7 @@ model SeedfinderStrain {
   strainId            String // strainInfosFromSeedfinder.id
   name                String // strainInfosFromSeedfinder.name
   picture_url         String // strainInfosFromSeedfinder.brinfo.pic
-  type                String //strainInfosFromSeedfinder.brinfo.type
+  type                String // strainInfosFromSeedfinder.brinfo.type
   cbd                 String // strainInfosFromSeedfinder.brinfo.cbd
   description         String // strainInfosFromSeedfinder.brinfo.descr
   flowering_days      Int // strainInfosFromSeedfinder.brinfo.flowering.days
@@ -157,6 +157,7 @@ model Report {
   products     Product[] // A Report may have many Products
   strains      CannabisStrain[] // A Report may have many CannabisStrains
   Notification Notification[]
+  ReportSlug   ReportSlug[]
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
@@ -257,7 +258,7 @@ model Comment {
 model Company {
   id        String    @id @default(cuid())
   name      String
-  contests  Contest[] // One Company has many Contests 
+  contests  Contest[] // One Company has many Contests
   products  Product[] // One Company has many Products
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -316,4 +317,13 @@ model VerificationToken {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])
+}
+
+model ReportSlug {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  reportId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
