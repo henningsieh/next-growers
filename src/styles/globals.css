@@ -5,3 +5,25 @@
 html {
   scroll-behavior: smooth;
 }
+
+.prose,
+.prose a,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6,
+.prose strong {
+  max-width: none; /* or max-width: unset; */
+  color: inherit;
+}
+.prose a {
+  text-decoration: underline;
+}
+.prose li {
+  list-style-type: none;
+}
+ul.prose li::before {
+  content: "" !important; /* Set content to empty string */
+}

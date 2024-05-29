@@ -32,10 +32,11 @@ import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   title: {
-    fontFamily: `'Roboto Slab', sans-serif`,
     fontWeight: "bold",
-    marginBottom: theme.spacing.md,
     textAlign: "center",
+    fontFamily: `'Roboto Slab', sans-serif`,
+    paddingTop: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
     fontSize: rem(34),
     [theme.fn.smallerThan("lg")]: {
       fontSize: rem(28),
@@ -196,7 +197,7 @@ export const TechnologiesData = [
   },
   {
     icon: IconBrandJavascript,
-    title: "Javascript Framwork",
+    title: "Javascript Framework",
     description:
       "Unsere eigene Software im Backend basiert auf dem Open-Source Javascript React-Framework Next.JS.",
     href: "https://nextjs.org",

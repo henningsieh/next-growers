@@ -108,10 +108,10 @@ export function CreateReportForm({
       // Navigate to the edit report page
       void router.push(
         {
-          pathname: `/account/grows/edit/${newReportDB.id}/editGrow?newReport=true`,
-          //query: router.query
+          pathname: `/account/grows/edit/${newReportDB.id}/editGrow`,
+          query: { newReport: "true" }, // Separate query parameters
         },
-        undefined, //router.asPath,
+        undefined,
         { scroll: true, locale: activeLocale }
       );
     },

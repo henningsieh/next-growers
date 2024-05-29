@@ -35,6 +35,7 @@
     "@prisma/client": "^5.13",
     "@t3-oss/env-nextjs": "^0.10",
     "@tabler/icons-react": "^3.2",
+    "@tailwindcss/typography": "^0.5.13",
     "@tanstack/react-query": "^4.36",
     "@tiptap/extension-highlight": "^2.3.0",
     "@tiptap/extension-link": "^2.3.0",
@@ -106,7 +107,7 @@
     "prettier": "^3.2",
     "prettier-plugin-tailwindcss": "^0.5",
     "prisma": "^5.13",
-    "tailwindcss": "^3.4",
+    "tailwindcss": "^3.4.3",
     "ts-node": "^10.9",
     "tsconfig-paths": "^4.2",
     "typescript": "^5.4"

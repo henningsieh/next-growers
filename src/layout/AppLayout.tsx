@@ -33,6 +33,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import CookieConsentBanner from "~/components/Atom/CookieConsent";
+import { Footer } from "~/components/Atom/Footer";
+import SteadyButton from "~/components/Atom/SteadyButton";
 import LanguageSwitcher from "~/components/LanguageSwitcher";
 import LightDarkButton from "~/components/LightDarkButton";
 import Notifications from "~/components/User/Notifications";
@@ -149,7 +151,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   hiddenIfSmallerThanXs: {
-    [theme.fn.smallerThan("xs")]: {
+    [theme.fn.smallerThan("sm")]: {
       display: "none",
     },
   },
@@ -237,6 +239,25 @@ export default function RootLayout({
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
+  const footerLinks = [
+    {
+      link: "/imprint",
+      label: t("common:app-impressum-imprint-label"),
+    },
+    {
+      link: "/privacy",
+      label: t("common:app-impressum-privacy-label"),
+    },
+  ];
+
+  const footerCenterItems = footerLinks.map((link) => (
+    <Link key={link.label} href={link.link}>
+      <Text lh={0.6} size="md">
+        {link.label}
+      </Text>
+    </Link>
+  ));
+
   const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
       bg={dark ? "dark.5" : "gray.2"}
@@ -319,12 +340,12 @@ export default function RootLayout({
             <Link href="/info/tech-stack" className={classes.link}>
               Technologie
             </Link>
-            <Link
+            {/* <Link
               href="/how-to-manual-anleitung-wie-geht-das"
               className={classes.link}
             >
               {t("common:app-headermenu-how-to")}
-            </Link>
+            </Link> */}
             <HoverCard
               width={600}
               position="bottom"
@@ -384,11 +405,17 @@ export default function RootLayout({
             </HoverCard>
           </Group>
           <Group>
+            <Box>
+              <SteadyButton
+                buttonTitle={t("common:app-steady-button-title")}
+              />
+            </Box>
+            {/* Does not fit in mobile portrait mode display */}
             <Box className={classes.hiddenIfSmallerThanXs}>
-              {/* Does not fit in mobile portrait mode display */}
               <LanguageSwitcher />
             </Box>
-            <Box>
+            {/* Does not fit in mobile portrait mode display */}
+            <Box className={classes.hiddenIfSmallerThanXs}>
               <LightDarkButton />
             </Box>
             {!!session && status === "authenticated" && (
@@ -396,7 +423,9 @@ export default function RootLayout({
                 <Notifications />
               </Box>
             )}
-            <LoginPanel />
+            <Box>
+              <LoginPanel />
+            </Box>
           </Group>
           {/* <Burger opened={drawerOpened} onClick={toggleDrawer} className={classes.hiddenDesktop} /> */}
         </Group>
@@ -417,6 +446,7 @@ export default function RootLayout({
           mt="-md"
         >
           <Divider
+            label="Menu"
             my="sm"
             color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
           />
@@ -434,12 +464,12 @@ export default function RootLayout({
           <Link href="/info/tech-stack" className={classes.link}>
             Technologie
           </Link>
-          <Link
+          {/* <Link
             href="/how-to-manual-anleitung-wie-geht-das"
             className={classes.link}
           >
             {t("common:app-headermenu-how-to")}
-          </Link>
+          </Link> */}
           <UnstyledButton
             className={classes.link}
             onClick={handleUnstyledButtonClick}
@@ -459,6 +489,11 @@ export default function RootLayout({
             my="sm"
             color={theme.colorScheme === "dark" ? "dark.5" : "gray.1"}
           />
+          <Box>
+            <LightDarkButton />
+            <LanguageSwitcher />
+          </Box>
+          <Box></Box>
         </ScrollArea>
       </Drawer>
 
@@ -470,6 +505,8 @@ export default function RootLayout({
 
       {/* Content */}
       <Box className="relative mt-16 pb-16">{children}</Box>
+
+      <Footer items={footerCenterItems} />
 
       {/* CookieConsent */}
       <CookieConsentBanner />

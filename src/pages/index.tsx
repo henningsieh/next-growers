@@ -4,7 +4,7 @@ import type { GetStaticPropsContext, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-import LandingPage from "~/components/StaticPages/LandingPage";
+import LandingPage from "~/components/WelcomePage";
 
 import { prisma } from "~/server/db";
 
