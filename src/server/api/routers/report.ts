@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { TRPCError } from "@trpc/server";
+import { nanoid } from "nanoid";
+import slugify from "slugify";
 import { z } from "zod";
 
 import {
@@ -52,16 +54,16 @@ export const reportRouter = createTRPCRouter({
               },
             ],
             /*
-            strains: {
-              //FIXME: workaround for hiding "unready" (without strains) reports
-              some: {
-                name: {
-                  contains: strain,
-                  mode: "insensitive",
+              strains: {
+                //FIXME: workaround for hiding "unready" (without strains) reports
+                some: {
+                  name: {
+                    contains: strain,
+                    mode: "insensitive",
+                  },
                 },
               },
-            },
-            */
+              */
 
             strains: strain
               ? {
@@ -319,17 +321,17 @@ export const reportRouter = createTRPCRouter({
             //     },
             //   },
             // },
-            /* 
-            strains: strain
-              ? {
-                  some: {
-                    name: {
-                      contains: strain,
-                      mode: "insensitive",
+            /*
+              strains: strain
+                ? {
+                    some: {
+                      name: {
+                        contains: strain,
+                        mode: "insensitive",
+                      },
                     },
-                  },
-                }
-              : {}, */
+                  }
+                : {}, */
           },
           orderBy: {
             [orderBy]: desc ? "desc" : "asc",
@@ -739,43 +741,43 @@ export const reportRouter = createTRPCRouter({
    * @Input: userId: String
    */
   /*   getReportsByAuthorId: publicProcedure
-    .input(z.string())
-    .query(async ({ ctx, input }) => {
-      const reports = await ctx.prisma.report.findMany({
-        include: {
-          author: {
-            select: { id: true, name: true, image: true },
-          },
-          image: {
-            select: {
-              id: true,
-              publicId: true,
-              cloudUrl: true,
+      .input(z.string())
+      .query(async ({ ctx, input }) => {
+        const reports = await ctx.prisma.report.findMany({
+          include: {
+            author: {
+              select: { id: true, name: true, image: true },
+            },
+            image: {
+              select: {
+                id: true,
+                publicId: true,
+                cloudUrl: true,
+              },
             },
           },
-        },
-        where: {
-          id: input,
-        },
-      });
-      return reports.map(
-        ({
-          id,
-          title,
-          description,
-          authorId,
-          createdAt,
-          updatedAt,
-        }) => ({
-          id,
-          title,
-          description,
-          authorId,
-          createdAt,
-          updatedAt,
-        })
-      );
-    }), */
+          where: {
+            id: input,
+          },
+        });
+        return reports.map(
+          ({
+            id,
+            title,
+            description,
+            authorId,
+            createdAt,
+            updatedAt,
+          }) => ({
+            id,
+            title,
+            description,
+            authorId,
+            createdAt,
+            updatedAt,
+          })
+        );
+      }), */
 
   deleteOwnReport: protectedProcedure
     .input(z.string())
@@ -808,7 +810,28 @@ export const reportRouter = createTRPCRouter({
   create: protectedProcedure
     .input(InputCreateReportForm)
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.report.create({
+      const baseSlug = slugify(input.title, {
+        lower: true,
+        strict: true,
+      });
+      let slugValue = baseSlug;
+
+      // Ensure the slug is unique
+      let isUnique = false;
+      while (!isUnique) {
+        const existingSlug = await ctx.prisma.reportSlug.findUnique({
+          where: { slug: slugValue },
+        });
+
+        if (!existingSlug) {
+          isUnique = true;
+        } else {
+          // Append a unique identifier to the slug
+          slugValue = `${baseSlug}-${nanoid(6)}`;
+        }
+      }
+
+      const report = await ctx.prisma.report.create({
         data: {
           title: input.title,
           description: input.description,
@@ -824,6 +847,21 @@ export const reportRouter = createTRPCRouter({
           },
         },
       });
+
+      // Create the ReportSlug record
+      await ctx.prisma.reportSlug.create({
+        data: {
+          report: {
+            connect: {
+              id: report.id,
+            },
+          },
+          slug: slugValue,
+        },
+      });
+
+      // Create the Report record
+      return report;
     }),
 
   saveReport: protectedProcedure
