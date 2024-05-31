@@ -17,7 +17,11 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconPlantOff, IconTrashFilled } from "@tabler/icons-react";
+import {
+  IconPlantOff,
+  IconSquarePlus,
+  IconTrashFilled,
+} from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -63,6 +67,28 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   const [selectedBreeder, setSelectedBreeder] = useState<
     BreederFromSeedfinder | undefined
   >(undefined);
+
+  // initialize saveBagSeedToReport function
+  const {
+    mutate: tRPCsaveBagSeedToReport,
+    isLoading: tRPCsaveBagSeedToReportIsLoading,
+    error: tRPCsaveBagSeedToReportError,
+  } = api.strains.saveBagSeedToReport.useMutation({
+    onMutate: (_plantId) => {
+      console.debug("START strains.saveBagSeedToReport.useMutation");
+    },
+    onError(error) {
+      console.error("ERROR strains.saveBagSeedToReport.useMutation");
+      console.error(tRPCsaveBagSeedToReportError);
+      console.error(error);
+      throw tRPCsaveBagSeedToReportError;
+    },
+    async onSuccess(_result, _plant) {
+      console.debug("SUCCESS strains.saveBagSeedToReport.useMutation");
+      //refresh content of allPlantsInGrow table
+      await trpc.strains.getAllPlantsByReportId.refetch();
+    },
+  });
 
   // Initialize deletePlant function
   const {
@@ -301,7 +327,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
             : "Current plants in your grow"}
         </Title>
 
-        <Box className="relative">
+        <Box mb="sm">
           <Table
             mt="xs"
             striped
@@ -399,6 +425,17 @@ const AddPlant = ({ growId }: AddPlantProps) => {
             </Box>
           )}
         </Box>
+        <Button
+          variant="filled"
+          color="growgreen"
+          leftIcon={<IconSquarePlus size="1.4rem" />}
+          onClick={() => {
+            tRPCsaveBagSeedToReport({ reportId: growId });
+          }}
+          loading={tRPCsaveBagSeedToReportIsLoading}
+        >
+          Add Bag Seed
+        </Button>
       </Paper>
 
       <Divider
