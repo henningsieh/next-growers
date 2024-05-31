@@ -39,11 +39,8 @@ const useStyles = createStyles((theme) => ({
   },
 
   image: {
-    // width: "100%",
-    // ...theme.fn.cover(),
-    ref: getStylesRef("image"),
     objectFit: "cover",
-    // backgroundSize: "cover",
+    ref: getStylesRef("image"),
     transition: "transform 500ms ease",
   },
 
@@ -145,6 +142,7 @@ export function ImagePreview({
           fetchPriority="high"
           alt={`Header Image from Grow \"${title}\"`}
           className={classes.image}
+          sizes="450px" // 450px is the maximum width of the RepostCard
         />
         <Box className={classes.overlay} />
         {/* Avatar */}
