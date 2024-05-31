@@ -25,6 +25,7 @@ import {
 import { env } from "~/env.mjs";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useRouter } from "next/router";
 
@@ -42,6 +43,7 @@ interface AddPlantProps {
 const AddPlant = ({ growId }: AddPlantProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
@@ -434,7 +436,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
           }}
           loading={tRPCsaveBagSeedToReportIsLoading}
         >
-          Add Bag Seed
+          {t("common:report-add-bagseed-button")}
         </Button>
       </Paper>
 
@@ -442,7 +444,6 @@ const AddPlant = ({ growId }: AddPlantProps) => {
         py="md"
         size="md"
         labelPosition="center"
-        // color={dark ? "groworange.4" : "groworange.6"}
         label={
           activeLocale === "de"
             ? "Sorte als neue Pflanze zum Grow hinzufügen"
