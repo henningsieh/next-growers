@@ -52,6 +52,7 @@ export function Footer({ items: footerLinks }: FooterProps) {
         <Flex align="center" justify="center" gap="xs">
           <ThemeIcon>
             <Image
+              priority
               src={"/favicon-32x32.png"}
               width={32}
               height={32}
