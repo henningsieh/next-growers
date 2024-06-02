@@ -156,6 +156,18 @@ export const onlyOnePostPerDayAllowed = {
   loading: false,
 };
 
+export const fileUploadErrorMsg = (
+  filename: string,
+  fileSizeInMB: string,
+  uploadMaxSize: string
+) => ({
+  title: 'Error with "' + filename + '"',
+  message: `File size of ${fileSizeInMB} MB exceeds the allowed maximum of ${uploadMaxSize} MB`,
+  color: "red",
+  icon: <IconFileAlert size="1.2rem" stroke={2.8} />,
+  loading: false,
+});
+
 export const filesMaxOneErrorMsg = (filesCount: number) => ({
   title: `File count error: The count ${filesCount} exceeds the permitted files count of 1.`,
   message: ` You can only upload one image file as a user avatar.`,

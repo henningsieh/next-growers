@@ -50,6 +50,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_AUTH_TOKEN: z.string().min(1),
     NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1),
     NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL: z.string().url(),
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE: z.string().min(1),
   },
 
   /**
@@ -85,5 +86,7 @@ export const env = createEnv({
     NEXT_PUBLIC_TWITTERX_URL: process.env.NEXT_PUBLIC_TWITTERX_URL,
     NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:
       process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE:
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE,
   },
 });

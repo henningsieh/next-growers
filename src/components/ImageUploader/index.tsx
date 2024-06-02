@@ -11,7 +11,8 @@ import {
 import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
-import { httpStatusErrorMsg } from "~/messages";
+import { env } from "~/env.mjs";
+import { fileUploadErrorMsg, httpStatusErrorMsg } from "~/messages";
 
 import {
   type Dispatch,
@@ -24,12 +25,9 @@ import { useSession } from "next-auth/react";
 
 import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 
-import type {
-  CloudinaryResonse, // IsoReportWithPostsFromDb,
-} from "~/types";
+import type { CloudinaryResonse } from "~/types";
 
 import { api } from "~/utils/api";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { handleMultipleDrop } from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
@@ -170,11 +168,21 @@ export default function ImageUploader({
                   onDrop={(files) => {
                     void handleMultipleDropWrapper(files);
                   }}
+                  maxSize={
+                    env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE as unknown as number
+                  }
                   maxFiles={maxFiles}
                   onReject={(files) => {
                     files.forEach((file) => {
                       notifications.show(
-                        httpStatusErrorMsg(file.file.name, 500)
+                        fileUploadErrorMsg(
+                          file.file.name,
+                          (file.file.size / 1024 ** 2).toFixed(2),
+                          String(
+                            (env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE as unknown as number) /
+                              1024 ** 2
+                          )
+                        )
                       );
                     });
                   }}
