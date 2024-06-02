@@ -214,6 +214,7 @@ export default function ReportCard({
     return false;
   });
 
+  // Intitialize plantBadges elemet array
   const plantBadges = uniqueStrains?.map((plant) => (
     <Tooltip
       key={plant.id}
@@ -243,29 +244,6 @@ export default function ReportCard({
       </Badge>
     </Tooltip>
   ));
-
-  // Intitialize plantBadges elemet array
-  //   <Box key={strainBadge.id}>
-  //     <Badge
-  //       className="cursor-pointer"
-  //       onClick={() => {
-  //         setSearchString &&
-  //           setSearchString(`strain:"${strainBadge.name}"`);
-  //       }}
-  //       variant="gradient"
-  //       gradient={{
-  //         from: theme.colors.dark[4],
-  //         to: theme.colors.green[9],
-  //       }}
-  //       fz={"0.66rem"}
-  //       px={3}
-  //       mx={0}
-  //       leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
-  //     >
-  //       {strainBadge.name}
-  //     </Badge>
-  //   </Box>
-  // ));
 
   // Initialize the total comment count
   let totalCommentCount = 0;
@@ -315,7 +293,7 @@ export default function ReportCard({
       <Card.Section className={classes.section}>
         <Flex align="flex-start" justify="space-between">
           {/* Strains */}
-          <ScrollArea className="overflow-visible" maw={260} h={42}>
+          <ScrollArea className="overflow-visible" w={"82%"} h={42}>
             {plantBadges && plantBadges.length !== 0 ? (
               <Flex py={4} gap="xs">
                 {plantBadges}

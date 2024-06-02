@@ -6,6 +6,7 @@ import {
   createStyles,
   Flex,
   getStylesRef,
+  Grid,
   Title,
 } from "@mantine/core";
 import {
@@ -25,6 +26,8 @@ import {
   IconUserPlus,
 } from "@tabler/icons-react";
 
+import { useState } from "react";
+
 import type { GetServerSideProps, NextPage } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
@@ -34,6 +37,7 @@ import Image from "next/image";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
 import UserAvatar from "~/components/Atom/UserAvatar";
+import ReportCard from "~/components/Report/Card";
 
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
@@ -365,8 +369,9 @@ const PublicProfile: NextPage<{
   imageCount: number;
   ownReports: IsoReportWithPostsFromDb[];
 }> = (props) => {
-  const { user, imageCount } = props;
-  const { data: session } = useSession();
+  const { user, imageCount, ownReports: ownIsoReports } = props;
+  const { data: session, status } = useSession();
+  const [_searchString, setSearchString] = useState("");
 
   console.debug("user", user);
 
@@ -425,6 +430,10 @@ const PublicProfile: NextPage<{
     "https://images.unsplash.com/photo-1444084316824-dc26d6657664",
   ];
 
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
   if (session && user) {
     return (
       <>
@@ -470,7 +479,6 @@ const PublicProfile: NextPage<{
                 <Flex justify="space-between" style={{ zIndex: 20 }}>
                   <Box p="xs">
                     <UserAvatar
-                      userId={user.id}
                       userName={user.name}
                       imageUrl={user.image}
                       avatarRadius={120}
@@ -524,17 +532,7 @@ const PublicProfile: NextPage<{
               </Card.Section>
 
               <Text mt="sm" color="dimmed" size="md">
-                has uploaded
-                <Text
-                  fz="md"
-                  fw="bold"
-                  component="span"
-                  inherit
-                  color={theme.colors.groworange[4]}
-                >
-                  &nbsp;{user._count.posts} Updates
-                </Text>
-                &nbsp;with
+                ... has uploaded
                 <Text
                   fz="md"
                   fw="bold"
@@ -543,6 +541,16 @@ const PublicProfile: NextPage<{
                   color={theme.colors.groworange[4]}
                 >
                   &nbsp;{imageCount} images
+                </Text>
+                &nbsp;within
+                <Text
+                  fz="md"
+                  fw="bold"
+                  component="span"
+                  inherit
+                  color={theme.colors.groworange[4]}
+                >
+                  &nbsp;{user._count.posts} Updates
                 </Text>
               </Text>
 
@@ -563,7 +571,7 @@ const PublicProfile: NextPage<{
               </Card.Section>
 
               <Text mt="sm" color="dimmed" size="md">
-                and owns
+                ... and owns
                 <Text
                   fz="md"
                   fw="bold"
@@ -577,19 +585,25 @@ const PublicProfile: NextPage<{
               </Text>
 
               <Card.Section inheritPadding mt="sm" pb="md">
-                <SimpleGrid cols={responsiveColumnCount}>
-                  {images.map((image) => (
-                    <div key={image}>
-                      <Image
-                        alt=""
-                        src={image}
-                        width={330}
-                        height={330}
-                        sizes="330px"
-                      />
-                    </div>
-                  ))}
-                </SimpleGrid>
+                <Grid gutter="sm">
+                  {ownIsoReports.map((ownIsoReport) => {
+                    return (
+                      <Grid.Col
+                        key={ownIsoReport.id}
+                        xs={12}
+                        sm={6}
+                        md={4}
+                        lg={3}
+                        xl={3}
+                      >
+                        <ReportCard
+                          report={ownIsoReport}
+                          setSearchString={setSearchString}
+                        />
+                      </Grid.Col>
+                    );
+                  })}
+                </Grid>
               </Card.Section>
             </Card>
           </Container>

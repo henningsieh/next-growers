@@ -6,8 +6,11 @@ import {
   getStylesRef,
   rem,
   Text,
+  Tooltip,
 } from "@mantine/core";
 
+// import { useTranslation } from "react-i18next";
+// import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -125,11 +128,40 @@ export function ImagePreview({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   comments,
 }: ImageCardProps) {
+  // const router = useRouter();
+  // const { locale: activeLocale } = router;
+  // const { t } = useTranslation(activeLocale);
+
   const { classes } = useStyles();
 
   return (
-    <Link href={publicLink}>
+    <>
+      <Tooltip
+        transitionProps={{
+          transition: "slide-up",
+          duration: 150,
+        }}
+        position="top-start"
+        label={authorName}
+        color="growgreen.4"
+        withArrow
+      >
+        <Box
+          pos="absolute"
+          component={Link}
+          href={`/profile/${authorId}`}
+          className="top-11 left-2 z-20 cursor-pointer"
+        >
+          <UserAvatar
+            userName={authorName}
+            imageUrl={authorImageUrl}
+            avatarRadius={48}
+          />
+        </Box>
+      </Tooltip>
       <Card
+        component={Link}
+        href={publicLink}
         p="lg"
         shadow="lg"
         radius="sm"
@@ -147,16 +179,7 @@ export function ImagePreview({
           sizes="450px" // 450px is the maximum width of the RepostCard
         />
         <Box className={classes.overlay} />
-        {/* Avatar */}
-        <Box pos="absolute" ml={-10} pt={24} className="z-20">
-          <UserAvatar
-            userId={authorId}
-            userName={authorName}
-            imageUrl={authorImageUrl}
-            avatarRadius={42}
-          />
-        </Box>
-        {/* Cite blockquote */}
+
         <Box pos="absolute" m={-20}>
           {/* Blockquote */}
           <Blockquote className={classes.cite} cite={authorName}>
@@ -190,7 +213,7 @@ export function ImagePreview({
           </Group>
         </Group> */}
       </Card>
-    </Link>
+    </>
   );
 }
 

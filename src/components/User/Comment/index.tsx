@@ -277,7 +277,6 @@ export function UserComment({
                       comment.author.name as string
                     }`
               }
-              userId={comment.author.id}
               userName={comment.author.name as string}
               avatarRadius={largeScreen ? 42 : 32}
             />

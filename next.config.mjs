@@ -41,19 +41,7 @@ const config = {
       },
       {
         protocol: "https",
-        hostname: "api.api-ninjas.com",
-        port: "",
-        pathname: "/v1/randomimage/**",
-      },
-      {
-        protocol: "https",
-        hostname: "picsum.photos",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "pbs.twimg.com",
+        hostname: "*.twimg.com",
         port: "",
         pathname: "/**",
       },
