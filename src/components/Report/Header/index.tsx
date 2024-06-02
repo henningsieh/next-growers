@@ -76,6 +76,7 @@ ReportHeaderProps) {
           imageUrl={image}
           title={report.title}
           description={report.description}
+          authorId={report.author.id}
           authorName={report.author.name as string}
           authorImageUrl={
             report.author.image

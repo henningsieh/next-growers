@@ -105,6 +105,7 @@ interface ImageCardProps {
   imageUrl: string;
   title: string;
   description: string;
+  authorId: string;
   authorName: string;
   authorImageUrl: string;
   views: number;
@@ -116,6 +117,7 @@ export function ImagePreview({
   imageUrl,
   title,
   description,
+  authorId,
   authorName,
   authorImageUrl,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -148,6 +150,7 @@ export function ImagePreview({
         {/* Avatar */}
         <Box pos="absolute" ml={-10} pt={24} className="z-20">
           <UserAvatar
+            userId={authorId}
             userName={authorName}
             imageUrl={authorImageUrl}
             avatarRadius={42}

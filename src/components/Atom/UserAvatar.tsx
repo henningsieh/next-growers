@@ -1,15 +1,18 @@
-import { Box, Tooltip } from "@mantine/core";
+import { Tooltip } from "@mantine/core";
 
 import Image from "next/image";
+import Link from "next/link";
 
 type UserAvatarProps = {
   imageUrl: string;
+  userId: string;
   userName: string;
   avatarRadius: number;
 };
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
   imageUrl,
+  userId,
   userName,
   avatarRadius,
 }) => {
@@ -21,15 +24,15 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
       color="growgreen.4"
       withArrow
     >
-      <Box>
+      <Link className="z-20" href={`/profile/${userId}`}>
         <Image
-          className={"mx-auto rounded-full w-auto h-auto"}
+          className={"mx-auto rounded-full"}
           width={avatarRadius}
           height={avatarRadius}
           src={imageUrl}
           alt={`${userName}'s Profile Image`}
         />
-      </Box>
+      </Link>
     </Tooltip>
   );
 };

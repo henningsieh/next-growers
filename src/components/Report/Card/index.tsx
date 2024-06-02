@@ -297,6 +297,7 @@ export default function ReportCard({
           title={isoReport.title}
           description={isoReport.description}
           publicLink={`/grow/${isoReport.id}`}
+          authorId={isoReport.author?.id}
           authorName={isoReport.author?.name as string}
           authorImageUrl={
             isoReport.author?.image

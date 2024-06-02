@@ -233,13 +233,12 @@ export function CreateReportForm({
                 title={createReportForm.values.title}
                 description={createReportForm.values.description}
                 publicLink="#"
+                authorId={user.id}
                 authorName={user.name as string}
                 authorImageUrl={
                   user.image
                     ? user.image
-                    : `https://ui-avatars.com/api/?name=${
-                        user.name as string
-                      }`
+                    : `https://ui-avatars.com/api/?name=${user.name as string}`
                 }
                 comments={89}
                 views={183}

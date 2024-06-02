@@ -266,6 +266,7 @@ export function EditReportForm({
                   views={183}
                   comments={89}
                   imageUrl={cloudUrl}
+                  authorId={user.id}
                   authorName={user.name as string}
                   authorImageUrl={
                     user.image

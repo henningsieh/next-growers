@@ -10,6 +10,17 @@ type GetIsoReportWithPostsFromDbOutput =
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
 
+export type getUserByIdResponse = RouterOutput["user"]["getUserById"];
+export type User = {
+  image: string;
+  id: string;
+  name: string;
+  email: string;
+  _count: {
+    posts: number;
+  };
+};
+
 type getPostsByReportIdOutput =
   RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
