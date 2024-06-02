@@ -298,7 +298,7 @@ export const handleMultipleDrop = async (
 }> => {
   const url =
     "https://api.cloudinary.com/v1_1/" +
-    env.CLOUDINARY_NAME +
+    env.NEXT_PUBLIC_CLOUDINARY_NAME +
     "/image/upload";
 
   const cloudinarySignatureResponse = await fetch(

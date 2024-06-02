@@ -23,7 +23,7 @@ export const imageRouter = createTRPCRouter({
     const api_secret =
       cloudinary.config().api_secret || env.CLOUDINARY_API_SECRET;
     const cloud_name =
-      cloudinary.config().cloud_name || env.CLOUDINARY_NAME;
+      cloudinary.config().cloud_name || env.NEXT_PUBLIC_CLOUDINARY_NAME;
     const signature = cloudinary.utils.api_sign_request(
       {
         timestamp: timestamp,

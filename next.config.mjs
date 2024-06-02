@@ -27,7 +27,7 @@ const config = {
         protocol: "https",
         hostname: "res.cloudinary.com",
         port: "",
-        pathname: `/${env.CLOUDINARY_NAME}/**`,
+        pathname: `/${env.NEXT_PUBLIC_CLOUDINARY_NAME}/**`,
       },
       {
         protocol: "https",
