@@ -11,7 +11,7 @@ export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
 
 export type getUserByIdResponse = RouterOutput["user"]["getUserById"];
-export type User = {
+export type UserProfileData = {
   image: string;
   id: string;
   name: string;

@@ -8,7 +8,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import type { User } from "~/types";
+import type { UserProfileData } from "~/types";
 
 import {
   InputSaveUserImage,
@@ -118,7 +118,7 @@ export const userRouter = createTRPCRouter({
             email: true,
             image: true,
           },
-        })) as User | null;
+        })) as UserProfileData | null;
 
         return !!user
           ? {

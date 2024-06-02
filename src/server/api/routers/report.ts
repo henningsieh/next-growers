@@ -262,12 +262,12 @@ export const reportRouter = createTRPCRouter({
 
             return {
               ...reportFromDb,
+              posts: isoPosts,
+              likes: isoLikes,
               createdAt: reportFromDb.createdAt.toISOString(),
               updatedAt: newestPostDate
                 ? newestPostDate.toISOString()
                 : reportFromDb.updatedAt.toISOString(),
-              likes: isoLikes,
-              posts: isoPosts,
             };
           });
 
@@ -534,7 +534,7 @@ export const reportRouter = createTRPCRouter({
 
   /**
    * Get Report by Id
-   * @Input: userId: String
+   * @Input: reportId: String
    */
   getIsoReportWithPostsFromDb: publicProcedure
     .input(z.string())
