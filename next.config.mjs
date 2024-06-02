@@ -1,3 +1,5 @@
+import { env } from "./src/env.mjs";
+
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
@@ -31,7 +33,7 @@ const config = {
         protocol: "https",
         hostname: "res.cloudinary.com",
         port: "",
-        pathname: "/dgcydirlu/**",
+        pathname: `/${env.CLOUDINARY_NAME}/**`,
       },
       {
         protocol: "https",
