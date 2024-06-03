@@ -32,7 +32,7 @@ import type { CloudinaryResonse } from "~/types";
 
 import { api } from "~/utils/api";
 import {
-  getFileUploadCloudinaryMaxFileSize,
+  getFileUploadCloudinaryMaxFileSizeInByte,
   getFileUploadMaxFileCount,
   handleMultipleDrop,
 } from "~/utils/helperUtils";
@@ -173,30 +173,99 @@ export default function ImageUploader({
                   onDrop={(files) => {
                     void handleMultipleDropWrapper(files);
                   }}
-                  maxSize={getFileUploadCloudinaryMaxFileSize()}
+                  maxSize={getFileUploadCloudinaryMaxFileSizeInByte()}
                   maxFiles={getFileUploadMaxFileCount()}
                   onReject={(files: FileRejection[]) => {
+                    console.error(files);
                     let tooManyFilesErrorShown = false;
+
                     files.forEach((file) => {
-                      if (file.errors[0].code === "too-many-files") {
-                        if (!tooManyFilesErrorShown) {
+                      file.errors.map((error) => {
+                        console.error(error.code);
+
+                        if (error.code === "too-many-files") {
+                          if (!tooManyFilesErrorShown) {
+                            notifications.show(
+                              fileUploadMaxFileCountErrorMsg(
+                                files.length,
+                                getFileUploadMaxFileCount()
+                              )
+                            );
+                            // show error only once
+                            tooManyFilesErrorShown = true;
+                          }
+                        } else if (error.code === "file-too-large") {
                           notifications.show(
-                            fileUploadMaxFileCountErrorMsg(
-                              files.length,
-                              getFileUploadMaxFileCount()
+                            fileUploadMaxFileSizeErrorMsg(
+                              file.file.name,
+                              file.file.size
                             )
                           );
-                          tooManyFilesErrorShown = true;
+                        } else if (error.code === "file-invalid-type") {
+                          notifications.show(
+                            httpStatusErrorMsg(
+                              `File type of ${file.file.name} is not supported!`,
+                              415
+                            )
+                          );
+                        } else {
+                          notifications.show(
+                            httpStatusErrorMsg(
+                              error.message,
+                              error.code
+                            )
+                          );
                         }
-                      } else {
-                        notifications.show(
-                          fileUploadMaxFileSizeErrorMsg(
-                            file.file.name,
-                            file.file.size / 1024 ** 2
-                          )
-                        );
-                      }
+                      });
                     });
+
+                    // files.forEach((file) => {
+                    //   if (
+                    //     // too many files error
+                    //     file.errors[0].code === "too-many-files"
+                    //   ) {
+                    //     if (!tooManyFilesErrorShown) {
+                    //       notifications.show(
+                    //         fileUploadMaxFileCountErrorMsg(
+                    //           files.length,
+                    //           getFileUploadMaxFileCount()
+                    //         )
+                    //       );
+                    //       // show error only once
+                    //       tooManyFilesErrorShown = true;
+                    //     }
+                    //   } else if (
+                    //     // file too large error
+                    //     file.errors[0].code === "file-too-large"
+                    //   ) {
+                    //     notifications.show(
+                    //       fileUploadMaxFileSizeErrorMsg(
+                    //         file.file.name,
+                    //         file.file.size
+                    //       )
+                    //     );
+                    //   } else if (
+                    //     // file invalid type error
+                    //     file.errors[0].code === "file-invalid-type"
+                    //   ) {
+                    //     notifications.show(
+                    //       httpStatusErrorMsg(
+                    //         `File type of ${file.file.name} is not supported!`,
+                    //         415
+                    //       )
+                    //     );
+                    //   } else {
+                    //     file.errors.map((error) => {
+                    //       console.error(error);
+                    //       notifications.show(
+                    //         httpStatusErrorMsg(
+                    //           error.message,
+                    //           error.code
+                    //         )
+                    //       );
+                    //     });
+                    //   }
+                    // });
                   }}
                   sx={(theme) => ({
                     fontSize: theme.fontSizes.lg,

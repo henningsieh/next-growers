@@ -437,6 +437,9 @@ export function getFileUploadCloudinaryMaxFileSize(): number {
     parseInt(env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE) / 1024 ** 2
   );
 }
+export function getFileUploadCloudinaryMaxFileSizeInByte(): number {
+  return parseInt(env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE);
+}
 
 export function getFileUploadMaxFileCount(): number {
   return parseInt(env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES);

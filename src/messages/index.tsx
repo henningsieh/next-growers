@@ -11,15 +11,15 @@ import {
   IconPhotoCancel,
 } from "@tabler/icons-react";
 
-import { getFileUploadCloudinaryMaxFileSize } from "~/utils/helperUtils";
+import { getFileUploadCloudinaryMaxFileSizeInByte } from "~/utils/helperUtils";
 
 export const httpStatusErrorMsg = (
   message: string,
-  httpStatus?: number | undefined,
+  httpStatus?: number | string | undefined,
   autoClose?: boolean | undefined
 ) => ({
   loading: false,
-  title: `Error ${httpStatus ? `${String(httpStatus)}` : ""}`,
+  title: `Error ${httpStatus ? `${String(httpStatus)}` : "500"}`,
   message,
   color: "red",
   autoClose,
@@ -160,10 +160,11 @@ export const onlyOnePostPerDayAllowed = {
 
 export const fileUploadMaxFileSizeErrorMsg = (
   filename: string,
-  fileSizeInMB: number
+  fileSizeInByte: number
 ) => ({
   title: 'Error with "' + filename + '"',
-  message: `File size of ${fileSizeInMB} MB exceeds the allowed maximum of ${getFileUploadCloudinaryMaxFileSize().toFixed(2)} MB`,
+  message: `File size of ${fileSizeInByte.toFixed(2)} MB exceeds the allowed maximum \
+            of ${(getFileUploadCloudinaryMaxFileSizeInByte() / 1024 ** 2).toFixed(2)} MB`,
   color: "red",
   icon: <IconFileAlert size="1.2rem" stroke={2.8} />,
   loading: false,
