@@ -314,7 +314,7 @@ export default function ReportCard({
       <Card.Section className={classes.section}>
         <Flex align="flex-start" justify="space-between">
           {/* Strains */}
-          <ScrollArea className="overflow-visible" maw={260} h={42}>
+          <ScrollArea className="overflow-visible" w={"82%"} h={42}>
             {plantBadges && plantBadges.length !== 0 ? (
               <Flex py={4} gap="xs">
                 {plantBadges}

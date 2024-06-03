@@ -5,7 +5,9 @@ import {
   Container,
   createStyles,
   Grid,
+  Loader,
   LoadingOverlay,
+  Skeleton,
   Title,
 } from "@mantine/core";
 import { IconDatabaseSearch } from "@tabler/icons-react";
@@ -133,15 +135,25 @@ const PublicAllGrows: NextPage = () => {
 
         {/* // Iso Reports Grid */}
         <Box pos="relative">
-          <LoadingOverlay
-            visible={isoIsLoading}
-            transitionDuration={600}
-            overlayBlur={2}
-          />
-          {isoReports && !isoIsLoading && (
-            <Grid gutter="sm">
+          <Skeleton my={10} h={740} visible={isoIsLoading}>
+            <LoadingOverlay
+              loaderProps={{
+                size: "xl",
+                color: "growgreen.4",
+                // m: "xl",
+              }}
+              visible={isoIsLoading}
+              transitionDuration={150}
+              overlayBlur={2}
+            >
+              <Center>
+                Loading Grows...
+                <Loader size="xl" m="xl" color="growgreen.4" />
+              </Center>
+            </LoadingOverlay>
+            <Grid gutter="xs">
               {/* LOOP OVER REPORTS */}
-              {isoReports.length ? (
+              {isoReports && isoReports.length ? (
                 isoReports.map((isoReport) => {
                   return (
                     <Grid.Col
@@ -176,7 +188,11 @@ const PublicAllGrows: NextPage = () => {
                 </Container>
               )}
             </Grid>
-          )}
+          </Skeleton>
+
+          {/* {isoReports && !isoIsLoading && (
+
+          )} */}
         </Box>
       </Container>
     </>
