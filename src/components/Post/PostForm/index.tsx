@@ -56,7 +56,6 @@ import type {
 import { GrowStage } from "~/types";
 
 import { api } from "~/utils/api";
-import { getFileMaxUpload } from "~/utils/helperUtils";
 import { InputCreatePostForm } from "~/utils/inputValidation";
 
 interface AddPostProps {
@@ -525,7 +524,6 @@ const PostForm = (props: AddPostProps) => {
                 setImageIds={setImageIds}
                 isUploading={isUploading}
                 setIsUploading={setIsUploading}
-                maxFiles={getFileMaxUpload()}
               />
 
               <Group position="apart" mt="xl">

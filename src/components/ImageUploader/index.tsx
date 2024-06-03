@@ -8,11 +8,14 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import type { FileWithPath } from "@mantine/dropzone";
+import type { FileRejection, FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
-import { env } from "~/env.mjs";
-import { fileUploadErrorMsg, httpStatusErrorMsg } from "~/messages";
+import {
+  fileUploadMaxFileCountErrorMsg,
+  fileUploadMaxFileSizeErrorMsg,
+  httpStatusErrorMsg,
+} from "~/messages";
 
 import {
   type Dispatch,
@@ -28,7 +31,11 @@ import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 import type { CloudinaryResonse } from "~/types";
 
 import { api } from "~/utils/api";
-import { handleMultipleDrop } from "~/utils/helperUtils";
+import {
+  getFileUploadCloudinaryMaxFileSize,
+  getFileUploadMaxFileCount,
+  handleMultipleDrop,
+} from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
   //report: IsoReportWithPostsFromDb;
@@ -48,7 +55,6 @@ interface ImageUploaderProps {
       }[]
     >
   >;
-  maxFiles?: number;
   setImageIds: Dispatch<SetStateAction<string[]>>;
   isUploading: boolean;
   setIsUploading: Dispatch<SetStateAction<boolean>>;
@@ -59,7 +65,6 @@ export default function ImageUploader({
   setImages,
   isUploading,
   setIsUploading,
-  maxFiles,
 }: ImageUploaderProps) {
   const { data: session, status } = useSession();
   const _theme = useMantineTheme();
@@ -168,22 +173,29 @@ export default function ImageUploader({
                   onDrop={(files) => {
                     void handleMultipleDropWrapper(files);
                   }}
-                  maxSize={
-                    env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE as unknown as number
-                  }
-                  maxFiles={maxFiles}
-                  onReject={(files) => {
+                  maxSize={getFileUploadCloudinaryMaxFileSize()}
+                  maxFiles={getFileUploadMaxFileCount()}
+                  onReject={(files: FileRejection[]) => {
+                    let tooManyFilesErrorShown = false;
                     files.forEach((file) => {
-                      notifications.show(
-                        fileUploadErrorMsg(
-                          file.file.name,
-                          (file.file.size / 1024 ** 2).toFixed(2),
-                          String(
-                            (env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE as unknown as number) /
-                              1024 ** 2
+                      if (file.errors[0].code === "too-many-files") {
+                        if (!tooManyFilesErrorShown) {
+                          notifications.show(
+                            fileUploadMaxFileCountErrorMsg(
+                              files.length,
+                              getFileUploadMaxFileCount()
+                            )
+                          );
+                          tooManyFilesErrorShown = true;
+                        }
+                      } else {
+                        notifications.show(
+                          fileUploadMaxFileSizeErrorMsg(
+                            file.file.name,
+                            file.file.size / 1024 ** 2
                           )
-                        )
-                      );
+                        );
+                      }
                     });
                   }}
                   sx={(theme) => ({

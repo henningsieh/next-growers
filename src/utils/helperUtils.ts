@@ -432,6 +432,12 @@ export const parseAndReplaceAmazonLinks = async (
   return doc.documentElement.innerHTML;
 };
 
-export function getFileMaxUpload(): number {
+export function getFileUploadCloudinaryMaxFileSize(): number {
+  return (
+    parseInt(env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE) / 1024 ** 2
+  );
+}
+
+export function getFileUploadMaxFileCount(): number {
   return parseInt(env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES);
 }
