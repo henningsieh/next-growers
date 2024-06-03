@@ -32,7 +32,6 @@ export const env = createEnv({
     EMAIL_FROM: z.string().min(1),
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
-    CLOUDINARY_NAME: z.string().min(1),
 
     SEEDFINDER_API_KEY: z.string().min(32),
   },
@@ -51,6 +50,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1),
     NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL: z.string().url(),
     NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE: z.string().min(1),
+    NEXT_PUBLIC_CLOUDINARY_NAME: z.string().min(1),
   },
 
   /**
@@ -73,7 +73,8 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    NEXT_PUBLIC_CLOUDINARY_NAME:
+      process.env.NEXT_PUBLIC_CLOUDINARY_NAME,
     SEEDFINDER_API_KEY: process.env.SEEDFINDER_API_KEY,
     NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL:
       process.env.NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL,
