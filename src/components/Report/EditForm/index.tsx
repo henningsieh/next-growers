@@ -415,7 +415,7 @@ export function EditReportForm({
                       withAsterisk
                       {...editReportForm.getInputProps("environment")}
                       className="w-full"
-                      icon={<IconHome size="1.2rem" />}
+                      icon={<IconHome size={20} />}
                     />
                   </Grid.Col>
                   <Grid.Col xs={12} sm={5} md={4} lg={4} xl={4}>
@@ -430,7 +430,7 @@ export function EditReportForm({
                       maxDate={new Date()}
                       // maxDate={dayjs(new Date()).add(1, 'month').toDate()}
                       // className="w-full"
-                      icon={<IconCalendar size="1.2rem" />}
+                      icon={<IconCalendar size={20} />}
                       withAsterisk
                       {...editReportForm.getInputProps("createdAt")}
                       onChange={(selectedDate: Date) => {
@@ -470,7 +470,7 @@ export function EditReportForm({
                     color="growgreen"
                     type="submit"
                     leftIcon={
-                      <IconDeviceFloppy stroke={2.2} size="1.4rem" />
+                      <IconDeviceFloppy stroke={2.2} size={24} />
                     }
                   >
                     {isNewReport

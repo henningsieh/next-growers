@@ -216,7 +216,7 @@ export default function Plants({ plants }: Props) {
                     className="cursor-pointer"
                     href={plant.seedfinderStrain.seedfinder_ext_url}
                     compact
-                    leftIcon={<IconExternalLink size="1rem" />}
+                    leftIcon={<IconExternalLink size={18} />}
                   >
                     Infos on Seedfinder.eu
                   </Button>
@@ -280,7 +280,7 @@ export default function Plants({ plants }: Props) {
                           plant.seedfinderStrain.breeder_website_url
                         }
                         compact
-                        rightIcon={<IconExternalLink size="1rem" />}
+                        rightIcon={<IconExternalLink size={18} />}
                       >
                         Website
                       </Button>

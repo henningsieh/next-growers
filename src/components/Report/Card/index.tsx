@@ -237,7 +237,7 @@ export default function ReportCard({
         fz={"0.72rem"}
         px={3}
         mx={0}
-        leftSection={<IconCannabis stroke={1.6} size={16} />}
+        leftSection={<IconCannabis stroke={1.8} size={16} />}
       >
         {plant.seedfinderStrain.name}
       </Badge>
@@ -470,7 +470,7 @@ export function EditReportMenu({
     <IconAlertTriangle
       className="ml-2"
       height={20}
-      stroke={1.6}
+      stroke={1.8}
     />
   </Button> 
   </Group> */}

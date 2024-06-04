@@ -18,7 +18,7 @@ export default function EditGrowButton({ growId, buttonLabel }: Props) {
         variant="filled"
         color="groworange"
         className="cursor-pointer"
-        leftIcon={<IconEdit className="ml-1" size={22} stroke={1.6} />}
+        leftIcon={<IconEdit className="ml-1" size={22} stroke={1.8} />}
       >
         {buttonLabel}
       </Button>

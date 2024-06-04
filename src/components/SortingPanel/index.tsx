@@ -56,7 +56,7 @@ export default function SortingPanel({
                     ? theme.white
                     : theme.colors.dark[4]
                 }
-                size="1.1rem"
+                size={18}
                 stroke={1.8}
               />
             ) : (
@@ -66,7 +66,7 @@ export default function SortingPanel({
                     ? theme.white
                     : theme.colors.dark[4]
                 }
-                size="1.1rem"
+                size={18}
                 stroke={1.8}
               />
             )
@@ -77,7 +77,7 @@ export default function SortingPanel({
                   ? theme.white
                   : theme.colors.dark[4]
               }
-              size="1.1rem"
+              size={18}
               stroke={1.8}
             />
           ) : (
@@ -87,7 +87,7 @@ export default function SortingPanel({
                   ? theme.white
                   : theme.colors.dark[4]
               }
-              size="1.1rem"
+              size={18}
               stroke={1.8}
             />
           )

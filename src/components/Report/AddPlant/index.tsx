@@ -403,7 +403,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
           </Table>
           {!allPlantsInGrowAreLoading && plantsInGrow.length === 0 && (
             <Alert
-              icon={<IconPlantOff size="1rem" />}
+              icon={<IconPlantOff size={20} />}
               title={activeLocale === "de" ? "Schade!" : "Bummer!"}
               color="red"
               variant="outline"
@@ -430,7 +430,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
         <Button
           variant="filled"
           color="growgreen"
-          leftIcon={<IconSquarePlus size="1.4rem" />}
+          leftIcon={<IconSquarePlus size={22} />}
           onClick={() => {
             tRPCsaveBagSeedToReport({ reportId: growId });
           }}

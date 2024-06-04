@@ -314,7 +314,7 @@ export function UserComment({
                       variant="filled"
                       color="groworange.4"
                     >
-                      <IconEdit size="1.4rem" stroke={1.2} />
+                      <IconEdit size={20} stroke={1.8} />
                     </ActionIcon>
                   ) : (
                     <ActionIcon
@@ -328,7 +328,7 @@ export function UserComment({
                       variant="filled"
                       color="groworange.2"
                     >
-                      <IconEditOff size="1.4rem" stroke={1.2} />
+                      <IconEditOff size={20} stroke={1.8} />
                     </ActionIcon>
                   )}
                   <ActionIcon
@@ -338,7 +338,7 @@ export function UserComment({
                     variant="filled"
                     color="red.9"
                   >
-                    <IconTrashX size="1.4rem" stroke={1.2} />
+                    <IconTrashX size={20} stroke={1.8} />
                   </ActionIcon>
                 </>
               )}
@@ -384,7 +384,7 @@ export function UserComment({
                   <p></p>`);
               }}
             >
-              <IconMessageForward size="1.4rem" stroke={1.2} />
+              <IconMessageForward size={20} stroke={1.8} />
             </ActionIcon>
 
             {/* Like Button */}

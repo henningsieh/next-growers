@@ -50,7 +50,7 @@ export default function EmailForm() {
           placeholder={getEmailaddress()}
           fz={"xs"}
           label="Your email address"
-          icon={<IconAt size="1.0rem" />}
+          icon={<IconAt size={20} />}
         />
         <Button
           mt="sm"
@@ -60,7 +60,7 @@ export default function EmailForm() {
           color="growgreen"
           className="cursor-pointer"
           loading={isLoading}
-          leftIcon={<IconMailForward size={1.2} />}
+          leftIcon={<IconMailForward size={20} />}
           type="submit"
         >
           {`${t("common:app-login-button-loginWithEmail")}`}

@@ -387,9 +387,7 @@ export function CreateReportForm({
                 color="growgreen"
                 className="cursor-pointer"
                 disabled={!createReportForm.isValid()}
-                leftIcon={
-                  <IconFileArrowRight stroke={2.2} size="1.4rem" />
-                }
+                leftIcon={<IconFileArrowRight stroke={2.2} size={24} />}
                 type="submit"
               >
                 {textContinueButton}

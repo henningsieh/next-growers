@@ -359,51 +359,24 @@ const PostComments = ({ growId, updateId }: CommentsProps) => {
                     </Box>
                   </Group>
                   <Group position="right">
-                    <>
-                      <ActionIcon
-                        color="orange"
-                        variant="default"
-                        title="reset form and close"
-                        onClick={() => {
-                          setNewOpen(false);
-                          editor?.commands.clearContent();
-                          newCommentForm.reset();
-                        }}
-                        m={0}
-                        p={0}
-                        className=" cursor-default"
-                      >
-                        <IconX size={22} stroke={1.4} />
-                      </ActionIcon>
-                    </>
-
-                    {/* <LikeHeart itemToLike={comment} itemType={"Comment"} /> */}
+                    <ActionIcon
+                      color="orange"
+                      variant="default"
+                      title="reset form and close"
+                      onClick={() => {
+                        setNewOpen(false);
+                        editor?.commands.clearContent();
+                        newCommentForm.reset();
+                      }}
+                      m={0}
+                      p={0}
+                      className=" cursor-default"
+                    >
+                      <IconX size={22} stroke={1.8} />
+                    </ActionIcon>
                   </Group>
                 </Group>
-                <Box>
-                  {/* <Alert
-                    p="xs"
-                    mt="sm"
-                    ml={42}
-                    // w={420}
-                    icon={<IconInfoCircle size="1rem" />}
-                    title="Markdown support"
-                    color="orange"
-                    variant="outline"
-                  >
-                    Use{" "}
-                    <Link
-                      title="Markdown Cheat Sheet"
-                      href={
-                        "https://www.markdownguide.org/cheat-sheet/"
-                      }
-                      target="_blank"
-                    >
-                      <u>markdown</u>
-                    </Link>{" "}
-                    to <i>style</i> your <b>comment</b>!
-                  </Alert> */}
-                </Box>
+                <Box></Box>
                 <form
                   onSubmit={newCommentForm.onSubmit((values) => {
                     tRPCsaveComment(values);

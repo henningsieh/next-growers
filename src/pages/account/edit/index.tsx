@@ -315,7 +315,7 @@ const ProtectedEditReport: NextPage = () => {
             <Alert
               pt="lg"
               pb="lg"
-              icon={<IconAlertCircle size="1rem" />}
+              icon={<IconAlertCircle size={20} />}
               title="You don't have a username yet!"
               color="red"
               variant="outline"
@@ -367,7 +367,7 @@ const ProtectedEditReport: NextPage = () => {
                       color={theme.primaryColor}
                       variant="outline"
                     >
-                      <IconReload size="1.2rem" stroke={1.6} />
+                      <IconReload size={20} stroke={1.8} />
                     </ActionIcon>
                   </Tooltip>
                 }

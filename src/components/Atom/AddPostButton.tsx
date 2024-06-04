@@ -19,7 +19,7 @@ export default function AddPostButton({ growId, buttonLabel }: Props) {
         color="growgreen"
         className="cursor-pointer"
         leftIcon={
-          <IconFilePlus className="ml-1" size={22} stroke={1.6} />
+          <IconFilePlus className="ml-1" size={22} stroke={1.8} />
         }
       >
         {buttonLabel}

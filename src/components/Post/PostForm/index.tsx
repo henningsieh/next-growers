@@ -275,10 +275,7 @@ const PostForm = (props: AddPostProps) => {
                         )}
                         valueFormat="MMMM DD, YYYY HH:mm"
                         icon={
-                          <IconCalendarEvent
-                            stroke={1.6}
-                            size="1.4rem"
-                          />
+                          <IconCalendarEvent stroke={1.8} size={20} />
                         }
                         withAsterisk
                         {...createPostForm.getInputProps("date")}
@@ -303,7 +300,7 @@ const PostForm = (props: AddPostProps) => {
                           "common:post-addform-growdaydescription"
                         )}
                         placeholder="1"
-                        icon={<IconNumber stroke={1.6} size="1.8rem" />}
+                        icon={<IconNumber stroke={1.8} size={20} />}
                         withAsterisk
                         min={0}
                         {...createPostForm.getInputProps("day")}
@@ -344,7 +341,7 @@ const PostForm = (props: AddPostProps) => {
                         data={growStageSelectData}
                         withAsterisk
                         {...createPostForm.getInputProps("growStage")}
-                        icon={<IconPlant stroke={1.6} size="1.4rem" />}
+                        icon={<IconPlant stroke={1.8} size={20} />}
                       />
                     </Flex>
                   </Grid.Col>
@@ -366,7 +363,7 @@ const PostForm = (props: AddPostProps) => {
                         {...createPostForm.getInputProps(
                           "lightHoursPerDay"
                         )}
-                        icon={<IconClock stroke={1.6} size="1.6rem" />}
+                        icon={<IconClock stroke={1.8} size={20} />}
                       />
                       <NumberInput
                         w={232}
@@ -388,7 +385,7 @@ const PostForm = (props: AddPostProps) => {
                             createPostForm.setFieldValue("watt", value);
                           }
                         }}
-                        icon={<IconBolt stroke={1.6} size="1.6rem" />}
+                        icon={<IconBolt stroke={1.8} size={20} />}
                       />
                     </Flex>
                   </Grid.Col>
@@ -542,9 +539,7 @@ const PostForm = (props: AddPostProps) => {
                   variant="filled"
                   color="growgreen"
                   type="submit"
-                  leftIcon={
-                    <IconDeviceFloppy stroke={2.2} size="1.4rem" />
-                  }
+                  leftIcon={<IconDeviceFloppy stroke={2.2} size={20} />}
                 >
                   {t("common:post-addformn-save-button")}
                 </Button>

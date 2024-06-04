@@ -418,11 +418,7 @@ function PublicReportPost(
 
   const reportBasics = reportBasicData.map((growBasic) => (
     <Center key={growBasic.label}>
-      <growBasic.icon
-        size="1.05rem"
-        className={classes.icon}
-        stroke={1.6}
-      />
+      <growBasic.icon size={18} className={classes.icon} stroke={1.8} />
       <Text size="xs"> {growBasic.label} </Text>
     </Center>
   ));
