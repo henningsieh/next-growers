@@ -8,6 +8,7 @@ import {
   Group,
   LoadingOverlay, // MultiSelect,
   Paper,
+  Progress,
   rem,
   Select,
   Text,
@@ -53,17 +54,17 @@ import { InputEditReportForm } from "~/utils/inputValidation";
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
-    alignItems: "center", // add this line
-    height: "100%", // add this line
+    alignItems: "center",
+    height: "100%",
   },
 
   dropzone: {
     borderWidth: rem(1),
     padding: rem(5),
-    height: "100%", // add this line
-    display: "flex", // add this line
-    alignItems: "center", // add this line
-    justifyContent: "center", // add this line
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   icon: {
@@ -78,6 +79,14 @@ const useStyles = createStyles((theme) => ({
     width: rem(250),
     left: `calc(50% - ${rem(125)})`,
     bottom: rem(-20),
+  },
+  bar: {
+    justifyContent: "flex-start", // Align progess label to the left
+  },
+  label: {
+    paddingLeft: theme.spacing.xs,
+    fontSize: 12,
+    fontFamily: theme.fontFamilyMonospace,
   },
 }));
 
@@ -100,7 +109,6 @@ export function EditReportForm({
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  //const [strainsSarchValue, onSttrinsSearchChange] = useState("");
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
 
@@ -109,6 +117,13 @@ export function EditReportForm({
   const [cloudUrl, setCloudUrl] = useState(
     reportfromProps.image?.cloudUrl as string
   );
+  const [uploadProgress, setUploadProgress] = useState<
+    {
+      value: number;
+      label: string;
+    }[]
+  >([]);
+
   const { mutate: tRPCsaveReport } = api.reports.saveReport.useMutation(
     {
       onMutate: () => {
@@ -182,8 +197,6 @@ export function EditReportForm({
         console.error(error);
       },
       onSuccess: (newImage) => {
-        setImagesUploadedToCloudinary([]);
-
         if (!!newImage) {
           setCloudUrl(newImage.cloudUrl);
           editReportForm.setFieldValue("imageId", newImage.id);
@@ -191,6 +204,7 @@ export function EditReportForm({
       },
       onSettled: (_newImage) => {
         // indicate that saving process is ready:
+        setImagesUploadedToCloudinary([]);
         setIsSaving(false);
       },
     }
@@ -221,16 +235,16 @@ export function EditReportForm({
     setIsUploading(true);
     setIsSaving(true); //controlls upload inactive overlay
 
-    const result = await handleMultipleDrop(
+    const _result = await handleMultipleDrop(
       fileWithPath,
-      setImagesUploadedToCloudinary
+      setImagesUploadedToCloudinary,
+      setUploadProgress
     ).catch((error) => {
       console.error(error);
     });
 
     setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
-
-    console.debug(result);
+    setUploadProgress([]);
   };
 
   const growstartdatePlaceholder = t(
@@ -281,83 +295,99 @@ export function EditReportForm({
               </Box>
             </>
           ) : (
-            /*// Dropzone */
-            <Box className={classes.wrapper}>
-              <LoadingOverlay
-                visible={isSaving}
-                transitionDuration={600}
-                overlayBlur={2}
-              />
-              <Dropzone
-                accept={IMAGE_MIME_TYPE}
-                className={classes.dropzone}
-                h={rem(280)}
-                multiple={false} // only one header image!
-                openRef={openReference}
-                onDrop={(files) => {
-                  void handleMultipleDropWrapper(files);
-                }}
-                onReject={(files) => {
-                  files.forEach((file) => {
-                    notifications.show(
-                      httpStatusErrorMsg(file.file.name, 500)
-                    );
-                  });
-                }}
-              >
-                <Box style={{ pointerEvents: "none" }}>
-                  <Group position="center">
-                    {/* <Center> */}
-                    <Dropzone.Accept>
-                      <IconDownload
-                        size={rem(50)}
-                        color={
-                          theme.colorScheme === "dark"
-                            ? theme.colors.blue[0]
-                            : theme.white
-                        }
-                        stroke={1.6}
-                      />
-                    </Dropzone.Accept>
-                    <Dropzone.Reject>
-                      <IconX
-                        size={rem(50)}
-                        color={theme.colors.red[6]}
-                        stroke={1.6}
-                      />
-                    </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      <IconCloudUpload
-                        size={rem(50)}
-                        color={
-                          theme.colorScheme === "dark"
-                            ? theme.colors.dark[0]
-                            : theme.black
-                        }
-                        stroke={1.6}
-                      />
-                    </Dropzone.Idle>
-                    {/* </Center> */}
-                  </Group>
+            <>
+              {/* Dropzone */}
+              <Box className={classes.wrapper}>
+                <LoadingOverlay
+                  visible={isSaving}
+                  transitionDuration={600}
+                  overlayBlur={2}
+                />
+                <Dropzone
+                  accept={IMAGE_MIME_TYPE}
+                  className={classes.dropzone}
+                  h={rem(280)}
+                  multiple={false} // only one header image!
+                  openRef={openReference}
+                  onDrop={(files) => {
+                    void handleMultipleDropWrapper(files);
+                  }}
+                  onReject={(files) => {
+                    files.forEach((file) => {
+                      notifications.show(
+                        httpStatusErrorMsg(file.file.name, 500)
+                      );
+                    });
+                  }}
+                >
+                  <Box style={{ pointerEvents: "none" }}>
+                    <Group position="center">
+                      {/* <Center> */}
+                      <Dropzone.Accept>
+                        <IconDownload
+                          size={rem(50)}
+                          color={
+                            theme.colorScheme === "dark"
+                              ? theme.colors.blue[0]
+                              : theme.white
+                          }
+                          stroke={1.6}
+                        />
+                      </Dropzone.Accept>
+                      <Dropzone.Reject>
+                        <IconX
+                          size={rem(50)}
+                          color={theme.colors.red[6]}
+                          stroke={1.6}
+                        />
+                      </Dropzone.Reject>
+                      <Dropzone.Idle>
+                        <IconCloudUpload
+                          size={rem(50)}
+                          color={
+                            theme.colorScheme === "dark"
+                              ? theme.colors.dark[0]
+                              : theme.black
+                          }
+                          stroke={1.6}
+                        />
+                      </Dropzone.Idle>
+                      {/* </Center> */}
+                    </Group>
 
-                  <Text ta="center" fw={700} fz="lg" mt="xl">
-                    <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                    <Dropzone.Reject>
-                      Only one Image with a size of less than 4.28 MB
-                      (4.394 KB, 4.500.000 B)!
-                    </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      Drag&apos;n&apos;drop your Grow Header Image here
-                      to upload!
-                    </Dropzone.Idle>
-                  </Text>
-                  <Text ta="center" fz="sm" my="xs" c="dimmed">
-                    For now we only can accept one <i>.jpg/.png/.gif</i>
-                    image file, that is less than 4.5 MB in size.
-                  </Text>
-                </Box>
-              </Dropzone>
-            </Box>
+                    <Text ta="center" fw={700} fz="lg" mt="xl">
+                      <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                      <Dropzone.Reject>
+                        Only one Image with a size of less than 4.28 MB
+                        (4.394 KB, 4.500.000 B)!
+                      </Dropzone.Reject>
+                      <Dropzone.Idle>
+                        Drag&apos;n&apos;drop your Grow Header Image
+                        here to upload!
+                      </Dropzone.Idle>
+                    </Text>
+                    <Text ta="center" fz="sm" my="xs" c="dimmed">
+                      For now we only can accept one{" "}
+                      <i>.jpg/.png/.gif</i>
+                      image file, that is less than 4.5 MB in size.
+                    </Text>
+                  </Box>
+                </Dropzone>
+              </Box>
+              {/* Upload progress indicator */}
+              {uploadProgress.map((item, index) => (
+                <Progress
+                  key={index}
+                  value={item.value}
+                  label={item.label}
+                  color={theme.colors.growgreen[4]}
+                  size={rem(20)}
+                  animate={isUploading}
+                  my="xs"
+                  classNames={classes}
+                />
+              ))}
+            </>
           )}
           <Paper m={0} p="sm" withBorder>
             <form

@@ -1,8 +1,10 @@
 import {
   Box,
   Container,
+  createStyles,
   LoadingOverlay,
   Paper,
+  Progress,
   rem,
   Space,
   Text,
@@ -73,6 +75,13 @@ export default function ImageUploader({
   const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
     useState<CloudinaryResonse[]>([]);
 
+  const [uploadProgress, setUploadProgress] = useState<
+    {
+      value: number;
+      label: string;
+    }[]
+  >([]);
+
   const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
     {
       onError: (error) => {
@@ -82,8 +91,6 @@ export default function ImageUploader({
         console.error(error);
       },
       onSuccess: (newImage) => {
-        setImagesUploadedToCloudinary([]);
-
         !!newImage &&
           setImages((prevImages) => [
             ...prevImages,
@@ -94,6 +101,8 @@ export default function ImageUploader({
               postOrder: !!newImage.postOrder ? newImage.postOrder : 0,
             },
           ]);
+
+        setImagesUploadedToCloudinary([]);
       },
       onSettled: (_newImage) => {
         // indicate that saving process is ready:
@@ -112,6 +121,8 @@ export default function ImageUploader({
           ownerId: session.user.id,
         });
       });
+
+      setUploadProgress([]);
     }
   }, [
     imagesUploadedToCloudinary,
@@ -127,17 +138,30 @@ export default function ImageUploader({
     setIsUploading(true);
     setIsSaving(true); //controlls upload inactive overlay
 
-    const result = await handleMultipleDrop(
+    const _result = await handleMultipleDrop(
       fileWithPath,
-      setImagesUploadedToCloudinary
+      setImagesUploadedToCloudinary,
+      setUploadProgress
     ).catch((error) => {
       console.error(error);
     });
 
     setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
-
-    console.debug(result);
+    setUploadProgress([]);
   };
+
+  const useStyles = createStyles((theme) => ({
+    bar: {
+      justifyContent: "flex-start", // Align label to the left
+    },
+    label: {
+      paddingLeft: theme.spacing.xs,
+      fontSize: 12,
+      fontFamily: theme.fontFamilyMonospace,
+    },
+  }));
+
+  const { classes, theme } = useStyles();
 
   return (
     <Container mt="sm" p={0} size="md">
@@ -160,13 +184,29 @@ export default function ImageUploader({
       </Box>
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
-          {/* <Group position="left">
-            <IconCamera color={theme.colors.growgreen[4]} />
-            <Title order={4}>Append images</Title>
-          </Group> */}
           <Box>
+            {/* Your file upload input and button */}
+            {uploadProgress.map((item, index) => (
+              <Progress
+                key={index}
+                value={item.value}
+                label={item.label}
+                color={theme.colors.growgreen[4]}
+                size={rem(20)}
+                animate={isUploading}
+                my="xs"
+                classNames={classes}
+              />
+            ))}
             <Box className="relative">
-              <LoadingOverlay visible={isSaving} />
+              <LoadingOverlay
+                loaderProps={{
+                  size: "xl",
+                  color: "growgreen.4",
+                  variant: "oval",
+                }}
+                visible={isSaving}
+              />
               <Box>
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}

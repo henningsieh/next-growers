@@ -6,6 +6,7 @@ import {
   createStyles,
   Group,
   LoadingOverlay,
+  Progress,
   rem,
   Text,
   Textarea,
@@ -73,6 +74,14 @@ const useStyles = createStyles((theme) => ({
     left: `calc(50% - ${rem(125)})`,
     bottom: rem(-20),
   },
+  bar: {
+    justifyContent: "flex-start", // Align label to the left
+  },
+  label: {
+    paddingLeft: theme.spacing.xs,
+    fontSize: 12,
+    fontFamily: theme.fontFamilyMonospace,
+  },
 }));
 
 export function CreateReportForm({
@@ -91,6 +100,12 @@ export function CreateReportForm({
   const [imageId, setImageId] = useState("");
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [cloudUrl, setCloudUrl] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<
+    {
+      value: number;
+      label: string;
+    }[]
+  >([]);
 
   const { mutate: tRPCcreateReport } = api.reports.create.useMutation({
     onMutate: () => {
@@ -190,17 +205,18 @@ export function CreateReportForm({
     setIsUploading(true);
     setIsSaving(true); //controlls upload inactive overlay
 
-    const result = await handleMultipleDrop(
+    const _result = await handleMultipleDrop(
       fileWithPath,
-      setImagesUploadedToCloudinary
+      setImagesUploadedToCloudinary,
+      setUploadProgress
     ).catch((error) => {
       console.error(error);
     });
 
     setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
-
-    console.debug(result);
+    setUploadProgress([]);
   };
+
   return (
     <>
       <Container
@@ -247,87 +263,102 @@ export function CreateReportForm({
             </Box>
           </>
         ) : (
-          /* // Dropzone */
-          <Box className={classes.wrapper}>
-            <LoadingOverlay
-              visible={isSaving}
-              transitionDuration={600}
-              overlayBlur={2}
-            />
-            <Dropzone
-              accept={IMAGE_MIME_TYPE}
-              className={classes.dropzone}
-              h={rem(280)}
-              multiple={false} // only one image for now!
-              openRef={openReference}
-              onDrop={(files) => {
-                void handleMultipleDropWrapper(files);
-              }}
-              onReject={(files) => {
-                files.forEach((file) => {
-                  notifications.show(
-                    httpStatusErrorMsg(file.file.name, 500)
-                  );
-                });
-              }}
-            >
-              <Box style={{ pointerEvents: "none" }}>
-                <Group position="center">
-                  {/* <Center> */}
-                  <Dropzone.Accept>
-                    <IconDownload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.blue[0]
-                          : theme.white
-                      }
-                      stroke={1.6}
-                    />
-                  </Dropzone.Accept>
-                  <Dropzone.Reject>
-                    <IconX
-                      size={rem(50)}
-                      color={theme.colors.red[6]}
-                      stroke={1.6}
-                    />
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    <IconCloudUpload
-                      size={rem(50)}
-                      color={
-                        theme.colorScheme === "dark"
-                          ? theme.colors.growgreen[4]
-                          : theme.colors.groworange[4]
-                      }
-                      stroke={1.6}
-                    />
-                  </Dropzone.Idle>
-                </Group>
+          <>
+            {/* Dropzone */}
+            <Box className={classes.wrapper}>
+              <LoadingOverlay
+                visible={isSaving}
+                transitionDuration={600}
+                overlayBlur={2}
+              />
+              <Dropzone
+                accept={IMAGE_MIME_TYPE}
+                className={classes.dropzone}
+                h={rem(280)}
+                multiple={false} // only one image for now!
+                openRef={openReference}
+                onDrop={(files) => {
+                  void handleMultipleDropWrapper(files);
+                }}
+                onReject={(files) => {
+                  files.forEach((file) => {
+                    notifications.show(
+                      httpStatusErrorMsg(file.file.name, 500)
+                    );
+                  });
+                }}
+              >
+                <Box style={{ pointerEvents: "none" }}>
+                  <Group position="center">
+                    {/* <Center> */}
+                    <Dropzone.Accept>
+                      <IconDownload
+                        size={rem(50)}
+                        color={
+                          theme.colorScheme === "dark"
+                            ? theme.colors.blue[0]
+                            : theme.white
+                        }
+                        stroke={1.6}
+                      />
+                    </Dropzone.Accept>
+                    <Dropzone.Reject>
+                      <IconX
+                        size={rem(50)}
+                        color={theme.colors.red[6]}
+                        stroke={1.6}
+                      />
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      <IconCloudUpload
+                        size={rem(50)}
+                        color={
+                          theme.colorScheme === "dark"
+                            ? theme.colors.growgreen[4]
+                            : theme.colors.groworange[4]
+                        }
+                        stroke={1.6}
+                      />
+                    </Dropzone.Idle>
+                  </Group>
 
-                <Text ta="center" fw={700} fz="lg" mt="xl">
-                  <Dropzone.Accept>Drop files here</Dropzone.Accept>
-                  <Dropzone.Reject>
-                    Only one Image with a size of less than 4.28 MB
-                    (4.394 KB, 4.500.000 B)!
-                  </Dropzone.Reject>
-                  <Dropzone.Idle>
-                    Drag&apos;n&apos;drop your{" "}
-                    <span style={{ color: "green" }}>
-                      Grow Header Image
-                    </span>{" "}
-                    here to upload!
-                  </Dropzone.Idle>
-                </Text>
-                <Text ta="center" fz="sm" my="xs" c="dimmed">
-                  <b>
-                    The app accepts one (1) <i>.jpg/.png/.gif</i> image
-                    file, that is less than 4.5 MB in size.
-                  </b>
-                </Text>
-              </Box>
-            </Dropzone>
-          </Box>
+                  <Text ta="center" fw={700} fz="lg" mt="xl">
+                    <Dropzone.Accept>Drop files here</Dropzone.Accept>
+                    <Dropzone.Reject>
+                      Only one Image with a size of less than 4.28 MB
+                      (4.394 KB, 4.500.000 B)!
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      Drag&apos;n&apos;drop your{" "}
+                      <span style={{ color: "green" }}>
+                        Grow Header Image
+                      </span>{" "}
+                      here to upload!
+                    </Dropzone.Idle>
+                  </Text>
+                  <Text ta="center" fz="sm" my="xs" c="dimmed">
+                    <b>
+                      The app accepts one (1) <i>.jpg/.png/.gif</i>{" "}
+                      image file, that is less than 4.5 MB in size.
+                    </b>
+                  </Text>
+                </Box>
+              </Dropzone>
+            </Box>
+            {/* Upload progress indicator */}
+            {uploadProgress.map((item, index) => (
+              <Progress
+                key={index}
+                value={item.value}
+                label={item.label}
+                color={theme.colors.growgreen[4]}
+                size={rem(20)}
+                animate={isUploading}
+                my="xs"
+                classNames={classes}
+              />
+            ))}
+          </>
         )}
 
         <form
