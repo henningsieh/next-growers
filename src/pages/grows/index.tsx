@@ -5,7 +5,9 @@ import {
   Container,
   createStyles,
   Grid,
+  Group,
   Loader,
+  Pagination,
   Title,
 } from "@mantine/core";
 import { IconDatabaseSearch } from "@tabler/icons-react";
@@ -70,19 +72,26 @@ const PublicAllGrows: NextPage = () => {
   const [desc, setDesc] = useState(true);
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
+  const [activePage, setPage] = useState(1);
+  const [pageSize, _setPageSize] = useState(12);
 
   const { classes } = useStyles();
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const {
-    data: isoReports,
+    data: result,
     isLoading: isoIsLoading,
     isError: isoIsError,
   } = api.reports.getIsoReportsWithPostsFromDb.useQuery({
     search: searchString,
-    orderBy: sortBy, // Set the desired orderBy field
-    desc: desc, // Set the desired order (true for descending, false for ascending)
+    orderBy: sortBy,
+    desc: desc,
+    page: activePage,
+    pageSize: pageSize,
   });
+
+  const isoReports = result?.isoReportsFromDb;
+  const totalCount = result?.totalCount;
 
   /* // Props for Sorting Panel */
   const sortingPanelProps: SortingPanelProps = {
@@ -131,6 +140,141 @@ const PublicAllGrows: NextPage = () => {
         </Box>
         {/* // Header End */}
 
+        {/* Pagination Controls */}
+        {isoReports && totalCount && (
+          <>
+            {/* <Pagination
+              position="center"
+              styles={(theme) => ({
+                control: {
+                  "&[data-active]": {
+                    backgroundImage: theme.fn.gradient({
+                      from: "red",
+                      to: "yellow",
+                    }),
+                    border: 0,
+                  },
+                },
+              })}
+              value={activePage}
+              onChange={setPage}
+              total={totalCount / pageSize}
+            /> */}
+            <Pagination.Root
+              value={activePage}
+              onChange={setPage}
+              siblings={1}
+              boundaries={1}
+              total={totalCount / pageSize}
+              styles={(theme) => ({
+                control: {
+                  "&[data-active]": {
+                    backgroundImage: theme.fn.gradient({
+                      from: "red",
+                      to: "yellow",
+                    }),
+                    border: 0,
+                  },
+                },
+              })}
+            >
+              <Group spacing={5} position="center">
+                <Pagination.First />
+                <Pagination.Previous />
+                <Pagination.Items />
+                <Pagination.Next />
+                <Pagination.Last />
+              </Group>
+            </Pagination.Root>
+
+            {/* Regular pagination */}
+            {/* <Pagination
+              position="center"
+              withEdges
+              value={activePage}
+              onChange={setPage}
+              siblings={1}
+              boundaries={1}
+              total={totalCount}
+              styles={(theme) => ({
+                control: {
+                  "&[data-active]": {
+                    backgroundImage: theme.fn.gradient({
+                      from: "red",
+                      to: "yellow",
+                    }),
+                    border: 0,
+                  },
+                },
+              })}
+              getItemProps={(page) => ({
+                component: "a",
+                href: `#page-${page}`,
+              })}
+              getControlProps={(control) => {
+                if (control === "first") {
+                  return { component: "a", href: "#page-0" };
+                }
+
+                if (control === "last") {
+                  return { component: "a", href: "#page-10" };
+                }
+
+                if (control === "next") {
+                  return { component: "a", href: "#page-2" };
+                }
+
+                if (control === "previous") {
+                  return { component: "a", href: "#page-1" };
+                }
+
+                return {};
+              }}
+            /> */}
+
+            {/* Compound pagination */}
+            {/* <Pagination.Root
+              value={activePage}
+              onChange={setPage}
+              siblings={1}
+              boundaries={1}
+              total={totalCount / pageSize}
+              styles={(theme) => ({
+                control: {
+                  "&[data-active]": {
+                    backgroundImage: theme.fn.gradient({
+                      from: "red",
+                      to: "yellow",
+                    }),
+                    border: 0,
+                  },
+                },
+              })}
+              getItemProps={(page) => ({
+                component: "a",
+                href: `#page-${page}`,
+              })}
+            >
+              <Group spacing={7} position="center" mt="xl">
+                <Pagination.First component="a" href="#page-0" />
+                <Pagination.Previous
+                  component="a"
+                  href={`#page-${String(Math.max(0, activePage - 1))}`}
+                />
+                <Pagination.Items />
+                <Pagination.Next
+                  component="a"
+                  href={`#page-${String(Math.max(0, activePage + 1))}`}
+                />
+                <Pagination.Last
+                  component="a"
+                  href={`#page-${String(Math.round(totalCount / pageSize))}`}
+                />
+              </Group>
+            </Pagination.Root> */}
+          </>
+        )}
+
         {/* // Iso Reports Grid */}
         <Box pos="relative">
           {isoIsLoading && (
@@ -138,6 +282,7 @@ const PublicAllGrows: NextPage = () => {
               <Loader size="xl" m="xl" color="growgreen.4" />
             </Center>
           )}
+
           <Grid gutter="xs">
             {/* LOOP OVER REPORTS */}
             {isoReports && isoReports.length
@@ -175,10 +320,6 @@ const PublicAllGrows: NextPage = () => {
                   </Container>
                 )}
           </Grid>
-
-          {/* {isoReports && !isoIsLoading && (
-
-          )} */}
         </Box>
       </Container>
     </>

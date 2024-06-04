@@ -180,6 +180,8 @@ export const InputGetReports = z.object({
   orderBy: z.string().min(1),
   desc: z.boolean(),
   search: z.string(),
+  page: z.number().default(1),
+  pageSize: z.number().default(12),
 });
 
 export const InputLike = z.object({

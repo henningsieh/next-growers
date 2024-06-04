@@ -281,10 +281,16 @@ export const reportRouter = createTRPCRouter({
    */
   getIsoReportsWithPostsFromDb: publicProcedure
     .input(InputGetReports)
-    .query(({ ctx, input }) => {
-      const { orderBy, desc, search } = input;
+    .query(async ({ ctx, input }) => {
+      const { orderBy, desc, search, page, pageSize } = input;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { searchstring, strain } = splitSearchString(search);
+
+      const skip = (page - 1) * pageSize;
+      const take = pageSize;
+
+      const totalCount = await ctx.prisma.report.count();
+
       return ctx.prisma.report
         .findMany({
           where: {
@@ -423,6 +429,8 @@ export const reportRouter = createTRPCRouter({
               },
             },
           },
+          skip,
+          take,
         })
         .then((reportsFromDb) => {
           const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
@@ -528,7 +536,10 @@ export const reportRouter = createTRPCRouter({
             };
           });
 
-          return isoReportsFromDb;
+          return {
+            totalCount: totalCount,
+            isoReportsFromDb,
+          };
         });
     }),
 
