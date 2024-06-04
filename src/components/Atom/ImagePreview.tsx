@@ -29,15 +29,6 @@ const useStyles = createStyles((theme) => ({
       transform: "scale(1.02)",
     },
   },
-
-  cite: {
-    borderLeft: `0px solid`, // no left border for this quote
-    fontFamily: `'Roboto Slab', sans-serif`,
-    fontSize: rem(20),
-    color: theme.colors.gray[5],
-    width: "100%",
-  },
-
   image: {
     objectFit: "cover",
     ref: getStylesRef("image"),
@@ -94,9 +85,12 @@ const useStyles = createStyles((theme) => ({
     fontWeight: "bold",
   },
 
-  author: {
-    color: theme.colors.dark[5],
-    fontWeight: "bold",
+  cite: {
+    borderLeft: `0px solid`, // no left border for this quote
+    fontFamily: `'Roboto Slab', sans-serif`,
+    fontSize: rem(20),
+    color: theme.colors.gray[4],
+    width: "100%",
   },
 }));
 
@@ -123,7 +117,7 @@ export function ImagePreview({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   comments,
 }: ImageCardProps) {
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
 
   return (
     <Link href={publicLink}>
@@ -156,7 +150,15 @@ export function ImagePreview({
         {/* Cite blockquote */}
         <Box pos="absolute" m={-20}>
           {/* Blockquote */}
-          <Blockquote className={classes.cite} cite={authorName}>
+          <Blockquote
+            className={classes.cite}
+            cite={authorName}
+            styles={{
+              cite: {
+                color: theme.colors.gray[2],
+              },
+            }}
+          >
             {description}
           </Blockquote>
         </Box>
