@@ -267,7 +267,7 @@ export default function RootLayout({
     >
       <Group noWrap align="flex-start">
         <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={rem(22)} color={theme.colors.growgreen[4]} />
+          <item.icon size={22} color={theme.colors.growgreen[4]} />
         </ThemeIcon>
         <Box>
           <Text size="md" fw={500}>

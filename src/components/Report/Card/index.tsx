@@ -234,38 +234,15 @@ export default function ReportCard({
           from: theme.colors.dark[4],
           to: theme.colors.green[9],
         }}
-        fz={"0.66rem"}
+        fz={"0.72rem"}
         px={3}
         mx={0}
-        leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
+        leftSection={<IconCannabis stroke={1.6} size={16} />}
       >
         {plant.seedfinderStrain.name}
       </Badge>
     </Tooltip>
   ));
-
-  // Intitialize plantBadges elemet array
-  //   <Box key={strainBadge.id}>
-  //     <Badge
-  //       className="cursor-pointer"
-  //       onClick={() => {
-  //         setSearchString &&
-  //           setSearchString(`strain:"${strainBadge.name}"`);
-  //       }}
-  //       variant="gradient"
-  //       gradient={{
-  //         from: theme.colors.dark[4],
-  //         to: theme.colors.green[9],
-  //       }}
-  //       fz={"0.66rem"}
-  //       px={3}
-  //       mx={0}
-  //       leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
-  //     >
-  //       {strainBadge.name}
-  //     </Badge>
-  //   </Box>
-  // ));
 
   // Initialize the total comment count
   let totalCommentCount = 0;
@@ -367,7 +344,7 @@ export default function ReportCard({
             >
               <Center>
                 <Box pr={4}>
-                  <IconCalendar size="1.2rem" />
+                  <IconCalendar size={16} />
                 </Box>
                 <Text className={`${classes.label} cursor-default`}>
                   {sanatizeDateString(
@@ -402,7 +379,7 @@ export default function ReportCard({
                   )}
                 </Text>
                 <Box pl={4}>
-                  <IconClock size="1.2rem" />
+                  <IconClock size={16} />
                 </Box>
               </Center>
             </Tooltip>
@@ -462,7 +439,7 @@ export function EditReportMenu({
           <Link href={`/account/grows/edit/${reportId}/editGrow`}>
             <Menu.Item
               className={classes.edit}
-              icon={<IconEdit size={rem(14)} />}
+              icon={<IconEdit size={18} />}
             >
               {labelEditGrow}
             </Menu.Item>
@@ -470,7 +447,7 @@ export function EditReportMenu({
           <Link href={`/account/grows/edit/${reportId}/addUpdate`}>
             <Menu.Item
               className={classes.add}
-              icon={<IconPlant size={rem(14)} />}
+              icon={<IconPlant size={18} />}
             >
               {labelAddUpdate}
             </Menu.Item>

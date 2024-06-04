@@ -164,7 +164,7 @@ const PublicAllGrows: NextPage = () => {
                       <Alert
                         p="xl"
                         m="xl"
-                        icon={<IconDatabaseSearch size="1.4rem" />}
+                        icon={<IconDatabaseSearch size={20} />}
                         title="Empty search result"
                         color="red"
                         variant="outline"

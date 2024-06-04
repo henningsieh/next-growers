@@ -33,7 +33,7 @@ const useStyles = createStyles((theme) => ({
   cite: {
     borderLeft: `0px solid`, // no left border for this quote
     fontFamily: `'Roboto Slab', sans-serif`,
-    fontSize: "1.2rem",
+    fontSize: rem(20),
     color: theme.colors.gray[5],
     width: "100%",
   },
@@ -166,26 +166,6 @@ export function ImagePreview({
             {title}
           </Text>
         </Box>
-        {/* <Group position="apart" spacing="xs">
-          <Text size="sm" className={classes.author}>
-            {authorName}
-          </Text>
-
-          <Group spacing="lg">
-            <Center>
-              <Text size="sm" className={classes.bodyText}>
-                {views}
-              </Text>
-              <IconEye size="1.2rem" stroke={2.2} color="gray.4" />
-            </Center>
-            <Center>
-              <Text size="sm" className={classes.bodyText}>
-                {comments}
-              </Text>
-              <IconMessageCircle size="1rem" stroke={2.2} color="red" />
-            </Center>
-          </Group>
-        </Group> */}
       </Card>
     </Link>
   );

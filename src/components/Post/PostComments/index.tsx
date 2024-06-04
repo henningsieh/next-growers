@@ -373,7 +373,7 @@ const PostComments = ({ growId, updateId }: CommentsProps) => {
                         p={0}
                         className=" cursor-default"
                       >
-                        <IconX size="1.2rem" stroke={1.4} />
+                        <IconX size={22} stroke={1.4} />
                       </ActionIcon>
                     </>
 

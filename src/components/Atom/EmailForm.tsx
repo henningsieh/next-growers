@@ -60,7 +60,7 @@ export default function EmailForm() {
           color="growgreen"
           className="cursor-pointer"
           loading={isLoading}
-          leftIcon={<IconMailForward size="1.2rem" />}
+          leftIcon={<IconMailForward size={1.2} />}
           type="submit"
         >
           {`${t("common:app-login-button-loginWithEmail")}`}

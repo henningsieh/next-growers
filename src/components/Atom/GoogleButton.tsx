@@ -13,7 +13,7 @@ export function GoogleButton(props: ButtonProps) {
       fz="md"
       variant="filled"
       className="cursor-pointer"
-      leftIcon={<FcGoogle size="1.2rem" />}
+      leftIcon={<FcGoogle size={22} />}
       type="submit"
       {...props}
     />

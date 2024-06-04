@@ -206,15 +206,15 @@ const LikeHeart = (props: LikeHeartProps) => {
               ) ? (
                 <IconHeartFilled
                   onClick={handleDisLikeItem}
-                  size="1.4rem"
+                  size={22}
                   className={`${classes.red}`}
-                  stroke={1.8}
+                  stroke={1}
                 />
               ) : (
                 <IconHeart
                   onClick={handleLikeItem}
-                  size="1.4rem"
-                  stroke={1.2}
+                  size={22}
+                  stroke={2}
                 />
               )}
             </ActionIcon>

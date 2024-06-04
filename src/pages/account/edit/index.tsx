@@ -8,7 +8,6 @@ import {
   Group,
   LoadingOverlay,
   Progress,
-  rem,
   Space,
   TextInput,
   Title,
@@ -305,7 +304,7 @@ const ProtectedEditReport: NextPage = () => {
               value={item.value}
               label={item.label}
               color={theme.colors.growgreen[4]}
-              size={rem(20)}
+              size={20}
               animate={isUploading}
               my="xs"
               classNames={classes}

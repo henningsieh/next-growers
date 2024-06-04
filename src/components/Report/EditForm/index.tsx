@@ -325,32 +325,20 @@ export function EditReportForm({
                       {/* <Center> */}
                       <Dropzone.Accept>
                         <IconDownload
-                          size={rem(50)}
-                          color={
-                            theme.colorScheme === "dark"
-                              ? theme.colors.blue[0]
-                              : theme.white
-                          }
-                          stroke={1.6}
+                          size={92}
+                          color={theme.colors.growgreen[4]}
+                          stroke={2}
                         />
                       </Dropzone.Accept>
                       <Dropzone.Reject>
                         <IconX
-                          size={rem(50)}
+                          size={92}
                           color={theme.colors.red[6]}
-                          stroke={1.6}
+                          stroke={2}
                         />
                       </Dropzone.Reject>
                       <Dropzone.Idle>
-                        <IconCloudUpload
-                          size={rem(50)}
-                          color={
-                            theme.colorScheme === "dark"
-                              ? theme.colors.dark[0]
-                              : theme.black
-                          }
-                          stroke={1.6}
-                        />
+                        <IconCloudUpload size={92} stroke={2} />
                       </Dropzone.Idle>
                       {/* </Center> */}
                     </Group>
@@ -381,7 +369,7 @@ export function EditReportForm({
                   value={item.value}
                   label={item.label}
                   color={theme.colors.growgreen[4]}
-                  size={rem(20)}
+                  size={20}
                   animate={isUploading}
                   my="xs"
                   classNames={classes}

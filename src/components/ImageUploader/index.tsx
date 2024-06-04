@@ -192,7 +192,7 @@ export default function ImageUploader({
                 value={item.value}
                 label={item.label}
                 color={theme.colors.growgreen[4]}
-                size={rem(20)}
+                size={20}
                 animate={isUploading}
                 my="xs"
                 classNames={classes}
