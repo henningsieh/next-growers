@@ -167,6 +167,12 @@ export const reportRouter = createTRPCRouter({
                 LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
+            ReportSlug: {
+              select: {
+                slug: true,
+                createdAt: true,
+              },
+            },
           },
         })
         .then((reportsFromDb) => {
@@ -270,6 +276,7 @@ export const reportRouter = createTRPCRouter({
                 : reportFromDb.updatedAt.toISOString(),
               likes: isoLikes,
               posts: isoPosts,
+              reportSlug: reportFromDb.ReportSlug,
             };
           });
 
@@ -424,10 +431,18 @@ export const reportRouter = createTRPCRouter({
                 LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
+            ReportSlug: {
+              select: {
+                slug: true,
+                createdAt: true,
+              },
+            },
           },
         })
         .then((reportsFromDb) => {
           const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
+            console.log("reportFromDb");
+            console.log(reportFromDb);
             const isoPosts =
               (reportFromDb.posts || []).length > 0
                 ? reportFromDb.posts.map((post) => {
@@ -518,7 +533,9 @@ export const reportRouter = createTRPCRouter({
                     )
                   )
                 : null;
-
+            console.log("reportFromDb");
+            console.debug(reportFromDb);
+            console.debug(reportFromDb.ReportSlug);
             return {
               ...reportFromDb,
               updatedAt: newestPostDate
@@ -527,6 +544,7 @@ export const reportRouter = createTRPCRouter({
               createdAt: reportFromDb.createdAt.toISOString(),
               likes: isoLikes,
               posts: isoPosts,
+              reportSlug: reportFromDb.ReportSlug,
             };
           });
 
@@ -541,7 +559,19 @@ export const reportRouter = createTRPCRouter({
   getIsoReportWithPostsFromDb: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const reportFromDb = await ctx.prisma.report.findUnique({
+      const reportFromDb = await ctx.prisma.report.findFirst({
+        where: {
+          OR: [
+            { id: input },
+            {
+              ReportSlug: {
+                every: {
+                  slug: input,
+                },
+              },
+            },
+          ],
+        },
         include: {
           author: {
             select: { id: true, name: true, image: true },
@@ -589,7 +619,6 @@ export const reportRouter = createTRPCRouter({
             },
           },
           likes: {
-            // Include the Like relation and select the users who liked the report
             include: {
               user: {
                 select: {
@@ -628,12 +657,15 @@ export const reportRouter = createTRPCRouter({
                 },
               },
               comments: true,
-              LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
+              LightWatts: { select: { watt: true } },
             },
           },
-        },
-        where: {
-          id: input,
+          ReportSlug: {
+            select: {
+              slug: true,
+              createdAt: true,
+            },
+          },
         },
       });
 
@@ -731,6 +763,7 @@ export const reportRouter = createTRPCRouter({
           };
         }),
         strains: reportFromDb?.strains || [],
+        reportSlug: reportFromDb.ReportSlug,
       };
 
       return isoReportFromDb;

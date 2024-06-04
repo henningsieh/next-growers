@@ -24,6 +24,7 @@ import {
   IconEdit,
   IconPlant,
 } from "@tabler/icons-react";
+import { getLatestSlugFromReport } from "~/services/reportSlugService";
 
 import type { Dispatch, SetStateAction } from "react";
 
@@ -275,6 +276,7 @@ export default function ReportCard({
     // Add the number of comments in the current post to the total comment count
     totalCommentCount += post.comments.length;
   });
+  const urlSlug = getLatestSlugFromReport(isoReport);
 
   return (
     <Paper withBorder p={0} m={0} radius="sm" className={classes.card}>
@@ -296,7 +298,7 @@ export default function ReportCard({
           imageUrl={isoReport.image?.cloudUrl as string}
           title={isoReport.title}
           description={isoReport.description}
-          publicLink={`/grow/${isoReport.id}`}
+          publicLink={`/grow/${urlSlug}`}
           authorName={isoReport.author?.name as string}
           authorImageUrl={
             isoReport.author?.image

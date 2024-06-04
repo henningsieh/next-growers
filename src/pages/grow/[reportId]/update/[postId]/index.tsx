@@ -154,6 +154,12 @@ export async function getStaticProps(
           LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
         },
       },
+      ReportSlug: {
+        select: {
+          slug: true,
+          createdAt: true,
+        },
+      },
     },
     where: {
       id: growId,
@@ -244,6 +250,7 @@ export async function getStaticProps(
       };
     }),
     strains: grow?.strains || [],
+    reportSlug: grow?.ReportSlug,
   };
 
   // Fetch translations using next-i18next

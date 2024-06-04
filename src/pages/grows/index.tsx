@@ -83,7 +83,6 @@ const PublicAllGrows: NextPage = () => {
     orderBy: sortBy, // Set the desired orderBy field
     desc: desc, // Set the desired order (true for descending, false for ascending)
   });
-
   /* // Props for Sorting Panel */
   const sortingPanelProps: SortingPanelProps = {
     sortBy,
