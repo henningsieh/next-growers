@@ -1,22 +1,6 @@
-import {
-  Box,
-  Center,
-  Container,
-  createStyles,
-  Group,
-  rem,
-  Text,
-  Title,
-  useMantineColorScheme,
-} from "@mantine/core";
+import { Box, Container, useMantineTheme } from "@mantine/core";
 import { useMediaQuery, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import {
-  IconCalendar,
-  IconClock,
-  IconEye,
-  IconHome,
-} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { convert } from "html-to-text";
 import { noPostAtThisDay } from "~/messages";
@@ -32,21 +16,15 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import LikeHeart from "~/components/Atom/LikeHeart";
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/PostCard";
 import PostDatepicker from "~/components/Post/PostDatepicker";
+import { GrowBasicData } from "~/components/Report/GrowBasicData";
 import { ReportHeader } from "~/components/Report/Header";
-import { LightWattChart } from "~/components/Report/LightWattChart/LightWattChart";
 
 import { prisma } from "~/server/db";
 
-import { Environment, Locale } from "~/types";
-
-import {
-  compareDatesWithoutTime,
-  sanatizeDateString,
-} from "~/utils/helperUtils";
+import { compareDatesWithoutTime } from "~/utils/helperUtils";
 
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
@@ -171,6 +149,7 @@ export async function getStaticProps(
     const postDate = new Date(post.date);
     return postDate > prevDate ? postDate : prevDate;
   }, new Date(grow.createdAt));
+
   const isoReportFromDb = {
     ...grow,
     createdAt: grow?.createdAt.toISOString(),
@@ -259,9 +238,9 @@ export async function getStaticProps(
 
   return {
     props: {
+      ...translations,
       report: isoReportFromDb,
       postId: updateId,
-      ...translations,
     },
     revalidate: 1,
   };
@@ -294,46 +273,7 @@ function PublicReportPost(
   const postDate = new Date(thisPost ? thisPost.date : "");
   const [selectedDate, selectDate] = useState<Date | null>(postDate);
 
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
-  const useStyles = createStyles((theme) => ({
-    icon: {
-      marginRight: rem(5),
-      color:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[2]
-          : theme.black,
-    },
-
-    titleLink: {
-      display: "inline-flex",
-      fontWeight: "bold",
-      color: dark
-        ? theme.colors.growgreen[4]
-        : theme.colors.growgreen[6],
-    },
-    title: {
-      display: "flex",
-      [theme.fn.smallerThan("md")]: {
-        flexDirection: "column",
-      },
-
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingTop: theme.spacing.sm,
-    },
-
-    section: {
-      marginTop: theme.spacing.xl,
-      padding: theme.spacing.xs,
-      borderTop: `${rem(1)} solid ${
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[4]
-          : theme.colors.gray[3]
-      }`,
-    },
-  }));
-  const { theme, classes } = useStyles();
+  const theme = useMantineTheme();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -386,42 +326,6 @@ function PublicReportPost(
   );
 
   const pageTitle = `${grow.title}`;
-
-  const reportBasicData = [
-    {
-      label: sanatizeDateString(
-        grow.createdAt,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN,
-        false,
-        false
-      ),
-      icon: IconCalendar,
-    },
-    {
-      label: Environment[grow.environment as keyof typeof Environment],
-      icon: IconHome,
-    },
-    {
-      label: "1468",
-      icon: IconEye,
-    },
-    {
-      label: sanatizeDateString(
-        grow.updatedAt,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN,
-        false,
-        false
-      ),
-      icon: IconClock,
-    },
-  ];
-
-  const reportBasics = reportBasicData.map((growBasic) => (
-    <Center key={growBasic.label}>
-      <growBasic.icon size={18} className={classes.icon} stroke={1.8} />
-      <Text size="xs"> {growBasic.label} </Text>
-    </Center>
-  ));
 
   const dateOfGermination = new Date(grow.createdAt);
 
@@ -564,35 +468,8 @@ function PublicReportPost(
         </Container>
       </Container>
 
-      <Container size="xl" className="flex flex-col space-y-2">
-        <Group
-          my="xs"
-          px="sm"
-          position="apart"
-          className={classes.section}
-        >
-          <Title py="sm" order={3}>
-            Grow
-          </Title>
-          <Text fz="md">{grow.title}</Text>
-          <LikeHeart itemToLike={grow} itemType={"Report"} />
-        </Group>
-
-        <LightWattChart
-          repordId={grow.id}
-          reportStartDate={new Date(grow.createdAt)}
-          dateOfnewestPost={dateOfnewestPost}
-        />
-
-        <Group
-          my="xs"
-          position="apart"
-          spacing="xs"
-          className={classes.section}
-        >
-          {reportBasics}
-        </Group>
-      </Container>
+      {/* // GrowBasicData / Strains / Statistics */}
+      <GrowBasicData grow={grow} dateOfnewestPost={dateOfnewestPost} />
     </>
   );
 }

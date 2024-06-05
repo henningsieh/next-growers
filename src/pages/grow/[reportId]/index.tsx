@@ -3,24 +3,12 @@ import {
   Box,
   Center,
   Container,
-  createStyles,
-  Flex,
-  Group,
   Loader,
-  rem,
-  Space,
   Text,
-  Title,
-  useMantineColorScheme,
+  useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import {
-  IconCalendar,
-  IconClock,
-  IconEye,
-  IconHome,
-} from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { httpStatusErrorMsg, noPostAtThisDay } from "~/messages";
 
@@ -31,21 +19,14 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import LikeHeart from "~/components/Atom/LikeHeart";
 import { generateOpenGraphMetaTagsImage } from "~/components/OpenGraph/Image";
 import { PostCard } from "~/components/Post/PostCard";
 import PostDatepicker from "~/components/Post/PostDatepicker";
+import { GrowBasicData } from "~/components/Report/GrowBasicData";
 import { ReportHeader } from "~/components/Report/Header";
-import { LightWattChart } from "~/components/Report/LightWattChart/LightWattChart";
-import Plants from "~/components/Report/Plants";
-
-import { Environment, Locale } from "~/types";
 
 import { api } from "~/utils/api";
-import {
-  compareDatesWithoutTime,
-  sanatizeDateString,
-} from "~/utils/helperUtils";
+import { compareDatesWithoutTime } from "~/utils/helperUtils";
 
 /** PUBLIC DYNAMIC PAGE with translations
  * getServerSideProps (Server-Side Rendering)
@@ -55,13 +36,19 @@ import {
  */
 export const getServerSideProps: GetServerSideProps = async (
   context
-) => ({
-  props: {
-    ...(await serverSideTranslations(context.locale as string, [
-      "common",
-    ])),
-  },
-});
+) => {
+  // Fetch translations using next-i18next
+  const translations = await serverSideTranslations(
+    context.locale as string,
+    ["common"]
+  );
+
+  return {
+    props: {
+      ...translations,
+    },
+  };
+};
 
 /**
  * @Page ReportDetails
@@ -75,47 +62,7 @@ const PublicReport: NextPage = () => {
   const [updateId, setUpdateId] = useState<string>("");
   const [selectedDate, selectDate] = useState<Date | null>(null);
 
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
-  const useStyles = createStyles((theme) => ({
-    icon: {
-      marginRight: rem(5),
-      color:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[2]
-          : theme.black,
-    },
-
-    titleLink: {
-      display: "inline-flex",
-      fontWeight: "bold",
-      color: dark
-        ? theme.colors.groworange[4]
-        : theme.colors.growgreen[5],
-    },
-
-    title: {
-      display: "flex",
-      [theme.fn.smallerThan("md")]: {
-        flexDirection: "column",
-      },
-
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingTop: theme.spacing.sm,
-    },
-
-    section: {
-      marginTop: theme.spacing.xl,
-      padding: theme.spacing.xs,
-      borderTop: `${rem(1)} solid ${
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[4]
-          : theme.colors.gray[3]
-      }`,
-    },
-  }));
-  const { theme, classes } = useStyles();
+  const theme = useMantineTheme();
 
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -177,42 +124,6 @@ const PublicReport: NextPage = () => {
 
   const pageTitle = `${grow.title}`;
 
-  const reportBasicData = [
-    {
-      label: sanatizeDateString(
-        grow?.createdAt,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN,
-        false,
-        false
-      ),
-      icon: IconCalendar,
-    },
-    {
-      label: Environment[grow.environment as keyof typeof Environment],
-      icon: IconHome,
-    },
-    {
-      label: "1468",
-      icon: IconEye,
-    },
-    {
-      label: sanatizeDateString(
-        grow?.updatedAt,
-        router.locale === Locale.DE ? Locale.DE : Locale.EN,
-        false,
-        false
-      ),
-      icon: IconClock,
-    },
-  ];
-
-  const reportBasics = reportBasicData.map((growBasic) => (
-    <Center key={growBasic.label}>
-      <growBasic.icon size={18} className={classes.icon} stroke={1.8} />
-      <Text size="xs"> {growBasic.label} </Text>
-    </Center>
-  ));
-
   const dateOfGermination = new Date(grow.createdAt);
 
   const defaultRelDate =
@@ -266,7 +177,7 @@ const PublicReport: NextPage = () => {
         <meta name="description" content={description} />
         <meta
           property="og:url"
-          content={`https://growagram.com/grow/${grow.id || ""}`}
+          content={`https://growagram.com/grow/${grow.id}`}
         />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
@@ -369,34 +280,8 @@ const PublicReport: NextPage = () => {
         </Container>
       </Container>
 
-      <Container size="xl" className="flex flex-col space-y-2">
-        <Flex
-          align="center"
-          px="sm"
-          justify="space-between"
-          className={classes.section}
-        >
-          <Title order={1}>Grow Details</Title>
-          <Text p="md" fz="md">
-            {grow.title}
-          </Text>
-          <LikeHeart itemToLike={grow} itemType={"Report"} />
-        </Flex>
-
-        <Plants plants={grow.plants} />
-
-        <Space h="md" />
-
-        <LightWattChart
-          repordId={grow.id}
-          reportStartDate={new Date(grow.createdAt)}
-          dateOfnewestPost={dateOfnewestPost}
-        />
-
-        <Group mt="xl" position="apart" spacing="xs">
-          {reportBasics}
-        </Group>
-      </Container>
+      {/* // GrowBasicData / Strains / Statistics */}
+      <GrowBasicData grow={grow} dateOfnewestPost={dateOfnewestPost} />
     </>
   );
 };

@@ -8,6 +8,7 @@ import {
 
 import { Chart } from "react-google-charts";
 
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import { Locale } from "~/types";
@@ -28,6 +29,7 @@ export function LightWattChart({
 }: LightWattChartOptions) {
   const router = useRouter();
   const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
@@ -110,8 +112,8 @@ export function LightWattChart({
     return (
       processedData && (
         <>
-          <Title p="sm" order={3}>
-            My Statistics
+          <Title p="xs" order={3}>
+            {t("common:report-details-statistics")}
           </Title>
           <Paper
             withBorder
