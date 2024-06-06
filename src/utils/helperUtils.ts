@@ -1,4 +1,4 @@
-import type { AxiosResponse } from "axios";
+import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import axios from "axios";
 import { env } from "~/env.mjs";
 
@@ -290,6 +290,14 @@ export const handleMultipleDrop = async (
   files: File[],
   setImagesUploadedToCloudinary: Dispatch<
     SetStateAction<CloudinaryResonse[]>
+  >,
+  setUploadProgress: Dispatch<
+    SetStateAction<
+      {
+        value: number;
+        label: string;
+      }[]
+    >
   >
 ): Promise<{
   success: boolean;
@@ -309,9 +317,17 @@ export const handleMultipleDrop = async (
     (await cloudinarySignatureResponse.json()) as CloudinarySignature;
 
   const cloudUrls: string[] = [];
+  const initialProgressArray = files.map((file) => ({
+    value: 0,
+    color: "blue",
+    label: file.name,
+  }));
+
+  setUploadProgress(initialProgressArray);
 
   try {
-    for (const file of files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       const formData = new FormData();
 
       formData.append("file", file);
@@ -324,17 +340,38 @@ export const handleMultipleDrop = async (
       );
       formData.append("folder", cloudinarySignature.folder);
 
-      const response = await fetch(url, {
-        method: "POST",
-        body: formData,
+      const response = await axios.post(url, formData, {
+        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+          const progress = Math.round(
+            (progressEvent.loaded /
+              (progressEvent.total ? progressEvent.total : file.size)) *
+              100
+          );
+
+          setUploadProgress((prevProgress) => {
+            const newProgress = [...prevProgress];
+            newProgress[i] = {
+              value: progress,
+              label: file.name,
+            };
+            return newProgress;
+          });
+        },
       });
-      if (!response.ok) {
+
+      // const response = await fetch(url, {
+      //   method: "POST",
+      //   body: formData,
+      // });
+      if (!response.data) {
         throw new Error("Network response was not ok");
       }
 
-      const cloudinaryResponse = JSON.parse(
-        await response.text()
-      ) as CloudinaryResonse;
+      const cloudinaryResponse = response.data as CloudinaryResonse;
+
+      // const cloudinaryResponse = JSON.parse(
+      //   await response.text()
+      // ) as CloudinaryResonse;
 
       setImagesUploadedToCloudinary((prev) => [
         ...prev,
@@ -432,6 +469,15 @@ export const parseAndReplaceAmazonLinks = async (
   return doc.documentElement.innerHTML;
 };
 
-export function getFileMaxUpload(): number {
+export function getFileUploadCloudinaryMaxFileSize(): number {
+  return (
+    parseInt(env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE) / 1024 ** 2
+  );
+}
+export function getFileUploadCloudinaryMaxFileSizeInByte(): number {
+  return parseInt(env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE);
+}
+
+export function getFileUploadMaxFileCount(): number {
   return parseInt(env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES);
 }

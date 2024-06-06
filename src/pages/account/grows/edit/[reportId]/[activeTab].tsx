@@ -202,9 +202,7 @@ const ProtectedEditReportDetails: NextPage = () => {
                 h={smallScreen ? 28 : 40}
                 px={smallScreen ? 4 : "md"}
                 value="editGrow"
-                icon={
-                  <IconEdit size={smallScreen ? "0.8rem" : "1.4rem"} />
-                }
+                icon={<IconEdit size={smallScreen ? 16 : 20} />}
               >
                 <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   {t("common:report-edit-headline")}
@@ -215,9 +213,7 @@ const ProtectedEditReportDetails: NextPage = () => {
                 h={smallScreen ? 28 : 40}
                 p={smallScreen ? 2 : "md"}
                 value="addPlant"
-                icon={
-                  <IconPlant size={smallScreen ? "1rem" : "1.4rem"} />
-                }
+                icon={<IconPlant size={smallScreen ? 16 : 20} />}
               >
                 <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   Pflanzen hinzufügen
@@ -229,11 +225,7 @@ const ProtectedEditReportDetails: NextPage = () => {
                 h={smallScreen ? 28 : 40}
                 p={smallScreen ? 2 : "md"}
                 value="addUpdate"
-                icon={
-                  <IconFilePlus
-                    size={smallScreen ? "1rem" : "1.4rem"}
-                  />
-                }
+                icon={<IconFilePlus size={smallScreen ? 16 : 20} />}
               >
                 <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   {t("common:addpost-headline")}
@@ -244,9 +236,7 @@ const ProtectedEditReportDetails: NextPage = () => {
                 h={smallScreen ? 28 : 40}
                 px={smallScreen ? 4 : "md"}
                 value="editAll"
-                icon={
-                  <IconList size={smallScreen ? "0.8rem" : "1.4rem"} />
-                }
+                icon={<IconList size={smallScreen ? 16 : 20} />}
               >
                 <Title order={1} fz={smallScreen ? rem(13) : "md"}>
                   {t("common:editallpost-headline")}{" "}

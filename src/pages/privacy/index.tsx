@@ -2,13 +2,12 @@ import { appTitle } from "../_document";
 import fs from "fs";
 import path from "path";
 
-import { useTranslation } from "react-i18next";
-
 import type {
   GetStaticProps,
   GetStaticPropsContext,
   NextPage,
 } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 

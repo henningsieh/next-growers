@@ -4,8 +4,10 @@ import {
   Box,
   Button,
   Container,
+  createStyles,
   Group,
   LoadingOverlay,
+  Progress,
   Space,
   TextInput,
   Title,
@@ -83,8 +85,26 @@ export const getServerSideProps: GetServerSideProps = async (
   return { props: { ...translations, session } };
 };
 
+const useStyles = createStyles((theme) => ({
+  bar: {
+    justifyContent: "flex-start", // Align progess label to the left
+  },
+  label: {
+    paddingLeft: theme.spacing.xs,
+    fontSize: 12,
+    fontFamily: theme.fontFamilyMonospace,
+  },
+}));
+
 const ProtectedEditReport: NextPage = () => {
   const { data: session, update } = useSession();
+  const { classes } = useStyles();
+  const [uploadProgress, setUploadProgress] = useState<
+    {
+      value: number;
+      label: string;
+    }[]
+  >([]);
 
   const router = useRouter();
 
@@ -127,6 +147,7 @@ const ProtectedEditReport: NextPage = () => {
         notifications.show(setUserimageSuccessfulMsg);
       },
       onSettled() {
+        setUploadProgress([]);
         void update();
       },
     });
@@ -147,7 +168,8 @@ const ProtectedEditReport: NextPage = () => {
     try {
       const result = await handleMultipleDrop(
         files,
-        setImagesUploadedToCloudinary
+        setImagesUploadedToCloudinary,
+        setUploadProgress
       ).catch((error) => {
         console.error(error);
       });
@@ -203,14 +225,13 @@ const ProtectedEditReport: NextPage = () => {
         >
           <Group className="relative" position="center" mt="xl">
             <LoadingOverlay
-              zIndex={99}
+              visible={isUploading}
               loaderProps={{
                 size: "lg",
                 color: theme.colors.groworange[4],
                 variant: "oval",
               }}
               radius="sm"
-              visible={isUploading}
               transitionDuration={600}
               overlayBlur={4}
             />
@@ -262,6 +283,7 @@ const ProtectedEditReport: NextPage = () => {
                     className="... rounded-full"
                     height={142}
                     width={142}
+                    priority
                     src={
                       session.user.image
                         ? session.user.image
@@ -274,15 +296,26 @@ const ProtectedEditReport: NextPage = () => {
                 </Dropzone>
               </Box>
             </Tooltip>
-
-            {/* <Dropzone compon></Dropzone> */}
           </Group>
+          {/* Upload progress indicator */}
+          {uploadProgress.map((item, index) => (
+            <Progress
+              key={index}
+              value={item.value}
+              label={item.label}
+              color={theme.colors.growgreen[4]}
+              size={20}
+              animate={isUploading}
+              my="xs"
+              classNames={classes}
+            />
+          ))}
           {/* // Error if no Username */}
           {!session?.user.name && (
             <Alert
               pt="lg"
               pb="lg"
-              icon={<IconAlertCircle size="1rem" />}
+              icon={<IconAlertCircle size={20} />}
               title="You don't have a username yet!"
               color="red"
               variant="outline"
@@ -334,7 +367,7 @@ const ProtectedEditReport: NextPage = () => {
                       color={theme.primaryColor}
                       variant="outline"
                     >
-                      <IconReload size="1.2rem" stroke={1.6} />
+                      <IconReload size={20} stroke={1.8} />
                     </ActionIcon>
                   </Tooltip>
                 }

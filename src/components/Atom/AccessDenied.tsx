@@ -6,7 +6,7 @@ const AccessDenied = () => {
     <Container pt={60} size="sm">
       <Alert
         mt={5}
-        icon={<IconAlertCircle size="1rem" />}
+        icon={<IconAlertCircle size={20} />}
         title="ACCESS DENIED"
         color="red"
         variant="outline"

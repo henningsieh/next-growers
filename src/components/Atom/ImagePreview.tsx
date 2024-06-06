@@ -32,15 +32,6 @@ const useStyles = createStyles((theme) => ({
       transform: "scale(1.02)",
     },
   },
-
-  cite: {
-    borderLeft: `0px solid`, // no left border for this quote
-    fontFamily: `'Roboto Slab', sans-serif`,
-    fontSize: "1.2rem",
-    color: theme.colors.gray[5],
-    width: "100%",
-  },
-
   image: {
     objectFit: "cover",
     ref: getStylesRef("image"),
@@ -97,9 +88,12 @@ const useStyles = createStyles((theme) => ({
     fontWeight: "bold",
   },
 
-  author: {
-    color: theme.colors.dark[5],
-    fontWeight: "bold",
+  cite: {
+    borderLeft: `0px solid`, // no left border for this quote
+    fontFamily: `'Roboto Slab', sans-serif`,
+    fontSize: rem(20),
+    color: theme.colors.gray[4],
+    width: "100%",
   },
 }));
 
@@ -132,7 +126,7 @@ export function ImagePreview({
   // const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
 
-  const { classes } = useStyles();
+  const { classes, theme } = useStyles();
 
   return (
     <>
@@ -182,7 +176,15 @@ export function ImagePreview({
 
         <Box pos="absolute" m={-20}>
           {/* Blockquote */}
-          <Blockquote className={classes.cite} cite={authorName}>
+          <Blockquote
+            className={classes.cite}
+            cite={authorName}
+            styles={{
+              cite: {
+                color: theme.colors.gray[2],
+              },
+            }}
+          >
             {description}
           </Blockquote>
         </Box>
@@ -192,26 +194,6 @@ export function ImagePreview({
             {title}
           </Text>
         </Box>
-        {/* <Group position="apart" spacing="xs">
-          <Text size="sm" className={classes.author}>
-            {authorName}
-          </Text>
-
-          <Group spacing="lg">
-            <Center>
-              <Text size="sm" className={classes.bodyText}>
-                {views}
-              </Text>
-              <IconEye size="1.2rem" stroke={2.2} color="gray.4" />
-            </Center>
-            <Center>
-              <Text size="sm" className={classes.bodyText}>
-                {comments}
-              </Text>
-              <IconMessageCircle size="1rem" stroke={2.2} color="red" />
-            </Center>
-          </Group>
-        </Group> */}
       </Card>
     </>
   );

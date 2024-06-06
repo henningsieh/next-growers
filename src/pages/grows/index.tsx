@@ -5,7 +5,7 @@ import {
   Container,
   createStyles,
   Grid,
-  LoadingOverlay,
+  Loader,
   Title,
 } from "@mantine/core";
 import { IconDatabaseSearch } from "@tabler/icons-react";
@@ -133,16 +133,15 @@ const PublicAllGrows: NextPage = () => {
 
         {/* // Iso Reports Grid */}
         <Box pos="relative">
-          <LoadingOverlay
-            visible={isoIsLoading}
-            transitionDuration={600}
-            overlayBlur={2}
-          />
-          {isoReports && !isoIsLoading && (
-            <Grid gutter="sm">
-              {/* LOOP OVER REPORTS */}
-              {isoReports.length ? (
-                isoReports.map((isoReport) => {
+          {isoIsLoading && (
+            <Center>
+              <Loader size="xl" m="xl" color="growgreen.4" />
+            </Center>
+          )}
+          <Grid gutter="xs">
+            {/* LOOP OVER REPORTS */}
+            {isoReports && isoReports.length
+              ? isoReports.map((isoReport) => {
                   return (
                     <Grid.Col
                       key={isoReport.id}
@@ -159,24 +158,27 @@ const PublicAllGrows: NextPage = () => {
                     </Grid.Col>
                   );
                 })
-              ) : (
-                <Container>
-                  <Center>
-                    <Alert
-                      p="xl"
-                      m="xl"
-                      icon={<IconDatabaseSearch size="1.4rem" />}
-                      title="Empty search result"
-                      color="red"
-                      variant="outline"
-                    >
-                      No Grows where found!
-                    </Alert>
-                  </Center>
-                </Container>
-              )}
-            </Grid>
-          )}
+              : !isoIsLoading && (
+                  <Container>
+                    <Center>
+                      <Alert
+                        p="xl"
+                        m="xl"
+                        icon={<IconDatabaseSearch size={20} />}
+                        title="Empty search result"
+                        color="red"
+                        variant="outline"
+                      >
+                        No Grows where found!
+                      </Alert>
+                    </Center>
+                  </Container>
+                )}
+          </Grid>
+
+          {/* {isoReports && !isoIsLoading && (
+
+          )} */}
         </Box>
       </Container>
     </>

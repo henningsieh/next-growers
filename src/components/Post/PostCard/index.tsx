@@ -193,11 +193,7 @@ export function PostCard(props: PostCardProps) {
           <Box pos="absolute" m="xs" className="bottom-0 right-0">
             {status === "authenticated" &&
               session.user.id == grow.authorId && (
-                <EditPostButton
-                  growId={grow.id}
-                  postId={updateId}
-                  buttonLabel={t("common:post-edit-button")}
-                />
+                <EditPostButton growId={grow.id} postId={updateId} />
               )}
           </Box>
           <Paper>

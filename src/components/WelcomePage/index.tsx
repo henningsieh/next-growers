@@ -44,8 +44,6 @@ export default function LandingPage({
       WebkitBackgroundClip: "text",
       transition: "background 300ms ease-in-out",
       cursor: "default",
-      // height: "4rem", // You might need to adjust this height based on your design
-      // width: "18rem", // You might need to adjust this width based on your design
 
       [theme.fn.smallerThan("lg")]: {
         fontSize: rem(112),

@@ -18,9 +18,10 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconCannabis, IconExternalLink } from "@tabler/icons-react";
 import { decode } from "html-entities";
 
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
-//import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import type { Plant } from "~/types";
 
@@ -28,10 +29,13 @@ interface Props {
   plants: Plant[];
 }
 
-export default function Plants({ plants }: Props) {
-  const { colorScheme } = useMantineColorScheme();
+export default function StrainsInGrow({ plants }: Props) {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const theme = useMantineTheme();
-  const dark = colorScheme === "dark";
+  const dark = useMantineColorScheme().colorScheme === "dark";
   const mediumScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.sm})`
   );
@@ -39,7 +43,7 @@ export default function Plants({ plants }: Props) {
   return (
     <>
       <Title p="xs" order={3}>
-        My Plants
+        {t("common:report-details-strainsingrow")}
       </Title>
       <Accordion
         radius="sm"
@@ -216,7 +220,7 @@ export default function Plants({ plants }: Props) {
                     className="cursor-pointer"
                     href={plant.seedfinderStrain.seedfinder_ext_url}
                     compact
-                    leftIcon={<IconExternalLink size="1rem" />}
+                    leftIcon={<IconExternalLink size={18} />}
                   >
                     Infos on Seedfinder.eu
                   </Button>
@@ -280,7 +284,7 @@ export default function Plants({ plants }: Props) {
                           plant.seedfinderStrain.breeder_website_url
                         }
                         compact
-                        rightIcon={<IconExternalLink size="1rem" />}
+                        rightIcon={<IconExternalLink size={18} />}
                       >
                         Website
                       </Button>
