@@ -27,9 +27,9 @@ import { httpStatusErrorMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 
-//import { useTranslation } from "react-i18next";
 import type { User } from "next-auth";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
@@ -42,7 +42,6 @@ import { InputCreateReportForm } from "~/utils/inputValidation";
 
 interface AddFormProps {
   user: User;
-  textContinueButton: string;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -84,14 +83,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function CreateReportForm({
-  user,
-  textContinueButton,
-}: AddFormProps) {
+export function AddReportForm({ user }: AddFormProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const { locale: activeLocale } = router;
-  //const { t } = useTranslation(activeLocale);
+  const { t } = useTranslation(activeLocale);
+
+  const { data: session, status } = useSession();
 
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
@@ -383,6 +380,7 @@ export function CreateReportForm({
             <Group position="right" mt="xl">
               <Button
                 fz="lg"
+                w={160}
                 variant="filled"
                 color="growgreen"
                 className="cursor-pointer"
@@ -390,7 +388,7 @@ export function CreateReportForm({
                 leftIcon={<IconFileArrowRight stroke={2.2} size={24} />}
                 type="submit"
               >
-                {textContinueButton}
+                {t("common:report-save-new-button")}
               </Button>
             </Group>
           </Box>

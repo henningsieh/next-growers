@@ -406,25 +406,7 @@ function PublicReportPost(
               <IconChevronLeft size={28} />
               {grow.title}
             </Box>
-          </Link>
-
-          {status === "authenticated" &&
-            grow.authorId === session.user.id && (
-              <Group position="right">
-
-                <EditPostButton
-                  growId={grow.id}
-                  postId={thisPost.id}
-                  buttonLabel={t("common:post-edit-button")}
-                />
-
-                <AddPostButton
-                  growId={grow.id}
-                  buttonLabel={t("common:addpost-headline")}
-                />
-              </Group>
-            )}
-            
+          </Link>            
         </Box> */}
 
         {/* // Header End */}
@@ -436,20 +418,9 @@ function PublicReportPost(
           pt="xs"
           className="flex w-full flex-col space-y-4"
         >
-          {/* Update view without Header brings better UI! */}
-          <ReportHeader
-            report={grow}
-            image={grow.image?.cloudUrl as string}
-            avatar={
-              grow.author.image
-                ? grow.author.image
-                : `https://ui-avatars.com/api/?name=${
-                    grow.author.name as string
-                  }`
-            }
-            name={grow.author.name as string}
-            description={grow.description}
-          />
+          {/* Grow Header */}
+          <ReportHeader grow={grow} />
+
           {/* // Posts Date Picker */}
           <PostDatepicker
             defaultDate={

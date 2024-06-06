@@ -192,22 +192,7 @@ const PublicReport: NextPage = () => {
           <Title order={1} className="inline">
             {`${pageTitle}`}
           </Title>
-          {/* 
-          {!!grow &&
-            status === "authenticated" &&
-            grow.authorId === session.user.id && (
-              <Group position="right">
-                <EditGrowButton
-                  growId={grow.id}
-                  buttonLabel={t("common:report-edit-button")}
-                />
 
-                <AddPostButton
-                  growId={grow.id}
-                  buttonLabel={t("common:addpost-headline")}
-                />
-              </Group>
-            )}
         </Box> */}
         {/* // Header End */}
         <Container
@@ -217,20 +202,8 @@ const PublicReport: NextPage = () => {
           pt="xs"
           className="flex w-full flex-col space-y-4"
         >
-          {grow && (
-            <ReportHeader
-              report={grow}
-              image={grow.image?.cloudUrl as string}
-              avatar={
-                grow.author?.image
-                  ? grow.author?.image
-                  : `https://ui-avatars.com/api/?name=${
-                      grow.author?.name as string
-                    }`
-              }
-              name={grow.author?.name as string}
-              description={grow.description}
-            />
+          {!reportIsLoading && !reportHasErrors && (
+            <ReportHeader grow={grow} />
           )}
           {/* // Posts Date Picker */}
           {/* <Box ref={targetRef}> */}

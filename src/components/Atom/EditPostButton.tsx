@@ -2,12 +2,13 @@ import { Button, createStyles, rem } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconEdit } from "@tabler/icons-react";
 
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface Props {
   growId: string;
   postId: string;
-  buttonLabel: string;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -24,11 +25,11 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function EditPostButton({
-  growId,
-  postId,
-  buttonLabel,
-}: Props) {
+export default function EditPostButton({ growId, postId }: Props) {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const { classes, theme } = useStyles();
   const smallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.sm})`
@@ -45,7 +46,7 @@ export default function EditPostButton({
           <IconEdit size={smallScreen ? 18 : 24} stroke={1.8} />
         }
       >
-        {buttonLabel}
+        {t("common:post-edit-button")}
       </Button>
     </Link>
   );

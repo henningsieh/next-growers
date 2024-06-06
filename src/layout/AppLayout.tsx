@@ -230,7 +230,6 @@ export default function RootLayout({
   };
 
   const router = useRouter();
-
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
@@ -238,25 +237,6 @@ export default function RootLayout({
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-
-  const footerLinks = [
-    {
-      link: "/imprint",
-      label: t("common:app-impressum-imprint-label"),
-    },
-    {
-      link: "/privacy",
-      label: t("common:app-impressum-privacy-label"),
-    },
-  ];
-
-  const footerCenterItems = footerLinks.map((link) => (
-    <Link key={link.label} href={link.link}>
-      <Text lh={0.6} size="md">
-        {link.label}
-      </Text>
-    </Link>
-  ));
 
   const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
@@ -406,9 +386,7 @@ export default function RootLayout({
           </Group>
           <Group>
             <Box>
-              <SteadyButton
-                buttonTitle={t("common:app-steady-button-title")}
-              />
+              <SteadyButton />
             </Box>
             {/* Does not fit in mobile portrait mode display */}
             <Box className={classes.hiddenIfSmallerThanXs}>
@@ -506,7 +484,7 @@ export default function RootLayout({
       {/* Content */}
       <Box className="relative mt-16 pb-16">{children}</Box>
 
-      <Footer items={footerCenterItems} />
+      <Footer />
 
       {/* CookieConsent */}
       <CookieConsentBanner />

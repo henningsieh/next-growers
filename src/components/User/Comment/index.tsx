@@ -42,9 +42,9 @@ import {
 } from "~/messages";
 
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import EmojiPicker from "~/components/Atom/EmojiPicker";

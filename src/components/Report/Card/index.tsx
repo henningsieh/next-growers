@@ -16,7 +16,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import {
-  // IconAlertTriangle,
   IconCalendar,
   IconCannabis,
   IconClock,
@@ -262,11 +261,7 @@ export default function ReportCard({
           !!isoReport &&
           session.user.id == isoReport.authorId && (
             <Box p={8} pos="absolute" className="z-20 bottom-0 right-0">
-              <EditReportMenu
-                reportId={isoReport.id}
-                labelEditGrow={t("common:report-edit-button")}
-                labelAddUpdate={t("common:addpost-headline")}
-              />
+              <EditReportMenu reportId={isoReport.id} />
             </Box>
           )}
         <ImagePreview
@@ -391,16 +386,14 @@ export default function ReportCard({
 }
 
 interface EditReportMenuProps {
-  labelEditGrow: React.ReactNode;
-  labelAddUpdate: React.ReactNode;
   reportId: string;
 }
 
-export function EditReportMenu({
-  reportId,
-  labelEditGrow,
-  labelAddUpdate,
-}: EditReportMenuProps) {
+export function EditReportMenu({ reportId }: EditReportMenuProps) {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const { classes } = useStyles();
   return (
     <Flex justify="flex-end" align="center">
@@ -421,7 +414,7 @@ export function EditReportMenu({
             withArrow
             arrowPosition="side"
             position="top-end"
-            label={labelEditGrow}
+            label={t("common:report-edit-button")}
           >
             <Button
               px={2}
@@ -441,7 +434,7 @@ export function EditReportMenu({
               className={classes.edit}
               icon={<IconEdit size={18} />}
             >
-              {labelEditGrow}
+              {t("common:report-edit-button")}
             </Menu.Item>
           </Link>
           <Link href={`/account/grows/edit/${reportId}/addUpdate`}>
@@ -449,7 +442,7 @@ export function EditReportMenu({
               className={classes.add}
               icon={<IconPlant size={18} />}
             >
-              {labelAddUpdate}
+              {t("common:addpost-headline")}
             </Menu.Item>
           </Link>
         </Menu.Dropdown>
