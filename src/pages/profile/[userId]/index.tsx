@@ -34,7 +34,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type {
   GetStaticPaths,
@@ -422,11 +422,30 @@ const PublicProfile: NextPage<
   const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
 
-  const [activeTab, setActiveTab] = useState<string | null>("grows");
+  // const { query } = useRouter();
+  const [activeTab, setActiveTab] = useState<string | undefined>(
+    (useRouter().query.tab as string | undefined) || "profile"
+  );
 
-  // path is "?tab=grows"
-  const tab = router.query.tab as string;
-  console.debug("tab", tab);
+  useEffect(() => {
+    if (activeTab) {
+      setActiveTab(activeTab);
+    }
+  }, [activeTab]);
+
+  const handleTabChange = (value: string | null) => {
+    if (value) {
+      setActiveTab(value);
+      void router.push(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, tab: value },
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  };
 
   const useStyles = createStyles((theme) => ({
     card: {
@@ -709,13 +728,8 @@ const PublicProfile: NextPage<
               allowTabDeactivation
               keepMounted={false}
               color="growgreen.2"
-              // value={router.query.activeTab as string}
               value={activeTab}
-              onTabChange={setActiveTab}
-              // onTabChange={(value) => {
-              //   void router.push(`${`/profile/${user.id}`}/${value}`);
-              //   return;
-              // }}
+              onTabChange={handleTabChange}
             >
               <Tabs.List>
                 <Tabs.Tab value="profile">Profile</Tabs.Tab>
