@@ -508,13 +508,6 @@ const PublicProfile: NextPage<
   const imageUrl =
     "https://images.unsplash.com/photo-1591754060004-f91c95f5cf05";
 
-  const icons = {
-    images: IconPhotoUp,
-    comments: IconMessage,
-    likes: IconHeart,
-    posts: IconFilePlus,
-  };
-
   //FIXME: diff/trend calculation
   const data = [
     {
@@ -543,8 +536,15 @@ const PublicProfile: NextPage<
     },
   ] as const;
 
+  const statIcons = {
+    images: IconPhotoUp,
+    comments: IconMessage,
+    likes: IconHeart,
+    posts: IconFilePlus,
+  } as const;
+
   const stats = data.map((stat) => {
-    const Icon = icons[stat.icon];
+    const Icon = statIcons[stat.icon];
     const DiffIcon =
       stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
 
@@ -575,7 +575,7 @@ const PublicProfile: NextPage<
         </Text>
       </Paper>
     );
-  });
+  }) as JSX.Element[];
 
   const grows = ownIsoReports.map((ownIsoReport) => {
     return (
@@ -593,10 +593,10 @@ const PublicProfile: NextPage<
         />
       </Grid.Col>
     );
-  });
+  }) as JSX.Element[];
 
   return !user ? (
-    <>not found</>
+    <>Error 404: This Grower was not found</>
   ) : (
     <>
       <Head>
