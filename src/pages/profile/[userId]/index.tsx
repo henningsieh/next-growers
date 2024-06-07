@@ -7,7 +7,10 @@ import {
   Flex,
   getStylesRef,
   Grid,
+  Paper,
+  Tabs,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 import {
   Card,
@@ -19,27 +22,38 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import {
+  IconArrowDownRight,
+  IconArrowUpRight,
   IconDots,
   IconEye,
+  IconFilePlus,
   IconFileZip,
+  IconHeart,
+  IconMessage,
+  IconPhotoUp,
   IconTrash,
-  IconUserPlus,
 } from "@tabler/icons-react";
 
 import { useState } from "react";
 
-import type { GetServerSideProps, NextPage } from "next";
-import { getServerSession } from "next-auth/next";
+import type {
+  GetStaticPaths,
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+  NextPage,
+} from "next";
 import { useSession } from "next-auth/react";
+// import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
+import FollowButton from "~/components/Atom/FollowButton";
 import UserAvatar from "~/components/Atom/UserAvatar";
 import ReportCard from "~/components/Report/Card";
 
-import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 import type {
@@ -47,15 +61,13 @@ import type {
   UserProfileData,
 } from "~/types";
 
-/** PUBLIC DYNAMIC PAGE with translations
- * getServerSideProps (Server-Side Rendering)
- *
- * @param GetServerSidePropsContext<{ locale: string; translations: string | string[] | undefined; }> context - The context object containing information about the request
- * @returns Promise<{ props: { [key: string]: any }; }> - A promise resolving to an object containing props to be passed to the page component
+/** getStaticProps
+ *  @param context : GetStaticPropsContext<{ reportId: string }>
+ *  @returns : Promise<{props{ report: Report }}>
  */
-export const getServerSideProps: GetServerSideProps = (async (
-  context
-) => {
+export async function getStaticProps(
+  context: GetStaticPropsContext<{ userId: string }>
+) {
   // fetch user data from the database
   const user = (await prisma.user.findUnique({
     where: {
@@ -68,7 +80,31 @@ export const getServerSideProps: GetServerSideProps = (async (
       image: true,
       _count: {
         select: {
-          posts: {},
+          reports: {
+            where: {
+              authorId: context.params?.userId as string,
+            },
+          },
+          posts: {
+            where: {
+              authorId: context.params?.userId as string,
+            },
+          },
+          likes: {
+            where: {
+              userId: context.params?.userId as string,
+            },
+          },
+          comments: {
+            where: {
+              authorId: context.params?.userId as string,
+            },
+          },
+          cloudImages: {
+            where: {
+              ownerId: context.params?.userId as string,
+            },
+          },
         },
       },
     },
@@ -315,39 +351,11 @@ export const getServerSideProps: GetServerSideProps = (async (
       return isoReportsFromDb;
     })) as IsoReportWithPostsFromDb[];
 
-  //count the number of images uploaded by the user
-  const imageCount = await prisma.image.count({
-    where: {
-      ownerId: user?.id,
-    },
-  });
-
-  //count the number of images uploaded by the user
-  // const postImages = await prisma.image.findMany({
-  //   where: {
-  //     ownerId: user?.id,
-  //   },
-  //   select: {
-  //     id: true,
-  //     cloudUrl: true,
-  //     post: true,
-  //   },
-  // });
-
-  // if (!user) {
-  //   // Redirect with next router
-  //   router.push("/404");
-
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
-
-  const session = await getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
+  // const session = await getServerSession(
+  //   context.req,
+  //   context.res,
+  //   authOptions
+  // );
   const translations = await serverSideTranslations(
     context.locale as string,
     ["common"]
@@ -356,26 +364,70 @@ export const getServerSideProps: GetServerSideProps = (async (
   return {
     props: {
       user,
-      imageCount,
       ownReports,
-      session,
+      // session,
       ...translations,
     },
   };
-}) satisfies GetServerSideProps;
+}
 
-const PublicProfile: NextPage<{
-  user: UserProfileData | null;
-  imageCount: number;
-  ownReports: IsoReportWithPostsFromDb[];
-}> = (props) => {
-  const { user, imageCount, ownReports: ownIsoReports } = props;
+/** getStaticPaths
+ *  @param reports: { id: string; }[]
+ *  @returns { paths[] }
+ */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+    },
+  });
+
+  const paths = users.flatMap((user) => {
+    return [
+      {
+        params: {
+          userId: user.id,
+        },
+        locale: "en", // English version
+      },
+      {
+        params: {
+          userId: user.id,
+        },
+        locale: "de", // German version
+      },
+    ];
+  });
+
+  return {
+    paths,
+    fallback: "blocking",
+  };
+};
+
+const PublicProfile: NextPage<
+  InferGetStaticPropsType<typeof getStaticProps>
+> = ({ user, ownReports: ownIsoReports }) => {
+  //const { user, ownReports: ownIsoReports } = props;
   const { data: session, status } = useSession();
   const [_searchString, setSearchString] = useState("");
 
-  console.debug("user", user);
-
   const pageTitle = `Grower's Profile`;
+
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === "dark";
+
+  const router = useRouter();
+  // const { locale: activeLocale } = router;
+  // const { t } = useTranslation(activeLocale);
+
+  console.debug(router.query.value);
+
+  const [activeTab, setActiveTab] = useState<string | null>("grows");
+
+  // path is "?tab=grows"
+  const tab = router.query.tab as string;
+  console.debug("tab", tab);
 
   const useStyles = createStyles((theme) => ({
     card: {
@@ -407,11 +459,34 @@ const PublicProfile: NextPage<{
           ? theme.fn.lighten(theme.colors.dark[6], 0.0)
           : theme.fn.lighten(theme.colors.growgreen[5], 0.7),
     },
+
     item: {
       fontWeight: 700,
       color: theme.colorScheme === "dark" ? theme.white : theme.black,
       padding: rem(8),
       marginBottom: rem(2),
+    },
+
+    // STATS STYLES
+    value: {
+      fontSize: rem(32),
+      fontWeight: "bold",
+      lineHeight: 1,
+    },
+
+    diff: {
+      lineHeight: 1,
+      display: "flex",
+      alignItems: "center",
+    },
+
+    icon: {
+      color: dark ? "growgreen.4" : "growgreen.8",
+    },
+
+    title: {
+      fontWeight: 700,
+      textTransform: "uppercase",
     },
   }));
   const { classes, theme } = useStyles();
@@ -419,16 +494,106 @@ const PublicProfile: NextPage<{
   const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const responsiveColumnCount = xs ? 1 : sm ? 1 : md ? 2 : 3;
+  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  // const responsiveColumnCount = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
+  const responsiveStatsColumnCount = xs
+    ? 2
+    : sm
+      ? 2
+      : md
+        ? 2
+        : lg
+          ? 4
+          : 4;
 
   const imageUrl =
     "https://images.unsplash.com/photo-1591754060004-f91c95f5cf05";
 
-  const images = [
-    "https://images.unsplash.com/photo-1449824913935-59a10b8d2000",
-    "https://images.unsplash.com/photo-1444723121867-7a241cacace9",
-    "https://images.unsplash.com/photo-1444084316824-dc26d6657664",
-  ];
+  const icons = {
+    images: IconPhotoUp,
+    comments: IconMessage,
+    likes: IconHeart,
+    posts: IconFilePlus,
+  };
+
+  const data = [
+    {
+      title: "Updates",
+      icon: "posts",
+      value: user?._count.posts,
+      diff: -30,
+    },
+    {
+      title: "Images",
+      icon: "images",
+      value: user?._count.cloudImages,
+      diff: 34,
+    },
+    {
+      title: "Comments",
+      icon: "comments",
+      value: user?._count.comments,
+      diff: -13,
+    },
+    {
+      title: "Likes",
+      icon: "likes",
+      value: user?._count.likes,
+      diff: 18,
+    },
+  ] as const;
+
+  const stats = data.map((stat) => {
+    const Icon = icons[stat.icon];
+    const DiffIcon =
+      stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
+
+    return (
+      <Paper withBorder p="sm" radius="sm" key={stat.title}>
+        <Flex justify="space-between">
+          <Text size="ld" c="dimmed" className={classes.title}>
+            {stat.title}
+          </Text>
+          <Icon className={classes.icon} size={24} stroke={1.8} />
+        </Flex>
+
+        <Group align="flex-end" spacing="xs" mt={"xl"}>
+          <Text className={classes.value}>{stat.value}</Text>
+          <Text
+            className={classes.diff}
+            c={stat.diff > 0 ? "teal" : "red"}
+            fz="md"
+            fw={500}
+          >
+            <span>{stat.diff}%</span>
+            <DiffIcon size={20} stroke={1.8} />
+          </Text>
+        </Group>
+
+        <Text fz="xs" c="dimmed" mt={7}>
+          Compared to previous month
+        </Text>
+      </Paper>
+    );
+  });
+
+  const grows = ownIsoReports.map((ownIsoReport) => {
+    return (
+      <Grid.Col
+        key={ownIsoReport.id}
+        xs={12}
+        sm={6}
+        md={4}
+        lg={4}
+        xl={4}
+      >
+        <ReportCard
+          report={ownIsoReport}
+          setSearchString={setSearchString}
+        />
+      </Grid.Col>
+    );
+  });
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -456,7 +621,11 @@ const PublicProfile: NextPage<{
           </Box>
           {/* // Header End */}
 
-          <Container>
+          {/* // Main Content Container */}
+          <Container
+            size="lg"
+            className="flex w-full flex-col space-y-2"
+          >
             {/* // Card with User Profile */}
             <Card withBorder shadow="sm" radius="sm">
               <Card.Section p="xs" py="xs">
@@ -465,18 +634,13 @@ const PublicProfile: NextPage<{
                     {user.name}
                   </Text>
 
-                  <Button
-                    color="growgreen"
-                    variant="outline"
-                    leftIcon={<IconUserPlus size={22} stroke={1.8} />}
-                  >
-                    Follow
-                  </Button>
+                  <FollowButton />
                 </Group>
               </Card.Section>
 
               <Card.Section className={classes.card}>
                 <Flex justify="space-between" style={{ zIndex: 20 }}>
+                  {/* User Avatar */}
                   <Box p="xs">
                     <UserAvatar
                       userName={user.name}
@@ -484,6 +648,7 @@ const PublicProfile: NextPage<{
                       avatarRadius={120}
                     />
                   </Box>
+                  {/* User Profile Menu */}
                   <Box p="xs">
                     <Menu
                       classNames={classes}
@@ -493,11 +658,13 @@ const PublicProfile: NextPage<{
                     >
                       <Menu.Target>
                         <Button
-                          compact
+                          p={0}
+                          h={28}
+                          w={28}
                           variant="filled"
                           color="groworange"
                         >
-                          <IconDots size="1rem" />
+                          <IconDots size={20} />
                         </Button>
                       </Menu.Target>
 
@@ -531,80 +698,97 @@ const PublicProfile: NextPage<{
                 />
               </Card.Section>
 
-              <Text mt="sm" color="dimmed" size="md">
-                ... has uploaded
-                <Text
-                  fz="md"
-                  fw="bold"
-                  component="span"
-                  inherit
-                  color={theme.colors.groworange[4]}
-                >
-                  &nbsp;{imageCount} images
-                </Text>
-                &nbsp;within
-                <Text
-                  fz="md"
-                  fw="bold"
-                  component="span"
-                  inherit
-                  color={theme.colors.groworange[4]}
-                >
-                  &nbsp;{user._count.posts} Updates
-                </Text>
-              </Text>
-
               <Card.Section inheritPadding mt="sm" pb="md">
-                <SimpleGrid cols={responsiveColumnCount}>
-                  {images.map((image) => (
-                    <div key={image}>
-                      <Image
-                        alt=""
-                        src={image}
-                        width={330}
-                        height={330}
-                        sizes="330px"
-                      />
-                    </div>
-                  ))}
+                <SimpleGrid cols={responsiveStatsColumnCount}>
+                  {stats}
                 </SimpleGrid>
               </Card.Section>
 
-              <Text mt="sm" color="dimmed" size="md">
-                ... and owns
-                <Text
-                  fz="md"
-                  fw="bold"
-                  component="span"
-                  inherit
-                  color={theme.colors.groworange[4]}
-                >
-                  &nbsp;3 Grows
-                </Text>
-                :
-              </Text>
+              <Tabs
+                allowTabDeactivation
+                keepMounted={false}
+                color="growgreen.2"
+                // value={router.query.activeTab as string}
+                value={activeTab}
+                onTabChange={setActiveTab}
+                // onTabChange={(value) => {
+                //   void router.push(`${`/profile/${user.id}`}/${value}`);
+                //   return;
+                // }}
+              >
+                <Tabs.List>
+                  <Tabs.Tab value="profile">Profile</Tabs.Tab>
+                  <Tabs.Tab value="grows">Grows</Tabs.Tab>
+                  <Tabs.Tab value="updates">Updates</Tabs.Tab>
+                  <Tabs.Tab value="comments">Comments</Tabs.Tab>
+                  <Tabs.Tab value="followers">Followers</Tabs.Tab>
+                  <Tabs.Tab value="follows">Follows</Tabs.Tab>
+                </Tabs.List>
 
-              <Card.Section inheritPadding mt="sm" pb="md">
-                <Grid gutter="sm">
-                  {ownIsoReports.map((ownIsoReport) => {
-                    return (
-                      <Grid.Col
-                        key={ownIsoReport.id}
-                        xs={12}
-                        sm={6}
-                        md={4}
-                        lg={3}
-                        xl={3}
-                      >
-                        <ReportCard
-                          report={ownIsoReport}
-                          setSearchString={setSearchString}
-                        />
+                {/* Profile */}
+                <Tabs.Panel value="profile" pt="xs">
+                  <Card.Section inheritPadding mt="sm" pb="md">
+                    {/* // list profile links like link tree */}
+                    <Grid gutter="sm">
+                      <Grid.Col span={6}>
+                        <Flex align={"flex-end"}>
+                          <Text size="xl" fw="bold">
+                            Links
+                          </Text>
+                          <Text size="sm" c="dimmed">
+                            Links to other platforms
+                          </Text>
+                        </Flex>
+                        {/* Unorderes list of facebook, twitter, etc... */}
+                        <ul>
+                          <li>Facebook</li>
+                          <li>Instagram</li>
+                          <li>Twitter</li>
+                          <li>LinkedIn</li>
+                        </ul>
                       </Grid.Col>
-                    );
-                  })}
-                </Grid>
-              </Card.Section>
+                      <Grid.Col span={6}>
+                        <Text size="xl" fw="bold">
+                          About
+                        </Text>
+                        <Text size="sm" c="dimmed">
+                          Self description
+                        </Text>
+                      </Grid.Col>
+                    </Grid>
+                  </Card.Section>
+                </Tabs.Panel>
+                {/* Grows */}
+                <Tabs.Panel value="grows" pt="xs">
+                  <Card.Section inheritPadding mt="sm" pb="md">
+                    <Grid gutter="sm">{grows}</Grid>
+                  </Card.Section>
+                </Tabs.Panel>
+                {/* Updates */}
+                <Tabs.Panel value="updates" pt="xs">
+                  <Card.Section inheritPadding mt="sm" pb="md">
+                    Latest Updates
+                  </Card.Section>
+                </Tabs.Panel>
+                {/* Comments */}
+                <Tabs.Panel value="comments" pt="xs">
+                  <Card.Section inheritPadding mt="sm" pb="md">
+                    Latest Comments
+                  </Card.Section>
+                </Tabs.Panel>
+                {/* Followers */}
+                <Tabs.Panel value="followers" pt="xs">
+                  <Card.Section inheritPadding mt="sm" pb="md">
+                    Followers
+                  </Card.Section>
+                </Tabs.Panel>
+                {/* Follows */}
+                <Tabs.Panel value="follows" pt="xs">
+                  <Card.Section inheritPadding mt="sm" pb="md">
+                    Follows
+                  </Card.Section>
+                </Tabs.Panel>
+              </Tabs>
             </Card>
           </Container>
         </Container>

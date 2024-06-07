@@ -2,7 +2,6 @@ import {
   Badge,
   Box,
   Button,
-  Card,
   Center,
   createStyles,
   Flex,
@@ -90,7 +89,7 @@ const useStyles = createStyles((theme) => ({
     transition: "transform 150ms ease, box-shadow 150ms ease",
     backgroundColor:
       theme.colorScheme === "dark"
-        ? theme.colors.dark[5]
+        ? theme.colors.dark[4]
         : theme.colors.gray[2],
     "&:hover": {
       boxShadow:
@@ -234,8 +233,8 @@ export default function ReportCard({
           from: theme.colors.dark[4],
           to: theme.colors.green[9],
         }}
-        fz={"0.72rem"}
-        px={3}
+        fz={rem(10)}
+        px={6}
         mx={0}
         leftSection={<IconCannabis stroke={1.8} size={16} />}
       >
@@ -256,7 +255,7 @@ export default function ReportCard({
   return (
     <Paper withBorder p={0} m={0} radius="sm" className={classes.card}>
       {/* HEADER IMAGE */}
-      <Card.Section pos="relative">
+      <Box pos="relative">
         {/*// Session buttons */}
         {status === "authenticated" &&
           !!isoReport &&
@@ -282,13 +281,13 @@ export default function ReportCard({
           comments={totalCommentCount}
           views={183}
         />
-      </Card.Section>
+      </Box>
 
       {/* Strains and LikeHeart */}
-      <Card.Section className={classes.section}>
+      <Box className={classes.section}>
         <Flex align="flex-start" justify="space-between">
           {/* Strains */}
-          <ScrollArea className="overflow-visible" w={"82%"} h={42}>
+          <ScrollArea className="overflow-visible" w={"80%"} h={42}>
             {plantBadges && plantBadges.length !== 0 ? (
               <Flex py={4} gap="xs">
                 {plantBadges}
@@ -322,10 +321,10 @@ export default function ReportCard({
             <LikeHeart itemToLike={isoReport} itemType={"Report"} />
           </Box>
         </Flex>
-      </Card.Section>
+      </Box>
 
       {/* GROW DATES */}
-      <Card.Section className={classes.section}>
+      <Box className={classes.section}>
         <Group position="apart" c="dimmed">
           {/*// Stage/ Date */}
           <Group position="left">
@@ -382,7 +381,7 @@ export default function ReportCard({
             </Tooltip>
           </Group>
         </Group>
-      </Card.Section>
+      </Box>
     </Paper>
   );
 }

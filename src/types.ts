@@ -17,7 +17,11 @@ export type UserProfileData = {
   name: string;
   email: string;
   _count: {
+    cloudImages: number;
+    comments: number;
+    likes: number;
     posts: number;
+    reports: number;
   };
 };
 
