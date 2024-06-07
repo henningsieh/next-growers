@@ -11,6 +11,7 @@ import {
   Tabs,
   Title,
   useMantineColorScheme,
+  useMantineTheme,
 } from "@mantine/core";
 import {
   Card,
@@ -416,6 +417,7 @@ const PublicProfile: NextPage<
   const pageTitle = `Grower's Profile`;
 
   const { colorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
   const dark = colorScheme === "dark";
 
   const router = useRouter();
@@ -426,6 +428,12 @@ const PublicProfile: NextPage<
   const [activeTab, setActiveTab] = useState<string | undefined>(
     (useRouter().query.tab as string | undefined) || "profile"
   );
+
+  // const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  // const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
+  const responsiveStatsColumnCount = md ? 2 : 4;
 
   useEffect(() => {
     if (activeTab) {
@@ -506,24 +514,40 @@ const PublicProfile: NextPage<
       fontWeight: 700,
       textTransform: "uppercase",
     },
+
+    // TAB STYLES
+    tab: {
+      marginTop: 4,
+      paddingLeft: `${sm ? rem(6) : theme.spacing.md}`,
+      paddingRight: `${sm ? rem(6) : theme.spacing.md}`,
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.white,
+      color:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[0]
+          : theme.colors.gray[9],
+      "&[data-active]": dark
+        ? {
+            backgroundColor: theme.colors.dark[4],
+          }
+        : {
+            backgroundColor: theme.colors.gray[2],
+          },
+      "&[data-active]::before": {
+        height: rem(3),
+        backgroundColor: theme.colors.growgreen[2],
+      },
+      "&:disabled": {
+        opacity: 0.5,
+        cursor: "not-allowed",
+      },
+    },
   }));
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
 
-  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
-  const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-  const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
-  // const responsiveColumnCount = xs ? 1 : sm ? 1 : md ? 2 : lg ? 3 : 4;
-  const responsiveStatsColumnCount = xs
-    ? 2
-    : sm
-      ? 2
-      : md
-        ? 2
-        : lg
-          ? 4
-          : 4;
-
+  //FIXME: implement user profile header image
   const imageUrl =
     "https://images.unsplash.com/photo-1591754060004-f91c95f5cf05";
 
@@ -725,19 +749,36 @@ const PublicProfile: NextPage<
             </Card.Section>
 
             <Tabs
+              variant="outline"
               allowTabDeactivation
               keepMounted={false}
-              color="growgreen.2"
+              c="growgreen.4"
+              color="growgreen.4"
               value={activeTab}
               onTabChange={handleTabChange}
             >
               <Tabs.List>
-                <Tabs.Tab value="profile">Profile</Tabs.Tab>
-                <Tabs.Tab value="grows">Grows</Tabs.Tab>
-                <Tabs.Tab value="updates">Updates</Tabs.Tab>
-                <Tabs.Tab value="comments">Comments</Tabs.Tab>
-                <Tabs.Tab value="followers">Followers</Tabs.Tab>
-                <Tabs.Tab value="follows">Follows</Tabs.Tab>
+                {/* 
+                //FIXME: add translations
+                //FIXME: no padding on mobile */}
+                <Tabs.Tab className={classes.tab} value="profile">
+                  Profile
+                </Tabs.Tab>
+                <Tabs.Tab className={classes.tab} value="grows">
+                  Grows
+                </Tabs.Tab>
+                <Tabs.Tab className={classes.tab} value="updates">
+                  Updates
+                </Tabs.Tab>
+                <Tabs.Tab className={classes.tab} value="comments">
+                  Comments
+                </Tabs.Tab>
+                <Tabs.Tab className={classes.tab} value="followers">
+                  Followers
+                </Tabs.Tab>
+                <Tabs.Tab className={classes.tab} value="follows">
+                  Follows
+                </Tabs.Tab>
               </Tabs.List>
 
               {/* Profile */}
