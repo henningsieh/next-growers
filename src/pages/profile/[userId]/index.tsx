@@ -42,23 +42,24 @@ import type {
   InferGetStaticPropsType,
   NextPage,
 } from "next";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 // import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import AccessDenied from "~/components/Atom/AccessDenied";
+// import AccessDenied from "~/components/Atom/AccessDenied";
 import FollowButton from "~/components/Atom/FollowButton";
 import UserAvatar from "~/components/Atom/UserAvatar";
 import ReportCard from "~/components/Report/Card";
 
 import { prisma } from "~/server/db";
 
-import type {
-  IsoReportWithPostsFromDb,
-  UserProfileData,
+import {
+  type IsoReportWithPostsFromDb,
+  Locale,
+  type UserProfileData,
 } from "~/types";
 
 /** getStaticProps
@@ -409,7 +410,7 @@ const PublicProfile: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({ user, ownReports: ownIsoReports }) => {
   //const { user, ownReports: ownIsoReports } = props;
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
   const [_searchString, setSearchString] = useState("");
 
   const pageTitle = `Grower's Profile`;
@@ -418,10 +419,8 @@ const PublicProfile: NextPage<
   const dark = colorScheme === "dark";
 
   const router = useRouter();
-  // const { locale: activeLocale } = router;
+  const { locale: activeLocale } = router;
   // const { t } = useTranslation(activeLocale);
-
-  console.debug(router.query.value);
 
   const [activeTab, setActiveTab] = useState<string | null>("grows");
 
@@ -516,6 +515,7 @@ const PublicProfile: NextPage<
     posts: IconFilePlus,
   };
 
+  //FIXME: diff/trend calculation
   const data = [
     {
       title: "Updates",
@@ -595,206 +595,206 @@ const PublicProfile: NextPage<
     );
   });
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
+  return !user ? (
+    <>not found</>
+  ) : (
+    <>
+      <Head>
+        <title>{`${pageTitle} of ${user.name} | ${appTitle}`}</title>
+        <meta
+          name="description"
+          content={`${pageTitle} | ${appTitle}`}
+        />
+        <meta property="og:image" content={imageUrl} />
+        <meta
+          property="og:title"
+          content={`${pageTitle} of ${user.name} | ${appTitle}`}
+        />
+        <meta
+          property="og:description"
+          content={`Self description ${activeLocale === Locale.DE ? `von` : `of`} ${user.name} | ${appTitle}`}
+        />
+      </Head>
 
-  if (session && user) {
-    return (
-      <>
-        <Head>
-          <title>{`${pageTitle}  of  ${user.name} | ${appTitle}`}</title>
-          <meta
-            name="description"
-            content={`${pageTitle} | ${appTitle}`}
-          />
-        </Head>
+      {/* // Main Content Container */}
+      <Container size="xl" className="flex w-full flex-col space-y-4">
+        {/* // Header with Title */}
+        <Box className="flex items-center justify-between pt-2">
+          {/* // Title */}
+          <Title order={1} className="inline">
+            {pageTitle}
+          </Title>
+        </Box>
+        {/* // Header End */}
 
         {/* // Main Content Container */}
-        <Container size="xl" className="flex w-full flex-col space-y-4">
-          {/* // Header with Title */}
-          <Box className="flex items-center justify-between pt-2">
-            {/* // Title */}
-            <Title order={1} className="inline">
-              {pageTitle}
-            </Title>
-          </Box>
-          {/* // Header End */}
+        <Container size="lg" className="flex w-full flex-col space-y-2">
+          {/* // Card with User Profile */}
+          <Card withBorder shadow="sm" radius="sm">
+            <Card.Section p="xs" py="xs">
+              <Group position="apart">
+                <Text size="xl" fw="bold">
+                  {user.name}
+                </Text>
 
-          {/* // Main Content Container */}
-          <Container
-            size="lg"
-            className="flex w-full flex-col space-y-2"
-          >
-            {/* // Card with User Profile */}
-            <Card withBorder shadow="sm" radius="sm">
-              <Card.Section p="xs" py="xs">
-                <Group position="apart">
-                  <Text size="xl" fw="bold">
-                    {user.name}
-                  </Text>
+                <FollowButton />
+              </Group>
+            </Card.Section>
 
-                  <FollowButton />
-                </Group>
-              </Card.Section>
+            <Card.Section className={classes.card}>
+              <Flex justify="space-between" style={{ zIndex: 20 }}>
+                {/* User Avatar */}
+                <Box p="xs">
+                  <UserAvatar
+                    userName={user.name}
+                    imageUrl={user.image}
+                    avatarRadius={120}
+                  />
+                </Box>
+                {/* User Profile Menu */}
+                <Box p="xs">
+                  <Menu
+                    classNames={classes}
+                    withinPortal
+                    position="bottom-end"
+                    shadow="sm"
+                  >
+                    <Menu.Target>
+                      <Button
+                        p={0}
+                        h={28}
+                        w={28}
+                        variant="filled"
+                        color="groworange"
+                      >
+                        <IconDots size={20} />
+                      </Button>
+                    </Menu.Target>
 
-              <Card.Section className={classes.card}>
-                <Flex justify="space-between" style={{ zIndex: 20 }}>
-                  {/* User Avatar */}
-                  <Box p="xs">
-                    <UserAvatar
-                      userName={user.name}
-                      imageUrl={user.image}
-                      avatarRadius={120}
-                    />
-                  </Box>
-                  {/* User Profile Menu */}
-                  <Box p="xs">
-                    <Menu
-                      classNames={classes}
-                      withinPortal
-                      position="bottom-end"
-                      shadow="sm"
-                    >
-                      <Menu.Target>
-                        <Button
-                          p={0}
-                          h={28}
-                          w={28}
-                          variant="filled"
-                          color="groworange"
-                        >
-                          <IconDots size={20} />
-                        </Button>
-                      </Menu.Target>
+                    <Menu.Dropdown>
+                      <Menu.Item icon={<IconFileZip size={rem(14)} />}>
+                        Download zip
+                      </Menu.Item>
+                      <Menu.Item icon={<IconEye size={rem(14)} />}>
+                        Preview all
+                      </Menu.Item>
+                      <Menu.Item
+                        icon={<IconTrash size={rem(14)} />}
+                        color="red"
+                      >
+                        Delete all
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Menu>
+                </Box>
+              </Flex>
+              <Image
+                src={imageUrl}
+                className={classes.image}
+                alt={`Header Image from Grow \"${user.name}\"`}
+                fill
+                priority
+                quality={80}
+                sizes="(max-width: 3800px) 100vw, 2000px"
+              />
+            </Card.Section>
 
-                      <Menu.Dropdown>
-                        <Menu.Item
-                          icon={<IconFileZip size={rem(14)} />}
-                        >
-                          Download zip
-                        </Menu.Item>
-                        <Menu.Item icon={<IconEye size={rem(14)} />}>
-                          Preview all
-                        </Menu.Item>
-                        <Menu.Item
-                          icon={<IconTrash size={rem(14)} />}
-                          color="red"
-                        >
-                          Delete all
-                        </Menu.Item>
-                      </Menu.Dropdown>
-                    </Menu>
-                  </Box>
-                </Flex>
-                <Image
-                  src={imageUrl}
-                  className={classes.image}
-                  alt={`Header Image from Grow \"${user.name}\"`}
-                  fill
-                  priority
-                  quality={80}
-                  sizes="(max-width: 3800px) 100vw, 2000px"
-                />
-              </Card.Section>
+            <Card.Section inheritPadding mt="sm" pb="md">
+              <SimpleGrid cols={responsiveStatsColumnCount}>
+                {stats}
+              </SimpleGrid>
+            </Card.Section>
 
-              <Card.Section inheritPadding mt="sm" pb="md">
-                <SimpleGrid cols={responsiveStatsColumnCount}>
-                  {stats}
-                </SimpleGrid>
-              </Card.Section>
+            <Tabs
+              allowTabDeactivation
+              keepMounted={false}
+              color="growgreen.2"
+              // value={router.query.activeTab as string}
+              value={activeTab}
+              onTabChange={setActiveTab}
+              // onTabChange={(value) => {
+              //   void router.push(`${`/profile/${user.id}`}/${value}`);
+              //   return;
+              // }}
+            >
+              <Tabs.List>
+                <Tabs.Tab value="profile">Profile</Tabs.Tab>
+                <Tabs.Tab value="grows">Grows</Tabs.Tab>
+                <Tabs.Tab value="updates">Updates</Tabs.Tab>
+                <Tabs.Tab value="comments">Comments</Tabs.Tab>
+                <Tabs.Tab value="followers">Followers</Tabs.Tab>
+                <Tabs.Tab value="follows">Follows</Tabs.Tab>
+              </Tabs.List>
 
-              <Tabs
-                allowTabDeactivation
-                keepMounted={false}
-                color="growgreen.2"
-                // value={router.query.activeTab as string}
-                value={activeTab}
-                onTabChange={setActiveTab}
-                // onTabChange={(value) => {
-                //   void router.push(`${`/profile/${user.id}`}/${value}`);
-                //   return;
-                // }}
-              >
-                <Tabs.List>
-                  <Tabs.Tab value="profile">Profile</Tabs.Tab>
-                  <Tabs.Tab value="grows">Grows</Tabs.Tab>
-                  <Tabs.Tab value="updates">Updates</Tabs.Tab>
-                  <Tabs.Tab value="comments">Comments</Tabs.Tab>
-                  <Tabs.Tab value="followers">Followers</Tabs.Tab>
-                  <Tabs.Tab value="follows">Follows</Tabs.Tab>
-                </Tabs.List>
-
-                {/* Profile */}
-                <Tabs.Panel value="profile" pt="xs">
-                  <Card.Section inheritPadding mt="sm" pb="md">
-                    {/* // list profile links like link tree */}
-                    <Grid gutter="sm">
-                      <Grid.Col span={6}>
-                        <Flex align={"flex-end"}>
-                          <Text size="xl" fw="bold">
-                            Links
-                          </Text>
-                          <Text size="sm" c="dimmed">
-                            Links to other platforms
-                          </Text>
-                        </Flex>
-                        {/* Unorderes list of facebook, twitter, etc... */}
-                        <ul>
-                          <li>Facebook</li>
-                          <li>Instagram</li>
-                          <li>Twitter</li>
-                          <li>LinkedIn</li>
-                        </ul>
-                      </Grid.Col>
-                      <Grid.Col span={6}>
+              {/* Profile */}
+              <Tabs.Panel value="profile" pt="xs">
+                <Card.Section inheritPadding mt="sm" pb="md">
+                  {/* // list profile links like link tree */}
+                  <Grid gutter="sm">
+                    <Grid.Col span={6}>
+                      <Flex align={"flex-end"}>
                         <Text size="xl" fw="bold">
-                          About
+                          Links
                         </Text>
                         <Text size="sm" c="dimmed">
-                          Self description
+                          Links to other platforms
                         </Text>
-                      </Grid.Col>
-                    </Grid>
-                  </Card.Section>
-                </Tabs.Panel>
-                {/* Grows */}
-                <Tabs.Panel value="grows" pt="xs">
-                  <Card.Section inheritPadding mt="sm" pb="md">
-                    <Grid gutter="sm">{grows}</Grid>
-                  </Card.Section>
-                </Tabs.Panel>
-                {/* Updates */}
-                <Tabs.Panel value="updates" pt="xs">
-                  <Card.Section inheritPadding mt="sm" pb="md">
-                    Latest Updates
-                  </Card.Section>
-                </Tabs.Panel>
-                {/* Comments */}
-                <Tabs.Panel value="comments" pt="xs">
-                  <Card.Section inheritPadding mt="sm" pb="md">
-                    Latest Comments
-                  </Card.Section>
-                </Tabs.Panel>
-                {/* Followers */}
-                <Tabs.Panel value="followers" pt="xs">
-                  <Card.Section inheritPadding mt="sm" pb="md">
-                    Followers
-                  </Card.Section>
-                </Tabs.Panel>
-                {/* Follows */}
-                <Tabs.Panel value="follows" pt="xs">
-                  <Card.Section inheritPadding mt="sm" pb="md">
-                    Follows
-                  </Card.Section>
-                </Tabs.Panel>
-              </Tabs>
-            </Card>
-          </Container>
+                      </Flex>
+                      {/* Unorderes list of facebook, twitter, etc... */}
+                      <ul>
+                        <li>Facebook</li>
+                        <li>Instagram</li>
+                        <li>Twitter</li>
+                        <li>LinkedIn</li>
+                      </ul>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <Text size="xl" fw="bold">
+                        About
+                      </Text>
+                      <Text size="sm" c="dimmed">
+                        Self description
+                      </Text>
+                    </Grid.Col>
+                  </Grid>
+                </Card.Section>
+              </Tabs.Panel>
+              {/* Grows */}
+              <Tabs.Panel value="grows" pt="xs">
+                <Card.Section inheritPadding mt="sm" pb="md">
+                  <Grid gutter="sm">{grows}</Grid>
+                </Card.Section>
+              </Tabs.Panel>
+              {/* Updates */}
+              <Tabs.Panel value="updates" pt="xs">
+                <Card.Section inheritPadding mt="sm" pb="md">
+                  Latest Updates
+                </Card.Section>
+              </Tabs.Panel>
+              {/* Comments */}
+              <Tabs.Panel value="comments" pt="xs">
+                <Card.Section inheritPadding mt="sm" pb="md">
+                  Latest Comments
+                </Card.Section>
+              </Tabs.Panel>
+              {/* Followers */}
+              <Tabs.Panel value="followers" pt="xs">
+                <Card.Section inheritPadding mt="sm" pb="md">
+                  Followers
+                </Card.Section>
+              </Tabs.Panel>
+              {/* Follows */}
+              <Tabs.Panel value="follows" pt="xs">
+                <Card.Section inheritPadding mt="sm" pb="md">
+                  Follows
+                </Card.Section>
+              </Tabs.Panel>
+            </Tabs>
+          </Card>
         </Container>
-      </>
-    );
-  }
-  return <AccessDenied />;
+      </Container>
+    </>
+  );
+  // return <AccessDenied />;
 };
 export default PublicProfile;
