@@ -690,7 +690,11 @@ const PublicProfile: NextPage<
                 <Box p="xs">
                   <UserAvatar
                     userName={user.name}
-                    imageUrl={user.image}
+                    imageUrl={
+                      user.image
+                        ? user.image
+                        : `https://ui-avatars.com/api/?name=${user.name}`
+                    }
                     avatarRadius={120}
                   />
                 </Box>

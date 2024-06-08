@@ -12,9 +12,9 @@ export type IsoReportWithPostsFromDb =
 
 export type getUserByIdResponse = RouterOutput["user"]["getUserById"];
 export type UserProfileData = {
-  image: string;
   id: string;
   name: string;
+  image: string | null;
   email: string;
   _count: {
     cloudImages: number;
