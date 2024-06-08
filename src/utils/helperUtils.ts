@@ -278,7 +278,7 @@ export const handleDrop = async (
       }
     } catch (error) {
       setIsUploading(false);
-      console.debug(error);
+      console.error(error);
       throw new Error("Error uploading file");
     }
   } else {
@@ -486,7 +486,6 @@ export const calculateStatsDiffInPercent = (
   currentValue: number,
   previousValue: number
 ): number => {
-  console.debug(((currentValue - previousValue) / previousValue) * 100);
   if (previousValue !== 0) {
     return parseFloat(
       (((currentValue - previousValue) / previousValue) * 100).toFixed(

@@ -10,20 +10,13 @@ type GetIsoReportWithPostsFromDbOutput =
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
 
-export type getUserByIdResponse = RouterOutput["user"]["getUserById"];
-export type UserProfileData = {
-  id: string;
-  name: string;
-  image: string | null;
-  email: string;
-  _count: {
-    cloudImages: number;
-    comments: number;
-    likes: number;
-    posts: number;
-    reports: number;
-  };
-};
+type getUserByIdResponse = RouterOutput["user"]["getUserProfilesById"];
+export type UserProfiles = getUserByIdResponse;
+export type UserProfile = getUserByIdResponse[number];
+export type UserProfileWithoutFollow = Omit<
+  UserProfile,
+  "followers" | "following"
+>;
 
 type getPostsByReportIdOutput =
   RouterOutput["posts"]["getPostsByReportId"];

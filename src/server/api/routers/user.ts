@@ -8,12 +8,11 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-import type { UserProfileData } from "~/types";
-
 import {
   InputSaveUserImage,
   InputSaveUserName,
 } from "~/utils/inputValidation";
+import { getUserSelectObject } from "~/utils/repository/userSelectObject";
 
 export const userRouter = createTRPCRouter({
   saveOwnUsername: protectedProcedure
@@ -102,33 +101,19 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
-  getUserById: publicProcedure
+  getUserProfilesById: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const { userId } = input;
 
       try {
-        const user = (await ctx.prisma.user.findUnique({
+        const users = await ctx.prisma.user.findMany({
           where: {
             id: userId,
           },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
-        })) as UserProfileData | null;
-
-        return !!user
-          ? {
-              success: true,
-              user: user,
-            }
-          : {
-              success: false,
-              user: undefined,
-            };
+          select: getUserSelectObject(userId),
+        });
+        return users;
       } catch (error: unknown) {
         if (error instanceof TRPCError) {
           throw new TRPCError({
@@ -137,7 +122,9 @@ export const userRouter = createTRPCRouter({
             cause: error.cause,
           });
         } else if (error instanceof Error) {
-          throw new Error(error.message);
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
         } else {
           throw new Error("An unknown error occurred");
         }

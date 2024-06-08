@@ -58,13 +58,18 @@ import ReportCard from "~/components/Report/Card";
 
 import { prisma } from "~/server/db";
 
+import type { UserProfileWithoutFollow } from "~/types";
 import {
   type IsoReportWithPostsFromDb,
   Locale,
-  type UserProfileData,
+  type UserProfile,
 } from "~/types";
 
 import { calculateStatsDiffInPercent } from "~/utils/helperUtils";
+import {
+  getUserSelectObject,
+  getUserSelectObjectWithoutFollow,
+} from "~/utils/repository/userSelectObject";
 
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
@@ -79,81 +84,22 @@ export async function getStaticProps(
     where: {
       id: userId,
     },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      _count: {
-        select: {
-          reports: { where: { authorId: userId } },
-          posts: { where: { authorId: userId } },
-          likes: { where: { userId: userId } },
-          comments: { where: { authorId: userId } },
-          cloudImages: { where: { ownerId: userId } },
-        },
-      },
-    },
-  })) as UserProfileData;
+    select: getUserSelectObject(userId),
+  })) as UserProfile;
+
+  console.debug(user);
 
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const historicaUserlData = (await prisma.user.findUnique({
+  const historicalUserlData = (await prisma.user.findUnique({
     where: {
       id: userId,
     },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      _count: {
-        select: {
-          reports: {
-            where: {
-              authorId: userId,
-              createdAt: {
-                lt: thirtyDaysAgo,
-              },
-            },
-          },
-          posts: {
-            where: {
-              authorId: userId,
-              createdAt: {
-                lt: thirtyDaysAgo,
-              },
-            },
-          },
-          likes: {
-            where: {
-              userId: userId,
-              createdAt: {
-                lt: thirtyDaysAgo,
-              },
-            },
-          },
-          comments: {
-            where: {
-              authorId: userId,
-              createdAt: {
-                lt: thirtyDaysAgo,
-              },
-            },
-          },
-          cloudImages: {
-            where: {
-              ownerId: userId,
-              createdAt: {
-                lt: thirtyDaysAgo,
-              },
-            },
-          },
-        },
-      },
-    },
-  })) as UserProfileData;
+    select: getUserSelectObjectWithoutFollow(userId),
+  })) as UserProfileWithoutFollow;
+
+  console.debug(historicalUserlData);
 
   const ownReports = (await prisma.report
     .findMany({
@@ -403,7 +349,7 @@ export async function getStaticProps(
   return {
     props: {
       user,
-      historicaUserlData,
+      historicalUserlData,
       ownReports,
       ...translations,
     },
@@ -446,13 +392,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const PublicProfile: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({
-  user,
-  historicaUserlData: historicalUserlData,
-  ownReports: ownIsoReports,
-}) => {
-  console.debug(historicalUserlData);
-
+> = ({ user, historicalUserlData, ownReports: ownIsoReports }) => {
   const pageTitle = `Grower Profile`;
 
   const { colorScheme } = useMantineColorScheme();
@@ -594,36 +534,36 @@ const PublicProfile: NextPage<
     {
       title: "Updates",
       icon: "posts",
-      value: user?._count.posts,
+      value: user._count.posts,
       diff: calculateStatsDiffInPercent(
-        user?._count.posts,
+        user._count.posts,
         historicalUserlData?._count.posts
       ),
     },
     {
       title: "Images",
       icon: "images",
-      value: user?._count.cloudImages,
+      value: user._count.cloudImages,
       diff: calculateStatsDiffInPercent(
-        user?._count.cloudImages,
+        user._count.cloudImages,
         historicalUserlData?._count.cloudImages
       ),
     },
     {
       title: "Comments",
       icon: "comments",
-      value: user?._count.comments,
+      value: user._count.comments,
       diff: calculateStatsDiffInPercent(
-        user?._count.comments,
+        user._count.comments,
         historicalUserlData?._count.comments
       ),
     },
     {
       title: "Likes",
       icon: "likes",
-      value: user?._count.likes,
+      value: user._count.likes,
       diff: calculateStatsDiffInPercent(
-        user?._count.likes,
+        user._count.likes,
         historicalUserlData?._count.likes
       ),
     },
@@ -745,7 +685,7 @@ const PublicProfile: NextPage<
                 {/* User Avatar */}
                 <Box p="xs">
                   <UserAvatar
-                    userName={user.name}
+                    userName={user.name as string}
                     imageUrl={
                       user.image
                         ? user.image
