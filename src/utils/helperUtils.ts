@@ -481,3 +481,20 @@ export function getFileUploadCloudinaryMaxFileSizeInByte(): number {
 export function getFileUploadMaxFileCount(): number {
   return parseInt(env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES);
 }
+
+export const calculateStatsDiffInPercent = (
+  currentValue: number,
+  previousValue: number
+): number => {
+  console.debug(((currentValue - previousValue) / previousValue) * 100);
+  if (previousValue !== 0) {
+    return parseFloat(
+      (((currentValue - previousValue) / previousValue) * 100).toFixed(
+        2
+      )
+    );
+  } else {
+    // previousValue === 0
+    return currentValue !== 0 ? 100 : 0.0; // Assuming 100% increase if previousValue is 0
+  }
+};

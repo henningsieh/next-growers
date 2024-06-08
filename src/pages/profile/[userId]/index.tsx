@@ -24,6 +24,7 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import {
   IconArrowDownRight,
+  IconArrowNarrowRight,
   IconArrowUpRight,
   IconDots,
   IconEye,
@@ -63,6 +64,8 @@ import {
   type UserProfileData,
 } from "~/types";
 
+import { calculateStatsDiffInPercent } from "~/utils/helperUtils";
+
 /** getStaticProps
  *  @param context : GetStaticPropsContext<{ reportId: string }>
  *  @returns : Promise<{props{ report: Report }}>
@@ -71,9 +74,34 @@ export async function getStaticProps(
   context: GetStaticPropsContext<{ userId: string }>
 ) {
   // fetch user data from the database
+  const userId = context.params?.userId as string;
   const user = (await prisma.user.findUnique({
     where: {
-      id: context.params?.userId as string,
+      id: userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      _count: {
+        select: {
+          reports: { where: { authorId: userId } },
+          posts: { where: { authorId: userId } },
+          likes: { where: { userId: userId } },
+          comments: { where: { authorId: userId } },
+          cloudImages: { where: { ownerId: userId } },
+        },
+      },
+    },
+  })) as UserProfileData;
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const historicaUserlData = (await prisma.user.findUnique({
+    where: {
+      id: userId,
     },
     select: {
       id: true,
@@ -84,33 +112,48 @@ export async function getStaticProps(
         select: {
           reports: {
             where: {
-              authorId: context.params?.userId as string,
+              authorId: userId,
+              createdAt: {
+                lt: thirtyDaysAgo,
+              },
             },
           },
           posts: {
             where: {
-              authorId: context.params?.userId as string,
+              authorId: userId,
+              createdAt: {
+                lt: thirtyDaysAgo,
+              },
             },
           },
           likes: {
             where: {
-              userId: context.params?.userId as string,
+              userId: userId,
+              createdAt: {
+                lt: thirtyDaysAgo,
+              },
             },
           },
           comments: {
             where: {
-              authorId: context.params?.userId as string,
+              authorId: userId,
+              createdAt: {
+                lt: thirtyDaysAgo,
+              },
             },
           },
           cloudImages: {
             where: {
-              ownerId: context.params?.userId as string,
+              ownerId: userId,
+              createdAt: {
+                lt: thirtyDaysAgo,
+              },
             },
           },
         },
       },
     },
-  })) as UserProfileData | null;
+  })) as UserProfileData;
 
   const ownReports = (await prisma.report
     .findMany({
@@ -352,12 +395,6 @@ export async function getStaticProps(
 
       return isoReportsFromDb;
     })) as IsoReportWithPostsFromDb[];
-
-  // const session = await getServerSession(
-  //   context.req,
-  //   context.res,
-  //   authOptions
-  // );
   const translations = await serverSideTranslations(
     context.locale as string,
     ["common"]
@@ -366,8 +403,8 @@ export async function getStaticProps(
   return {
     props: {
       user,
+      historicaUserlData,
       ownReports,
-      // session,
       ...translations,
     },
   };
@@ -409,12 +446,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const PublicProfile: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ user, ownReports: ownIsoReports }) => {
-  //const { user, ownReports: ownIsoReports } = props;
-  // const { data: session, status } = useSession();
-  const [_searchString, setSearchString] = useState("");
+> = ({
+  user,
+  historicaUserlData: historicalUserlData,
+  ownReports: ownIsoReports,
+}) => {
+  console.debug(historicalUserlData);
 
-  const pageTitle = `Grower's Profile`;
+  const pageTitle = `Grower Profile`;
 
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
@@ -422,9 +461,9 @@ const PublicProfile: NextPage<
 
   const router = useRouter();
   const { locale: activeLocale } = router;
-  // const { t } = useTranslation(activeLocale);
 
-  // const { query } = useRouter();
+  const [_searchString, setSearchString] = useState("");
+
   const [activeTab, setActiveTab] = useState<string | undefined>(
     (useRouter().query.tab as string | undefined) || "profile"
   );
@@ -551,31 +590,42 @@ const PublicProfile: NextPage<
   const imageUrl =
     "https://images.unsplash.com/photo-1591754060004-f91c95f5cf05";
 
-  //FIXME: diff/trend calculation
   const data = [
     {
       title: "Updates",
       icon: "posts",
       value: user?._count.posts,
-      diff: -30,
+      diff: calculateStatsDiffInPercent(
+        user?._count.posts,
+        historicalUserlData?._count.posts
+      ),
     },
     {
       title: "Images",
       icon: "images",
       value: user?._count.cloudImages,
-      diff: 34,
+      diff: calculateStatsDiffInPercent(
+        user?._count.cloudImages,
+        historicalUserlData?._count.cloudImages
+      ),
     },
     {
       title: "Comments",
       icon: "comments",
       value: user?._count.comments,
-      diff: -13,
+      diff: calculateStatsDiffInPercent(
+        user?._count.comments,
+        historicalUserlData?._count.comments
+      ),
     },
     {
       title: "Likes",
       icon: "likes",
       value: user?._count.likes,
-      diff: 18,
+      diff: calculateStatsDiffInPercent(
+        user?._count.likes,
+        historicalUserlData?._count.likes
+      ),
     },
   ] as const;
 
@@ -589,7 +639,11 @@ const PublicProfile: NextPage<
   const stats = data.map((stat) => {
     const Icon = statIcons[stat.icon];
     const DiffIcon =
-      stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
+      stat.diff > 0
+        ? IconArrowUpRight
+        : stat.diff < 0
+          ? IconArrowDownRight
+          : IconArrowNarrowRight;
 
     return (
       <Paper withBorder p="sm" radius="sm" key={stat.title}>
@@ -604,7 +658,9 @@ const PublicProfile: NextPage<
           <Text className={classes.value}>{stat.value}</Text>
           <Text
             className={classes.diff}
-            c={stat.diff > 0 ? "teal" : "red"}
+            c={
+              stat.diff > 0 ? "teal" : stat.diff < 0 ? "red" : "yellow"
+            }
             fz="md"
             fw={500}
           >
@@ -763,8 +819,7 @@ const PublicProfile: NextPage<
             >
               <Tabs.List>
                 {/* 
-                //FIXME: add translations
-                //FIXME: no padding on mobile */}
+                //FIXME: add translations */}
                 <Tabs.Tab className={classes.tab} value="profile">
                   Profile
                 </Tabs.Tab>
