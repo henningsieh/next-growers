@@ -6,12 +6,12 @@ export function getUserSelectObject(userId: string) {
     image: true,
     followers: {
       select: {
-        follower: true,
+        followerId: true,
       },
     },
     following: {
       select: {
-        following: true,
+        followingId: true,
       },
     },
     _count: {

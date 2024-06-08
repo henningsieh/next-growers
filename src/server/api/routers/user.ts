@@ -101,6 +101,73 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
+  followUserById: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId: userIdToFollow } = input;
+
+      try {
+        // First, check if the user exists
+        const existingUser = await ctx.prisma.user.findUnique({
+          where: {
+            id: userIdToFollow,
+          },
+        });
+        if (!existingUser) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User does not exist",
+          });
+        }
+
+        // Then, check if the user is authorized to follow the user
+        if (existingUser.id === ctx.session.user.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You cannot follow yourself",
+          });
+        }
+
+        // Check if the user is already following the user
+        const existingFollow = await ctx.prisma.follows.findFirst({
+          where: {
+            followerId: ctx.session.user.id,
+            followingId: userIdToFollow,
+          },
+        });
+        if (existingFollow) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "You are already following this user",
+          });
+        }
+
+        // Follow the user
+        const follow = await ctx.prisma.follows.create({
+          data: {
+            followerId: ctx.session.user.id,
+            followingId: userIdToFollow,
+          },
+        });
+
+        return follow;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+
   getUserProfilesById: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {

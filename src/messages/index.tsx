@@ -9,6 +9,7 @@ import {
   IconFileAlert,
   IconPhoto,
   IconPhotoCancel,
+  IconUserPlus,
 } from "@tabler/icons-react";
 
 import { getFileUploadCloudinaryMaxFileSizeInByte } from "~/utils/helperUtils";
@@ -33,6 +34,14 @@ export const defaultErrorMsg = (msg: string) => ({
   color: "red",
   icon: <IconAlertCircle size={20} stroke={2.8} />,
 });
+
+export const followUserSuccessfulMsg = {
+  title: "Success",
+  message: "You are now following this user! 🥳",
+  color: "growgreen",
+  icon: <IconUserPlus size={20} stroke={2.8} />,
+  loading: false,
+};
 
 export const markAllReadMessage = {
   title: "I have read all",

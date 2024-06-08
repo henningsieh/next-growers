@@ -22,6 +22,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
   IconArrowDownRight,
   IconArrowNarrowRight,
@@ -35,6 +36,7 @@ import {
   IconPhotoUp,
   IconTrash,
 } from "@tabler/icons-react";
+import { followUserSuccessfulMsg } from "~/messages";
 
 import { useEffect, useState } from "react";
 
@@ -65,6 +67,7 @@ import {
   type UserProfile,
 } from "~/types";
 
+import { api } from "~/utils/api";
 import { calculateStatsDiffInPercent } from "~/utils/helperUtils";
 import {
   getUserSelectObject,
@@ -87,7 +90,35 @@ export async function getStaticProps(
     select: getUserSelectObject(userId),
   })) as UserProfile;
 
-  console.debug(user);
+  //console.debug(user);
+
+  const followers = await Promise.all(
+    user.followers.map(async (follower) => {
+      // fetch each follower data as UserProfile from the database
+      const followerData = await prisma.user.findUnique({
+        where: {
+          id: follower.followerId,
+        },
+        select: getUserSelectObject(follower.followerId),
+      });
+
+      return followerData as UserProfile;
+    })
+  );
+
+  const followings = await Promise.all(
+    user.following.map(async (following) => {
+      // fetch each following data as UserProfile from the database
+      const followingData = await prisma.user.findUnique({
+        where: {
+          id: following.followingId,
+        },
+        select: getUserSelectObject(following.followingId),
+      });
+
+      return followingData as UserProfile;
+    })
+  );
 
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -99,7 +130,7 @@ export async function getStaticProps(
     select: getUserSelectObjectWithoutFollow(userId),
   })) as UserProfileWithoutFollow;
 
-  console.debug(historicalUserlData);
+  // console.debug(historicalUserlData);
 
   const ownReports = (await prisma.report
     .findMany({
@@ -351,6 +382,8 @@ export async function getStaticProps(
       user,
       historicalUserlData,
       ownReports,
+      followers,
+      followings,
       ...translations,
     },
   };
@@ -392,7 +425,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 const PublicProfile: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ user, historicalUserlData, ownReports: ownIsoReports }) => {
+> = ({
+  user,
+  historicalUserlData,
+  ownReports: ownIsoReports,
+  followers,
+  followings,
+}) => {
   const pageTitle = `Grower Profile`;
 
   const { colorScheme } = useMantineColorScheme();
@@ -404,9 +443,22 @@ const PublicProfile: NextPage<
 
   const [_searchString, setSearchString] = useState("");
 
-  const [activeTab, setActiveTab] = useState<string | undefined>(
-    (useRouter().query.tab as string | undefined) || "profile"
-  );
+  // api.trpc to follow a user
+  const { mutate: followUserById } =
+    api.user.followUserById.useMutation({
+      onError: (error) => {
+        console.error(error);
+        // Handle error, e.g., show an error message
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onSuccess: (_res) => {
+        notifications.show(followUserSuccessfulMsg);
+      },
+      onSettled: async () => {
+        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
+        //await trpc.notifications.getNotificationsByUserId.invalidate();
+      },
+    });
 
   // const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
@@ -414,6 +466,20 @@ const PublicProfile: NextPage<
   // const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
   const responsiveStatsColumnCount = md ? 2 : 4;
 
+  const tab = useRouter().query.tab as string | undefined;
+
+  const [activeTab, setActiveTab] = useState<string | undefined>(
+    tab || "profile"
+  );
+
+  // Set the active tab based on the query string
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [tab]);
+
+  // Set the active tab based on Tab mouse click
   useEffect(() => {
     if (activeTab) {
       setActiveTab(activeTab);
@@ -423,7 +489,7 @@ const PublicProfile: NextPage<
   const handleTabChange = (value: string | null) => {
     if (value) {
       setActiveTab(value);
-      void router.push(
+      void router.replace(
         {
           pathname: router.pathname,
           query: { ...router.query, tab: value },
@@ -530,7 +596,7 @@ const PublicProfile: NextPage<
   const imageUrl =
     "https://images.unsplash.com/photo-1591754060004-f91c95f5cf05";
 
-  const data = [
+  const statsData = [
     {
       title: "Updates",
       icon: "posts",
@@ -576,7 +642,7 @@ const PublicProfile: NextPage<
     posts: IconFilePlus,
   } as const;
 
-  const stats = data.map((stat) => {
+  const stats = statsData.map((stat) => {
     const Icon = statIcons[stat.icon];
     const DiffIcon =
       stat.diff > 0
@@ -676,7 +742,10 @@ const PublicProfile: NextPage<
                   {user.name}
                 </Text>
 
-                <FollowButton />
+                <FollowButton
+                  userIdToFollow={user.id}
+                  tRPCfollowUser={followUserById}
+                />
               </Group>
             </Card.Section>
 
@@ -685,12 +754,9 @@ const PublicProfile: NextPage<
                 {/* User Avatar */}
                 <Box p="xs">
                   <UserAvatar
+                    userId={user.id}
                     userName={user.name as string}
-                    imageUrl={
-                      user.image
-                        ? user.image
-                        : `https://ui-avatars.com/api/?name=${user.name}`
-                    }
+                    imageUrl={user.image}
                     avatarRadius={120}
                   />
                 </Box>
@@ -834,13 +900,41 @@ const PublicProfile: NextPage<
               {/* Followers */}
               <Tabs.Panel value="followers" pt="xs">
                 <Card.Section inheritPadding mt="sm" pb="md">
-                  Followers
+                  {/* Followers */}
+                  <Flex>
+                    {followers.length &&
+                      followers.map((follower) => {
+                        return (
+                          <UserAvatar
+                            key={follower.id}
+                            userId={follower.id}
+                            userName={follower.name as string}
+                            imageUrl={follower.image}
+                            avatarRadius={42}
+                          />
+                        );
+                      })}
+                  </Flex>
                 </Card.Section>
               </Tabs.Panel>
               {/* Follows */}
               <Tabs.Panel value="follows" pt="xs">
                 <Card.Section inheritPadding mt="sm" pb="md">
-                  Follows
+                  {/* Follows */}
+                  <Flex>
+                    {followings.length &&
+                      followings.map((following) => {
+                        return (
+                          <UserAvatar
+                            key={following.id}
+                            userId={following.id}
+                            userName={following.name as string}
+                            imageUrl={following.image}
+                            avatarRadius={42}
+                          />
+                        );
+                      })}
+                  </Flex>
                 </Card.Section>
               </Tabs.Panel>
             </Tabs>

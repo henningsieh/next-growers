@@ -332,6 +332,7 @@ const PostComments = ({ growId, updateId }: CommentsProps) => {
                 <Group position="apart">
                   <Group position="left">
                     <UserAvatar
+                      userId={session?.user.id}
                       userName={session?.user.name as string}
                       avatarRadius={42}
                       imageUrl={

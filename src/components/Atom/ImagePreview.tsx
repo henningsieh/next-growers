@@ -6,7 +6,6 @@ import {
   getStylesRef,
   rem,
   Text,
-  Tooltip,
 } from "@mantine/core";
 
 // import { useTranslation } from "react-i18next";
@@ -130,29 +129,14 @@ export function ImagePreview({
 
   return (
     <>
-      <Tooltip
-        transitionProps={{
-          transition: "slide-up",
-          duration: 150,
-        }}
-        position="top-start"
-        label={authorName}
-        color="growgreen.4"
-        withArrow
-      >
-        <Box
-          pos="absolute"
-          component={Link}
-          href={`/profile/${authorId}`}
-          className="top-11 left-2 z-20 cursor-pointer"
-        >
-          <UserAvatar
-            userName={authorName}
-            imageUrl={authorImageUrl}
-            avatarRadius={48}
-          />
-        </Box>
-      </Tooltip>
+      <Box pos="absolute" className="top-11 left-2 z-20 cursor-pointer">
+        <UserAvatar
+          userId={authorId}
+          userName={authorName}
+          imageUrl={authorImageUrl}
+          avatarRadius={48}
+        />
+      </Box>
       <Card
         component={Link}
         href={publicLink}

@@ -270,14 +270,9 @@ export function UserComment({
         <Group position="apart">
           <Group position="left">
             <UserAvatar
-              imageUrl={
-                comment.author.image
-                  ? comment.author.image
-                  : `https://ui-avatars.com/api/?name=${
-                      comment.author.name as string
-                    }`
-              }
+              userId={comment.author.id}
               userName={comment.author.name as string}
+              imageUrl={comment.author.image}
               avatarRadius={largeScreen ? 42 : 32}
             />
             <Box>
