@@ -72,25 +72,24 @@ import {
 } from "~/utils/repository/userSelectObject";
 
 /** getStaticProps
- *  @param context : GetStaticPropsContext<{ reportId: string }>
- *  @returns : Promise<{props{ report: Report }}>
+ *  @param context : GetStaticPropsContext<{ userId: string }>
+ *  @returns : Promise<{props{ user : UserProfile }}>
  */
 export async function getStaticProps(
   context: GetStaticPropsContext<{ userId: string }>
 ) {
-  // fetch user data from the database
-  const userId = context.params?.userId as string;
-  const user = (await prisma.user.findUnique({
+  // FETCH USER DATA FROM THE DATABASE
+  const growerId = context.params?.userId as string;
+  const growerProfileData = (await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: growerId,
     },
-    select: getUserSelectObject(userId),
+    select: getUserSelectObject(growerId),
   })) as UserProfile;
 
-  //console.debug(user);
-
+  // INITIALIZE FOLLOWERS AND FOLLOWINGS ARRAY
   const followers = await Promise.all(
-    user.followers.map(async (follower) => {
+    growerProfileData.followers.map(async (follower) => {
       // fetch each follower data as UserProfile from the database
       const followerData = await prisma.user.findUnique({
         where: {
@@ -102,9 +101,8 @@ export async function getStaticProps(
       return followerData as UserProfile;
     })
   );
-
   const followings = await Promise.all(
-    user.following.map(async (following) => {
+    growerProfileData.following.map(async (following) => {
       // fetch each following data as UserProfile from the database
       const followingData = await prisma.user.findUnique({
         where: {
@@ -117,19 +115,18 @@ export async function getStaticProps(
     })
   );
 
+  // INITIALIZE HISTORICAL USER DATA
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-  const historicalUserlData = (await prisma.user.findUnique({
+  const historicalProfileData = (await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: growerId,
     },
-    select: getUserSelectObjectWithoutFollow(userId),
+    select: getUserSelectObjectWithoutFollow(growerId),
   })) as UserProfileWithoutFollow;
 
-  // console.debug(historicalUserlData);
-
-  const ownReports = (await prisma.report
+  // INITIALIZE GROWER REPORTS
+  const growerReports = (await prisma.report
     .findMany({
       where: {
         authorId: context.params?.userId as string,
@@ -376,9 +373,9 @@ export async function getStaticProps(
 
   return {
     props: {
-      user,
-      historicalUserlData,
-      ownReports,
+      growerProfileData,
+      historicalProfileData,
+      growerReports,
       followers,
       followings,
       ...translations,
@@ -423,9 +420,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 const PublicProfile: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = ({
-  user,
-  historicalUserlData,
-  ownReports: ownIsoReports,
+  growerProfileData,
+  historicalProfileData,
+  growerReports,
   followers,
   followings,
 }) => {
@@ -580,37 +577,37 @@ const PublicProfile: NextPage<
     {
       title: "Updates",
       icon: "posts",
-      value: user._count.posts,
+      value: growerProfileData._count.posts,
       diff: calculateStatsDiffInPercent(
-        user._count.posts,
-        historicalUserlData?._count.posts
+        growerProfileData._count.posts,
+        historicalProfileData?._count.posts
       ),
     },
     {
       title: "Images",
       icon: "images",
-      value: user._count.cloudImages,
+      value: growerProfileData._count.cloudImages,
       diff: calculateStatsDiffInPercent(
-        user._count.cloudImages,
-        historicalUserlData?._count.cloudImages
+        growerProfileData._count.cloudImages,
+        historicalProfileData?._count.cloudImages
       ),
     },
     {
       title: "Comments",
       icon: "comments",
-      value: user._count.comments,
+      value: growerProfileData._count.comments,
       diff: calculateStatsDiffInPercent(
-        user._count.comments,
-        historicalUserlData?._count.comments
+        growerProfileData._count.comments,
+        historicalProfileData?._count.comments
       ),
     },
     {
       title: "Likes",
       icon: "likes",
-      value: user._count.likes,
+      value: growerProfileData._count.likes,
       diff: calculateStatsDiffInPercent(
-        user._count.likes,
-        historicalUserlData?._count.likes
+        growerProfileData._count.likes,
+        historicalProfileData?._count.likes
       ),
     },
   ] as const;
@@ -662,7 +659,7 @@ const PublicProfile: NextPage<
     );
   }) as JSX.Element[];
 
-  const grows = ownIsoReports.map((ownIsoReport) => {
+  const grows = growerReports.map((ownIsoReport) => {
     return (
       <Grid.Col
         key={ownIsoReport.id}
@@ -680,12 +677,12 @@ const PublicProfile: NextPage<
     );
   }) as JSX.Element[];
 
-  return !user ? (
+  return !growerProfileData ? (
     <>Error 404: This Grower was not found</>
   ) : (
     <>
       <Head>
-        <title>{`${pageTitle} of ${user.name} | ${appTitle}`}</title>
+        <title>{`${pageTitle} of ${growerProfileData.name} | ${appTitle}`}</title>
         <meta
           name="description"
           content={`${pageTitle} | ${appTitle}`}
@@ -693,11 +690,11 @@ const PublicProfile: NextPage<
         <meta property="og:image" content={imageUrl} />
         <meta
           property="og:title"
-          content={`${pageTitle} of ${user.name} | ${appTitle}`}
+          content={`${pageTitle} of ${growerProfileData.name} | ${appTitle}`}
         />
         <meta
           property="og:description"
-          content={`Self description ${activeLocale === Locale.DE ? `von` : `of`} ${user.name} | ${appTitle}`}
+          content={`Self description ${activeLocale === Locale.DE ? `von` : `of`} ${growerProfileData.name} | ${appTitle}`}
         />
       </Head>
 
@@ -722,10 +719,10 @@ const PublicProfile: NextPage<
             <Card.Section p="xs" py="xs">
               <Group position="apart">
                 <Text size="xl" fw="bold">
-                  {user.name}
+                  {growerProfileData.name}
                 </Text>
 
-                <FollowButton growerId={user.id} />
+                <FollowButton growerId={growerProfileData.id} />
               </Group>
             </Card.Section>
 
@@ -734,9 +731,9 @@ const PublicProfile: NextPage<
                 {/* User Avatar */}
                 <Box p="xs">
                   <UserAvatar
-                    userId={user.id}
-                    userName={user.name as string}
-                    imageUrl={user.image}
+                    userId={growerProfileData.id}
+                    userName={growerProfileData.name as string}
+                    imageUrl={growerProfileData.image}
                     avatarRadius={120}
                   />
                 </Box>
@@ -780,7 +777,7 @@ const PublicProfile: NextPage<
               <Image
                 src={imageUrl}
                 className={classes.image}
-                alt={`Header Image from Grow \"${user.name}\"`}
+                alt={`Header Image from Grow \"${growerProfileData.name}\"`}
                 fill
                 priority
                 quality={80}
