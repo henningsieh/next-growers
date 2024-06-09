@@ -22,7 +22,6 @@ import {
   Text,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import {
   IconArrowDownRight,
   IconArrowNarrowRight,
@@ -36,7 +35,6 @@ import {
   IconPhotoUp,
   IconTrash,
 } from "@tabler/icons-react";
-import { followUserSuccessfulMsg } from "~/messages";
 
 import { useEffect, useState } from "react";
 
@@ -67,7 +65,6 @@ import {
   type UserProfile,
 } from "~/types";
 
-import { api } from "~/utils/api";
 import { calculateStatsDiffInPercent } from "~/utils/helperUtils";
 import {
   getUserSelectObject,
@@ -443,23 +440,6 @@ const PublicProfile: NextPage<
 
   const [_searchString, setSearchString] = useState("");
 
-  // api.trpc to follow a user
-  const { mutate: followUserById } =
-    api.user.followUserById.useMutation({
-      onError: (error) => {
-        console.error(error);
-        // Handle error, e.g., show an error message
-      },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onSuccess: (_res) => {
-        notifications.show(followUserSuccessfulMsg);
-      },
-      onSettled: async () => {
-        // Trigger any necessary refetch or invalidation, e.g., refetch the report data
-        //await trpc.notifications.getNotificationsByUserId.invalidate();
-      },
-    });
-
   // const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
@@ -733,7 +713,10 @@ const PublicProfile: NextPage<
         {/* // Header End */}
 
         {/* // Main Content Container */}
-        <Container size="lg" className="flex w-full flex-col space-y-2">
+        <Container
+          size="lg"
+          className="flex w-full flex-col px-0 space-y-2"
+        >
           {/* // Card with User Profile */}
           <Card withBorder shadow="sm" radius="sm">
             <Card.Section p="xs" py="xs">
@@ -742,10 +725,7 @@ const PublicProfile: NextPage<
                   {user.name}
                 </Text>
 
-                <FollowButton
-                  userIdToFollow={user.id}
-                  tRPCfollowUser={followUserById}
-                />
+                <FollowButton growerId={user.id} />
               </Group>
             </Card.Section>
 

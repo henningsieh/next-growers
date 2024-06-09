@@ -101,6 +101,67 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
+  getUserProfilesById: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+
+      try {
+        const users = await ctx.prisma.user.findMany({
+          where: {
+            id: userId,
+          },
+          select: getUserSelectObject(userId),
+        });
+        return users;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+
+  isFollowingUser: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+
+      try {
+        const existingFollow = await ctx.prisma.follows.findFirst({
+          where: {
+            followerId: ctx.session.user.id,
+            followingId: userId,
+          },
+        });
+
+        return existingFollow;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+
   followUserById: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -168,19 +229,58 @@ export const userRouter = createTRPCRouter({
       }
     }),
 
-  getUserProfilesById: publicProcedure
+  unfollowUserById: protectedProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const { userId } = input;
+    .mutation(async ({ ctx, input }) => {
+      const { userId: userIdToUnfollow } = input;
 
       try {
-        const users = await ctx.prisma.user.findMany({
+        // First, check if the user exists
+        const existingUser = await ctx.prisma.user.findUnique({
           where: {
-            id: userId,
+            id: userIdToUnfollow,
           },
-          select: getUserSelectObject(userId),
         });
-        return users;
+        if (!existingUser) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User does not exist",
+          });
+        }
+
+        // Then, check if the user is authorized to unfollow the user
+        if (existingUser.id === ctx.session.user.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You cannot unfollow yourself",
+          });
+        }
+
+        // Check if the user is not following the user
+        const existingFollow = await ctx.prisma.follows.findFirst({
+          where: {
+            followerId: ctx.session.user.id,
+            followingId: userIdToUnfollow,
+          },
+        });
+        if (!existingFollow) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "You are not following this user",
+          });
+        }
+
+        // Unfollow the user
+        await ctx.prisma.follows.delete({
+          where: {
+            followerId_followingId: {
+              followerId: ctx.session.user.id,
+              followingId: userIdToUnfollow,
+            },
+          },
+        });
+
+        return existingFollow;
       } catch (error: unknown) {
         if (error instanceof TRPCError) {
           throw new TRPCError({
