@@ -1,5 +1,6 @@
 import { appTitle } from "../../_document";
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -30,10 +31,12 @@ import {
   IconEye,
   IconFilePlus,
   IconFileZip,
+  IconGitBranch,
   IconHeart,
   IconMessage,
   IconPhotoUp,
   IconTrash,
+  IconUserCircle,
 } from "@tabler/icons-react";
 
 import { useEffect, useState } from "react";
@@ -446,7 +449,7 @@ const PublicProfile: NextPage<
   const tab = useRouter().query.tab as string | undefined;
 
   const [activeTab, setActiveTab] = useState<string | undefined>(
-    tab || "profile"
+    tab || "grows"
   );
 
   // Set the active tab based on the query string
@@ -563,7 +566,7 @@ const PublicProfile: NextPage<
       },
       "&:disabled": {
         opacity: 0.5,
-        cursor: "not-allowed",
+        cursor: "default",
       },
     },
   }));
@@ -803,16 +806,28 @@ const PublicProfile: NextPage<
               <Tabs.List>
                 {/* 
                 //FIXME: add translations */}
-                <Tabs.Tab className={classes.tab} value="profile">
+                <Tabs.Tab
+                  disabled
+                  className={classes.tab}
+                  value="profile"
+                >
                   Profile
                 </Tabs.Tab>
                 <Tabs.Tab className={classes.tab} value="grows">
                   Grows
                 </Tabs.Tab>
-                <Tabs.Tab className={classes.tab} value="updates">
+                <Tabs.Tab
+                  disabled
+                  className={classes.tab}
+                  value="updates"
+                >
                   Updates
                 </Tabs.Tab>
-                <Tabs.Tab className={classes.tab} value="comments">
+                <Tabs.Tab
+                  disabled
+                  className={classes.tab}
+                  value="comments"
+                >
                   Comments
                 </Tabs.Tab>
                 <Tabs.Tab className={classes.tab} value="followers">
@@ -829,28 +844,18 @@ const PublicProfile: NextPage<
                   {/* // list profile links like link tree */}
                   <Grid gutter="sm">
                     <Grid.Col span={6}>
-                      <Flex align={"flex-end"}>
-                        <Text size="xl" fw="bold">
-                          Links
-                        </Text>
-                        <Text size="sm" c="dimmed">
-                          Links to other platforms
-                        </Text>
-                      </Flex>
+                      <Text size="xl" fw="bold">
+                        Social Links
+                      </Text>
                       {/* Unorderes list of facebook, twitter, etc... */}
-                      <ul>
-                        <li>Facebook</li>
-                        <li>Instagram</li>
-                        <li>Twitter</li>
-                        <li>LinkedIn</li>
-                      </ul>
+                      {showFeatureComingSoon()}
                     </Grid.Col>
                     <Grid.Col span={6}>
                       <Text size="xl" fw="bold">
                         About
                       </Text>
                       <Text size="sm" c="dimmed">
-                        Self description
+                        {showFeatureComingSoon()}
                       </Text>
                     </Grid.Col>
                   </Grid>
@@ -865,53 +870,98 @@ const PublicProfile: NextPage<
               {/* Updates */}
               <Tabs.Panel value="updates" pt="xs">
                 <Card.Section inheritPadding mt="sm" pb="md">
-                  Latest Updates
+                  {showFeatureComingSoon()}
                 </Card.Section>
               </Tabs.Panel>
               {/* Comments */}
               <Tabs.Panel value="comments" pt="xs">
                 <Card.Section inheritPadding mt="sm" pb="md">
-                  Latest Comments
+                  {showFeatureComingSoon()}
                 </Card.Section>
               </Tabs.Panel>
               {/* Followers */}
               <Tabs.Panel value="followers" pt="xs">
                 <Card.Section inheritPadding mt="sm" pb="md">
                   {/* Followers */}
-                  <Flex>
-                    {followers.length &&
-                      followers.map((follower) => {
+                  {followers.length ? (
+                    <Flex direction="row" align="center">
+                      {followers.map((follower) => {
                         return (
-                          <UserAvatar
-                            key={follower.id}
-                            userId={follower.id}
-                            userName={follower.name as string}
-                            imageUrl={follower.image}
-                            avatarRadius={42}
-                          />
+                          <>
+                            <UserAvatar
+                              userId={follower.id}
+                              userName={follower.name as string}
+                              imageUrl={follower.image}
+                              avatarRadius={42}
+                            />
+                            <Text ml="sm">{follower.name}</Text>
+                          </>
                         );
                       })}
-                  </Flex>
+                    </Flex>
+                  ) : (
+                    <Alert
+                      icon={<IconUserCircle size={20} stroke={1.8} />}
+                      title="No Followers yet!"
+                      color="growgreen.4"
+                      withCloseButton
+                      variant="outline"
+                    >
+                      <Text>
+                        {growerProfileData.name} is not being followed
+                        by any other Grower yet
+                      </Text>
+                    </Alert>
+                  )}
                 </Card.Section>
               </Tabs.Panel>
               {/* Follows */}
               <Tabs.Panel value="follows" pt="xs">
                 <Card.Section inheritPadding mt="sm" pb="md">
                   {/* Follows */}
-                  <Flex>
-                    {followings.length &&
-                      followings.map((following) => {
+                  {followings.length ? (
+                    <Flex
+                      gap={theme.spacing.xs}
+                      direction="row"
+                      wrap={"wrap"}
+                      justify="left"
+                      align="center"
+                    >
+                      {followings.map((following) => {
                         return (
-                          <UserAvatar
+                          <Paper
+                            w={990 / 4}
+                            p="sm"
+                            withBorder
                             key={following.id}
-                            userId={following.id}
-                            userName={following.name as string}
-                            imageUrl={following.image}
-                            avatarRadius={42}
-                          />
+                          >
+                            <Flex>
+                              <UserAvatar
+                                userId={following.id}
+                                userName={following.name as string}
+                                imageUrl={following.image}
+                                avatarRadius={42}
+                              />
+                              <Text ml="sm">{following.name}</Text>
+                            </Flex>
+                          </Paper>
                         );
                       })}
-                  </Flex>
+                    </Flex>
+                  ) : (
+                    <Alert
+                      icon={<IconUserCircle size={20} stroke={1.8} />}
+                      title="No Follows yet!"
+                      color="growgreen.4"
+                      withCloseButton
+                      variant="outline"
+                    >
+                      <Text>
+                        {growerProfileData.name} is not following any
+                        other Grower yet
+                      </Text>
+                    </Alert>
+                  )}
                 </Card.Section>
               </Tabs.Panel>
             </Tabs>
@@ -923,3 +973,21 @@ const PublicProfile: NextPage<
   // return <AccessDenied />;
 };
 export default PublicProfile;
+
+function showFeatureComingSoon() {
+  {
+    /* // Alert: Feature not yet implemented */
+  }
+  return (
+    <Alert
+      icon={<IconGitBranch size={20} stroke={1.8} />}
+      title="Feature not yet implemented!"
+      color="gray.7"
+      variant="outline"
+    >
+      <Text c="dimmed">
+        <i>Feature coming soon...</i>
+      </Text>
+    </Alert>
+  );
+}
