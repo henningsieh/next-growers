@@ -1,22 +1,25 @@
-// utils/sendEmail.js
+// utils/sendEmail.ts
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { env } from "~/env.mjs";
+
+interface EmailOptions {
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+}
 
 const sendEmail = async ({
   to,
   subject,
   text,
-}: {
-  to: string;
-  subject: string;
-  text: string;
-}) => {
-  // Create a transporter object using SMTP
+  html,
+}: EmailOptions): Promise<void> => {
   const transporter: Transporter = nodemailer.createTransport({
     host: env.EMAIL_SERVER_HOST,
     port: env.EMAIL_SERVER_PORT,
-    secure: env.EMAIL_SERVER_PORT == 465, // true for 465, false for other ports
+    secure: env.EMAIL_SERVER_PORT === 465, // true for 465, false for other ports
     auth: {
       user: env.EMAIL_SERVER_USER,
       pass: env.EMAIL_SERVER_PASSWORD,
@@ -29,7 +32,7 @@ const sendEmail = async ({
     to,
     subject,
     text,
-    // html,
+    html,
   };
 
   // Send email
