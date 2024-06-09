@@ -441,10 +441,11 @@ const PublicProfile: NextPage<
   const [_searchString, setSearchString] = useState("");
 
   // const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
+  const xs = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const sm = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const md = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
   // const lg = useMediaQuery(`(max-width: ${theme.breakpoints.lg})`);
-  const responsiveStatsColumnCount = md ? 2 : 4;
+  const responsiveStatsColumnCount = xs ? 1 : md ? 2 : 4;
 
   const tab = useRouter().query.tab as string | undefined;
 
@@ -481,7 +482,7 @@ const PublicProfile: NextPage<
   };
 
   const useStyles = createStyles((theme) => ({
-    card: {
+    header: {
       transition: "transform 250ms ease, box-shadow 250ms ease",
       zIndex: 10,
       position: "relative",
@@ -490,7 +491,7 @@ const PublicProfile: NextPage<
       backgroundColor:
         theme.colorScheme === "dark"
           ? theme.colors.dark[6]
-          : theme.colors.gray[0],
+          : theme.colors.gray[6],
 
       [`&:hover .${getStylesRef("image")}`]: {
         transform: "scale(1.02)",
@@ -558,7 +559,7 @@ const PublicProfile: NextPage<
             backgroundColor: theme.colors.dark[4],
           }
         : {
-            backgroundColor: theme.colors.gray[2],
+            backgroundColor: theme.colors.gray[1],
           },
       "&[data-active]::before": {
         height: rem(3),
@@ -622,7 +623,7 @@ const PublicProfile: NextPage<
     posts: IconFilePlus,
   } as const;
 
-  const stats = statsData.map((stat) => {
+  const stats = statsData.map((stat, index) => {
     const Icon = statIcons[stat.icon];
     const DiffIcon =
       stat.diff > 0
@@ -632,7 +633,7 @@ const PublicProfile: NextPage<
           : IconArrowNarrowRight;
 
     return (
-      <Paper withBorder p="sm" radius="sm" key={stat.title}>
+      <Paper withBorder p="sm" radius="sm" key={index}>
         <Flex justify="space-between">
           <Text size="ld" c="dimmed" className={classes.title}>
             {stat.title}
@@ -729,7 +730,7 @@ const PublicProfile: NextPage<
               </Group>
             </Card.Section>
 
-            <Card.Section className={classes.card}>
+            <Card.Section className={classes.header}>
               <Flex justify="space-between" style={{ zIndex: 20 }}>
                 {/* User Avatar */}
                 <Box p="xs">
@@ -804,8 +805,6 @@ const PublicProfile: NextPage<
               onTabChange={handleTabChange}
             >
               <Tabs.List>
-                {/* 
-                //FIXME: add translations */}
                 <Tabs.Tab
                   disabled
                   className={classes.tab}
@@ -882,23 +881,24 @@ const PublicProfile: NextPage<
               {/* Followers */}
               <Tabs.Panel value="followers" pt="xs">
                 <Card.Section inheritPadding mt="sm" pb="md">
-                  {/* Followers */}
                   {followers.length ? (
-                    <Flex direction="row" align="center">
-                      {followers.map((follower) => {
+                    <SimpleGrid cols={responsiveStatsColumnCount}>
+                      {followers.map((follower, index) => {
                         return (
-                          <>
-                            <UserAvatar
-                              userId={follower.id}
-                              userName={follower.name as string}
-                              imageUrl={follower.image}
-                              avatarRadius={42}
-                            />
-                            <Text ml="sm">{follower.name}</Text>
-                          </>
+                          <Paper key={index} p="sm" withBorder>
+                            <Flex>
+                              <UserAvatar
+                                userId={follower.id}
+                                userName={follower.name as string}
+                                imageUrl={follower.image}
+                                avatarRadius={42}
+                              />
+                              <Text ml="sm">{follower.name}</Text>
+                            </Flex>
+                          </Paper>
                         );
                       })}
-                    </Flex>
+                    </SimpleGrid>
                   ) : (
                     <Alert
                       icon={<IconUserCircle size={20} stroke={1.8} />}
@@ -920,21 +920,10 @@ const PublicProfile: NextPage<
                 <Card.Section inheritPadding mt="sm" pb="md">
                   {/* Follows */}
                   {followings.length ? (
-                    <Flex
-                      gap={theme.spacing.xs}
-                      direction="row"
-                      wrap={"wrap"}
-                      justify="left"
-                      align="center"
-                    >
-                      {followings.map((following) => {
+                    <SimpleGrid cols={responsiveStatsColumnCount}>
+                      {followings.map((following, index) => {
                         return (
-                          <Paper
-                            w={990 / 4}
-                            p="sm"
-                            withBorder
-                            key={following.id}
-                          >
+                          <Paper key={index} p="sm" withBorder>
                             <Flex>
                               <UserAvatar
                                 userId={following.id}
@@ -947,7 +936,7 @@ const PublicProfile: NextPage<
                           </Paper>
                         );
                       })}
-                    </Flex>
+                    </SimpleGrid>
                   ) : (
                     <Alert
                       icon={<IconUserCircle size={20} stroke={1.8} />}
