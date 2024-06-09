@@ -19,6 +19,7 @@ enum NotificationEvent {
   LIKE_CREATED
   COMMENT_CREATED
   COMMENT_ANSWERED
+  FOLLOWED_USER
 }
 
 enum CannabisStraintype {
@@ -51,6 +52,8 @@ model Notification {
   postId      String?
   report      Report?           @relation(fields: [reportId], references: [id], onDelete: Cascade)
   reportId    String?
+  follow      Follows?          @relation(fields: [followId], references: [id], onDelete: Cascade)
+  followId    String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 }
@@ -79,13 +82,15 @@ model User {
 }
 
 model Follows {
+  id          String   @id @default(cuid())
   follower    User     @relation("follower", fields: [followerId], references: [id])
   followerId  String
   following   User     @relation("following", fields: [followingId], references: [id])
   followingId String
   createdAt   DateTime @default(now())
 
-  @@id([followerId, followingId])
+  // @@id([followerId, followingId])
+  Notification Notification[]
 }
 
 model CannabisStrain {

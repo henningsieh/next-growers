@@ -122,6 +122,7 @@ const ProtectedNotifications = () => {
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "has commented on",
     COMMENT_ANSWERED: "has responded to",
+    FOLLOWED_USER: "has started following you",
   };
 
   return (
@@ -242,35 +243,41 @@ const ProtectedNotifications = () => {
                     >
                       <Link
                         scroll={false}
+                        // prettier-ignore
                         href={
-                          // handle Comment hrefs
-                          (notification.event === "COMMENT_CREATED" ||
-                            notification.event ===
-                              "COMMENT_ANSWERED") &&
-                          notification.commentId != null
-                            ? `/grow/${
-                                notification.comment?.post
-                                  ?.reportId as string
-                              }/update/${
-                                notification.comment?.postId as string
-                              }#${notification.commentId}`
-                            : notification.like?.commentId != null
-                              ? `/grow/${
-                                  notification.like.comment?.post
-                                    ?.reportId as string
-                                }/update/${
-                                  notification.like.comment
-                                    ?.postId as string
-                                }#${notification.like.commentId}`
-                              : notification.like?.postId == null
-                                ? `/grow/${
-                                    notification.like
-                                      ?.reportId as string
-                                  }`
-                                : `/grow/${
-                                    notification.like?.post
-                                      ?.reportId as string
-                                  }/update/${notification.like?.postId}`
+                          // HANDLE NEW FOLLOWERS
+                          (notification.event === "FOLLOWED_USER")
+                            ? `/profile/${notification.follow?.follower?.id}`
+                            : (notification.event === "COMMENT_CREATED" || notification.event === "COMMENT_ANSWERED") && notification.commentId != null
+                              // HANDLE NEW COMMENTS
+                                ? // Link to the new comment
+                                  `/grow/${
+                                    notification.comment?.post?.reportId as string
+                                  }/update/${
+                                    notification.comment?.postId as string
+                                  }#${notification.commentId}`
+                              // HANDLE NEW LIKES
+                                : notification.event==="LIKE_CREATED" && notification.like?.commentId != null
+                                  ? // Link to the liked comment
+                                    `/grow/${
+                                      notification.like.comment?.post
+                                        ?.reportId as string
+                                    }/update/${
+                                      notification.like.comment
+                                        ?.postId as string
+                                    }#${notification.like.commentId}`
+                                  : notification.event==="LIKE_CREATED" && notification.like?.reportId != null
+                                    ? // Link to the liked grow
+                                      `/grow/${
+                                        notification.like?.reportId 
+                                      }`
+                                    : notification.event==="LIKE_CREATED" && notification.like?.postId != null 
+                                    // Link to the liked update
+                                    ? `/grow/${
+                                        notification.like?.post
+                                          ?.reportId as string
+                                      }/update/${notification.like?.postId}`
+                                    : ""
                         }
                       >
                         <Box style={{ display: "flex" }}>
@@ -281,6 +288,12 @@ const ProtectedNotifications = () => {
                             />
                           </Center>
                           <Box p={4} fz="0.78rem" className="text-left">
+                            {notification.event === "FOLLOWED_USER" && (
+                              <>
+                                {notification.follow?.follower.name}{" "}
+                                {notificationEvents[notification.event]}
+                              </>
+                            )}
                             {notification.event ===
                               "COMMENT_ANSWERED" && (
                               <>

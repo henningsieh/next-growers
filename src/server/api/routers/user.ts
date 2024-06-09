@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { NotificationEvent, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -223,6 +223,23 @@ export const userRouter = createTRPCRouter({
         //send the email
         await sendEmail(emailOptions);
 
+        // Create a notification for the user being followed
+        const _notification = await ctx.prisma.notification.create({
+          data: {
+            recipient: {
+              connect: {
+                id: userIdToFollow,
+              },
+            },
+            event: NotificationEvent.FOLLOWED_USER,
+            follow: {
+              connect: {
+                id: follow.id,
+              },
+            },
+          },
+        });
+
         return follow;
       } catch (error: unknown) {
         if (error instanceof TRPCError) {
@@ -285,10 +302,7 @@ export const userRouter = createTRPCRouter({
         // Unfollow the user
         await ctx.prisma.follows.delete({
           where: {
-            followerId_followingId: {
-              followerId: ctx.session.user.id,
-              followingId: userIdToUnfollow,
-            },
+            id: existingFollow.id,
           },
         });
 

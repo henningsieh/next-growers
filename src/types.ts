@@ -111,7 +111,8 @@ export type NotificationEventMap =
   | "POST_CREATED" //TODO: NOTIFY report.followers
   | "LIKE_CREATED"
   | "COMMENT_CREATED"
-  | "COMMENT_ANSWERED";
+  | "COMMENT_ANSWERED"
+  | "FOLLOWED_USER";
 
 export enum Locale {
   EN = "en",
