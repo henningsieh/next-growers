@@ -26,7 +26,10 @@ export const env = createEnv({
     TWITTER_API_KEY: z.string(),
     TWITTER_API_KEY_SECRET: z.string(),
     EMAIL_SERVER_HOST: z.string().min(1),
-    EMAIL_SERVER_PORT: z.string().min(1),
+    EMAIL_SERVER_PORT: z
+      .string()
+      .min(1)
+      .transform((v) => parseInt(v, 10)),
     EMAIL_SERVER_USER: z.string().min(1),
     EMAIL_SERVER_PASSWORD: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
