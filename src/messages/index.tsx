@@ -9,6 +9,7 @@ import {
   IconFileAlert,
   IconPhoto,
   IconPhotoCancel,
+  IconUserMinus,
   IconUserPlus,
 } from "@tabler/icons-react";
 
@@ -40,6 +41,14 @@ export const followUserSuccessfulMsg = {
   message: "You are now following this user! 🥳",
   color: "growgreen",
   icon: <IconUserPlus size={20} stroke={2.8} />,
+  loading: false,
+};
+
+export const unfollowUserSuccessfulMsg = {
+  title: "Success",
+  message: "You are no longer following this user! 😢",
+  color: "growgreen",
+  icon: <IconUserMinus size={20} stroke={2.8} />,
   loading: false,
 };
 

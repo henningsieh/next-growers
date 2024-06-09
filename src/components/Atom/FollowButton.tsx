@@ -4,6 +4,7 @@ import { IconUserMinus, IconUserPlus } from "@tabler/icons-react";
 import {
   followUserSuccessfulMsg,
   httpStatusErrorMsg,
+  unfollowUserSuccessfulMsg,
 } from "~/messages";
 
 import { useSession } from "next-auth/react";
@@ -52,7 +53,7 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onSuccess: (result) => {
         console.debug(result);
-        notifications.show(followUserSuccessfulMsg);
+        notifications.show(unfollowUserSuccessfulMsg);
       },
       onSettled: async () => {
         // Trigger any necessary refetch or invalidation, e.g., refetch follwing data
