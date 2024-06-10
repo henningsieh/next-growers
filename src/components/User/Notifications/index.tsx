@@ -122,6 +122,7 @@ const ProtectedNotifications = () => {
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "has commented on",
     COMMENT_ANSWERED: "has responded to",
+    FOLLOWED_USER: "now follows you",
   };
 
   return (
