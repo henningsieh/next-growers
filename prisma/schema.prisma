@@ -19,6 +19,7 @@ enum NotificationEvent {
   LIKE_CREATED
   COMMENT_CREATED
   COMMENT_ANSWERED
+  FOLLOWED_USER
 }
 
 enum CannabisStraintype {

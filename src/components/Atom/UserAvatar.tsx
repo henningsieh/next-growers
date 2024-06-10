@@ -23,11 +23,12 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
     >
       <Box>
         <Image
-          className={"mx-auto rounded-full w-auto h-auto"}
+          alt={`${userName}'s Profile Image`}
           width={avatarRadius}
           height={avatarRadius}
           src={imageUrl}
-          alt={`${userName}'s Profile Image`}
+          style={{ width: avatarRadius, height: avatarRadius }}
+          className={"mx-auto rounded-full"}
         />
       </Box>
     </Tooltip>

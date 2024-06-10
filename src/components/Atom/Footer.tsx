@@ -4,13 +4,16 @@ import {
   createStyles,
   Flex,
   rem,
+  Text,
   ThemeIcon,
 } from "@mantine/core";
 import { IconBrandInstagram, IconBrandX } from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -22,51 +25,56 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.gray[3]
     }`,
   },
-
-  links: {
-    // marginTop: useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
-    //   ? theme.spacing.lg
-    //   : undefined,
-    // marginBottom: useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
-    //   ? theme.spacing.sm
-    //   : undefined,
-  },
 }));
 // Define the type for the props
-interface FooterProps {
-  items: JSX.Element[];
-}
 
 // Define the Footer component with the correct props type
-export function Footer({ items: footerLinks }: FooterProps) {
+export function Footer() {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
+  const footerLinks = [
+    {
+      link: "/imprint",
+      label: t("common:app-impressum-imprint-label"),
+    },
+    {
+      link: "/privacy",
+      label: t("common:app-impressum-privacy-label"),
+    },
+  ];
+
+  const footerCenterItems = footerLinks.map((link) => (
+    <Link key={link.label} href={link.link}>
+      <Text lh={0.6} size="md">
+        {link.label}
+      </Text>
+    </Link>
+  ));
+
   const { classes, theme: theme } = useStyles();
 
   return (
     <Box className={classes.footer}>
       <Flex
-        p={theme.spacing.xs}
         align="center"
+        justify="space-between"
+        p={theme.spacing.xs}
         gap={theme.spacing.md}
-        justify="space-evenly"
       >
-        <Flex align="center" justify="center" gap="xs">
-          <ThemeIcon>
-            <Image
-              src={"/favicon-32x32.png"}
-              width={32}
-              height={32}
-              alt={"GrowAGram Icon"}
-            />
-          </ThemeIcon>
-        </Flex>
+        <ThemeIcon>
+          <Image
+            priority
+            src={"/favicon-32x32.png"}
+            width={32}
+            height={32}
+            alt={"GrowAGram Icon"}
+          />
+        </ThemeIcon>
 
-        <Flex
-          gap="sm"
-          justify="center"
-          wrap="wrap"
-          className={classes.links}
-        >
-          {footerLinks}
+        <Flex gap="sm" justify="center" wrap="wrap">
+          {footerCenterItems}
         </Flex>
 
         <Flex gap="sm" justify="flex-end" wrap="nowrap">

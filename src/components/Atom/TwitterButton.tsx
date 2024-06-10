@@ -13,7 +13,7 @@ export function TwitterButton(props: ButtonProps) {
       fz="md"
       variant="filled"
       className="cursor-pointer"
-      leftIcon={<FaXTwitter size="1.2rem" />}
+      leftIcon={<FaXTwitter size={20} />}
       type="submit"
       {...props}
     />

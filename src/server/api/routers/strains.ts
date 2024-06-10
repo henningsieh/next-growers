@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -23,6 +22,75 @@ import {
 } from "~/utils/inputValidation";
 
 export const strainRouter = createTRPCRouter({
+  saveBagSeedToReport: protectedProcedure
+    .input(z.object({ reportId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { reportId } = input;
+
+      try {
+        const existingReport = await ctx.prisma.report.findUnique({
+          where: {
+            id: reportId,
+          },
+        });
+
+        // CHECK IF GROW IS AVAILABLE
+        if (!existingReport) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "This grow was not found",
+          });
+        }
+
+        // CHECK IF SESSION USER IS AUTHOR OF GROW
+        if (ctx.session.user.id != existingReport.authorId) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not authorized to edit this report",
+          });
+        }
+
+        // find strainID="Bag_Seed"
+        const bagSeed = await ctx.prisma.seedfinderStrain.findFirst({
+          where: {
+            strainId: "Bag_Seed",
+          },
+        });
+
+        if (!bagSeed) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Bag seed not found in the database",
+          });
+        }
+
+        // CREATE Bag_Seed PLANT
+        const plant = await ctx.prisma.plant.create({
+          data: {
+            reportId,
+            seedfinderStrainId: bagSeed.id,
+          },
+        });
+
+        return {
+          success: true,
+          plant,
+        };
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: `${error.name}: ${error.message}`,
+            cause: error.cause,
+          });
+        } else {
+          throw new Error("Internal server error", {
+            cause: (error as Error).cause,
+          });
+        }
+      }
+    }),
+
   getAllPlantsByReportId: publicProcedure
     .input(z.object({ reportId: z.string() }))
     .query(async ({ ctx, input }) => {

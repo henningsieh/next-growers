@@ -27,9 +27,9 @@ export default function LightDarkButton() {
         title={t("common:app-themetoggle")}
       >
         {dark ? (
-          <IconSun size="1.8rem" stroke={2.2} />
+          <IconSun size={28} stroke={2.2} />
         ) : (
-          <IconMoonStars size="1.8rem" stroke={1.8} />
+          <IconMoonStars size={28} stroke={1.8} />
         )}
       </ActionIcon>
     </Group>

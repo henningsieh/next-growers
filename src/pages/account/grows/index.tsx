@@ -200,7 +200,7 @@ const ProtectedOwnGrows: NextPage = () => {
                     <Alert
                       mt="xl"
                       p="xl"
-                      icon={<IconAlertCircle size="1rem" />}
+                      icon={<IconAlertCircle size={20} stroke={1.8} />}
                       title="You don't have any Grow Reports yet!"
                       color="red"
                       variant="outline"

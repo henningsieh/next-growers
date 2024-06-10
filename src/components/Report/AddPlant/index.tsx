@@ -17,11 +17,16 @@ import {
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconPlantOff, IconTrashFilled } from "@tabler/icons-react";
+import {
+  IconPlantOff,
+  IconSquarePlus,
+  IconTrashFilled,
+} from "@tabler/icons-react";
 import { env } from "~/env.mjs";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import SelectedStrain from "~/components/Atom/SelectedStrain";
@@ -38,6 +43,7 @@ interface AddPlantProps {
 const AddPlant = ({ growId }: AddPlantProps) => {
   const router = useRouter();
   const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
   const { colorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const dark = colorScheme === "dark";
@@ -63,6 +69,28 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   const [selectedBreeder, setSelectedBreeder] = useState<
     BreederFromSeedfinder | undefined
   >(undefined);
+
+  // initialize saveBagSeedToReport function
+  const {
+    mutate: tRPCsaveBagSeedToReport,
+    isLoading: tRPCsaveBagSeedToReportIsLoading,
+    error: tRPCsaveBagSeedToReportError,
+  } = api.strains.saveBagSeedToReport.useMutation({
+    onMutate: (_plantId) => {
+      console.debug("START strains.saveBagSeedToReport.useMutation");
+    },
+    onError(error) {
+      console.error("ERROR strains.saveBagSeedToReport.useMutation");
+      console.error(tRPCsaveBagSeedToReportError);
+      console.error(error);
+      throw tRPCsaveBagSeedToReportError;
+    },
+    async onSuccess(_result, _plant) {
+      console.debug("SUCCESS strains.saveBagSeedToReport.useMutation");
+      //refresh content of allPlantsInGrow table
+      await trpc.strains.getAllPlantsByReportId.refetch();
+    },
+  });
 
   // Initialize deletePlant function
   const {
@@ -301,7 +329,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
             : "Current plants in your grow"}
         </Title>
 
-        <Box className="relative">
+        <Box mb="sm">
           <Table
             mt="xs"
             striped
@@ -375,7 +403,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
           </Table>
           {!allPlantsInGrowAreLoading && plantsInGrow.length === 0 && (
             <Alert
-              icon={<IconPlantOff size="1rem" />}
+              icon={<IconPlantOff size={20} />}
               title={activeLocale === "de" ? "Schade!" : "Bummer!"}
               color="red"
               variant="outline"
@@ -399,13 +427,23 @@ const AddPlant = ({ growId }: AddPlantProps) => {
             </Box>
           )}
         </Box>
+        <Button
+          variant="filled"
+          color="growgreen"
+          leftIcon={<IconSquarePlus size={22} />}
+          onClick={() => {
+            tRPCsaveBagSeedToReport({ reportId: growId });
+          }}
+          loading={tRPCsaveBagSeedToReportIsLoading}
+        >
+          {t("common:report-add-bagseed-button")}
+        </Button>
       </Paper>
 
       <Divider
         py="md"
         size="md"
         labelPosition="center"
-        // color={dark ? "groworange.4" : "groworange.6"}
         label={
           activeLocale === "de"
             ? "Sorte als neue Pflanze zum Grow hinzufügen"

@@ -1,17 +1,23 @@
 import {
   Box,
   Container,
+  createStyles,
   LoadingOverlay,
   Paper,
+  Progress,
   rem,
   Space,
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import type { FileWithPath } from "@mantine/dropzone";
+import type { FileRejection, FileWithPath } from "@mantine/dropzone";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { notifications } from "@mantine/notifications";
-import { httpStatusErrorMsg } from "~/messages";
+import {
+  fileUploadMaxFileCountErrorMsg,
+  fileUploadMaxFileSizeErrorMsg,
+  httpStatusErrorMsg,
+} from "~/messages";
 
 import {
   type Dispatch,
@@ -24,13 +30,14 @@ import { useSession } from "next-auth/react";
 
 import DragAndSortGrid from "~/components/Atom/DragAndSortGrid";
 
-import type {
-  CloudinaryResonse, // IsoReportWithPostsFromDb,
-} from "~/types";
+import type { CloudinaryResonse } from "~/types";
 
 import { api } from "~/utils/api";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { handleMultipleDrop } from "~/utils/helperUtils";
+import {
+  getFileUploadCloudinaryMaxFileSizeInByte,
+  getFileUploadMaxFileCount,
+  handleMultipleDrop,
+} from "~/utils/helperUtils";
 
 interface ImageUploaderProps {
   //report: IsoReportWithPostsFromDb;
@@ -50,7 +57,6 @@ interface ImageUploaderProps {
       }[]
     >
   >;
-  maxFiles?: number;
   setImageIds: Dispatch<SetStateAction<string[]>>;
   isUploading: boolean;
   setIsUploading: Dispatch<SetStateAction<boolean>>;
@@ -61,7 +67,6 @@ export default function ImageUploader({
   setImages,
   isUploading,
   setIsUploading,
-  maxFiles,
 }: ImageUploaderProps) {
   const { data: session, status } = useSession();
   const _theme = useMantineTheme();
@@ -69,6 +74,13 @@ export default function ImageUploader({
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
     useState<CloudinaryResonse[]>([]);
+
+  const [uploadProgress, setUploadProgress] = useState<
+    {
+      value: number;
+      label: string;
+    }[]
+  >([]);
 
   const { mutate: tRPCcreateImage } = api.image.createImage.useMutation(
     {
@@ -79,8 +91,6 @@ export default function ImageUploader({
         console.error(error);
       },
       onSuccess: (newImage) => {
-        setImagesUploadedToCloudinary([]);
-
         !!newImage &&
           setImages((prevImages) => [
             ...prevImages,
@@ -91,6 +101,8 @@ export default function ImageUploader({
               postOrder: !!newImage.postOrder ? newImage.postOrder : 0,
             },
           ]);
+
+        setImagesUploadedToCloudinary([]);
       },
       onSettled: (_newImage) => {
         // indicate that saving process is ready:
@@ -109,6 +121,8 @@ export default function ImageUploader({
           ownerId: session.user.id,
         });
       });
+
+      setUploadProgress([]);
     }
   }, [
     imagesUploadedToCloudinary,
@@ -124,17 +138,30 @@ export default function ImageUploader({
     setIsUploading(true);
     setIsSaving(true); //controlls upload inactive overlay
 
-    const result = await handleMultipleDrop(
+    const _result = await handleMultipleDrop(
       fileWithPath,
-      setImagesUploadedToCloudinary
+      setImagesUploadedToCloudinary,
+      setUploadProgress
     ).catch((error) => {
       console.error(error);
     });
 
     setIsUploading(false); //triggers tRPCcreateImage in ImageUploader
-
-    console.debug(result);
+    setUploadProgress([]);
   };
+
+  const useStyles = createStyles((theme) => ({
+    bar: {
+      justifyContent: "flex-start", // Align label to the left
+    },
+    label: {
+      paddingLeft: theme.spacing.xs,
+      fontSize: 12,
+      fontFamily: theme.fontFamilyMonospace,
+    },
+  }));
+
+  const { classes, theme } = useStyles();
 
   return (
     <Container mt="sm" p={0} size="md">
@@ -157,26 +184,128 @@ export default function ImageUploader({
       </Box>
       <Paper p="xs" withBorder>
         <Box className="space-y-2">
-          {/* <Group position="left">
-            <IconCamera color={theme.colors.growgreen[4]} />
-            <Title order={4}>Append images</Title>
-          </Group> */}
           <Box>
+            {/* Your file upload input and button */}
+            {uploadProgress.map((item, index) => (
+              <Progress
+                key={index}
+                value={item.value}
+                label={item.label}
+                color={theme.colors.growgreen[4]}
+                size={20}
+                animate={isUploading}
+                my="xs"
+                classNames={classes}
+              />
+            ))}
             <Box className="relative">
-              <LoadingOverlay visible={isSaving} />
+              <LoadingOverlay
+                loaderProps={{
+                  size: "xl",
+                  color: "growgreen.4",
+                  variant: "oval",
+                }}
+                visible={isSaving}
+              />
               <Box>
                 <Dropzone
                   accept={IMAGE_MIME_TYPE}
                   onDrop={(files) => {
                     void handleMultipleDropWrapper(files);
                   }}
-                  maxFiles={maxFiles}
-                  onReject={(files) => {
+                  maxSize={getFileUploadCloudinaryMaxFileSizeInByte()}
+                  maxFiles={getFileUploadMaxFileCount()}
+                  onReject={(files: FileRejection[]) => {
+                    console.error(files);
+                    let tooManyFilesErrorShown = false;
+
                     files.forEach((file) => {
-                      notifications.show(
-                        httpStatusErrorMsg(file.file.name, 500)
-                      );
+                      file.errors.map((error) => {
+                        console.error(error.code);
+
+                        if (error.code === "too-many-files") {
+                          if (!tooManyFilesErrorShown) {
+                            notifications.show(
+                              fileUploadMaxFileCountErrorMsg(
+                                files.length,
+                                getFileUploadMaxFileCount()
+                              )
+                            );
+                            // show error only once
+                            tooManyFilesErrorShown = true;
+                          }
+                        } else if (error.code === "file-too-large") {
+                          notifications.show(
+                            fileUploadMaxFileSizeErrorMsg(
+                              file.file.name,
+                              file.file.size
+                            )
+                          );
+                        } else if (error.code === "file-invalid-type") {
+                          notifications.show(
+                            httpStatusErrorMsg(
+                              `File type of ${file.file.name} is not supported!`,
+                              415
+                            )
+                          );
+                        } else {
+                          notifications.show(
+                            httpStatusErrorMsg(
+                              error.message,
+                              error.code
+                            )
+                          );
+                        }
+                      });
                     });
+
+                    // files.forEach((file) => {
+                    //   if (
+                    //     // too many files error
+                    //     file.errors[0].code === "too-many-files"
+                    //   ) {
+                    //     if (!tooManyFilesErrorShown) {
+                    //       notifications.show(
+                    //         fileUploadMaxFileCountErrorMsg(
+                    //           files.length,
+                    //           getFileUploadMaxFileCount()
+                    //         )
+                    //       );
+                    //       // show error only once
+                    //       tooManyFilesErrorShown = true;
+                    //     }
+                    //   } else if (
+                    //     // file too large error
+                    //     file.errors[0].code === "file-too-large"
+                    //   ) {
+                    //     notifications.show(
+                    //       fileUploadMaxFileSizeErrorMsg(
+                    //         file.file.name,
+                    //         file.file.size
+                    //       )
+                    //     );
+                    //   } else if (
+                    //     // file invalid type error
+                    //     file.errors[0].code === "file-invalid-type"
+                    //   ) {
+                    //     notifications.show(
+                    //       httpStatusErrorMsg(
+                    //         `File type of ${file.file.name} is not supported!`,
+                    //         415
+                    //       )
+                    //     );
+                    //   } else {
+                    //     file.errors.map((error) => {
+                    //       console.error(error);
+                    //       notifications.show(
+                    //         httpStatusErrorMsg(
+                    //           error.message,
+                    //           error.code
+                    //         )
+                    //       );
+                    //     });
+                    //   }
+                    // });
                   }}
                   sx={(theme) => ({
                     fontSize: theme.fontSizes.lg,

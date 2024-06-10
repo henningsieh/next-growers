@@ -1,6 +1,6 @@
 import { appTitle } from "~/pages/_document";
 
-// import { useTranslation } from "react-i18next";
+// import { useTranslation } from "next-i18next";
 import type {
   GetStaticProps,
   GetStaticPropsContext,

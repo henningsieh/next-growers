@@ -224,7 +224,7 @@ export default function SelectedStrain({
                     w={!mediumScreen ? 280 : undefined}
                     compact={mediumScreen}
                     fullWidth={mediumScreen}
-                    leftIcon={<IconDeviceFloppy size="1.4rem" />}
+                    leftIcon={<IconDeviceFloppy size={22} />}
                     loading={savePlantToGrowIsLoading}
                     variant="filled"
                     color="growgreen"
@@ -406,7 +406,7 @@ export default function SelectedStrain({
                         className="cursor-pointer"
                         href={strainInfosFromSeedfinder.links.info}
                         compact
-                        rightIcon={<IconExternalLink size="1rem" />}
+                        rightIcon={<IconExternalLink size={18} />}
                       >
                         Strain Data
                       </Button>
@@ -469,7 +469,7 @@ export default function SelectedStrain({
                       className="cursor-pointer"
                       href={strainInfosFromSeedfinder.brinfo.link}
                       compact
-                      rightIcon={<IconExternalLink size="1rem" />}
+                      rightIcon={<IconExternalLink size={18} />}
                     >
                       Website
                     </Button>

@@ -26,13 +26,15 @@ export const env = createEnv({
     TWITTER_API_KEY: z.string(),
     TWITTER_API_KEY_SECRET: z.string(),
     EMAIL_SERVER_HOST: z.string().min(1),
-    EMAIL_SERVER_PORT: z.string().min(1),
+    EMAIL_SERVER_PORT: z
+      .string()
+      .min(1)
+      .transform((v) => parseInt(v, 10)),
     EMAIL_SERVER_USER: z.string().min(1),
     EMAIL_SERVER_PASSWORD: z.string().min(1),
     EMAIL_FROM: z.string().min(1),
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
-    CLOUDINARY_NAME: z.string().min(1),
 
     SEEDFINDER_API_KEY: z.string().min(32),
   },
@@ -50,6 +52,8 @@ export const env = createEnv({
     NEXT_PUBLIC_SENTRY_AUTH_TOKEN: z.string().min(1),
     NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES: z.string().min(1),
     NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL: z.string().url(),
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE: z.string().min(1),
+    NEXT_PUBLIC_CLOUDINARY_NAME: z.string().min(1),
   },
 
   /**
@@ -72,7 +76,8 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    NEXT_PUBLIC_CLOUDINARY_NAME:
+      process.env.NEXT_PUBLIC_CLOUDINARY_NAME,
     SEEDFINDER_API_KEY: process.env.SEEDFINDER_API_KEY,
     NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL:
       process.env.NEXT_PUBLIC_SEEDFINDER_BREEDER_LOGO_BASEURL,
@@ -85,5 +90,7 @@ export const env = createEnv({
     NEXT_PUBLIC_TWITTERX_URL: process.env.NEXT_PUBLIC_TWITTERX_URL,
     NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION:
       process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE:
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE,
   },
 });

@@ -122,6 +122,7 @@ const ProtectedNotifications = () => {
     LIKE_CREATED: "likes",
     COMMENT_CREATED: "has commented on",
     COMMENT_ANSWERED: "has responded to",
+    FOLLOWED_USER: "now follows you",
   };
 
   return (
@@ -150,10 +151,10 @@ const ProtectedNotifications = () => {
             withBorder
             processing
           >
-            <IconBell size="1.8rem" stroke={1.8} />
+            <IconBell size={28} stroke={1.8} />
           </Indicator>
         ) : (
-          <IconBell size="1.8rem" stroke={1.8} />
+          <IconBell size={28} stroke={1.8} />
         )}
       </ActionIcon>
 
@@ -276,7 +277,7 @@ const ProtectedNotifications = () => {
                         <Box style={{ display: "flex" }}>
                           <Center>
                             <IconHeartFilled
-                              size="1.2rem"
+                              size={20}
                               className={`${classes.like} icon-transition`}
                             />
                           </Center>

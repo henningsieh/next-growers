@@ -16,7 +16,6 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import {
-  // IconAlertTriangle,
   IconCalendar,
   IconCannabis,
   IconClock,
@@ -235,38 +234,15 @@ export default function ReportCard({
           from: theme.colors.dark[4],
           to: theme.colors.green[9],
         }}
-        fz={"0.66rem"}
+        fz={"0.72rem"}
         px={3}
         mx={0}
-        leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
+        leftSection={<IconCannabis stroke={1.8} size={16} />}
       >
         {plant.seedfinderStrain.name}
       </Badge>
     </Tooltip>
   ));
-
-  // Intitialize plantBadges elemet array
-  //   <Box key={strainBadge.id}>
-  //     <Badge
-  //       className="cursor-pointer"
-  //       onClick={() => {
-  //         setSearchString &&
-  //           setSearchString(`strain:"${strainBadge.name}"`);
-  //       }}
-  //       variant="gradient"
-  //       gradient={{
-  //         from: theme.colors.dark[4],
-  //         to: theme.colors.green[9],
-  //       }}
-  //       fz={"0.66rem"}
-  //       px={3}
-  //       mx={0}
-  //       leftSection={<IconCannabis stroke={1.6} size={rem(14)} />}
-  //     >
-  //       {strainBadge.name}
-  //     </Badge>
-  //   </Box>
-  // ));
 
   // Initialize the total comment count
   let totalCommentCount = 0;
@@ -287,11 +263,7 @@ export default function ReportCard({
           !!isoReport &&
           session.user.id == isoReport.authorId && (
             <Box p={8} pos="absolute" className="z-20 bottom-0 right-0">
-              <EditReportMenu
-                reportId={isoReport.id}
-                labelEditGrow={t("common:report-edit-button")}
-                labelAddUpdate={t("common:addpost-headline")}
-              />
+              <EditReportMenu reportId={isoReport.id} />
             </Box>
           )}
         <ImagePreview
@@ -316,7 +288,7 @@ export default function ReportCard({
       <Card.Section className={classes.section}>
         <Flex align="flex-start" justify="space-between">
           {/* Strains */}
-          <ScrollArea className="overflow-visible" maw={260} h={42}>
+          <ScrollArea className="overflow-visible" w={"82%"} h={42}>
             {plantBadges && plantBadges.length !== 0 ? (
               <Flex py={4} gap="xs">
                 {plantBadges}
@@ -369,7 +341,7 @@ export default function ReportCard({
             >
               <Center>
                 <Box pr={4}>
-                  <IconCalendar size="1.2rem" />
+                  <IconCalendar size={16} />
                 </Box>
                 <Text className={`${classes.label} cursor-default`}>
                   {sanatizeDateString(
@@ -404,7 +376,7 @@ export default function ReportCard({
                   )}
                 </Text>
                 <Box pl={4}>
-                  <IconClock size="1.2rem" />
+                  <IconClock size={16} />
                 </Box>
               </Center>
             </Tooltip>
@@ -416,16 +388,14 @@ export default function ReportCard({
 }
 
 interface EditReportMenuProps {
-  labelEditGrow: React.ReactNode;
-  labelAddUpdate: React.ReactNode;
   reportId: string;
 }
 
-export function EditReportMenu({
-  reportId,
-  labelEditGrow,
-  labelAddUpdate,
-}: EditReportMenuProps) {
+export function EditReportMenu({ reportId }: EditReportMenuProps) {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const { classes } = useStyles();
   return (
     <Flex justify="flex-end" align="center">
@@ -446,7 +416,7 @@ export function EditReportMenu({
             withArrow
             arrowPosition="side"
             position="top-end"
-            label={labelEditGrow}
+            label={t("common:report-edit-button")}
           >
             <Button
               px={2}
@@ -464,17 +434,17 @@ export function EditReportMenu({
           <Link href={`/account/grows/edit/${reportId}/editGrow`}>
             <Menu.Item
               className={classes.edit}
-              icon={<IconEdit size={rem(14)} />}
+              icon={<IconEdit size={18} />}
             >
-              {labelEditGrow}
+              {t("common:report-edit-button")}
             </Menu.Item>
           </Link>
           <Link href={`/account/grows/edit/${reportId}/addUpdate`}>
             <Menu.Item
               className={classes.add}
-              icon={<IconPlant size={rem(14)} />}
+              icon={<IconPlant size={18} />}
             >
-              {labelAddUpdate}
+              {t("common:addpost-headline")}
             </Menu.Item>
           </Link>
         </Menu.Dropdown>
@@ -495,7 +465,7 @@ export function EditReportMenu({
     <IconAlertTriangle
       className="ml-2"
       height={20}
-      stroke={1.6}
+      stroke={1.8}
     />
   </Button> 
   </Group> */}

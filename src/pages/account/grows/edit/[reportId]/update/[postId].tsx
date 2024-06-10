@@ -88,7 +88,7 @@ const ProtectedEditPost: NextPage = () => {
   const { t } = useTranslation(activeLocale);
   const pageTitle = t("common:post-edit-headline");
 
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const sessionIsLoading = status === "loading";
 
   if (!sessionIsLoading && status === "unauthenticated") {
@@ -123,18 +123,21 @@ const ProtectedEditPost: NextPage = () => {
     );
   }
 
-  const reportTitle = `${report.title}`;
+  if (!sessionIsLoading && session?.user.id !== report.authorId) {
+    return <AccessDenied />;
+  }
 
   const queryPost = report?.posts.find(
     (post) => post.id === queryPostId
   );
+  if (!!!queryPost) {
+    return <>Error 404: Update with ID {queryPostId} was not found.</>;
+  }
 
-  return !!!queryPost ? (
-    <>Error 404: Update with ID {queryPostId} was not found.</>
-  ) : (
+  return (
     <>
       <Head>
-        <title>{`${pageTitle} | GrowAGram | ${reportTitle}`}</title>
+        <title>{`${pageTitle} | GrowAGram | ${report.title}`}</title>
         <meta
           name="description"
           content="Create your grow report on growagram.com"
