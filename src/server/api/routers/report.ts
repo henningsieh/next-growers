@@ -170,7 +170,6 @@ export const reportRouter = createTRPCRouter({
             ReportSlug: {
               select: {
                 slug: true,
-                createdAt: true,
               },
             },
           },
@@ -663,7 +662,6 @@ export const reportRouter = createTRPCRouter({
           ReportSlug: {
             select: {
               slug: true,
-              createdAt: true,
             },
           },
         },

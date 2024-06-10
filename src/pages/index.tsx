@@ -125,6 +125,12 @@ export async function getStaticProps(
             comments: true,
           },
         },
+        ReportSlug: {
+          select: {
+            slug: true,
+            // createdAt: true,
+          },
+        },
       },
       orderBy: {
         // Join with likes table and aggregate the count of likes
@@ -206,6 +212,7 @@ export async function getStaticProps(
           createdAt: reportFromDb.createdAt.toISOString(),
           likes: isoLikes,
           posts: isoPosts,
+          reportSlug: reportFromDb.ReportSlug,
         };
       });
 
