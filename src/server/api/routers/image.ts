@@ -50,9 +50,11 @@ export const imageRouter = createTRPCRouter({
         const { cloudUrl, ownerId, publicId } = input;
 
         if (ownerId != ctx.session.user.id) {
-          throw new Error(
-            "A SECURITY ISSSUE OCCURED! (Missmatch: authorId != userId )"
-          );
+          //Throw new TRPC ERROR NOT ALLOWED
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Not allowed to create image for other users",
+          });
         }
 
         const result = ctx.prisma.image.create({

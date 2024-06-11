@@ -102,6 +102,80 @@ export const userRouter = createTRPCRouter({
       return user;
     }),
 
+  saveGrowerProfileHeaderImg: protectedProcedure
+    .input(
+      z.object({
+        cloudUrl: z.string(),
+        publicId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // First, check if the user exists
+      const existingUser = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+      if (!existingUser) {
+        throw new Error("User does not exist");
+      }
+
+      // Create a new image record
+      const image = await ctx.prisma.image.create({
+        data: {
+          cloudUrl: input.cloudUrl,
+          publicId: input.publicId,
+          ownerId: existingUser.id,
+        },
+      });
+
+      // Check if the user already has a grower profile
+      if (existingUser.growerProfileId) {
+        // Update the existing grower profile with the new header image
+        const growerProfile = await ctx.prisma.growerProfile.update({
+          where: {
+            id: existingUser.growerProfileId,
+          },
+          data: {
+            headerImg: {
+              connect: {
+                id: image.id,
+              },
+            },
+          },
+        });
+        return { growerProfile, image };
+      } else {
+        // Create a new grower profile with the new header image
+        const growerProfile = await ctx.prisma.growerProfile.create({
+          data: {
+            headerImg: {
+              connect: {
+                id: image.id,
+              },
+            },
+            user: {
+              connect: {
+                id: existingUser.id,
+              },
+            },
+          },
+        });
+
+        // Update the user's growerProfileId
+        await ctx.prisma.user.update({
+          where: {
+            id: existingUser.id,
+          },
+          data: {
+            growerProfileId: growerProfile.id,
+          },
+        });
+
+        return { growerProfile, image };
+      }
+    }),
+
   getUserProfilesById: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -109,6 +183,35 @@ export const userRouter = createTRPCRouter({
 
       try {
         const users = await ctx.prisma.user.findMany({
+          where: {
+            id: userId,
+          },
+          select: getUserSelectObject(userId),
+        });
+        return users;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+  getUserProfileById: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+
+      try {
+        const users = await ctx.prisma.user.findFirst({
           where: {
             id: userId,
           },

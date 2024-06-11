@@ -138,7 +138,7 @@ export default function ImageUploader({
     setIsUploading(true);
     setIsSaving(true); //controlls upload inactive overlay
 
-    const _result = await handleMultipleDrop(
+    await handleMultipleDrop(
       fileWithPath,
       setImagesUploadedToCloudinary,
       setUploadProgress

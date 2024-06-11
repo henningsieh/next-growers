@@ -35,8 +35,8 @@ export const env = createEnv({
     EMAIL_FROM: z.string().min(1),
     CLOUDINARY_API_KEY: z.string().min(1),
     CLOUDINARY_API_SECRET: z.string().min(1),
-
     SEEDFINDER_API_KEY: z.string().min(32),
+    SENTRY_AUTH_TOKEN: z.string().min(1),
   },
 
   /**
@@ -89,5 +89,6 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
     NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE:
       process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_MAX_FILESIZE,
+    SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
   },
 });

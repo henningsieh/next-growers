@@ -4,6 +4,21 @@ export function getUserSelectObject(userId: string) {
     name: true,
     email: true,
     image: true,
+    growerProfile: {
+      select: {
+        id: true,
+        bio: true,
+        location: true,
+        headerImg: true,
+        links: {
+          select: {
+            id: true,
+            title: true,
+            url: true,
+          },
+        },
+      },
+    },
     followers: {
       select: {
         followerId: true,

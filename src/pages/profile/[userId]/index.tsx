@@ -30,13 +30,12 @@ import {
   IconDots,
   IconEye,
   IconFilePlus,
-  IconFileZip,
   IconGitBranch,
   IconHeart,
   IconMessage,
   IconPhotoUp,
-  IconTrash,
   IconUserCircle,
+  IconUserEdit,
 } from "@tabler/icons-react";
 
 import { useEffect, useState } from "react";
@@ -47,14 +46,14 @@ import type {
   InferGetStaticPropsType,
   NextPage,
 } from "next";
-// import { useSession } from "next-auth/react";
-// import { useTranslation } from "next-i18next";
+import { useSession } from "next-auth/react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
-// import AccessDenied from "~/components/Atom/AccessDenied";
+import AnimatedValue from "~/components/Atom/AnimatedValue";
 import FollowButton from "~/components/Atom/FollowButton";
 import UserAvatar from "~/components/Atom/UserAvatar";
 import ReportCard from "~/components/Report/Card";
@@ -437,6 +436,7 @@ const PublicProfile: NextPage<
 
   const router = useRouter();
   const { locale: activeLocale } = router;
+  const { data: session, status } = useSession();
 
   const [_searchString, setSearchString] = useState("");
 
@@ -642,7 +642,9 @@ const PublicProfile: NextPage<
         </Flex>
 
         <Group align="flex-end" spacing="xs" mt={"xl"}>
-          <Text className={classes.value}>{stat.value}</Text>
+          <Text className={classes.value}>
+            <AnimatedValue value={stat.value} duration={2000} />
+          </Text>
           <Text
             className={classes.diff}
             c={
@@ -742,41 +744,53 @@ const PublicProfile: NextPage<
                   />
                 </Box>
                 {/* User Profile Menu */}
-                <Box p="xs">
-                  <Menu
-                    classNames={classes}
-                    withinPortal
-                    position="bottom-end"
-                    shadow="sm"
-                  >
-                    <Menu.Target>
-                      <Button
-                        p={0}
-                        h={28}
-                        w={28}
-                        variant="filled"
-                        color="groworange"
+                {status === "authenticated" &&
+                  session?.user.id === growerProfileData.id && (
+                    <Box p="xs">
+                      <Menu
+                        classNames={classes}
+                        withinPortal
+                        position="bottom-end"
+                        shadow="sm"
                       >
-                        <IconDots size={20} />
-                      </Button>
-                    </Menu.Target>
+                        <Menu.Target>
+                          <Button
+                            p={0}
+                            h={28}
+                            w={28}
+                            variant="filled"
+                            color="groworange"
+                          >
+                            <IconDots size={20} />
+                          </Button>
+                        </Menu.Target>
 
-                    <Menu.Dropdown>
-                      <Menu.Item icon={<IconFileZip size={rem(14)} />}>
-                        Download zip
-                      </Menu.Item>
-                      <Menu.Item icon={<IconEye size={rem(14)} />}>
-                        Preview all
-                      </Menu.Item>
-                      <Menu.Item
-                        icon={<IconTrash size={rem(14)} />}
-                        color="red"
-                      >
-                        Delete all
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </Box>
+                        <Menu.Dropdown>
+                          <Link href={`/account/edit`}>
+                            <Menu.Item
+                              icon={<IconUserEdit size={rem(14)} />}
+                            >
+                              Edit Profile
+                            </Menu.Item>
+                          </Link>
+
+                          <Link
+                            href={`/profile/${growerProfileData.id}`}
+                          >
+                            <Menu.Item
+                              icon={<IconEye size={rem(14)} />}
+                              // onClick={(e) => {
+                              //   e.preventDefault();
+                              //   void router.reload();
+                              // }}
+                            >
+                              Reload Profile
+                            </Menu.Item>
+                          </Link>
+                        </Menu.Dropdown>
+                      </Menu>
+                    </Box>
+                  )}
               </Flex>
               <Image
                 src={imageUrl}

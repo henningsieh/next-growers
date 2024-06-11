@@ -10,9 +10,10 @@ type GetIsoReportWithPostsFromDbOutput =
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
 
-type getUserByIdResponse = RouterOutput["user"]["getUserProfilesById"];
-export type UserProfiles = getUserByIdResponse;
-export type UserProfile = getUserByIdResponse[number];
+type GetUserProfilesByIdOutput =
+  RouterOutput["user"]["getUserProfilesById"];
+export type UserProfiles = GetUserProfilesByIdOutput;
+export type UserProfile = GetUserProfilesByIdOutput[number];
 export type UserProfileWithoutFollow = Omit<
   UserProfile,
   "followers" | "following"
