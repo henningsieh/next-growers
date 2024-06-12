@@ -9,7 +9,14 @@ export function getUserSelectObject(userId: string) {
         id: true,
         bio: true,
         location: true,
-        headerImg: true,
+        headerImg: {
+          select: {
+            id: true,
+            publicId: true,
+            cloudUrl: true,
+            ownerId: true,
+          },
+        },
         links: {
           select: {
             id: true,
