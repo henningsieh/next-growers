@@ -8,6 +8,7 @@ import {
 } from "~/messages";
 
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 
 import { api } from "~/utils/api";
 
@@ -17,6 +18,10 @@ type FollowButtonProps = {
 
 function FollowButton({ growerId: growerId }: FollowButtonProps) {
   const { data: _session, status: sessionSatus } = useSession();
+  //init translation
+  // const router = useRouter();
+  // const activeLocale = router.locale;
+  const { t } = useTranslation();
 
   const trpc = api.useUtils();
 
@@ -76,7 +81,6 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
   if (sessionSatus === "authenticated" && !isFollowingUserIsLoading) {
     // USER IS AUTHENTICATED AND FOLLOWING DATA IS LOADED
     if (!isFollowingUser) {
-      // Follow button
       return (
         <Button
           h={32}
@@ -86,11 +90,13 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
           loading={followUserIsLoading}
           onClick={() => tRPCfollowUser({ userId: growerId })}
         >
-          <Text>Follow</Text>
+          <Text>
+            {/* Follow this Grower */}
+            {t("profile-follow-button")}
+          </Text>
         </Button>
       );
     } else {
-      // Unfollow button
       return (
         <Button
           h={32}
@@ -100,7 +106,10 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
           loading={followUserIsLoading}
           onClick={() => tRPCunfollowUser({ userId: growerId })}
         >
-          <Text>Unfollow</Text>
+          <Text>
+            {/* Unfollow this Grower */}
+            {t("profile-unfollow-button")}
+          </Text>
         </Button>
       );
     }

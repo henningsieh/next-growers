@@ -7,7 +7,7 @@ module.exports = {
   generateRobotsTxt: true,
   exclude: [
     "/account",
-    "/account/edit",
+    "/profile/edit",
     "/account/grows",
     "/account/grows/create",
   ],

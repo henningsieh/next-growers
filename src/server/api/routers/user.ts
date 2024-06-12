@@ -13,7 +13,8 @@ import {
   InputSaveUserName,
 } from "~/utils/inputValidation";
 import { getUserSelectObject } from "~/utils/repository/userSelectObject";
-import sendEmail from "~/utils/sendEmail";
+
+//import sendEmail from "~/utils/sendEmail";
 
 export const userRouter = createTRPCRouter({
   saveOwnUsername: protectedProcedure
@@ -315,19 +316,8 @@ export const userRouter = createTRPCRouter({
           },
         });
 
-        // SEND EMAIL TO THE SESSION USER
-        const emailOptions = {
-          to: ctx.session.user.email as string,
-
-          subject: `You are now following ${existingUser.name}`,
-          //FIXME:write a nice e-mail text here
-          text: `You are now following ${existingUser.name}!`,
-        };
-        //send the email
-        await sendEmail(emailOptions);
-
         // Create a notification for the user being followed
-        const _notification = await ctx.prisma.notification.create({
+        await ctx.prisma.notification.create({
           data: {
             recipient: {
               connect: {
@@ -342,6 +332,17 @@ export const userRouter = createTRPCRouter({
             },
           },
         });
+
+        // // SEND EMAIL TO THE SESSION USER
+        // const emailOptions = {
+        //   to: ctx.session.user.email as string,
+
+        //   subject: `You are now following ${existingUser.name}`,
+        //   //FIXME:write a nice e-mail text here
+        //   text: `You are now following ${existingUser.name}!`,
+        // };
+        // //send the email
+        // await sendEmail(emailOptions);
 
         return follow;
       } catch (error: unknown) {

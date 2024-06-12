@@ -589,21 +589,21 @@ const PublicProfile: NextPage<
       ),
     },
     {
-      title: "Images",
-      icon: "images",
-      value: growerProfileData._count.cloudImages,
-      diff: calculateStatsDiffInPercent(
-        growerProfileData._count.cloudImages,
-        historicalProfileData?._count.cloudImages
-      ),
-    },
-    {
       title: "Comments",
       icon: "comments",
       value: growerProfileData._count.comments,
       diff: calculateStatsDiffInPercent(
         growerProfileData._count.comments,
         historicalProfileData?._count.comments
+      ),
+    },
+    {
+      title: "Images",
+      icon: "images",
+      value: growerProfileData._count.cloudImages,
+      diff: calculateStatsDiffInPercent(
+        growerProfileData._count.cloudImages,
+        historicalProfileData?._count.cloudImages
       ),
     },
     {
@@ -767,7 +767,7 @@ const PublicProfile: NextPage<
                         </Menu.Target>
 
                         <Menu.Dropdown>
-                          <Link href={`/account/edit`}>
+                          <Link href={`/profile/edit`}>
                             <Menu.Item
                               icon={<IconUserEdit size={rem(14)} />}
                             >
