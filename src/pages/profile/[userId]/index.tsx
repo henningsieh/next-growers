@@ -575,7 +575,8 @@ const PublicProfile: NextPage<
 
   //FIXME: implement user profile header image
   const imageUrl =
-    "https://images.unsplash.com/photo-1591754060004-f91c95f5cf05";
+    growerProfileData.growerProfile?.headerImg?.cloudUrl ||
+    "/grow-a-gram-high-resolution-logo_800px.webp";
 
   const statsData = [
     {
@@ -623,7 +624,7 @@ const PublicProfile: NextPage<
     posts: IconFilePlus,
   } as const;
 
-  const stats = statsData.map((stat, index) => {
+  const growerStatistics = statsData.map((stat, index) => {
     const Icon = statIcons[stat.icon];
     const DiffIcon =
       stat.diff > 0
@@ -799,13 +800,13 @@ const PublicProfile: NextPage<
                 fill
                 priority
                 quality={80}
-                sizes="(max-width: 3800px) 100vw, 2000px"
+                sizes="(max-width: 1024px) 100vw, 1024px"
               />
             </Card.Section>
 
             <Card.Section inheritPadding mt="sm" pb="md">
               <SimpleGrid cols={responsiveStatsColumnCount}>
-                {stats}
+                {growerStatistics}
               </SimpleGrid>
             </Card.Section>
 
@@ -973,7 +974,6 @@ const PublicProfile: NextPage<
       </Container>
     </>
   );
-  // return <AccessDenied />;
 };
 export default PublicProfile;
 

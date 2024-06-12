@@ -10,6 +10,7 @@ import {
   LoadingOverlay,
   Progress,
   Space,
+  Text,
   TextInput,
   Title,
   Tooltip,
@@ -21,9 +22,12 @@ import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
   IconAt,
+  IconCloudUpload,
   IconDeviceFloppy,
+  IconDownload,
   IconMail,
   IconReload,
+  IconX,
 } from "@tabler/icons-react";
 import type { ParsedUrlQuery } from "querystring";
 import {
@@ -97,7 +101,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const ProtectedEditReport: NextPage = () => {
+const ProtectedEditProfile: NextPage = () => {
   const {
     data: session,
     status: sessionStatus,
@@ -162,12 +166,16 @@ const ProtectedEditReport: NextPage = () => {
     api.user.saveOwnUserImage.useMutation({
       onSuccess() {
         notifications.show(setUserimageSuccessfulMsg);
-      },
-      onSettled() {
-        setUploadProgress([]);
         void updateSession();
       },
+      onSettled() {
+        setImagesUploadedToCloudinary([]);
+        setUploadProgress([]);
+      },
     });
+
+  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
+    useState<CloudinaryResonse[]>([]);
 
   const { mutate: saveGrowerProfileHeaderImg } =
     api.user.saveGrowerProfileHeaderImg.useMutation({
@@ -178,23 +186,28 @@ const ProtectedEditReport: NextPage = () => {
         console.error(error);
       },
       onSuccess: async (_result, _parameter) => {
-        setImagesUploadedToCloudinary([]);
         await trpc.user.getUserProfileById.invalidate();
       },
       onSettled: (_newImage) => {
         // indicate that saving process is ready:
-        // setIsSaving(false);
+        setUploadProgress([]);
+        setHeaderImgIsUploading(false);
+        setImagesUploadedToCloudinary([]);
       },
     });
 
-  const [isUploading, setIsUploading] = useState(isLoadingSetUserImage);
+  const [userAvaterIsUploading, setUserAvaterIsUploading] = useState(
+    isLoadingSetUserImage
+  );
+  const [headerImgIsUploading, setHeaderImgIsUploading] =
+    useState(false);
 
   const setRandomUsername = function (): string {
     editProfileForm.setValues({ name: getFakeAIUsername() });
     return editProfileForm.values.name;
   };
   const handleDropWrapper = async (files: File[]): Promise<void> => {
-    setIsUploading(true);
+    setUserAvaterIsUploading(true);
 
     try {
       const result = await handleMultipleDrop(
@@ -213,14 +226,11 @@ const ProtectedEditReport: NextPage = () => {
       console.error("Error handling file drop:", error);
     }
 
-    setIsUploading(false);
+    setUserAvaterIsUploading(false);
   };
 
-  const [imagesUploadedToCloudinary, setImagesUploadedToCloudinary] =
-    useState<CloudinaryResonse[]>([]);
-
   const handleDropWrapper2 = async (files: File[]): Promise<void> => {
-    setIsUploading(true);
+    setHeaderImgIsUploading(true);
 
     try {
       await handleMultipleDrop(
@@ -233,41 +243,20 @@ const ProtectedEditReport: NextPage = () => {
     } catch (error) {
       console.error("Error handling file drop:", error);
     }
-
-    setIsUploading(false);
   };
 
   useEffect(() => {
-    console.debug(imagesUploadedToCloudinary);
-    if (imagesUploadedToCloudinary.length > 0) {
+    if (headerImgIsUploading && imagesUploadedToCloudinary.length > 0) {
       saveGrowerProfileHeaderImg({
         cloudUrl: imagesUploadedToCloudinary[0].secure_url,
         publicId: imagesUploadedToCloudinary[0].public_id,
       });
     }
-  }, [imagesUploadedToCloudinary]);
-
-  // useEffect(() => {
-  //   if (sessionStatus === "authenticated" && !isUploading) {
-  //     // Save new images to db
-  //     void imagesUploadedToCloudinary.map((image) => {
-  //       //tRPC
-  //       tRPCcreateImage({
-  //         cloudUrl: image.secure_url,
-  //         publicId: image.public_id,
-  //         ownerId: session.user.id,
-  //       });
-  //     });
-
-  //     setUploadProgress([]);
-  //   }
-  // }, [
-  //   imagesUploadedToCloudinary,
-  //   isUploading,
-  //   session?.user.id,
-  //   sessionStatus,
-  //   tRPCcreateImage,
-  // ]);
+  }, [
+    imagesUploadedToCloudinary,
+    headerImgIsUploading,
+    saveGrowerProfileHeaderImg,
+  ]);
 
   const editProfileForm = useForm({
     validate: zodResolver(InputEditProfile),
@@ -297,7 +286,7 @@ const ProtectedEditReport: NextPage = () => {
               visible={true}
               loaderProps={{
                 size: "lg",
-                color: theme.colors.groworange[4],
+                color: theme.colors.growgreen[4],
                 variant: "oval",
               }}
               radius="sm"
@@ -347,10 +336,17 @@ const ProtectedEditReport: NextPage = () => {
               className="flex w-full flex-col h-full"
               mx="auto"
             >
+              <Text
+                mt="xl"
+                fz={theme.fontSizes.lg}
+                c={theme.colors.growgreen[4]}
+              >
+                Profile Header Image
+              </Text>
               {/* Upload Profile Header Image */}
-              <Box pos="relative" mt="xl">
+              <Box pos="relative">
                 <LoadingOverlay
-                  visible={isUploading}
+                  visible={headerImgIsUploading}
                   loaderProps={{
                     size: "lg",
                     color: theme.colors.groworange[4],
@@ -374,7 +370,6 @@ const ProtectedEditReport: NextPage = () => {
                 >
                   <Box>
                     <Dropzone
-                      h={300}
                       accept={IMAGE_MIME_TYPE}
                       pb="xl"
                       className="p-4 border-0 "
@@ -405,29 +400,105 @@ const ProtectedEditReport: NextPage = () => {
                         },
                       })}
                     >
-                      <Image
-                        style={{ objectFit: "cover" }}
-                        fill
-                        className="contain-content"
-                        // height={142}
-                        // width={142}
-                        priority
-                        src={
-                          growerProfile?.headerImg?.cloudUrl
-                            ? growerProfile.headerImg.cloudUrl
-                            : `https://res.cloudinary.com/dgcydirlu/image/upload/v1717577891/growagram/user_uploads/icsxvwh275myfcco9pnc.jpg`
-                        }
-                        alt={`${session.user.name as string}'s Profile Image`}
-                      />
+                      <Box pos="relative" p="xl" h={250}>
+                        {growerProfile?.headerImg?.cloudUrl ? (
+                          <Image
+                            style={{ objectFit: "cover" }}
+                            fill
+                            className="contain-content"
+                            // height={142}
+                            // width={142}
+                            priority
+                            src={growerProfile?.headerImg?.cloudUrl}
+                            alt={`${session.user.name as string}'s Profile Image`}
+                          />
+                        ) : (
+                          <Box style={{ pointerEvents: "none" }}>
+                            <Group position="center">
+                              {/* <Center> */}
+                              <Dropzone.Accept>
+                                <IconDownload
+                                  size={92}
+                                  color={theme.colors.growgreen[4]}
+                                  stroke={2}
+                                />
+                              </Dropzone.Accept>
+                              <Dropzone.Reject>
+                                <IconX
+                                  size={92}
+                                  color={theme.colors.red[6]}
+                                  stroke={2}
+                                />
+                              </Dropzone.Reject>
+                              <Dropzone.Idle>
+                                <IconCloudUpload size={92} stroke={2} />
+                              </Dropzone.Idle>
+                              {/* </Center> */}
+                            </Group>
+
+                            <Text ta="center" fw={700} fz="lg" mt="xl">
+                              <Dropzone.Accept>
+                                Drop files here
+                              </Dropzone.Accept>
+                              <Dropzone.Reject>
+                                Only one Image with a size of less than
+                                10 MB!
+                              </Dropzone.Reject>
+                              <Dropzone.Idle>
+                                Drag&apos;n&apos;drop your{" "}
+                                <span style={{ color: "green" }}>
+                                  Profile Header Image
+                                </span>{" "}
+                                here to upload!
+                              </Dropzone.Idle>
+                            </Text>
+                            <Text
+                              ta="center"
+                              fz="sm"
+                              my="xs"
+                              c="dimmed"
+                            >
+                              <b>
+                                The app accepts one (1){" "}
+                                <i>.jpg/.png/.gif</i> image file, that
+                                is less than 10 MB in size.
+                              </b>
+                            </Text>
+                          </Box>
+                        )}
+                      </Box>
                     </Dropzone>
                   </Box>
                 </Tooltip>
               </Box>
 
+              {/* Upload progress indicator */}
+              {uploadProgress.map((item, index) => (
+                <Progress
+                  key={index}
+                  value={item.value}
+                  label={item.label}
+                  color={theme.colors.growgreen[4]}
+                  size={20}
+                  animate={
+                    userAvaterIsUploading || headerImgIsUploading
+                  }
+                  my="xs"
+                  classNames={classes}
+                />
+              ))}
+
+              <Text
+                fz={theme.fontSizes.lg}
+                c={theme.colors.growgreen[4]}
+                mt="xl"
+              >
+                Profile Avatar
+              </Text>
               {/* Upload Profile Image */}
-              <Center pos="relative" mt="xl">
+              <Center pos="relative">
                 <LoadingOverlay
-                  visible={isUploading}
+                  visible={userAvaterIsUploading}
                   loaderProps={{
                     size: "lg",
                     color: theme.colors.groworange[4],
@@ -437,7 +508,6 @@ const ProtectedEditReport: NextPage = () => {
                   transitionDuration={600}
                   overlayBlur={4}
                 />
-
                 <Tooltip
                   position="bottom"
                   label="Upload your new user profile image"
@@ -499,20 +569,6 @@ const ProtectedEditReport: NextPage = () => {
                   </Box>
                 </Tooltip>
               </Center>
-
-              {/* Upload progress indicator */}
-              {uploadProgress.map((item, index) => (
-                <Progress
-                  key={index}
-                  value={item.value}
-                  label={item.label}
-                  color={theme.colors.growgreen[4]}
-                  size={20}
-                  animate={isUploading}
-                  my="xs"
-                  classNames={classes}
-                />
-              ))}
               {/* // Error if no Username */}
               {!session?.user.name && (
                 <Alert
@@ -637,4 +693,4 @@ const ProtectedEditReport: NextPage = () => {
   }
 };
 
-export default ProtectedEditReport;
+export default ProtectedEditProfile;
