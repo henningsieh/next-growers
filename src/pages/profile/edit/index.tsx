@@ -673,6 +673,7 @@ const ProtectedEditProfile: NextPage = () => {
                         type="submit"
                         title="save profile"
                         variant="filled"
+                        color={"growgreen"}
                         className="cursor-default"
                         disabled={isLoadingSetUsername}
                         leftIcon={<IconDeviceFloppy size={22} />}
