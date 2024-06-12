@@ -382,6 +382,7 @@ export async function getStaticProps(
       followings,
       ...translations,
     },
+    revalidate: 1,
   };
 }
 
