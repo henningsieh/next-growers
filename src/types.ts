@@ -10,6 +10,15 @@ type GetIsoReportWithPostsFromDbOutput =
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
 
+type GetUserProfilesByIdOutput =
+  RouterOutput["user"]["getUserProfilesById"];
+export type UserProfiles = GetUserProfilesByIdOutput;
+export type UserProfile = GetUserProfilesByIdOutput[number];
+export type UserProfileWithoutFollow = Omit<
+  UserProfile,
+  "followers" | "following"
+>;
+
 type getPostsByReportIdOutput =
   RouterOutput["posts"]["getPostsByReportId"];
 export type Posts = getPostsByReportIdOutput;
@@ -103,7 +112,8 @@ export type NotificationEventMap =
   | "POST_CREATED" //TODO: NOTIFY report.followers
   | "LIKE_CREATED"
   | "COMMENT_CREATED"
-  | "COMMENT_ANSWERED";
+  | "COMMENT_ANSWERED"
+  | "FOLLOWED_USER";
 
 export enum Locale {
   EN = "en",

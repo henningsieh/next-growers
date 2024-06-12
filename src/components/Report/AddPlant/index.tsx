@@ -25,8 +25,8 @@ import {
 import { env } from "~/env.mjs";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import SelectedStrain from "~/components/Atom/SelectedStrain";

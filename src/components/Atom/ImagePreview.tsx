@@ -8,6 +8,8 @@ import {
   Text,
 } from "@mantine/core";
 
+// import { useTranslation } from "react-i18next";
+// import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -99,6 +101,7 @@ interface ImageCardProps {
   imageUrl: string;
   title: string;
   description: string;
+  authorId: string;
   authorName: string;
   authorImageUrl: string;
   views: number;
@@ -110,6 +113,7 @@ export function ImagePreview({
   imageUrl,
   title,
   description,
+  authorId,
   authorName,
   authorImageUrl,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -117,11 +121,25 @@ export function ImagePreview({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   comments,
 }: ImageCardProps) {
+  // const router = useRouter();
+  // const { locale: activeLocale } = router;
+  // const { t } = useTranslation(activeLocale);
+
   const { classes, theme } = useStyles();
 
   return (
-    <Link href={publicLink}>
+    <>
+      <Box pos="absolute" className="top-11 left-2 z-20 cursor-pointer">
+        <UserAvatar
+          userId={authorId}
+          userName={authorName}
+          imageUrl={authorImageUrl}
+          avatarRadius={48}
+        />
+      </Box>
       <Card
+        component={Link}
+        href={publicLink}
         p="lg"
         shadow="lg"
         radius="sm"
@@ -139,15 +157,7 @@ export function ImagePreview({
           sizes="450px" // 450px is the maximum width of the RepostCard
         />
         <Box className={classes.overlay} />
-        {/* Avatar */}
-        <Box pos="absolute" ml={-10} pt={24} className="z-20">
-          <UserAvatar
-            userName={authorName}
-            imageUrl={authorImageUrl}
-            avatarRadius={42}
-          />
-        </Box>
-        {/* Cite blockquote */}
+
         <Box pos="absolute" m={-20}>
           {/* Blockquote */}
           <Blockquote
@@ -169,7 +179,7 @@ export function ImagePreview({
           </Text>
         </Box>
       </Card>
-    </Link>
+    </>
   );
 }
 

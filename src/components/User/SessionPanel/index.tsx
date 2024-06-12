@@ -78,7 +78,7 @@ export default function SessionPanel() {
 
   useEffect(() => {
     async function redirectToEditAccount() {
-      const editProfilePath = "/account/edit";
+      const editProfilePath = "/profile/edit";
       if (
         status === "authenticated" &&
         !session?.user.name &&
@@ -162,7 +162,7 @@ export default function SessionPanel() {
 
               <Menu.Divider />
               <Menu.Label>Profile</Menu.Label>
-              <Link href="/account/edit">
+              <Link href="/profile/edit">
                 <Menu.Item icon={<IconUserEdit size={20} />}>
                   {t("common:usermenu-myprofile")}
                 </Menu.Item>

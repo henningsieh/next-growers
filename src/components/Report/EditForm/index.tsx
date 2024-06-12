@@ -280,6 +280,7 @@ export function EditReportForm({
                   views={183}
                   comments={89}
                   imageUrl={cloudUrl}
+                  authorId={user.id}
                   authorName={user.name as string}
                   authorImageUrl={
                     user.image
@@ -346,18 +347,21 @@ export function EditReportForm({
                     <Text ta="center" fw={700} fz="lg" mt="xl">
                       <Dropzone.Accept>Drop files here</Dropzone.Accept>
                       <Dropzone.Reject>
-                        Only one Image with a size of less than 4.28 MB
-                        (4.394 KB, 4.500.000 B)!
+                        Only one Image with a size of less than 10 MB!
                       </Dropzone.Reject>
                       <Dropzone.Idle>
-                        Drag&apos;n&apos;drop your Grow Header Image
+                        Drag&apos;n&apos;drop your{" "}
+                        <span style={{ color: "green" }}>
+                          Grow Header Image
+                        </span>{" "}
                         here to upload!
                       </Dropzone.Idle>
                     </Text>
                     <Text ta="center" fz="sm" my="xs" c="dimmed">
-                      For now we only can accept one{" "}
-                      <i>.jpg/.png/.gif</i>
-                      image file, that is less than 4.5 MB in size.
+                      <b>
+                        The app accepts one (1) <i>.jpg/.png/.gif</i>{" "}
+                        image file, that is less than 10 MB in size.
+                      </b>
                     </Text>
                   </Box>
                 </Dropzone>

@@ -1,15 +1,20 @@
-import { Prisma } from "@prisma/client";
+import { NotificationEvent, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from "~/server/api/trpc";
 
 import {
   InputSaveUserImage,
   InputSaveUserName,
 } from "~/utils/inputValidation";
+import { getUserSelectObject } from "~/utils/repository/userSelectObject";
+
+//import sendEmail from "~/utils/sendEmail";
 
 export const userRouter = createTRPCRouter({
   saveOwnUsername: protectedProcedure
@@ -96,5 +101,330 @@ export const userRouter = createTRPCRouter({
       });
 
       return user;
+    }),
+
+  saveGrowerProfileHeaderImg: protectedProcedure
+    .input(
+      z.object({
+        cloudUrl: z.string(),
+        publicId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // First, check if the user exists
+      const existingUser = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+      if (!existingUser) {
+        throw new Error("User does not exist");
+      }
+
+      // Create a new image record
+      const image = await ctx.prisma.image.create({
+        data: {
+          cloudUrl: input.cloudUrl,
+          publicId: input.publicId,
+          ownerId: existingUser.id,
+        },
+      });
+
+      // Check if the user already has a grower profile
+      if (existingUser.growerProfileId) {
+        // Update the existing grower profile with the new header image
+        const growerProfile = await ctx.prisma.growerProfile.update({
+          where: {
+            id: existingUser.growerProfileId,
+          },
+          data: {
+            headerImg: {
+              connect: {
+                id: image.id,
+              },
+            },
+          },
+        });
+        return { growerProfile, image };
+      } else {
+        // Create a new grower profile with the new header image
+        const growerProfile = await ctx.prisma.growerProfile.create({
+          data: {
+            headerImg: {
+              connect: {
+                id: image.id,
+              },
+            },
+            user: {
+              connect: {
+                id: existingUser.id,
+              },
+            },
+          },
+        });
+
+        // Update the user's growerProfileId
+        await ctx.prisma.user.update({
+          where: {
+            id: existingUser.id,
+          },
+          data: {
+            growerProfileId: growerProfile.id,
+          },
+        });
+
+        return { growerProfile, image };
+      }
+    }),
+
+  getUserProfilesById: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+
+      try {
+        const users = await ctx.prisma.user.findMany({
+          where: {
+            id: userId,
+          },
+          select: getUserSelectObject(userId),
+        });
+        return users;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+  getUserProfileById: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+
+      try {
+        const users = await ctx.prisma.user.findFirst({
+          where: {
+            id: userId,
+          },
+          select: getUserSelectObject(userId),
+        });
+        return users;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+
+  isFollowingUser: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+
+      try {
+        const existingFollow = await ctx.prisma.follows.findFirst({
+          where: {
+            followerId: ctx.session.user.id,
+            followingId: userId,
+          },
+        });
+
+        return existingFollow;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+
+  followUserById: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId: userIdToFollow } = input;
+
+      try {
+        // First, check if the user exists
+        const existingUser = await ctx.prisma.user.findUnique({
+          where: {
+            id: userIdToFollow,
+          },
+        });
+        if (!existingUser) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User does not exist",
+          });
+        }
+
+        // Then, check if the user is authorized to follow the user
+        if (existingUser.id === ctx.session.user.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You cannot follow yourself",
+          });
+        }
+
+        // Check if the user is already following the user
+        const existingFollow = await ctx.prisma.follows.findFirst({
+          where: {
+            followerId: ctx.session.user.id,
+            followingId: userIdToFollow,
+          },
+        });
+        if (existingFollow) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "You are already following this user",
+          });
+        }
+
+        // Follow the user
+        const follow = await ctx.prisma.follows.create({
+          data: {
+            followerId: ctx.session.user.id,
+            followingId: userIdToFollow,
+          },
+        });
+
+        // Create a notification for the user being followed
+        await ctx.prisma.notification.create({
+          data: {
+            recipient: {
+              connect: {
+                id: userIdToFollow,
+              },
+            },
+            event: NotificationEvent.FOLLOWED_USER,
+            follow: {
+              connect: {
+                id: follow.id,
+              },
+            },
+          },
+        });
+
+        // // SEND EMAIL TO THE SESSION USER
+        // const emailOptions = {
+        //   to: ctx.session.user.email as string,
+
+        //   subject: `You are now following ${existingUser.name}`,
+        //   //FIXME:write a nice e-mail text here
+        //   text: `You are now following ${existingUser.name}!`,
+        // };
+        // //send the email
+        // await sendEmail(emailOptions);
+
+        return follow;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
+    }),
+
+  unfollowUserById: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { userId: userIdToUnfollow } = input;
+
+      try {
+        // First, check if the user exists
+        const existingUser = await ctx.prisma.user.findUnique({
+          where: {
+            id: userIdToUnfollow,
+          },
+        });
+        if (!existingUser) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User does not exist",
+          });
+        }
+
+        // Then, check if the user is authorized to unfollow the user
+        if (existingUser.id === ctx.session.user.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You cannot unfollow yourself",
+          });
+        }
+
+        // Check if the user is not following the user
+        const existingFollow = await ctx.prisma.follows.findFirst({
+          where: {
+            followerId: ctx.session.user.id,
+            followingId: userIdToUnfollow,
+          },
+        });
+        if (!existingFollow) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "You are not following this user",
+          });
+        }
+
+        // Unfollow the user
+        await ctx.prisma.follows.delete({
+          where: {
+            id: existingFollow.id,
+          },
+        });
+
+        return existingFollow;
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw new TRPCError({
+            code: error.code,
+            message: error.message,
+            cause: error.cause,
+          });
+        } else if (error instanceof Error) {
+          throw new Error(error.message, {
+            cause: error.cause,
+          } as ErrorOptions);
+        } else {
+          throw new Error("An unknown error occurred");
+        }
+      }
     }),
 });

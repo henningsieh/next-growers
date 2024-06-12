@@ -278,7 +278,7 @@ export const handleDrop = async (
       }
     } catch (error) {
       setIsUploading(false);
-      console.debug(error);
+      console.error(error);
       throw new Error("Error uploading file");
     }
   } else {
@@ -481,3 +481,19 @@ export function getFileUploadCloudinaryMaxFileSizeInByte(): number {
 export function getFileUploadMaxFileCount(): number {
   return parseInt(env.NEXT_PUBLIC_FILE_UPLOAD_MAX_FILES);
 }
+
+export const calculateStatsDiffInPercent = (
+  currentValue: number,
+  previousValue: number
+): number => {
+  if (previousValue !== 0) {
+    return parseFloat(
+      (((currentValue - previousValue) / previousValue) * 100).toFixed(
+        2
+      )
+    );
+  } else {
+    // previousValue === 0
+    return currentValue !== 0 ? 100 : 0.0; // Assuming 100% increase if previousValue is 0
+  }
+};

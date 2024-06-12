@@ -1,10 +1,7 @@
 import { EditReportMenu } from "../Card";
 import { Box, Card, createStyles, rem } from "@mantine/core";
 
-import { useTranslation } from "react-i18next";
-
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 
@@ -29,28 +26,12 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface ReportHeaderProps {
-  report: IsoReportWithPostsFromDb;
-  image: string;
-  avatar: string;
-  name: string;
-  description: string;
-  // stats: { label: string; value: string }[];
+  grow: IsoReportWithPostsFromDb;
 }
 
-export function ReportHeader({
-  report,
-  image,
-  // name,
-  // description,
-}: // stats, //FIXME: not needed
-ReportHeaderProps) {
+export function ReportHeader({ grow }: ReportHeaderProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { classes, theme } = useStyles();
-
-  const router = useRouter();
-
-  const { locale: activeLocale } = router;
-  const { t } = useTranslation(activeLocale);
 
   const { data: session, status } = useSession();
 
@@ -61,27 +42,24 @@ ReportHeaderProps) {
       <Card.Section pos="relative">
         {/*// Session buttons */}
         {status === "authenticated" &&
-          !!report &&
-          session.user.id == report.authorId && (
+          !!grow &&
+          session.user.id == grow.authorId && (
             <Box p={8} pos="absolute" className="z-20 top-1 right-1">
-              <EditReportMenu
-                reportId={report.id}
-                labelEditGrow={t("common:report-edit-button")}
-                labelAddUpdate={t("common:addpost-headline")}
-              />
+              <EditReportMenu reportId={grow.id} />
             </Box>
           )}
         <ImagePreview
-          publicLink={`/grow/${report.id}`}
-          imageUrl={image}
-          title={report.title}
-          description={report.description}
-          authorName={report.author.name as string}
+          publicLink={`/grow/${grow.id}`}
+          imageUrl={grow.image?.cloudUrl as string}
+          title={grow.title}
+          description={grow.description}
+          authorId={grow.author.id}
+          authorName={grow.author.name as string}
           authorImageUrl={
-            report.author.image
-              ? report.author.image
+            grow.author.image
+              ? grow.author.image
               : `https://ui-avatars.com/api/?name=${
-                  report.author.name as string
+                  grow.author.name as string
                 }`
           }
           views={0}

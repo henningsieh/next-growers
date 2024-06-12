@@ -1,36 +1,46 @@
-import { Box, Tooltip } from "@mantine/core";
+import { Tooltip } from "@mantine/core";
 
 import Image from "next/image";
+import Link from "next/link";
 
 type UserAvatarProps = {
-  imageUrl: string;
+  userId: string;
   userName: string;
+  imageUrl: string | null;
   avatarRadius: number;
 };
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
-  imageUrl,
+  userId,
   userName,
+  imageUrl,
   avatarRadius,
 }) => {
   return (
     <Tooltip
-      transitionProps={{ transition: "pop-bottom-left", duration: 300 }}
-      position="top"
+      transitionProps={{
+        transition: "slide-up",
+        duration: 150,
+      }}
+      position="top-start"
       label={userName}
       color="growgreen.4"
       withArrow
     >
-      <Box>
+      <Link href={`/profile/${userId}`}>
         <Image
+          src={
+            imageUrl
+              ? imageUrl
+              : `https://ui-avatars.com/api/?name=${userName}`
+          }
+          className={"rounded-full"}
           alt={`${userName}'s Profile Image`}
           width={avatarRadius}
           height={avatarRadius}
-          src={imageUrl}
           style={{ width: avatarRadius, height: avatarRadius }}
-          className={"mx-auto rounded-full"}
         />
-      </Box>
+      </Link>
     </Tooltip>
   );
 };

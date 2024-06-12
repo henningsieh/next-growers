@@ -35,9 +35,9 @@ import {
 } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import EmojiPicker from "~/components/Atom/EmojiPicker";
@@ -332,15 +332,14 @@ const PostComments = ({ growId, updateId }: CommentsProps) => {
                 <Group position="apart">
                   <Group position="left">
                     <UserAvatar
+                      userId={session?.user.id}
+                      userName={session?.user.name as string}
+                      avatarRadius={42}
                       imageUrl={
                         session?.user.image
                           ? session.user.image
-                          : `https://ui-avatars.com/api/?name=${
-                              session.user.name as string
-                            }`
+                          : `https://ui-avatars.com/api/?name=${session.user.name as string}`
                       }
-                      userName={session?.user.name as string}
-                      avatarRadius={42}
                     />
                     <Box>
                       <Text fz="sm">

@@ -27,9 +27,9 @@ import { httpStatusErrorMsg } from "~/messages";
 
 import { useEffect, useRef, useState } from "react";
 
-//import { useTranslation } from "react-i18next";
 import type { User } from "next-auth";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import { ImagePreview } from "~/components/Atom/ImagePreview";
@@ -42,7 +42,6 @@ import { InputCreateReportForm } from "~/utils/inputValidation";
 
 interface AddFormProps {
   user: User;
-  textContinueButton: string;
 }
 
 const useStyles = createStyles((theme) => ({
@@ -84,14 +83,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function CreateReportForm({
-  user,
-  textContinueButton,
-}: AddFormProps) {
+export function AddReportForm({ user }: AddFormProps) {
   const router = useRouter();
-  const { data: session, status } = useSession();
   const { locale: activeLocale } = router;
-  //const { t } = useTranslation(activeLocale);
+  const { t } = useTranslation(activeLocale);
+
+  const { data: session, status } = useSession();
 
   const { classes, theme } = useStyles();
   const openReference = useRef<() => void>(null);
@@ -249,13 +246,12 @@ export function CreateReportForm({
                 title={createReportForm.values.title}
                 description={createReportForm.values.description}
                 publicLink="#"
+                authorId={user.id}
                 authorName={user.name as string}
                 authorImageUrl={
                   user.image
                     ? user.image
-                    : `https://ui-avatars.com/api/?name=${
-                        user.name as string
-                      }`
+                    : `https://ui-avatars.com/api/?name=${user.name as string}`
                 }
                 comments={89}
                 views={183}
@@ -313,8 +309,7 @@ export function CreateReportForm({
                   <Text ta="center" fw={700} fz="lg" mt="xl">
                     <Dropzone.Accept>Drop files here</Dropzone.Accept>
                     <Dropzone.Reject>
-                      Only one Image with a size of less than 4.28 MB
-                      (4.394 KB, 4.500.000 B)!
+                      Only one Image with a size of less than 10 MB!
                     </Dropzone.Reject>
                     <Dropzone.Idle>
                       Drag&apos;n&apos;drop your{" "}
@@ -327,7 +322,7 @@ export function CreateReportForm({
                   <Text ta="center" fz="sm" my="xs" c="dimmed">
                     <b>
                       The app accepts one (1) <i>.jpg/.png/.gif</i>{" "}
-                      image file, that is less than 4.5 MB in size.
+                      image file, that is less than 10 MB in size.
                     </b>
                   </Text>
                 </Box>
@@ -383,6 +378,7 @@ export function CreateReportForm({
             <Group position="right" mt="xl">
               <Button
                 fz="lg"
+                w={160}
                 variant="filled"
                 color="growgreen"
                 className="cursor-pointer"
@@ -390,7 +386,7 @@ export function CreateReportForm({
                 leftIcon={<IconFileArrowRight stroke={2.2} size={24} />}
                 type="submit"
               >
-                {textContinueButton}
+                {t("common:report-save-new-button")}
               </Button>
             </Group>
           </Box>

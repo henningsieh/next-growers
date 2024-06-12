@@ -148,6 +148,16 @@ const GrowAGram: AppType<{ session: Session | null }> = ({
           },
 
           components: {
+            Paper: {
+              styles: (theme) => ({
+                root: {
+                  backgroundColor:
+                    theme.colorScheme === "dark"
+                      ? theme.colors.dark[7]
+                      : theme.colors.gray[1],
+                },
+              }),
+            },
             Accordion: {
               styles: (
                 theme,

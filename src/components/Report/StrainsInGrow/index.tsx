@@ -18,9 +18,10 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconCannabis, IconExternalLink } from "@tabler/icons-react";
 import { decode } from "html-entities";
 
+import { useTranslation } from "next-i18next";
 import Image from "next/image";
-//import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 import type { Plant } from "~/types";
 
@@ -28,10 +29,13 @@ interface Props {
   plants: Plant[];
 }
 
-export default function Plants({ plants }: Props) {
-  const { colorScheme } = useMantineColorScheme();
+export default function StrainsInGrow({ plants }: Props) {
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
+
   const theme = useMantineTheme();
-  const dark = colorScheme === "dark";
+  const dark = useMantineColorScheme().colorScheme === "dark";
   const mediumScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.sm})`
   );
@@ -39,7 +43,7 @@ export default function Plants({ plants }: Props) {
   return (
     <>
       <Title p="xs" order={3}>
-        My Plants
+        {t("common:report-details-strainsingrow")}
       </Title>
       <Accordion
         radius="sm"

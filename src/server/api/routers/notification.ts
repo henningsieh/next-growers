@@ -82,6 +82,16 @@ export const notificationRouter = createTRPCRouter({
               },
             },
           },
+          follow: {
+            include: {
+              follower: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
         },
       });
       return notifications;

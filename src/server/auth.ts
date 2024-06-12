@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
       ...(env.NODE_ENV !== "production"
         ? {
             sendVerificationRequest({ url }) {
-              console.log("LOGIN LINK", url);
+              console.debug("LOGIN LINK", url);
             },
           }
         : {}),

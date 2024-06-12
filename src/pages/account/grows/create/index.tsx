@@ -13,7 +13,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import AccessDenied from "~/components/Atom/AccessDenied";
-import { CreateReportForm } from "~/components/Report/AddForm";
+import { AddReportForm } from "~/components/Report/AddForm";
 
 import { authOptions } from "~/server/auth";
 
@@ -40,7 +40,6 @@ export const getServerSideProps: GetServerSideProps = async (
 
 const ProtectedCreateReport: NextPage = () => {
   const router = useRouter();
-
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
   const pageTitle = t("common:report-create-headline");
@@ -72,10 +71,7 @@ const ProtectedCreateReport: NextPage = () => {
 
         {/* // Add Component */}
 
-        <CreateReportForm
-          user={session.user}
-          textContinueButton={t("common:report-save-new-button")}
-        />
+        <AddReportForm user={session.user} />
       </Container>
     </>
   );
