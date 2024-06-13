@@ -82,7 +82,7 @@ const PublicAllGrows: NextPage = () => {
     data: result,
     isLoading: isoIsLoading,
     isError: isoIsError,
-  } = api.reports.getIsoReportsWithPostsFromDb.useQuery({
+  } = api.reports.getIsoReportsWithPostsCountFromDb.useQuery({
     search: searchString,
     orderBy: sortBy,
     desc: desc,

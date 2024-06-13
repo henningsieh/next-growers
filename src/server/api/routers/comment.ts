@@ -32,55 +32,118 @@ export const commentRouter = createTRPCRouter({
         throw new Error(`Post with id ${postId} does not exist`);
       }
 
-      const comments = await ctx.prisma.comment.findMany({
-        orderBy: {
-          createdAt: "desc",
-        },
-        where: {
-          postId: postId,
-          isResponseTo: null, // Filter out comments that are responses, they come as 'responses[]'
-        },
-        include: {
-          isResponseTo: true, // Include the "mother" comment if it exists
-          responses: {
-            orderBy: {
-              createdAt: "asc",
-            },
-            include: {
-              author: {
-                select: { id: true, name: true, image: true },
+      const comments = await ctx.prisma.comment
+        .findMany({
+          orderBy: {
+            createdAt: "desc",
+          },
+          where: {
+            postId: postId,
+            isResponseTo: null, // Filter out comments that are responses, they come as 'responses[]'
+          },
+          include: {
+            isResponseTo: true, // Include the "mother" comment if it exists
+            responses: {
+              orderBy: {
+                createdAt: "asc",
               },
-              likes: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      image: true,
+              include: {
+                author: {
+                  select: { id: true, name: true, image: true },
+                },
+                likes: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                      },
                     },
                   },
                 },
+                responses: {
+                  orderBy: {
+                    createdAt: "asc",
+                  },
+                  include: {
+                    author: {
+                      select: { id: true, name: true, image: true },
+                    },
+                    likes: {
+                      include: {
+                        user: {
+                          select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                          },
+                        },
+                      },
+                    },
+                    responses: true, // Include the array of responses for each response
+                    isResponseTo: true, // Include the isResponseTo field for each response
+                  },
+                },
+                isResponseTo: true, // Include the isResponseTo field for each response
               },
-              responses: true, // Include the array of responses for each response
-              isResponseTo: true, // Include the isResponseTo field for each response
             },
-          },
-          author: {
-            select: { id: true, name: true, image: true },
-          },
-          likes: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
+            author: {
+              select: { id: true, name: true, image: true },
+            },
+            likes: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  },
                 },
               },
             },
           },
-        },
-      });
+        })
+        .then((comments) => {
+          const commentsWithIsoLikes = comments.map((comment) => {
+            const isoLikes = comment.likes.map(
+              ({ id, createdAt, updatedAt, user }) => ({
+                id,
+                userId: user.id,
+                name: user.name,
+                createdAt: new Date(createdAt).toISOString(),
+                updatedAt: new Date(updatedAt).toISOString(),
+              })
+            );
+
+            const responsesWithIsoLikes = comment.responses.map(
+              (response) => {
+                const isoLikes = response.likes.map(
+                  ({ id, createdAt, updatedAt, user }) => ({
+                    id,
+                    userId: user.id,
+                    name: user.name,
+                    createdAt: new Date(createdAt).toISOString(),
+                    updatedAt: new Date(updatedAt).toISOString(),
+                  })
+                );
+
+                return {
+                  ...response,
+                  likes: isoLikes,
+                };
+              }
+            );
+
+            return {
+              ...comment,
+              likes: isoLikes,
+              responses: responsesWithIsoLikes,
+            };
+          });
+
+          return commentsWithIsoLikes;
+        });
 
       //console.debug({ comments });
       /* 

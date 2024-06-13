@@ -20,7 +20,12 @@ import { useState } from "react";
 
 import { useSession } from "next-auth/react";
 
-import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
+import type {
+  Comment,
+  IsoReportWithPostsCountFromDb,
+  IsoReportWithPostsFromDb,
+  Post,
+} from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -31,24 +36,28 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface LikeHeartProps {
-  itemToLike: Comment | Post | IsoReportWithPostsFromDb;
+  itemToLike:
+    | Comment
+    | Post
+    | IsoReportWithPostsCountFromDb
+    | IsoReportWithPostsFromDb;
   itemType: "Comment" | "Post" | "Report";
 }
 
 const LikeHeart = (props: LikeHeartProps) => {
   const { data: session, status } = useSession();
-  const { itemToLike: item, itemType } = props;
+  const { itemToLike, itemType } = props;
   const { classes } = useStyles();
 
   const [showLikes, setShowLikes] = useState(false);
 
   // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const trpc = api.useUtils();
-  const {
-    data: itemLikes,
-    isLoading,
-    isError,
-  } = api.like.getLikesByItemId.useQuery(item.id);
+  // const {
+  //   data: itemLikes,
+  //   isLoading,
+  //   isError,
+  // } = api.like.getLikesByItemId.useQuery(item.id);
 
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
@@ -147,18 +156,19 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const handleLikeItem = () => {
     // Ensure that the user is authenticated
-    if (!session) {
+    if (status !== "authenticated") {
       // Redirect to login or show a login prompt
       return;
     }
 
     // Call the correct mutation// Call the correct mutation
     if (itemType === "Report") {
-      likeReportMutation({ id: item.id });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      likeReportMutation({ id: itemToLike.id });
     } else if (itemType === "Post") {
-      likePostMutation({ id: item.id });
+      likePostMutation({ id: itemToLike.id });
     } else if (itemType === "Comment") {
-      likeCommentMutation({ id: item.id });
+      likeCommentMutation({ id: itemToLike.id });
     }
   };
 
@@ -172,85 +182,85 @@ const LikeHeart = (props: LikeHeartProps) => {
     // Call the correct mutation// Call the correct mutation
     if (itemType === "Report") {
       // Call the dislikeReport mutation
-      dislikeReportMutation({ id: item.id });
+      dislikeReportMutation({ id: itemToLike.id });
     } else if (itemType === "Post") {
       // Call the dislikePost mutation
-      dislikePostMutation({ id: item.id });
+      dislikePostMutation({ id: itemToLike.id });
     } else if (itemType === "Comment") {
       // Call the dislikePost mutation
-      dislikeCommentMutation({ id: item.id });
+      dislikeCommentMutation({ id: itemToLike.id });
     }
   };
 
   // Conditionally render the component based on isError and isLoading
   return (
     <>
-      {!isError && !isLoading && (
-        <Flex pl="xs" gap={2}>
-          <Center fz="sm" p={0} m={0}>
-            {itemLikes?.length}
-          </Center>
-          <Box mt={2} ml={2} className="relative">
-            <ActionIcon
-              size={30}
-              // title="Give props to the Grower"
-              variant="transparent"
-              className="cursor-default"
-              onMouseEnter={() => void setShowLikes(true)}
-              onMouseLeave={() => void setShowLikes(false)}
-              onBlur={() => setShowLikes(false)}
-              radius="sm"
-            >
-              {itemLikes?.find(
-                (like) => like.userId === session?.user.id
-              ) ? (
-                <IconHeartFilled
-                  onClick={handleDisLikeItem}
-                  size={22}
-                  className={`${classes.red}`}
-                  stroke={1}
-                />
-              ) : (
-                <IconHeart
-                  onClick={handleLikeItem}
-                  size={22}
-                  stroke={2}
-                />
-              )}
-            </ActionIcon>
+      <Flex pl="xs" gap={2}>
+        <Center fz="sm" p={0} m={0}>
+          {itemToLike.likes.length}
+        </Center>
+        <Box mt={2} ml={2} className="relative">
+          <ActionIcon
+            size={30}
+            // title="Give props to the Grower"
+            variant="transparent"
+            className="cursor-default"
+            onMouseEnter={() => void setShowLikes(true)}
+            onMouseLeave={() => void setShowLikes(false)}
+            onBlur={() => setShowLikes(false)}
+            radius="sm"
+          >
+            {itemToLike.likes?.find(
+              (like) => like.userId === session?.user.id
+            ) ? (
+              <IconHeartFilled
+                onClick={handleDisLikeItem}
+                size={22}
+                className={`${classes.red}`}
+                stroke={1}
+              />
+            ) : (
+              <IconHeart
+                onClick={handleLikeItem}
+                size={22}
+                stroke={2}
+              />
+            )}
+          </ActionIcon>
 
-            {/* // Likes Tooltip */}
-            {!!itemLikes && !!itemLikes?.length && (
-              <Transition
-                mounted={showLikes}
-                transition="pop-bottom-right"
-                duration={100}
-                timingFunction="ease-in-out"
-              >
-                {(transitionStyles) => (
-                  <Paper
-                    withBorder
-                    className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
-                    style={{ ...transitionStyles }}
-                  >
-                    {itemLikes &&
-                      itemLikes.map((like) => (
-                        <Box key={like.id} mx={10} fz={"xs"}>
-                          {like.name}
-                        </Box>
-                      ))}
-                    {/* 
+          {/* // Likes Tooltip */}
+          {!!itemToLike.likes && !!itemToLike.likes?.length && (
+            <Transition
+              mounted={showLikes}
+              transition="pop-bottom-right"
+              duration={100}
+              timingFunction="ease-in-out"
+            >
+              {(transitionStyles) => (
+                <Paper
+                  withBorder
+                  className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
+                  style={{ ...transitionStyles }}
+                >
+                  {itemToLike.likes &&
+                    itemToLike.likes.map((like) => (
+                      <Box key={like.id} mx={10} fz={"xs"}>
+                        {like.name}s{/* POST: like.name */}
+                        {/* REPORT: like.name */}
+                        {/* COMMENT: like.user.name */}
+                      </Box>
+                    ))}
+                  {/* 
                   <Text fz="xs" td="overline" pr={4} fs="italic">
                     {itemLikes && itemLikes.length} Like
                     {itemLikes && itemLikes.length > 1 ? "s" : ""} 👍
                   </Text> */}
-                  </Paper>
-                )}
-              </Transition>
-            )}
-          </Box>
-        </Flex>
-      )}
+                </Paper>
+              )}
+            </Transition>
+          )}
+        </Box>
+      </Flex>
     </>
   );
 };

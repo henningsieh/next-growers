@@ -165,6 +165,12 @@ export const reportRouter = createTRPCRouter({
                 LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
+            // count posts instead of fetching them
+            _count: {
+              select: {
+                posts: true,
+              },
+            },
           },
         })
         .then((reportsFromDb) => {
@@ -250,7 +256,7 @@ export const reportRouter = createTRPCRouter({
             );
 
             const newestPostDate =
-              isoPosts.length > 0
+              reportsFromDb.length > 0
                 ? new Date(
                     Math.max(
                       ...isoPosts.map((post) =>
@@ -260,14 +266,16 @@ export const reportRouter = createTRPCRouter({
                   )
                 : null;
 
+            // Destructure to omit 'posts'
+            const { posts: _posts, ...rest } = reportFromDb;
             return {
-              ...reportFromDb,
-              posts: isoPosts,
+              ...rest,
               likes: isoLikes,
-              createdAt: reportFromDb.createdAt.toISOString(),
+              postCount: reportFromDb._count?.posts,
               updatedAt: newestPostDate
                 ? newestPostDate.toISOString()
                 : reportFromDb.updatedAt.toISOString(),
+              createdAt: reportFromDb.createdAt.toISOString(),
             };
           });
 
@@ -279,7 +287,7 @@ export const reportRouter = createTRPCRouter({
    * Get IsoReportwithPosts with SearchString
    * @Input: orderBy: z.ZodString; desc: z.ZodBoolean; search: z.ZodString;
    */
-  getIsoReportsWithPostsFromDb: publicProcedure
+  getIsoReportsWithPostsCountFromDb: publicProcedure
     .input(InputGetReports)
     .query(async ({ ctx, input }) => {
       const { orderBy, desc, search, page, pageSize } = input;
@@ -336,9 +344,6 @@ export const reportRouter = createTRPCRouter({
                   },
                 }
               : {}, */
-          },
-          orderBy: {
-            [orderBy]: desc ? "desc" : "asc",
           },
           include: {
             author: {
@@ -428,6 +433,15 @@ export const reportRouter = createTRPCRouter({
                 LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
+            // count posts instead of fetching them
+            _count: {
+              select: {
+                posts: true,
+              },
+            },
+          },
+          orderBy: {
+            [orderBy]: desc ? "desc" : "asc",
           },
           skip,
           take,
@@ -515,7 +529,7 @@ export const reportRouter = createTRPCRouter({
             );
 
             const newestPostDate =
-              isoPosts.length > 0
+              reportsFromDb.length > 0
                 ? new Date(
                     Math.max(
                       ...isoPosts.map((post) =>
@@ -525,14 +539,16 @@ export const reportRouter = createTRPCRouter({
                   )
                 : null;
 
+            // Destructure to omit 'posts'
+            const { posts: _posts, ...rest } = reportFromDb;
             return {
-              ...reportFromDb,
+              ...rest,
+              likes: isoLikes,
+              postCount: reportFromDb._count?.posts,
               updatedAt: newestPostDate
                 ? newestPostDate.toISOString()
                 : reportFromDb.updatedAt.toISOString(),
               createdAt: reportFromDb.createdAt.toISOString(),
-              likes: isoLikes,
-              posts: isoPosts,
             };
           });
 

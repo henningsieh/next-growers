@@ -8,7 +8,7 @@ import LandingPage from "~/components/WelcomePage";
 
 import { prisma } from "~/server/db";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
+import type { IsoReportWithPostsCountFromDb } from "~/types";
 
 /** PUBLIC DYNAMIC PAGE with translations
  * getServerSideProps (Server-Side Rendering)
@@ -109,6 +109,7 @@ export async function getStaticProps(
                 id: true,
                 publicId: true,
                 cloudUrl: true,
+                postOrder: true,
               },
             },
             likes: {
@@ -123,11 +124,17 @@ export async function getStaticProps(
               },
             },
             comments: true,
+            LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
+          },
+        },
+        // count posts instead of fetching them
+        _count: {
+          select: {
+            posts: true,
           },
         },
       },
       orderBy: {
-        // Join with likes table and aggregate the count of likes
         likes: {
           _count: "desc",
         },
@@ -140,13 +147,24 @@ export async function getStaticProps(
           (reportFromDb.posts || []).length > 0
             ? reportFromDb.posts.map((post) => {
                 const postDate = new Date(post.date).toISOString();
-                const reportCreatedAt =
-                  reportFromDb.createdAt.toISOString();
-                const timeDifference =
-                  new Date(postDate).getTime() -
-                  new Date(reportCreatedAt).getTime();
+                const reportCreatedAt = reportFromDb?.createdAt;
+
+                // Convert both dates to local time
+                const localPostDate = new Date(postDate);
+                const localReportCreatedAt = new Date(reportCreatedAt);
+
+                // Set the time of day to midnight for both dates
+                localPostDate.setHours(0, 0, 0, 0);
+                localReportCreatedAt.setHours(0, 0, 0, 0);
+
+                // Calculate the difference in milliseconds between the two dates
+                const differenceInMs =
+                  localPostDate.getTime() -
+                  localReportCreatedAt.getTime();
+
+                // Convert the difference from milliseconds to days
                 const growDay = Math.floor(
-                  timeDifference / (1000 * 60 * 60 * 24)
+                  differenceInMs / (1000 * 60 * 60 * 24)
                 );
 
                 const isoLikes = post.likes.map(
@@ -156,6 +174,15 @@ export async function getStaticProps(
                     name: user.name,
                     createdAt: new Date(createdAt).toISOString(),
                     updatedAt: new Date(updatedAt).toISOString(),
+                  })
+                );
+
+                const isoImages = post.images.map(
+                  ({ id, cloudUrl, publicId, postOrder }) => ({
+                    id,
+                    publicId,
+                    cloudUrl,
+                    postOrder: postOrder == null ? 0 : postOrder,
                   })
                 );
 
@@ -171,6 +198,7 @@ export async function getStaticProps(
                   updatedAt: post.createdAt.toISOString(),
                   date: postDate,
                   likes: isoLikes,
+                  images: isoImages,
                   comments: isoComments,
                   growDay,
                 };
@@ -198,14 +226,16 @@ export async function getStaticProps(
               )
             : null;
 
+        // Destructure to omit 'posts'
+        const { posts: _posts, ...rest } = reportFromDb;
         return {
-          ...reportFromDb,
+          ...rest,
+          likes: isoLikes,
+          postCount: reportFromDb._count?.posts,
           updatedAt: newestPostDate
             ? newestPostDate.toISOString()
             : reportFromDb.updatedAt.toISOString(),
           createdAt: reportFromDb.createdAt.toISOString(),
-          likes: isoLikes,
-          posts: isoPosts,
         };
       });
 
@@ -247,7 +277,7 @@ export async function getStaticProps(
 }
 
 interface Props {
-  topLikeReports: IsoReportWithPostsFromDb[]; // Replace YourTypeHere with the actual type of topLikeReports
+  topLikeReports: IsoReportWithPostsCountFromDb[]; // Replace YourTypeHere with the actual type of topLikeReports
   // Add other props if needed
 }
 

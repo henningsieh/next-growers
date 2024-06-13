@@ -22,13 +22,13 @@ import { useRouter } from "next/router";
 import { LoginModal } from "~/components/Atom/LoginModal";
 import ReportCard from "~/components/Report/Card";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
+import type { IsoReportWithPostsCountFromDb } from "~/types";
 
 interface LandingPageProps {
-  topLikeReports: IsoReportWithPostsFromDb[];
+  topLikeReports: IsoReportWithPostsCountFromDb[];
 }
 
-export default function LandingPage({
+export default function WelcomePage({
   topLikeReports: topLikeReports,
 }: LandingPageProps) {
   const { colorScheme } = useMantineColorScheme();
