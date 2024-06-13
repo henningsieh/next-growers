@@ -10,8 +10,8 @@ import {
 import { notifications } from "@mantine/notifications";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import {
-  createLikeErrorMsg,
   dislikeSuccessfulMsg,
+  httpStatusErrorMsg,
   likeGrowSuccessfulMsg,
   likeUpdateSuccessfulMsg,
 } from "~/messages";
@@ -45,24 +45,28 @@ interface LikeHeartProps {
 }
 
 const LikeHeart = (props: LikeHeartProps) => {
-  const { data: session, status } = useSession();
+  const { data: session, status } = useSession() || {};
   const { itemToLike, itemType } = props;
   const { classes } = useStyles();
 
-  const [showLikes, setShowLikes] = useState(false);
+  const [itemLikes, setItemLikes] = useState(itemToLike.likes);
+  const [showLikeNames, setShowLikeNames] = useState(false);
 
-  // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const trpc = api.useUtils();
-  // const {
-  //   data: itemLikes,
-  //   isLoading,
-  //   isError,
-  // } = api.like.getLikesByItemId.useQuery(item.id);
 
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
+      // optimistic update to the UI with the new like
+      onMutate: (newLike) => {
+        addOptimisticLike(newLike);
+      },
       onError: (error) => {
-        notifications.show(createLikeErrorMsg(error.message));
+        // Rollback the optimistic update on error
+        removeOptimisticLike();
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+        console.error({ error });
       },
       onSuccess: () => {
         notifications.show(likeGrowSuccessfulMsg);
@@ -76,9 +80,16 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: dislikeReportMutation } =
     api.like.dislikeReport.useMutation({
-      onError: (error) => {
+      onMutate: () => {
+        removeOptimisticLike();
+      },
+      onError: (error, newLike) => {
+        addOptimisticLike(newLike);
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+
         console.error(error);
-        // Handle error, e.g., show an error message
       },
       onSuccess: () => {
         notifications.show(dislikeSuccessfulMsg);
@@ -91,8 +102,17 @@ const LikeHeart = (props: LikeHeartProps) => {
     });
 
   const { mutate: likePostMutation } = api.like.likePost.useMutation({
+    // optimistic add the session user's like to the UI
+    onMutate: (newLike) => {
+      addOptimisticLike(newLike);
+    },
     onError: (error) => {
-      notifications.show(createLikeErrorMsg(error.message));
+      // Rollback the optimistic update on error
+      removeOptimisticLike();
+      notifications.show(
+        httpStatusErrorMsg(error.message, error.data?.httpStatus)
+      );
+      console.error({ error });
     },
     onSuccess: () => {
       notifications.show(likeUpdateSuccessfulMsg);
@@ -106,12 +126,18 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: dislikePostMutation } =
     api.like.dislikePost.useMutation({
-      onError: (error) => {
-        console.error(error);
-        // Handle error, e.g., show an error message
+      onMutate: () => {
+        removeOptimisticLike();
       },
-      onSuccess: (res) => {
-        console.log(res);
+      onError: (error, newLike) => {
+        addOptimisticLike(newLike);
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+
+        console.error(error);
+      },
+      onSuccess: () => {
         notifications.show(dislikeSuccessfulMsg);
       },
       onSettled: async () => {
@@ -123,12 +149,20 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: likeCommentMutation } =
     api.like.likeComment.useMutation({
-      onError: (error) => {
-        notifications.show(createLikeErrorMsg(error.message));
+      // optimistic add the session user's like to the UI
+      onMutate: (newLike) => {
+        addOptimisticLike(newLike);
       },
-      onSuccess: (likedComment) => {
+      onError: (error) => {
+        // Rollback the optimistic update on error
+        removeOptimisticLike();
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+        console.error({ error });
+      },
+      onSuccess: () => {
         notifications.show(likeGrowSuccessfulMsg);
-        console.debug("likedReport", likedComment);
       },
       // Always refetch after error or success:
       onSettled: async () => {
@@ -139,12 +173,18 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: dislikeCommentMutation } =
     api.like.dislikeComment.useMutation({
-      onError: (error) => {
-        console.error(error);
-        // Handle error, e.g., show an error message
+      onMutate: () => {
+        removeOptimisticLike();
       },
-      onSuccess: (res) => {
-        console.debug(res);
+      onError: (error, newLike) => {
+        addOptimisticLike(newLike);
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+
+        console.error(error);
+      },
+      onSuccess: () => {
         notifications.show(dislikeSuccessfulMsg);
       },
       onSettled: async () => {
@@ -153,6 +193,28 @@ const LikeHeart = (props: LikeHeartProps) => {
         await trpc.notifications.getNotificationsByUserId.invalidate();
       },
     });
+
+  function removeOptimisticLike() {
+    // optimistic remove the session user's like from the UI
+    session &&
+      setItemLikes((prevData) =>
+        prevData.filter((like) => like.userId !== session.user.id)
+      );
+  }
+
+  function addOptimisticLike(newLike: { id: string }) {
+    session &&
+      setItemLikes((prevData) => [
+        ...prevData,
+        {
+          id: newLike.id,
+          userId: session.user.id,
+          name: session.user.name as string,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
+  }
 
   const handleLikeItem = () => {
     // Ensure that the user is authenticated
@@ -197,7 +259,7 @@ const LikeHeart = (props: LikeHeartProps) => {
     <>
       <Flex pl="xs" gap={2}>
         <Center fz="sm" p={0} m={0}>
-          {itemToLike.likes.length}
+          {itemLikes.length}
         </Center>
         <Box mt={2} ml={2} className="relative">
           <ActionIcon
@@ -205,13 +267,14 @@ const LikeHeart = (props: LikeHeartProps) => {
             // title="Give props to the Grower"
             variant="transparent"
             className="cursor-default"
-            onMouseEnter={() => void setShowLikes(true)}
-            onMouseLeave={() => void setShowLikes(false)}
-            onBlur={() => setShowLikes(false)}
+            onMouseEnter={() => void setShowLikeNames(true)}
+            onMouseLeave={() => void setShowLikeNames(false)}
+            onBlur={() => setShowLikeNames(false)}
             radius="sm"
           >
-            {itemToLike.likes?.find(
-              (like) => like.userId === session?.user.id
+            {session &&
+            itemLikes?.find(
+              (like) => like.userId === session.user.id
             ) ? (
               <IconHeartFilled
                 onClick={handleDisLikeItem}
@@ -229,9 +292,9 @@ const LikeHeart = (props: LikeHeartProps) => {
           </ActionIcon>
 
           {/* // Likes Tooltip */}
-          {!!itemToLike.likes && !!itemToLike.likes?.length && (
+          {!!itemLikes && !!itemLikes?.length && (
             <Transition
-              mounted={showLikes}
+              mounted={showLikeNames}
               transition="pop-bottom-right"
               duration={100}
               timingFunction="ease-in-out"
@@ -242,8 +305,8 @@ const LikeHeart = (props: LikeHeartProps) => {
                   className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
                   style={{ ...transitionStyles }}
                 >
-                  {itemToLike.likes &&
-                    itemToLike.likes.map((like) => (
+                  {itemLikes &&
+                    itemLikes.map((like) => (
                       <Box key={like.id} mx={10} fz={"xs"}>
                         {like.name}s{/* POST: like.name */}
                         {/* REPORT: like.name */}
