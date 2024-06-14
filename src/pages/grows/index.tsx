@@ -8,6 +8,7 @@ import {
   Group,
   Loader,
   Pagination,
+  Select,
   Title,
 } from "@mantine/core";
 import { IconDatabaseSearch } from "@tabler/icons-react";
@@ -73,7 +74,7 @@ const PublicAllGrows: NextPage = () => {
   const [sortBy, setSortBy] = useState("updatedAt");
   const [searchString, setSearchString] = useState("");
   const [activePage, setPage] = useState(1);
-  const [pageSize, _setPageSize] = useState(12);
+  const [pageSize, setPageSize] = useState(24);
 
   const { classes } = useStyles();
 
@@ -140,141 +141,6 @@ const PublicAllGrows: NextPage = () => {
         </Box>
         {/* // Header End */}
 
-        {/* Pagination Controls */}
-        {isoReports && totalCount && (
-          <>
-            {/* <Pagination
-              position="center"
-              styles={(theme) => ({
-                control: {
-                  "&[data-active]": {
-                    backgroundImage: theme.fn.gradient({
-                      from: "red",
-                      to: "yellow",
-                    }),
-                    border: 0,
-                  },
-                },
-              })}
-              value={activePage}
-              onChange={setPage}
-              total={totalCount / pageSize}
-            /> */}
-            <Pagination.Root
-              value={activePage}
-              onChange={setPage}
-              siblings={1}
-              boundaries={1}
-              total={totalCount / pageSize}
-              styles={(theme) => ({
-                control: {
-                  "&[data-active]": {
-                    backgroundImage: theme.fn.gradient({
-                      from: "red",
-                      to: "yellow",
-                    }),
-                    border: 0,
-                  },
-                },
-              })}
-            >
-              <Group spacing={5} position="center">
-                <Pagination.First />
-                <Pagination.Previous />
-                <Pagination.Items />
-                <Pagination.Next />
-                <Pagination.Last />
-              </Group>
-            </Pagination.Root>
-
-            {/* Regular pagination */}
-            {/* <Pagination
-              position="center"
-              withEdges
-              value={activePage}
-              onChange={setPage}
-              siblings={1}
-              boundaries={1}
-              total={totalCount}
-              styles={(theme) => ({
-                control: {
-                  "&[data-active]": {
-                    backgroundImage: theme.fn.gradient({
-                      from: "red",
-                      to: "yellow",
-                    }),
-                    border: 0,
-                  },
-                },
-              })}
-              getItemProps={(page) => ({
-                component: "a",
-                href: `#page-${page}`,
-              })}
-              getControlProps={(control) => {
-                if (control === "first") {
-                  return { component: "a", href: "#page-0" };
-                }
-
-                if (control === "last") {
-                  return { component: "a", href: "#page-10" };
-                }
-
-                if (control === "next") {
-                  return { component: "a", href: "#page-2" };
-                }
-
-                if (control === "previous") {
-                  return { component: "a", href: "#page-1" };
-                }
-
-                return {};
-              }}
-            /> */}
-
-            {/* Compound pagination */}
-            {/* <Pagination.Root
-              value={activePage}
-              onChange={setPage}
-              siblings={1}
-              boundaries={1}
-              total={totalCount / pageSize}
-              styles={(theme) => ({
-                control: {
-                  "&[data-active]": {
-                    backgroundImage: theme.fn.gradient({
-                      from: "red",
-                      to: "yellow",
-                    }),
-                    border: 0,
-                  },
-                },
-              })}
-              getItemProps={(page) => ({
-                component: "a",
-                href: `#page-${page}`,
-              })}
-            >
-              <Group spacing={7} position="center" mt="xl">
-                <Pagination.First component="a" href="#page-0" />
-                <Pagination.Previous
-                  component="a"
-                  href={`#page-${String(Math.max(0, activePage - 1))}`}
-                />
-                <Pagination.Items />
-                <Pagination.Next
-                  component="a"
-                  href={`#page-${String(Math.max(0, activePage + 1))}`}
-                />
-                <Pagination.Last
-                  component="a"
-                  href={`#page-${String(Math.round(totalCount / pageSize))}`}
-                />
-              </Group>
-            </Pagination.Root> */}
-          </>
-        )}
-
         {/* // Iso Reports Grid */}
         <Box pos="relative">
           {isoIsLoading && (
@@ -321,6 +187,181 @@ const PublicAllGrows: NextPage = () => {
                 )}
           </Grid>
         </Box>
+
+        {/* Pagination Controls */}
+        {isoReports && totalCount && (
+          <>
+            <Pagination.Root
+              value={activePage}
+              onChange={setPage}
+              siblings={1}
+              boundaries={0}
+              total={Math.ceil(totalCount / pageSize)}
+              styles={(theme) => ({
+                control: {
+                  "&[data-active]": {
+                    backgroundImage: theme.fn.gradient({
+                      from: "red",
+                      to: "yellow",
+                    }),
+                    border: 0,
+                  },
+                },
+              })}
+            >
+              <Group spacing={5} position="center">
+                <Pagination.First />
+                <Pagination.Previous />
+                <Pagination.Items />
+                <Pagination.Next />
+                <Pagination.Last />
+                <Select
+                  w={160}
+                  variant="default"
+                  placeholder="Custom active styles"
+                  defaultValue={pageSize.toString()}
+                  data={[
+                    {
+                      value: "12",
+                      label: "12 Grows per page",
+                      name: "Bob Handsome",
+                    },
+                    {
+                      value: "24",
+                      label: "24 Grows per page",
+                      name: "Bill Rataconda",
+                    },
+                    {
+                      value: "48",
+                      label: "48 Grows per page",
+                      name: "Amy Wong",
+                    },
+                  ]}
+                  onChange={(value) =>
+                    !!value && setPageSize(parseInt(value, 10))
+                  }
+                  styles={(theme) => ({
+                    input: {
+                      fontSize: theme.fontSizes.sm,
+                      minHeight: 32,
+                      height: 32,
+                      border:
+                        theme.colorScheme === "dark"
+                          ? `1px solid ${theme.colors.dark[4]}`
+                          : `1px solid ${theme.colors.gray[4]}`,
+                    },
+                    item: {
+                      // height: 20,
+                      // applies styles to selected item
+                      "&[data-selected]": {
+                        "&, &:hover": {
+                          backgroundImage: theme.fn.gradient({
+                            from: "red",
+                            to: "yellow",
+                          }),
+                          // color:
+                          //   theme.colorScheme === "dark"
+                          //     ? theme.white
+                          //     : theme.colors.teal[9],
+                        },
+                      },
+
+                      // applies styles to hovered item (with mouse or keyboard)
+                      "&[data-hovered]": {},
+                    },
+                  })}
+                />
+              </Group>
+              {/* // MantineSelect to set pageSize */}
+            </Pagination.Root>
+
+            {/* Regular pagination */}
+            {/* <Pagination
+      position="center"
+      withEdges
+      value={activePage}
+      onChange={setPage}
+      siblings={1}
+      boundaries={1}
+      total={totalCount}
+      styles={(theme) => ({
+        control: {
+          "&[data-active]": {
+            backgroundImage: theme.fn.gradient({
+              from: "red",
+              to: "yellow",
+            }),
+            border: 0,
+          },
+        },
+      })}
+      getItemProps={(page) => ({
+        component: "a",
+        href: `#page-${page}`,
+      })}
+      getControlProps={(control) => {
+        if (control === "first") {
+          return { component: "a", href: "#page-0" };
+        }
+
+        if (control === "last") {
+          return { component: "a", href: "#page-10" };
+        }
+
+        if (control === "next") {
+          return { component: "a", href: "#page-2" };
+        }
+
+        if (control === "previous") {
+          return { component: "a", href: "#page-1" };
+        }
+
+        return {};
+      }}
+    /> */}
+
+            {/* Compound pagination */}
+            {/* <Pagination.Root
+      value={activePage}
+      onChange={setPage}
+      siblings={1}
+      boundaries={1}
+      total={totalCount / pageSize}
+      styles={(theme) => ({
+        control: {
+          "&[data-active]": {
+            backgroundImage: theme.fn.gradient({
+              from: "red",
+              to: "yellow",
+            }),
+            border: 0,
+          },
+        },
+      })}
+      getItemProps={(page) => ({
+        component: "a",
+        href: `#page-${page}`,
+      })}
+    >
+      <Group spacing={7} position="center" mt="xl">
+        <Pagination.First component="a" href="#page-0" />
+        <Pagination.Previous
+          component="a"
+          href={`#page-${String(Math.max(0, activePage - 1))}`}
+        />
+        <Pagination.Items />
+        <Pagination.Next
+          component="a"
+          href={`#page-${String(Math.max(0, activePage + 1))}`}
+        />
+        <Pagination.Last
+          component="a"
+          href={`#page-${String(Math.round(totalCount / pageSize))}`}
+        />
+      </Group>
+    </Pagination.Root> */}
+          </>
+        )}
       </Container>
     </>
   );
