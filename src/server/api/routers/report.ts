@@ -297,8 +297,6 @@ export const reportRouter = createTRPCRouter({
       const skip = (page - 1) * pageSize;
       const take = pageSize;
 
-      const totalCount = await ctx.prisma.report.count();
-
       return ctx.prisma.report
         .findMany({
           where: {
@@ -446,7 +444,34 @@ export const reportRouter = createTRPCRouter({
           skip,
           take,
         })
-        .then((reportsFromDb) => {
+        .then(async (reportsFromDb) => {
+          const totalCount = await ctx.prisma.report.count({
+            where: {
+              OR: [
+                {
+                  title: {
+                    contains: searchstring,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  description: {
+                    contains: searchstring,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  author: {
+                    name: {
+                      contains: searchstring,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              ],
+            },
+          });
+
           const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
             const isoPosts =
               (reportFromDb.posts || []).length > 0
