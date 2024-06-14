@@ -308,16 +308,9 @@ const LikeHeart = (props: LikeHeartProps) => {
                   {itemLikes &&
                     itemLikes.map((like) => (
                       <Box key={like.id} mx={10} fz={"xs"}>
-                        {like.name}s{/* POST: like.name */}
-                        {/* REPORT: like.name */}
-                        {/* COMMENT: like.user.name */}
+                        {like.name}
                       </Box>
                     ))}
-                  {/* 
-                  <Text fz="xs" td="overline" pr={4} fs="italic">
-                    {itemLikes && itemLikes.length} Like
-                    {itemLikes && itemLikes.length > 1 ? "s" : ""} 👍
-                  </Text> */}
                 </Paper>
               )}
             </Transition>
