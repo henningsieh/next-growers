@@ -529,7 +529,7 @@ export const reportRouter = createTRPCRouter({
             );
 
             const newestPostDate =
-              reportsFromDb.length > 0
+              isoPosts.length > 0
                 ? new Date(
                     Math.max(
                       ...isoPosts.map((post) =>
