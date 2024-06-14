@@ -78,9 +78,10 @@ const PublicAllGrows: NextPage = () => {
 
   // respect query parameter for activePage
   useEffect(() => {
-    if (typeof router.query === "string") {
-      const parsedPage = parseInt(router.query, 10);
+    if (typeof router.query.page === "string") {
+      const parsedPage = parseInt(router.query.page, 10);
       if (!isNaN(parsedPage) && parsedPage > 0) {
+        console.debug("parsedPage", parsedPage);
         setActivePage(parsedPage);
       }
     }
