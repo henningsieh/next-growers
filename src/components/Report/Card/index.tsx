@@ -33,7 +33,7 @@ import { useRouter } from "next/router";
 import { ImagePreview } from "~/components/Atom/ImagePreview";
 import LikeHeart from "~/components/Atom/LikeHeart";
 
-import type { IsoReportWithPostsFromDb } from "~/types";
+import type { IsoReportWithPostsCountFromDb } from "~/types";
 import { Locale } from "~/types";
 
 import { sanatizeDateString } from "~/utils/helperUtils";
@@ -118,7 +118,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface IsoReportCardProps {
-  report: IsoReportWithPostsFromDb;
+  report: IsoReportWithPostsCountFromDb;
   setSearchString?: Dispatch<SetStateAction<string>>;
 }
 
@@ -243,15 +243,6 @@ export default function ReportCard({
     </Tooltip>
   ));
 
-  // Initialize the total comment count
-  let totalCommentCount = 0;
-
-  // Iterate over each post in the isoReport
-  isoReport.posts.forEach((post) => {
-    // Add the number of comments in the current post to the total comment count
-    totalCommentCount += post.comments.length;
-  });
-
   return (
     <Paper withBorder p={0} m={0} radius="sm" className={classes.card}>
       {/* HEADER IMAGE */}
@@ -278,7 +269,7 @@ export default function ReportCard({
                   isoReport.author?.name as string
                 }`
           }
-          comments={totalCommentCount}
+          comments={isoReport._count.posts}
           views={183}
         />
       </Box>

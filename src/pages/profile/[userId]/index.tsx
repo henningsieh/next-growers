@@ -60,12 +60,11 @@ import ReportCard from "~/components/Report/Card";
 
 import { prisma } from "~/server/db";
 
-import type { UserProfileWithoutFollow } from "~/types";
-import {
-  type IsoReportWithPostsFromDb,
-  Locale,
-  type UserProfile,
+import type {
+  IsoReportWithPostsCountFromDb,
+  UserProfileWithoutFollow,
 } from "~/types";
+import { Locale, type UserProfile } from "~/types";
 
 import { calculateStatsDiffInPercent } from "~/utils/helperUtils";
 import {
@@ -268,6 +267,12 @@ export async function getStaticProps(
             LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
           },
         },
+        // count posts instead of fetching them
+        _count: {
+          select: {
+            posts: true,
+          },
+        },
       },
     })
     .then((reportsFromDb) => {
@@ -355,8 +360,10 @@ export async function getStaticProps(
               )
             : null;
 
+        // Destructure to omit 'posts'
+        const { posts: _posts, ...reportWithoutPosts } = reportFromDb;
         return {
-          ...reportFromDb,
+          ...reportWithoutPosts,
           posts: isoPosts,
           likes: isoLikes,
           createdAt: reportFromDb.createdAt.toISOString(),
@@ -367,7 +374,8 @@ export async function getStaticProps(
       });
 
       return isoReportsFromDb;
-    })) as IsoReportWithPostsFromDb[];
+    })) as IsoReportWithPostsCountFromDb[];
+
   const translations = await serverSideTranslations(
     context.locale as string,
     ["common"]

@@ -5,10 +5,24 @@ import type { Dispatch, SetStateAction } from "react";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
+// Type of ONE GROW with posts
 type GetIsoReportWithPostsFromDbOutput =
   RouterOutput["reports"]["getIsoReportWithPostsFromDb"];
 export type IsoReportWithPostsFromDb =
   GetIsoReportWithPostsFromDbOutput;
+
+// Type of MANY GROWS without (!!!) posts
+type GetIsoReportsWithPostsCountFromDbOutput =
+  RouterOutput["reports"]["getIsoReportsWithPostsCountFromDb"]["isoReportsFromDb"];
+export type IsoReportsWithPostsCountFromDb =
+  GetIsoReportsWithPostsCountFromDbOutput;
+export type IsoReportWithPostsCountFromDb =
+  GetIsoReportsWithPostsCountFromDbOutput[number];
+
+type getPostsByReportIdOutput =
+  RouterOutput["posts"]["getPostsByReportId"];
+export type Posts = getPostsByReportIdOutput;
+export type Post = getPostsByReportIdOutput[number];
 
 type GetUserProfilesByIdOutput =
   RouterOutput["user"]["getUserProfilesById"];
@@ -18,12 +32,6 @@ export type UserProfileWithoutFollow = Omit<
   UserProfile,
   "followers" | "following"
 >;
-
-type getPostsByReportIdOutput =
-  RouterOutput["posts"]["getPostsByReportId"];
-export type Posts = getPostsByReportIdOutput;
-export type Post = getPostsByReportIdOutput[number];
-
 type getCommentsByPostIdOutput =
   RouterOutput["comments"]["getCommentsByPostId"];
 export type Comments = getCommentsByPostIdOutput;

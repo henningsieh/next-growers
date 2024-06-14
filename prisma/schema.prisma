@@ -278,22 +278,19 @@ enum TypeOf {
 }
 
 model Comment {
-  id      String @id @default(cuid())
-  content String @db.VarChar(10000)
-
-  responses      Comment[] @relation("CommentAnswers")
-  isResponseTo   Comment?  @relation("CommentAnswers", fields: [isResponseToId], references: [id])
+  id             String         @id @default(cuid())
+  content        String         @db.VarChar(10000)
+  isResponseTo   Comment?       @relation("CommentAnswers", fields: [isResponseToId], references: [id])
   isResponseToId String?
-
-  author   User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId String // One User has many Comments
-  post     Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId   String? // One Post has many Comments
-
-  Notification Notification[]
-  likes        Like[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  author         User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId       String
+  post           Post?          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId         String?
+  likes          Like[]
+  responses      Comment[]      @relation("CommentAnswers")
+  Notification   Notification[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model Company {

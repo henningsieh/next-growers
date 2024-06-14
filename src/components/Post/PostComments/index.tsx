@@ -249,7 +249,7 @@ const PostComments = ({ growId, updateId }: CommentsProps) => {
               editor={editor}
               reportId={growId}
               isResponse={comment.id} // Assuming this is the ID of the parent comment
-              comment={response as Comment}
+              comment={response as unknown as Comment}
               setNewOpen={setNewOpen}
               newCommentForm={newCommentForm}
             />

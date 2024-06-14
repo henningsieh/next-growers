@@ -10,8 +10,8 @@ import {
 import { notifications } from "@mantine/notifications";
 import { IconHeart, IconHeartFilled } from "@tabler/icons-react";
 import {
-  createLikeErrorMsg,
   dislikeSuccessfulMsg,
+  httpStatusErrorMsg,
   likeGrowSuccessfulMsg,
   likeUpdateSuccessfulMsg,
 } from "~/messages";
@@ -20,7 +20,12 @@ import { useState } from "react";
 
 import { useSession } from "next-auth/react";
 
-import type { Comment, IsoReportWithPostsFromDb, Post } from "~/types";
+import type {
+  Comment,
+  IsoReportWithPostsCountFromDb,
+  IsoReportWithPostsFromDb,
+  Post,
+} from "~/types";
 
 import { api } from "~/utils/api";
 
@@ -31,29 +36,37 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface LikeHeartProps {
-  itemToLike: Comment | Post | IsoReportWithPostsFromDb;
+  itemToLike:
+    | Comment
+    | Post
+    | IsoReportWithPostsCountFromDb
+    | IsoReportWithPostsFromDb;
   itemType: "Comment" | "Post" | "Report";
 }
 
 const LikeHeart = (props: LikeHeartProps) => {
-  const { data: session, status } = useSession();
-  const { itemToLike: item, itemType } = props;
+  const { data: session, status } = useSession() || {};
+  const { itemToLike, itemType } = props;
   const { classes } = useStyles();
 
-  const [showLikes, setShowLikes] = useState(false);
+  const [itemLikes, setItemLikes] = useState(itemToLike.likes);
+  const [showLikeNames, setShowLikeNames] = useState(false);
 
-  // FETCH ALL REPORTS (may run in kind of hydration error, if executed after session check... so let's run it into an invisible unauthorized error in background. this only happens, if session is closed in another tab...)
   const trpc = api.useUtils();
-  const {
-    data: itemLikes,
-    isLoading,
-    isError,
-  } = api.like.getLikesByItemId.useQuery(item.id);
 
   const { mutate: likeReportMutation } =
     api.like.likeReport.useMutation({
+      // optimistic update to the UI with the new like
+      onMutate: (newLike) => {
+        addOptimisticLike(newLike);
+      },
       onError: (error) => {
-        notifications.show(createLikeErrorMsg(error.message));
+        // Rollback the optimistic update on error
+        removeOptimisticLike();
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+        console.error({ error });
       },
       onSuccess: () => {
         notifications.show(likeGrowSuccessfulMsg);
@@ -67,9 +80,16 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: dislikeReportMutation } =
     api.like.dislikeReport.useMutation({
-      onError: (error) => {
+      onMutate: () => {
+        removeOptimisticLike();
+      },
+      onError: (error, newLike) => {
+        addOptimisticLike(newLike);
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+
         console.error(error);
-        // Handle error, e.g., show an error message
       },
       onSuccess: () => {
         notifications.show(dislikeSuccessfulMsg);
@@ -82,8 +102,17 @@ const LikeHeart = (props: LikeHeartProps) => {
     });
 
   const { mutate: likePostMutation } = api.like.likePost.useMutation({
+    // optimistic add the session user's like to the UI
+    onMutate: (newLike) => {
+      addOptimisticLike(newLike);
+    },
     onError: (error) => {
-      notifications.show(createLikeErrorMsg(error.message));
+      // Rollback the optimistic update on error
+      removeOptimisticLike();
+      notifications.show(
+        httpStatusErrorMsg(error.message, error.data?.httpStatus)
+      );
+      console.error({ error });
     },
     onSuccess: () => {
       notifications.show(likeUpdateSuccessfulMsg);
@@ -97,12 +126,18 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: dislikePostMutation } =
     api.like.dislikePost.useMutation({
-      onError: (error) => {
-        console.error(error);
-        // Handle error, e.g., show an error message
+      onMutate: () => {
+        removeOptimisticLike();
       },
-      onSuccess: (res) => {
-        console.log(res);
+      onError: (error, newLike) => {
+        addOptimisticLike(newLike);
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+
+        console.error(error);
+      },
+      onSuccess: () => {
         notifications.show(dislikeSuccessfulMsg);
       },
       onSettled: async () => {
@@ -114,12 +149,20 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: likeCommentMutation } =
     api.like.likeComment.useMutation({
-      onError: (error) => {
-        notifications.show(createLikeErrorMsg(error.message));
+      // optimistic add the session user's like to the UI
+      onMutate: (newLike) => {
+        addOptimisticLike(newLike);
       },
-      onSuccess: (likedComment) => {
+      onError: (error) => {
+        // Rollback the optimistic update on error
+        removeOptimisticLike();
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+        console.error({ error });
+      },
+      onSuccess: () => {
         notifications.show(likeGrowSuccessfulMsg);
-        console.debug("likedReport", likedComment);
       },
       // Always refetch after error or success:
       onSettled: async () => {
@@ -130,12 +173,18 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const { mutate: dislikeCommentMutation } =
     api.like.dislikeComment.useMutation({
-      onError: (error) => {
-        console.error(error);
-        // Handle error, e.g., show an error message
+      onMutate: () => {
+        removeOptimisticLike();
       },
-      onSuccess: (res) => {
-        console.debug(res);
+      onError: (error, newLike) => {
+        addOptimisticLike(newLike);
+        notifications.show(
+          httpStatusErrorMsg(error.message, error.data?.httpStatus)
+        );
+
+        console.error(error);
+      },
+      onSuccess: () => {
         notifications.show(dislikeSuccessfulMsg);
       },
       onSettled: async () => {
@@ -145,20 +194,43 @@ const LikeHeart = (props: LikeHeartProps) => {
       },
     });
 
+  function removeOptimisticLike() {
+    // optimistic remove the session user's like from the UI
+    session &&
+      setItemLikes((prevData) =>
+        prevData.filter((like) => like.userId !== session.user.id)
+      );
+  }
+
+  function addOptimisticLike(newLike: { id: string }) {
+    session &&
+      setItemLikes((prevData) => [
+        ...prevData,
+        {
+          id: newLike.id,
+          userId: session.user.id,
+          name: session.user.name as string,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
+  }
+
   const handleLikeItem = () => {
     // Ensure that the user is authenticated
-    if (!session) {
+    if (status !== "authenticated") {
       // Redirect to login or show a login prompt
       return;
     }
 
     // Call the correct mutation// Call the correct mutation
     if (itemType === "Report") {
-      likeReportMutation({ id: item.id });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      likeReportMutation({ id: itemToLike.id });
     } else if (itemType === "Post") {
-      likePostMutation({ id: item.id });
+      likePostMutation({ id: itemToLike.id });
     } else if (itemType === "Comment") {
-      likeCommentMutation({ id: item.id });
+      likeCommentMutation({ id: itemToLike.id });
     }
   };
 
@@ -172,85 +244,86 @@ const LikeHeart = (props: LikeHeartProps) => {
     // Call the correct mutation// Call the correct mutation
     if (itemType === "Report") {
       // Call the dislikeReport mutation
-      dislikeReportMutation({ id: item.id });
+      dislikeReportMutation({ id: itemToLike.id });
     } else if (itemType === "Post") {
       // Call the dislikePost mutation
-      dislikePostMutation({ id: item.id });
+      dislikePostMutation({ id: itemToLike.id });
     } else if (itemType === "Comment") {
       // Call the dislikePost mutation
-      dislikeCommentMutation({ id: item.id });
+      dislikeCommentMutation({ id: itemToLike.id });
     }
   };
 
   // Conditionally render the component based on isError and isLoading
   return (
     <>
-      {!isError && !isLoading && (
-        <Flex pl="xs" gap={2}>
-          <Center fz="sm" p={0} m={0}>
-            {itemLikes?.length}
-          </Center>
-          <Box mt={2} ml={2} className="relative">
-            <ActionIcon
-              size={30}
-              // title="Give props to the Grower"
-              variant="transparent"
-              className="cursor-default"
-              onMouseEnter={() => void setShowLikes(true)}
-              onMouseLeave={() => void setShowLikes(false)}
-              onBlur={() => setShowLikes(false)}
-              radius="sm"
-            >
-              {itemLikes?.find(
-                (like) => like.userId === session?.user.id
-              ) ? (
-                <IconHeartFilled
-                  onClick={handleDisLikeItem}
-                  size={22}
-                  className={`${classes.red}`}
-                  stroke={1}
-                />
-              ) : (
-                <IconHeart
-                  onClick={handleLikeItem}
-                  size={22}
-                  stroke={2}
-                />
-              )}
-            </ActionIcon>
+      <Flex pl="xs" gap={2}>
+        <Center fz="sm" p={0} m={0}>
+          {itemLikes.length}
+        </Center>
+        <Box mt={2} ml={2} className="relative">
+          <ActionIcon
+            size={30}
+            // title="Give props to the Grower"
+            variant="transparent"
+            className="cursor-default"
+            onMouseEnter={() => void setShowLikeNames(true)}
+            onMouseLeave={() => void setShowLikeNames(false)}
+            onBlur={() => setShowLikeNames(false)}
+            radius="sm"
+          >
+            {session &&
+            itemLikes?.find(
+              (like) => like.userId === session.user.id
+            ) ? (
+              <IconHeartFilled
+                onClick={handleDisLikeItem}
+                size={22}
+                className={`${classes.red}`}
+                stroke={1}
+              />
+            ) : (
+              <IconHeart
+                onClick={handleLikeItem}
+                size={22}
+                stroke={2}
+              />
+            )}
+          </ActionIcon>
 
-            {/* // Likes Tooltip */}
-            {!!itemLikes && !!itemLikes?.length && (
-              <Transition
-                mounted={showLikes}
-                transition="pop-bottom-right"
-                duration={100}
-                timingFunction="ease-in-out"
-              >
-                {(transitionStyles) => (
-                  <Paper
-                    withBorder
-                    className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
-                    style={{ ...transitionStyles }}
-                  >
-                    {itemLikes &&
-                      itemLikes.map((like) => (
-                        <Box key={like.id} mx={10} fz={"xs"}>
-                          {like.name}
-                        </Box>
-                      ))}
-                    {/* 
+          {/* // Likes Tooltip */}
+          {!!itemLikes && !!itemLikes?.length && (
+            <Transition
+              mounted={showLikeNames}
+              transition="pop-bottom-right"
+              duration={100}
+              timingFunction="ease-in-out"
+            >
+              {(transitionStyles) => (
+                <Paper
+                  withBorder
+                  className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
+                  style={{ ...transitionStyles }}
+                >
+                  {itemLikes &&
+                    itemLikes.map((like) => (
+                      <Box key={like.id} mx={10} fz={"xs"}>
+                        {like.name}s{/* POST: like.name */}
+                        {/* REPORT: like.name */}
+                        {/* COMMENT: like.user.name */}
+                      </Box>
+                    ))}
+                  {/* 
                   <Text fz="xs" td="overline" pr={4} fs="italic">
                     {itemLikes && itemLikes.length} Like
                     {itemLikes && itemLikes.length > 1 ? "s" : ""} 👍
                   </Text> */}
-                  </Paper>
-                )}
-              </Transition>
-            )}
-          </Box>
-        </Flex>
-      )}
+                </Paper>
+              )}
+            </Transition>
+          )}
+        </Box>
+      </Flex>
     </>
   );
 };

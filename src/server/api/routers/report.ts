@@ -165,6 +165,12 @@ export const reportRouter = createTRPCRouter({
                 LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
+            // count posts instead of fetching them
+            _count: {
+              select: {
+                posts: true,
+              },
+            },
           },
         })
         .then((reportsFromDb) => {
@@ -250,7 +256,7 @@ export const reportRouter = createTRPCRouter({
             );
 
             const newestPostDate =
-              isoPosts.length > 0
+              reportsFromDb.length > 0
                 ? new Date(
                     Math.max(
                       ...isoPosts.map((post) =>
@@ -260,14 +266,16 @@ export const reportRouter = createTRPCRouter({
                   )
                 : null;
 
+            // Destructure to omit 'posts'
+            const { posts: _posts, ...rest } = reportFromDb;
             return {
-              ...reportFromDb,
-              posts: isoPosts,
+              ...rest,
               likes: isoLikes,
-              createdAt: reportFromDb.createdAt.toISOString(),
+              postCount: reportFromDb._count?.posts,
               updatedAt: newestPostDate
                 ? newestPostDate.toISOString()
                 : reportFromDb.updatedAt.toISOString(),
+              createdAt: reportFromDb.createdAt.toISOString(),
             };
           });
 
@@ -279,12 +287,16 @@ export const reportRouter = createTRPCRouter({
    * Get IsoReportwithPosts with SearchString
    * @Input: orderBy: z.ZodString; desc: z.ZodBoolean; search: z.ZodString;
    */
-  getIsoReportsWithPostsFromDb: publicProcedure
+  getIsoReportsWithPostsCountFromDb: publicProcedure
     .input(InputGetReports)
-    .query(({ ctx, input }) => {
-      const { orderBy, desc, search } = input;
+    .query(async ({ ctx, input }) => {
+      const { orderBy, desc, search, page, pageSize } = input;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { searchstring, strain } = splitSearchString(search);
+
+      const skip = (page - 1) * pageSize;
+      const take = pageSize;
+
       return ctx.prisma.report
         .findMany({
           where: {
@@ -330,9 +342,6 @@ export const reportRouter = createTRPCRouter({
                   },
                 }
               : {}, */
-          },
-          orderBy: {
-            [orderBy]: desc ? "desc" : "asc",
           },
           include: {
             author: {
@@ -422,9 +431,47 @@ export const reportRouter = createTRPCRouter({
                 LightWatts: { select: { watt: true } }, // Select only the 'watt' field from LightWatts
               },
             },
+            // count posts instead of fetching them
+            _count: {
+              select: {
+                posts: true,
+              },
+            },
           },
+          orderBy: {
+            [orderBy]: desc ? "desc" : "asc",
+          },
+          skip,
+          take,
         })
-        .then((reportsFromDb) => {
+        .then(async (reportsFromDb) => {
+          const totalCount = await ctx.prisma.report.count({
+            where: {
+              OR: [
+                {
+                  title: {
+                    contains: searchstring,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  description: {
+                    contains: searchstring,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  author: {
+                    name: {
+                      contains: searchstring,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              ],
+            },
+          });
+
           const isoReportsFromDb = reportsFromDb.map((reportFromDb) => {
             const isoPosts =
               (reportFromDb.posts || []).length > 0
@@ -517,18 +564,23 @@ export const reportRouter = createTRPCRouter({
                   )
                 : null;
 
+            // Destructure to omit 'posts'
+            const { posts: _posts, ...rest } = reportFromDb;
             return {
-              ...reportFromDb,
+              ...rest,
+              likes: isoLikes,
+              postCount: reportFromDb._count?.posts,
               updatedAt: newestPostDate
                 ? newestPostDate.toISOString()
                 : reportFromDb.updatedAt.toISOString(),
               createdAt: reportFromDb.createdAt.toISOString(),
-              likes: isoLikes,
-              posts: isoPosts,
             };
           });
 
-          return isoReportsFromDb;
+          return {
+            totalCount: totalCount,
+            isoReportsFromDb,
+          };
         });
     }),
 
