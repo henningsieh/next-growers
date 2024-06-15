@@ -81,7 +81,6 @@ const PublicAllGrows: NextPage = () => {
     if (typeof router.query.page === "string") {
       const parsedPage = parseInt(router.query.page, 10);
       if (!isNaN(parsedPage) && parsedPage > 0) {
-        console.debug("parsedPage", parsedPage);
         setActivePage(parsedPage);
       }
     }
