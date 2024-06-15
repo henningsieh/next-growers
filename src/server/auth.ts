@@ -36,19 +36,34 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  events: {
+    signIn({ user, account, profile, isNewUser }) {
+      console.debug("SIGN IN", user, account, profile, isNewUser);
+    },
+    createUser({ user }) {
+      console.debug("CREATE USER", user);
+    },
+  },
   callbacks: {
-    session: ({ session, user, token }) => ({
-      ...session,
-      ...token,
-      user: {
-        ...session.user,
-        id: user.id,
-        image: user.image
-          ? user.image
-          : `https://ui-avatars.com/api/?name=${user.name as string}`,
-        role: user.role,
-      },
-    }),
+    session: ({
+      session,
+      user,
+      // token
+    }) => {
+      // console.debug(session);
+      return {
+        ...session,
+        // ...token,
+        user: {
+          ...session.user,
+          id: user.id,
+          image: user.image
+            ? user.image
+            : `https://ui-avatars.com/api/?name=${user.name as string}`,
+          role: user.role,
+        },
+      };
+    },
   },
   adapter: PrismaAdapter(prisma),
   providers: [
