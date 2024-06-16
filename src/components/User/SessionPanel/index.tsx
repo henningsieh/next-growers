@@ -88,7 +88,10 @@ export default function SessionPanel() {
       }
     }
     void redirectToEditAccount();
-  }, [session, router, status]);
+    // router must not be a dependency, because we don't
+    // want to trigger a rerender on every router change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, status]);
 
   return (
     <>

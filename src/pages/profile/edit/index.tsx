@@ -116,7 +116,7 @@ const ProtectedEditProfile: NextPage = () => {
     data: userProfileData,
     isLoading: userProfileDataIsLoading,
     isError: userProfileDataIsError,
-  } = api.user.getUserProfileById.useQuery({
+  } = api.user.getGrowerProfileById.useQuery({
     userId: session?.user.id as string,
   });
 
@@ -189,7 +189,7 @@ const ProtectedEditProfile: NextPage = () => {
         console.error(error);
       },
       onSuccess: async (_result, _parameter) => {
-        await trpc.user.getUserProfileById.invalidate();
+        await trpc.user.getGrowerProfileById.invalidate();
       },
       onSettled: (_newImage) => {
         // indicate that saving process is ready:

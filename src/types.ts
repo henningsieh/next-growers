@@ -25,7 +25,7 @@ export type Posts = getPostsByReportIdOutput;
 export type Post = getPostsByReportIdOutput[number];
 
 type GetUserProfilesByIdOutput =
-  RouterOutput["user"]["getUserProfilesById"];
+  RouterOutput["user"]["getGrowerProfilesById"];
 export type UserProfiles = GetUserProfilesByIdOutput;
 export type UserProfile = GetUserProfilesByIdOutput[number];
 export type UserProfileWithoutFollow = Omit<

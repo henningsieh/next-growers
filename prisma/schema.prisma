@@ -76,11 +76,27 @@ model User {
   cloudImages     Image[]
   growerProfile   GrowerProfile? @relation(fields: [growerProfileId], references: [id])
   growerProfileId String?
+  acceptedTOS     TOS?           @relation(fields: [acceptedTOSId], references: [id])
+  acceptedTOSId   String?
   Notification    Notification[]
   followers       Follows[]      @relation("following")
   following       Follows[]      @relation("follower")
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
+}
+
+model TOS {
+  id             String   @id @default(cuid())
+  acceptedByUser User[]
+  html           String
+  version        Int      @default(1)
+  effectiveAt    DateTime
+  isCurrent      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // You can add an index to optimize queries for the current TOS
+  @@index([isCurrent])
 }
 
 model GrowerProfile {
