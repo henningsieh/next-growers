@@ -67,6 +67,14 @@ export const authOptions: NextAuthOptions = {
       console.debug("user.acceptedTOSId", user.acceptedTOSId);
       console.debug("currentTOSId", currentTOSId);
 
+      if (user.acceptedTOSId !== currentTOSId) {
+        // User implicitly accepted the TOS by logging in
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { acceptedTOSId: currentTOSId },
+        });
+      }
+
       // console.debug(
       //   "Event: SIGN IN",
       //   user,
