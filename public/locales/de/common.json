@@ -28,6 +28,8 @@
   "app-login-button-loginWithEmail": "Sende mir den Link zum Anmelden",
   "app-notifications-mark-all-read-button": "Hab alle gelesen",
   "app-notifications-close-button": "Schließen",
+  "app-impressum-tos-label": "Nutzungsbedingungen (AGB)",
+  "app-impressum-tos-accept-text": "Mit dem Einloggen akzeptierst du unsere",
   "app-impressum-imprint-label": "Impressum",
   "app-impressum-privacy-label": "Datenschutzerklärung",
   "how-does-this-work": "Wie funktioniert das?",

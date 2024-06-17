@@ -28,6 +28,8 @@
   "app-login-button-loginWithEmail": "Send me the link to log in",
   "app-notifications-mark-all-read-button": "I have read all",
   "app-notifications-close-button": "Close",
+  "app-impressum-tos-label": "Terms of Service (TOS)",
+  "app-impressum-tos-accept-text": "By logging in, you accept and agree to our",
   "app-impressum-imprint-label": "Imprint",
   "app-impressum-privacy-label": "Privacy Policy",
   "how-does-this-work": "How does this work?",

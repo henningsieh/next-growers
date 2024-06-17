@@ -5,7 +5,6 @@ import {
   Divider,
   Flex,
   Modal,
-  ScrollArea,
   Text,
   Title,
   TypographyStylesProvider,
@@ -118,23 +117,25 @@ function AcceptedTOS() {
   return (
     <>
       <Modal
-        size="80%"
+        size="xl"
         fullScreen={smallScreen}
         opened={!currentTOSIsLoading && currentTOSIsLoaded && opened}
         onClose={() => {}}
         withCloseButton={false}
         closeOnClickOutside={false}
         closeOnEscape={false}
-        scrollAreaComponent={(props) => (
-          <ScrollArea
-            {...props}
-            style={{
-              padding: theme.spacing.md,
-              overflowY: "auto",
-              height: "100%",
-            }}
-          />
-        )}
+        // scrollAreaComponent={(props) => (
+        //   <ScrollArea
+        //     {...props}
+        //     style={
+        //       {
+        //         // padding: theme.spacing.md,
+        //         // overflowY: "auto",
+        //         // height: "100%",
+        //       }
+        //     }
+        //   />
+        // )}
         transitionProps={{
           transition: "fade",
           duration: 600,
@@ -144,7 +145,8 @@ function AcceptedTOS() {
         <Title order={1}>
           {activeLocale === Locale.DE
             ? "Nutzungsbedingungen (AGB)"
-            : "Terms of Service (TOS"}{" "}
+            : "Terms of Service (TOS)"}
+          ,
         </Title>
 
         <TypographyStylesProvider>
@@ -172,11 +174,14 @@ function AcceptedTOS() {
         >
           <Flex gap="md" align="top" justify="space-between">
             <Checkbox
-              label={
-                activeLocale === Locale.DE
-                  ? "Ich habe die Nutzungsbedingungen gelesen und stimme diesen zu."
-                  : "I have read and will agree with these Terms of Service."
-              }
+              sx={{
+                input: {
+                  "&:focus": {
+                    borderColor: theme.colors.growgreen[4],
+                  },
+                },
+              }}
+              error={acceptTOSForm.errors.acceptTOS}
               checked={acceptTOSForm.values.acceptTOS}
               onChange={(event) =>
                 acceptTOSForm.setFieldValue(
@@ -184,7 +189,11 @@ function AcceptedTOS() {
                   event.currentTarget.checked
                 )
               }
-              error={acceptTOSForm.errors.acceptTOS}
+              label={
+                activeLocale === Locale.DE
+                  ? "Ich habe die Nutzungsbedingungen gelesen und stimme diesen zu."
+                  : "I have read and will agree with these Terms of Service."
+              }
             />
 
             <Button

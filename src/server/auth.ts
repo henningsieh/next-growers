@@ -15,8 +15,8 @@ import TwitterProvider from "next-auth/providers/twitter";
 import { prisma } from "~/server/db";
 
 /**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
+ * Module augmentation for `next-auth` types. Allows us to add custom properties
+ * to the `session` object and keep type safety.
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
@@ -51,16 +51,36 @@ export const authOptions: NextAuthOptions = {
           acceptedTOSId: user.acceptedTOSId,
         },
       };
-      return Promise.resolve(session);
+      return session;
     },
   },
   events: {
-    signIn({ user, account, profile, isNewUser }) {
-      console.debug("SIGN IN", user, account, profile, isNewUser);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async signIn({ user, account, profile, isNewUser }) {
+      const currentTOSId = (
+        await prisma.tOS.findFirst({
+          where: { isCurrent: true },
+          select: { id: true },
+        })
+      )?.id;
+
+      console.debug("user.acceptedTOSId", user.acceptedTOSId);
+      console.debug("currentTOSId", currentTOSId);
+
+      // console.debug(
+      //   "Event: SIGN IN",
+      //   user,
+      //   account,
+      //   profile,
+      //   isNewUser
+      // );
     },
-    createUser({ user }) {
-      console.debug("CREATE USER", user);
-    },
+    // session(message) {
+    //   console.debug("Event: SESSION", message.session);
+    // },
+    // createUser({ user }) {
+    //   console.debug("Event: CREATE USER", user);
+    // },
   },
   adapter: PrismaAdapter(prisma),
   providers: [

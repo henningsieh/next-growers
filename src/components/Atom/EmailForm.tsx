@@ -1,4 +1,4 @@
-import { Box, Button, TextInput } from "@mantine/core";
+import { Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconMailForward } from "@tabler/icons-react";
 import { IconAt } from "@tabler/icons-react";
@@ -42,30 +42,27 @@ export default function EmailForm() {
   };
 
   return (
-    <Box m={"sm"} p={"xs"}>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <TextInput
-          type="email"
-          {...form.getInputProps("email")}
-          placeholder={getEmailaddress()}
-          fz={"xs"}
-          label="Your email address"
-          icon={<IconAt size={20} />}
-        />
-        <Button
-          mt="sm"
-          fz="md"
-          fullWidth
-          variant="filled"
-          color="growgreen"
-          className="cursor-pointer"
-          loading={isLoading}
-          leftIcon={<IconMailForward size={20} />}
-          type="submit"
-        >
-          {`${t("common:app-login-button-loginWithEmail")}`}
-        </Button>
-      </form>
-    </Box>
+    <form className="space-y-2" onSubmit={form.onSubmit(handleSubmit)}>
+      <TextInput
+        type="email"
+        {...form.getInputProps("email")}
+        placeholder={getEmailaddress()}
+        fz={"xs"}
+        label="Your email address"
+        icon={<IconAt size={20} />}
+      />
+      <Button
+        fz="md"
+        fullWidth
+        variant="filled"
+        color="growgreen"
+        className="cursor-pointer"
+        loading={isLoading}
+        leftIcon={<IconMailForward size={20} />}
+        type="submit"
+      >
+        {`${t("common:app-login-button-loginWithEmail")}`}
+      </Button>
+    </form>
   );
 }

@@ -1,7 +1,7 @@
 import EmailForm from "./EmailForm";
 import { GoogleButtonWithText } from "./GoogleButton";
 import { TwitterButtonWithText } from "./TwitterButton";
-import { Box, Space } from "@mantine/core";
+import { Box, Divider, Space } from "@mantine/core";
 
 import { useState } from "react";
 
@@ -90,41 +90,38 @@ export default function LoginForm() {
   return (
     <>
       <Space h={"lg"} />
+      <Box className="px-4 md:px-5 lg:px-6 space-y-4">
+        {/* Twitter Login */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleTwitterSignIn(e);
+          }}
+        >
+          <Box className="grid">
+            <TwitterButtonWithText />
+          </Box>
+        </form>
 
-      {/* Twitter Login */}
-      <form
-        className="px-2 md:px-3 lg:px-4 pt-0"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void handleTwitterSignIn(e);
-        }}
-      >
-        <Box className="grid gap-y-3">
-          <TwitterButtonWithText />
-        </Box>
-      </form>
-
-      {/* Google Login */}
-      <form
-        className="px-2 md:px-3 lg:px-4 pt-0"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void handleGoogleSignIn(e);
-        }}
-      >
-        <Box className="grid gap-y-3">
-          <GoogleButtonWithText />
-        </Box>
-      </form>
-
-      <Box className="my-3 flex items-center px-3">
-        <hr className="w-full border-slate-600" />
-        <span className="mx-3 text-slate-500">OR</span>
-        <hr className="w-full border-slate-600" />
+        {/* Google Login */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleGoogleSignIn(e);
+          }}
+        >
+          <Box className="grid gap-y-3">
+            <GoogleButtonWithText />
+          </Box>
+        </form>
       </Box>
 
+      <Divider mt="lg" mb="sm" label="OR" labelPosition="center" />
+
       {/* E-Mail Login */}
-      <EmailForm />
+      <Box className="px-4 md:px-5 lg:px-6 space-y-4">
+        <EmailForm />
+      </Box>
     </>
   );
 }

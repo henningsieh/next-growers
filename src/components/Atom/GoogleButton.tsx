@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 export function GoogleButton(props: ButtonProps) {
   return (
     <Button
-      m={6}
       fz="md"
       variant="filled"
       className="cursor-pointer"

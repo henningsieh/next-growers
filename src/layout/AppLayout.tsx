@@ -488,7 +488,7 @@ export default function RootLayout({
       <Footer />
 
       {/* handling TOS acceptance */}
-      <AcceptedTOS />
+      {status === "authenticated" && <AcceptedTOS />}
 
       {/* CookieConsent */}
       <Box pos="absolute">

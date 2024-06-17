@@ -30,12 +30,7 @@ import type { IsoReportWithPostsCountFromDb } from "~/types";
  *  @param context : GetStaticPropsContext<{ reportId: string }>
  *  @returns : Promise<{props{ report: Report }}>
  */
-export async function getStaticProps(
-  context: GetStaticPropsContext<{
-    reportId: string;
-    postId: string;
-  }>
-) {
+export async function getStaticProps(context: GetStaticPropsContext) {
   // Prefetching the report from prisma
   const topLikeReports = await prisma.report
     .findMany({
