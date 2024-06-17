@@ -146,7 +146,6 @@ function AcceptedTOS() {
           {activeLocale === Locale.DE
             ? "Nutzungsbedingungen (AGB)"
             : "Terms of Service (TOS)"}
-          ,
         </Title>
 
         <TypographyStylesProvider>
