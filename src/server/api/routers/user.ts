@@ -482,7 +482,6 @@ export const userRouter = createTRPCRouter({
           isCurrent: true,
         },
       });
-
       if (!currentTOS) {
         // INTERNAL SERVER ERROR: No current TOS record
         const cause = new Error("No current TOS found");

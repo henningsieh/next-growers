@@ -487,12 +487,13 @@ export default function RootLayout({
 
       <Footer />
 
-      {/* CookieConsent */}
-      <CookieConsentBanner />
-
       {/* handling TOS acceptance */}
-
       <AcceptedTOS />
+
+      {/* CookieConsent */}
+      <Box pos="absolute">
+        <CookieConsentBanner />
+      </Box>
 
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (
