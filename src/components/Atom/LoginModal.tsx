@@ -1,10 +1,10 @@
 // LoginModal.tsx
 import LoginForm from "./LoginForm";
-import { Box, Checkbox, Flex, Modal, Text } from "@mantine/core";
+import { Box, Checkbox, Modal, Space, Text } from "@mantine/core";
 import { Alert, Divider } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
-
-import { useRef, useState } from "react";
+import { z } from "zod";
 
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
@@ -23,8 +23,22 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const checkboxTosRef = useRef<HTMLInputElement>(null);
-  const [checked, setChecked] = useState(false);
+  const acceptTOSForm = useForm({
+    initialValues: {
+      acceptTOS: false,
+    },
+    validate: zodResolver(
+      z.object({
+        acceptTOS: z.boolean().refine((value) => value === true, {
+          message: String(
+            t("common:app-impressum-tos-accept-continue")
+          ),
+        }),
+      })
+    ),
+    validateInputOnChange: false,
+    validateInputOnBlur: false,
+  });
 
   return (
     <Modal
@@ -40,36 +54,51 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       }}
     >
       <Box className="px-4 md:px-5 lg:px-6 space-y-4">
+        <Space h={10} />
+
+        <LoginForm acceptTOSForm={acceptTOSForm} />
+
+        <Space h={6} />
+
+        <Divider />
+
+        <Space h={6} />
+
         <Alert
           fz={"xl"}
           icon={<IconAlertCircle size={20} />}
           title={t("common:app-impressum-tos-label")}
-          color={checked ? "growgreen.4" : "red.4"}
+          color={
+            acceptTOSForm.isValid() ||
+            (!acceptTOSForm.isValid() && !acceptTOSForm.isTouched())
+              ? "growgreen.4"
+              : "red.7"
+          }
           variant="outline"
         >
-          <Flex gap={8}>
-            <Checkbox
-              ref={checkboxTosRef}
-              checked={checked}
-              onChange={(event) =>
-                setChecked(event.currentTarget.checked)
-              }
-            />
-            <Text fz="sm">
-              {t("common:app-impressum-tos-accept-text")}{" "}
-              <u>
-                <Link onClick={closeLoginModal} href="/tos">
-                  {t("common:app-impressum-tos-label")}
-                </Link>
-              </u>
-              .
-            </Text>
-          </Flex>
+          <Checkbox
+            p={4}
+            onChange={(event) =>
+              acceptTOSForm.setFieldValue(
+                "acceptTOS",
+                event.currentTarget.checked
+              )
+            }
+            error={acceptTOSForm.errors.acceptTOS}
+            checked={acceptTOSForm.values.acceptTOS}
+            label={
+              <Text fz="sm">
+                {t("common:app-impressum-tos-accept-text")}{" "}
+                <u>
+                  <Link onClick={closeLoginModal} href="/tos">
+                    {t("common:app-impressum-tos-label")}
+                  </Link>
+                </u>
+                .
+              </Text>
+            }
+          />
         </Alert>
-
-        <Divider my="xl" labelPosition="center" />
-
-        <LoginForm />
       </Box>
     </Modal>
   );

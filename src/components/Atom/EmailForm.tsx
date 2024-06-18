@@ -1,4 +1,5 @@
 import { Button, TextInput } from "@mantine/core";
+import type { UseFormReturnType } from "@mantine/form";
 import { useForm } from "@mantine/form";
 import { IconMailForward } from "@tabler/icons-react";
 import { IconAt } from "@tabler/icons-react";
@@ -11,14 +12,26 @@ import { useRouter } from "next/router";
 
 import { getEmailaddress } from "~/utils/helperUtils";
 
-export default function EmailForm() {
+interface EmailFormProps {
+  acceptTOSForm: UseFormReturnType<
+    {
+      acceptTOS: boolean;
+    },
+    (values: { acceptTOS: boolean }) => {
+      acceptTOS: boolean;
+    }
+  >;
+}
+
+export default function EmailForm(EmailFormProps: EmailFormProps) {
+  const acceptTOSForm = EmailFormProps.acceptTOSForm;
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm({
+  const emailForm = useForm({
     clearInputErrorOnChange: true,
     validateInputOnBlur: true,
     initialValues: { email: "" },
@@ -33,21 +46,30 @@ export default function EmailForm() {
   });
 
   const handleSubmit = (values: { email: string }): void => {
-    setIsLoading(true);
-    signIn("email", { email: values.email })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    console.debug(acceptTOSForm.validate().hasErrors);
+    console.debug(values.email);
+    if (!acceptTOSForm.validate().hasErrors) {
+      setIsLoading(true);
+      signIn("email", { email: values.email })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   return (
-    <form className="space-y-2" onSubmit={form.onSubmit(handleSubmit)}>
+    <form
+      className="space-y-2" //  acceptTOSForm.validate();
+      onSubmit={emailForm.onSubmit(() => {
+        handleSubmit(emailForm.values);
+      })}
+    >
       <TextInput
         type="email"
-        {...form.getInputProps("email")}
+        {...emailForm.getInputProps("email")}
         placeholder={getEmailaddress()}
         fz={"xs"}
         label={t("common:app-login-label-loginWithEmail")}

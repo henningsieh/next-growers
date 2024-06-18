@@ -12,8 +12,8 @@ export function TwitterButton() {
 
   return (
     <Button
-      fullWidth
       fz="md"
+      fullWidth
       variant="filled"
       className="cursor-pointer"
       leftIcon={<FaXTwitter size={20} />}
