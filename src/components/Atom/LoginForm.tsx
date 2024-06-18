@@ -1,7 +1,7 @@
 import EmailForm from "./EmailForm";
 import { GoogleButtonWithText } from "./GoogleButton";
-import { TwitterButtonWithText } from "./TwitterButton";
-import { Box, Divider, Space } from "@mantine/core";
+import { TwitterButton } from "./TwitterButton";
+import { Box, Divider } from "@mantine/core";
 
 import { useState } from "react";
 
@@ -89,39 +89,32 @@ export default function LoginForm() {
 
   return (
     <>
-      <Space h={"lg"} />
-      <Box className="px-4 md:px-5 lg:px-6 space-y-4">
-        {/* Twitter Login */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleTwitterSignIn(e);
-          }}
-        >
-          <Box className="grid">
-            <TwitterButtonWithText />
-          </Box>
-        </form>
+      {/* Twitter Login */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleTwitterSignIn(e);
+        }}
+      >
+        <TwitterButton />
+      </form>
 
-        {/* Google Login */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            void handleGoogleSignIn(e);
-          }}
-        >
-          <Box className="grid gap-y-3">
-            <GoogleButtonWithText />
-          </Box>
-        </form>
-      </Box>
+      {/* Google Login */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleGoogleSignIn(e);
+        }}
+      >
+        <Box className="grid gap-y-3">
+          <GoogleButtonWithText />
+        </Box>
+      </form>
 
       <Divider mt="lg" mb="sm" label="OR" labelPosition="center" />
 
       {/* E-Mail Login */}
-      <Box className="px-4 md:px-5 lg:px-6 space-y-4">
-        <EmailForm />
-      </Box>
+      <EmailForm />
     </>
   );
 }
