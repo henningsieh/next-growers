@@ -19,6 +19,7 @@ import { acceptedcurrentTOSMsg, httpStatusErrorMsg } from "~/messages";
 import { useEffect } from "react";
 
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 import { Locale } from "~/types";
@@ -28,8 +29,9 @@ import { api } from "~/utils/api";
 function AcceptedTOS() {
   const router = useRouter();
   const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
-  const { status, update } = useSession();
+  const { status } = useSession();
 
   const trpc = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
@@ -39,21 +41,25 @@ function AcceptedTOS() {
     `(max-width: ${theme.breakpoints.sm})`
   );
 
-  const {
-    data: hasAcceptedCurrentTOS,
-    isLoading: hasAcceptedCurrentTOSIsLoading,
-    isSuccess: hasAcceptedCurrentTOSIsLoaded,
-  } = api.user.hasAcceptedCurrentTOS.useQuery();
-
+  // fetch current TOS
   const {
     data: currentTOS,
     isLoading: currentTOSIsLoading,
     isSuccess: currentTOSIsLoaded,
   } = api.tos.getCurrentTos.useQuery();
 
+  // fetch if user has accepted current TOS
+  const {
+    data: hasAcceptedCurrentTOS,
+    isLoading: hasAcceptedCurrentTOSIsLoading,
+    isSuccess: hasAcceptedCurrentTOSIsLoaded,
+  } = api.user.hasAcceptedCurrentTOS.useQuery();
+
+  // procedure to accept current TOS
   const {
     mutate: acceptCurrentTOS,
     isLoading: acceptCurrentTOSIsLoading,
+    isSuccess: acceptCurrentTOSIsLoaded,
   } = api.user.acceptCurrentTOS.useMutation({
     onError: (error) => {
       console.error(error);
@@ -62,19 +68,14 @@ function AcceptedTOS() {
       );
     },
     onSuccess: async () => {
-      await update();
+      //await update();
       await trpc.user.hasAcceptedCurrentTOS.refetch();
       notifications.show(acceptedcurrentTOSMsg);
     },
     onSettled: () => {
-      close();
       acceptTOSForm.reset();
     },
   });
-
-  function acceptCurrentTOSClick() {
-    acceptCurrentTOS();
-  }
 
   const acceptTOSForm = useForm({
     initialValues: {
@@ -83,7 +84,9 @@ function AcceptedTOS() {
     validate: zodResolver(
       z.object({
         acceptTOS: z.boolean().refine((value) => value === true, {
-          message: "You have to agree with the TOS to continue",
+          message: String(
+            t("common:app-impressum-tos-accept-continue")
+          ),
         }),
       })
     ),
@@ -92,26 +95,30 @@ function AcceptedTOS() {
   });
 
   useEffect(() => {
-    if (
-      status === "authenticated" &&
-      !hasAcceptedCurrentTOS &&
-      !hasAcceptedCurrentTOSIsLoading &&
-      hasAcceptedCurrentTOSIsLoaded
-    ) {
-      open();
-    } else {
-      !acceptCurrentTOSIsLoading && close();
+    if (status === "authenticated") {
+      if (
+        !hasAcceptedCurrentTOSIsLoading &&
+        hasAcceptedCurrentTOSIsLoaded &&
+        !hasAcceptedCurrentTOS
+      ) {
+        open();
+      } else if (
+        !acceptCurrentTOSIsLoading &&
+        acceptCurrentTOSIsLoaded &&
+        !hasAcceptedCurrentTOSIsLoading &&
+        hasAcceptedCurrentTOSIsLoaded &&
+        hasAcceptedCurrentTOS
+      ) {
+        close();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    open,
-    close,
-    status,
-    // acceptTOSForm, //no Mantine Form in dependencies
     hasAcceptedCurrentTOS,
-    hasAcceptedCurrentTOSIsLoading,
-    hasAcceptedCurrentTOSIsLoaded,
+    acceptCurrentTOSIsLoaded,
     acceptCurrentTOSIsLoading,
+    hasAcceptedCurrentTOSIsLoaded,
+    hasAcceptedCurrentTOSIsLoading,
   ]);
 
   return (
@@ -124,18 +131,6 @@ function AcceptedTOS() {
         withCloseButton={false}
         closeOnClickOutside={false}
         closeOnEscape={false}
-        // scrollAreaComponent={(props) => (
-        //   <ScrollArea
-        //     {...props}
-        //     style={
-        //       {
-        //         // padding: theme.spacing.md,
-        //         // overflowY: "auto",
-        //         // height: "100%",
-        //       }
-        //     }
-        //   />
-        // )}
         transitionProps={{
           transition: "fade",
           duration: 600,
@@ -161,14 +156,12 @@ function AcceptedTOS() {
         <Divider my="sm" variant="dashed" />
         <Box my="xl">
           <Text fz="md" fw="bold">
-            {activeLocale === Locale.DE
-              ? "Durch die Nutzung der Plattform stimme ich diesen Nutzungsbedingungen zu."
-              : "By using the platform, I agree to these Terms of Service.."}
+            {t("common:app-impressum-tos-using-continue")}
           </Text>
         </Box>
         <form
           onSubmit={acceptTOSForm.onSubmit(() => {
-            acceptCurrentTOSClick();
+            acceptCurrentTOS();
           })}
         >
           <Flex gap="md" align="top" justify="space-between">
@@ -188,11 +181,7 @@ function AcceptedTOS() {
                   event.currentTarget.checked
                 )
               }
-              label={
-                activeLocale === Locale.DE
-                  ? "Ich habe die Nutzungsbedingungen gelesen und stimme diesen zu."
-                  : "I have read and will agree with these Terms of Service."
-              }
+              label={t("common:app-impressum-tos-checkbox-text")}
             />
 
             <Button

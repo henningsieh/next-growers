@@ -16,19 +16,21 @@ export default function EmailForm() {
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm({
     clearInputErrorOnChange: true,
     validateInputOnBlur: true,
     initialValues: { email: "" },
 
-    // functions will be used to validate value to a valid email address
+    // regex to validate email
     validate: {
       email: (value) =>
-        /^\S+@\S+\.\S{2,}$/.test(value) ? null : "Invalid email",
+        /^\S+@\S+\.\S{2,}$/.test(value)
+          ? null
+          : t("common:app-login-invalid-email"),
     },
   });
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (values: { email: string }): void => {
     setIsLoading(true);
@@ -48,7 +50,7 @@ export default function EmailForm() {
         {...form.getInputProps("email")}
         placeholder={getEmailaddress()}
         fz={"xs"}
-        label="Your email address"
+        label={t("common:app-login-label-loginWithEmail")}
         icon={<IconAt size={20} />}
       />
       <Button
