@@ -2,7 +2,6 @@ export function getUserSelectObject(userId: string) {
   return {
     id: true,
     name: true,
-    email: true,
     image: true,
     growerProfile: {
       select: {
