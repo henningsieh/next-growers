@@ -1,4 +1,5 @@
-import { Box, Button, TextInput } from "@mantine/core";
+import { Button, TextInput } from "@mantine/core";
+import type { UseFormReturnType } from "@mantine/form";
 import { useForm } from "@mantine/form";
 import { IconMailForward } from "@tabler/icons-react";
 import { IconAt } from "@tabler/icons-react";
@@ -11,61 +12,81 @@ import { useRouter } from "next/router";
 
 import { getEmailaddress } from "~/utils/helperUtils";
 
-export default function EmailForm() {
+interface EmailFormProps {
+  acceptTOSForm: UseFormReturnType<
+    {
+      acceptTOS: boolean;
+    },
+    (values: { acceptTOS: boolean }) => {
+      acceptTOS: boolean;
+    }
+  >;
+}
+
+export default function EmailForm(EmailFormProps: EmailFormProps) {
+  const acceptTOSForm = EmailFormProps.acceptTOSForm;
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t } = useTranslation(activeLocale);
 
-  const form = useForm({
+  const [isLoading, setIsLoading] = useState(false);
+
+  const emailForm = useForm({
     clearInputErrorOnChange: true,
     validateInputOnBlur: true,
     initialValues: { email: "" },
 
-    // functions will be used to validate value to a valid email address
+    // regex to validate email
     validate: {
       email: (value) =>
-        /^\S+@\S+\.\S{2,}$/.test(value) ? null : "Invalid email",
+        /^\S+@\S+\.\S{2,}$/.test(value)
+          ? null
+          : t("common:app-login-invalid-email"),
     },
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleSubmit = (values: { email: string }): void => {
-    setIsLoading(true);
-    signIn("email", { email: values.email })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    console.debug(acceptTOSForm.validate().hasErrors);
+    console.debug(values.email);
+    if (!acceptTOSForm.validate().hasErrors) {
+      setIsLoading(true);
+      signIn("email", { email: values.email })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   return (
-    <Box m={"sm"} p={"xs"}>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <TextInput
-          type="email"
-          {...form.getInputProps("email")}
-          placeholder={getEmailaddress()}
-          fz={"xs"}
-          label="Your email address"
-          icon={<IconAt size={20} />}
-        />
-        <Button
-          mt="sm"
-          fz="md"
-          fullWidth
-          variant="filled"
-          color="growgreen"
-          className="cursor-pointer"
-          loading={isLoading}
-          leftIcon={<IconMailForward size={20} />}
-          type="submit"
-        >
-          {`${t("common:app-login-button-loginWithEmail")}`}
-        </Button>
-      </form>
-    </Box>
+    <form
+      className="space-y-2" //  acceptTOSForm.validate();
+      onSubmit={emailForm.onSubmit(() => {
+        handleSubmit(emailForm.values);
+      })}
+    >
+      <TextInput
+        type="email"
+        {...emailForm.getInputProps("email")}
+        placeholder={getEmailaddress()}
+        fz={"xs"}
+        label={t("common:app-login-label-loginWithEmail")}
+        icon={<IconAt size={20} />}
+      />
+      <Button
+        fz="md"
+        fullWidth
+        variant="filled"
+        color="growgreen"
+        className="cursor-pointer"
+        loading={isLoading}
+        leftIcon={<IconMailForward size={20} />}
+        type="submit"
+      >
+        {`${t("common:app-login-button-loginWithEmail")}`}
+      </Button>
+    </form>
   );
 }

@@ -15,8 +15,8 @@ import TwitterProvider from "next-auth/providers/twitter";
 import { prisma } from "~/server/db";
 
 /**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
+ * Module augmentation for `next-auth` types. Allows us to add custom properties
+ * to the `session` object and keep type safety.
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
@@ -24,6 +24,7 @@ declare module "next-auth" {
   interface User {
     id: string;
     role: string;
+    acceptedTOSId: string | null;
   }
   interface Session extends DefaultSession {
     user: User & DefaultSession["user"];
@@ -37,18 +38,57 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user, token }) => ({
-      ...session,
-      ...token,
-      user: {
-        ...session.user,
-        id: user.id,
-        image: user.image
-          ? user.image
-          : `https://ui-avatars.com/api/?name=${user.name as string}`,
-        role: user.role,
-      },
-    }),
+    session: ({ session: nextAuthSession, user }) => {
+      const session = {
+        ...nextAuthSession,
+        user: {
+          ...nextAuthSession.user,
+          id: user.id,
+          image: user.image
+            ? user.image
+            : `https://ui-avatars.com/api/?name=${user.name as string}`,
+          role: user.role,
+          acceptedTOSId: user.acceptedTOSId,
+        },
+      };
+      return session;
+    },
+  },
+  events: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async signIn({ user, account, profile, isNewUser }) {
+      const currentTOSId = (
+        await prisma.tOS.findFirst({
+          where: { isCurrent: true },
+          select: { id: true },
+        })
+      )?.id;
+
+      console.debug("user.acceptedTOSId", user.acceptedTOSId);
+      console.debug("currentTOSId", currentTOSId);
+
+      if (user.acceptedTOSId !== currentTOSId) {
+        // User implicitly accepted the TOS by logging in
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { acceptedTOSId: currentTOSId },
+        });
+      }
+
+      // console.debug(
+      //   "Event: SIGN IN",
+      //   user,
+      //   account,
+      //   profile,
+      //   isNewUser
+      // );
+    },
+    // session(message) {
+    //   console.debug("Event: SESSION", message.session);
+    // },
+    // createUser({ user }) {
+    //   console.debug("Event: CREATE USER", user);
+    // },
   },
   adapter: PrismaAdapter(prisma),
   providers: [

@@ -36,6 +36,14 @@ export const defaultErrorMsg = (msg: string) => ({
   icon: <IconAlertCircle size={20} stroke={2.8} />,
 });
 
+export const acceptedcurrentTOSMsg = {
+  title: "Success",
+  message: "You have accepted the current TOS",
+  color: "growgreen",
+  icon: <IconCannabis size={20} stroke={2.8} />,
+  loading: false,
+};
+
 export const followUserSuccessfulMsg = {
   title: "Success",
   message: "You are now following this user! 🥳",

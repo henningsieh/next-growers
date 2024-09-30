@@ -495,7 +495,7 @@ const PublicProfile: NextPage<
       transition: "transform 250ms ease, box-shadow 250ms ease",
       zIndex: 10,
       position: "relative",
-      height: rem(240),
+      height: rem(200),
 
       backgroundColor:
         theme.colorScheme === "dark"
