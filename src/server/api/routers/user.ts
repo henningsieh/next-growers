@@ -177,7 +177,7 @@ export const userRouter = createTRPCRouter({
       }
     }),
 
-  getUserProfilesById: publicProcedure
+  getGrowerProfilesById: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const { userId } = input;
@@ -206,7 +206,7 @@ export const userRouter = createTRPCRouter({
         }
       }
     }),
-  getUserProfileById: publicProcedure
+  getGrowerProfileById: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const { userId } = input;
@@ -427,4 +427,96 @@ export const userRouter = createTRPCRouter({
         }
       }
     }),
+
+  hasAcceptedCurrentTOS: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      if (!ctx.session.user.acceptedTOSId) {
+        // User has never accepted TOS
+        return false;
+      } else {
+        const tos = await ctx.prisma.tOS.findUnique({
+          where: {
+            id: ctx.session.user.acceptedTOSId,
+          },
+          select: {
+            id: true,
+            version: true,
+            isCurrent: true,
+          },
+        });
+
+        if (!tos) {
+          // INTERNAL SERVER ERROR: TOS record does not exist
+          const cause = new Error("Accepted TOS record does not exist");
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: cause.message,
+            cause,
+          });
+        }
+
+        return tos.isCurrent;
+      }
+    } catch (error: unknown) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({
+          code: error.code,
+          message: error.message,
+          cause: error.cause,
+        });
+      } else if (error instanceof Error) {
+        throw new Error(error.message, {
+          cause: error.cause,
+        } as ErrorOptions);
+      } else {
+        throw new Error("An unknown error occurred");
+      }
+    }
+  }),
+
+  acceptCurrentTOS: protectedProcedure.mutation(async ({ ctx }) => {
+    try {
+      // Retrieve the current TOS
+      const currentTOS = await ctx.prisma.tOS.findFirst({
+        where: {
+          isCurrent: true,
+        },
+      });
+      if (!currentTOS) {
+        // INTERNAL SERVER ERROR: No current TOS record
+        const cause = new Error("No current TOS found");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: cause.message,
+          cause,
+        });
+      }
+
+      // Update the user's accepted TOS ID
+      const user = await ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          acceptedTOSId: currentTOS.id,
+        },
+      });
+
+      return user;
+    } catch (error: unknown) {
+      if (error instanceof TRPCError) {
+        throw new TRPCError({
+          code: error.code,
+          message: error.message,
+          cause: error.cause,
+        });
+      } else if (error instanceof Error) {
+        throw new Error(error.message, {
+          cause: error.cause,
+        } as ErrorOptions);
+      } else {
+        throw new Error("An unknown error occurred");
+      }
+    }
+  }),
 });

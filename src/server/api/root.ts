@@ -7,6 +7,7 @@ import { notificationRouter } from "./routers/notification";
 import { postRouter } from "./routers/posts";
 import { reportRouter } from "./routers/report";
 import { strainRouter } from "./routers/strains";
+import { tosRouter } from "./routers/tos";
 import { userRouter } from "./routers/user";
 import { createTRPCRouter } from "./trpc";
 
@@ -26,6 +27,7 @@ export const appRouter = createTRPCRouter({
   lightwatts: lightWattsRouter,
   comments: commentRouter,
   image: imageRouter,
+  tos: tosRouter,
 });
 
 // export type definition of API

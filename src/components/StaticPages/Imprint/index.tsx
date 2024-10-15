@@ -10,15 +10,6 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
-  container: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "top",
-    alignItems: "center",
-    paddingTop: theme.spacing.lg,
-  },
-
   title: {
     fontSize: rem(48),
     fontWeight: 900,
@@ -35,22 +26,6 @@ const useStyles = createStyles((theme) => ({
       fontSize: rem(24),
       lineHeight: 1.3,
     },
-  },
-
-  description: {
-    textAlign: "center",
-
-    [theme.fn.smallerThan("sm")]: {
-      fontSize: theme.fontSizes.md,
-    },
-  },
-
-  // Styles for the sticky image
-  stickyImage: {
-    position: "fixed",
-    top: 64,
-    right: theme.spacing.md,
-    zIndex: 999, // Ensure it's above other content
   },
 }));
 
@@ -70,18 +45,6 @@ const Imprint: React.FC<PrivacyProps> = ({ htmlContent }) => {
 
   return (
     <Container size="md" pt="xl">
-      {/* Sticky Image */}
-      {/* <Image
-        width={90}
-        height={140}
-        src={
-          dark
-            ? "/datenschutz-siegel-dark-vertical-small.png"
-            : "/datenschutz-siegel-light-vertical-small.png"
-        }
-        className={classes.stickyImage}
-        alt="Datenschutz-Siegel"
-      /> */}
       {/* Title */}
       <Title className={classes.title}>
         {t("common:app-impressum-imprint-label")}

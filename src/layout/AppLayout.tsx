@@ -37,6 +37,7 @@ import { Footer } from "~/components/Atom/Footer";
 import SteadyButton from "~/components/Atom/SteadyButton";
 import LanguageSwitcher from "~/components/LanguageSwitcher";
 import LightDarkButton from "~/components/LightDarkButton";
+import AcceptedTOS from "~/components/User/AcceptedTOS";
 import Notifications from "~/components/User/Notifications";
 import LoginPanel from "~/components/User/SessionPanel";
 
@@ -486,8 +487,13 @@ export default function RootLayout({
 
       <Footer />
 
+      {/* handling TOS acceptance */}
+      {status === "authenticated" && <AcceptedTOS />}
+
       {/* CookieConsent */}
-      <CookieConsentBanner />
+      <Box pos="absolute">
+        <CookieConsentBanner />
+      </Box>
 
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (

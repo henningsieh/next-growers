@@ -36,6 +36,10 @@ export function Footer() {
 
   const footerLinks = [
     {
+      link: "/tos",
+      label: t("common:app-impressum-tos-label-short"),
+    },
+    {
       link: "/imprint",
       label: t("common:app-impressum-imprint-label"),
     },

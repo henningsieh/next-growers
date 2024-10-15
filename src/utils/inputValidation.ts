@@ -116,6 +116,12 @@ export const InputEditProfile = z.object({
   email: z.string().email({ message: "Invalid email address" }),
 });
 
+export const acceptTOSSchema = z.object({
+  acceptTOS: z.boolean().refine((value) => value === true, {
+    message: "You have to agree with the TOS to continue",
+  }),
+});
+
 export const InputCreateReportForm = z.object({
   title: z
     .string()
