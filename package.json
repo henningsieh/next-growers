@@ -61,7 +61,7 @@
     "dayjs": "^1.11",
     "embla-carousel-react": "=7.1.0",
     "emoji-picker-react": "^4.9",
-    "formidable": "^2.1",
+    "formidable": "^3.5",
     "framer-motion": "=7.8.0",
     "html-entities": "^2.5.2",
     "html-to-text": "^9.0",
@@ -91,7 +91,7 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3",
     "@types/eslint": "^8.56",
-    "@types/formidable": "^2.0",
+    "@types/formidable": "^3.4",
     "@types/html-to-text": "^9.0",
     "@types/multer": "^1.4",
     "@types/node": "^22.9",
