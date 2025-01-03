@@ -9,3 +9,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "next"
+        versions: ["15.x"] # Stay on Next.js 14.x for now
