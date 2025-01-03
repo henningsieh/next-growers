@@ -15,6 +15,10 @@ export const config = {
   },
 };
 
+type UploadedFiles = {
+  image: formidable.File;
+};
+
 const handler: NextApiHandler = async (req, res) => {
   const session = await getServerSession(req, res, authOptions);
 
@@ -22,7 +26,18 @@ const handler: NextApiHandler = async (req, res) => {
     res.status(401).json({ error: "unauthorized" });
   } else {
     const data = await readUploadedFile(req, false);
-    if (!!data.files.image && !Array.isArray(data.files.image)) {
+    const files = data.files as unknown as UploadedFiles;
+
+    if (!files.image) {
+      res.status(400).json({ error: "no files attached" });
+      return;
+    }
+
+    const originalFilename =
+      files.image.originalFilename?.split(".")[0];
+    const localPathToImage = files.image.filepath;
+
+    if (!!files.image && !Array.isArray(files.image)) {
       // now handle the case where image is NOT an array
       const now = new Date();
       const year = now.getFullYear();
@@ -40,11 +55,7 @@ const handler: NextApiHandler = async (req, res) => {
         .toString()
         .padStart(2, "0")}${seconds.toString().padStart(2, "0")}`;
 
-      const publicIdWithTimestamp = `${formattedTimestamp}_${
-        data.files.image.originalFilename?.split(".")[0] as string
-      }`;
-
-      const localPathToImage = data.files.image.filepath;
+      const publicIdWithTimestamp = `${formattedTimestamp}_${originalFilename ?? "unknown_filename"}`;
 
       const result = await cloudinary.uploader.upload(
         localPathToImage,
@@ -94,7 +105,9 @@ const readUploadedFile = (
   fields: formidable.Fields;
   files: formidable.Files;
 }> => {
-  const options: formidable.Options = {};
+  const options: formidable.Options = {
+    multiples: true, // Enable parsing of multiple files with the same field name
+  };
 
   if (saveLocally) {
     options.uploadDir = path.join(process.cwd(), "/public/images");

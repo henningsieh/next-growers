@@ -1,5 +1,7 @@
 import type { Image } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import type { UploadApiResponse } from "cloudinary";
+import type { Fields, File, Files } from "formidable";
 import formidable from "formidable";
 import path from "path";
 
@@ -22,58 +24,61 @@ const handler: NextApiHandler = async (req, res) => {
 
   if (!session) {
     res.status(401).json({ error: "unauthorized" });
-  } else {
-    const data = await readUploadedFile(req, false);
-    const ownerId = data.fields["ownerId"] as string;
-
-    if (!ownerId) {
-      res.status(400).json({ error: "ownerId is missing" });
-    } else {
-      const imageIds: string[] = [];
-      const imagePublicIds: string[] = [];
-      const cloudUrls: string[] = [];
-
-      const files = data.files["images"];
-
-      if (!files) {
-        res.status(400).json({ error: "no files attachted" });
-      } else {
-        // Handle the case where a single file is uploaded
-        if (!Array.isArray(files)) {
-          const file = files;
-          const result = await handleFileUpload(file, ownerId);
-
-          imageIds.push(result.id);
-          imagePublicIds.push(result.publicId);
-          cloudUrls.push(result.cloudUrl);
-
-          // Handle the case where multiple files are uploaded
-        } else {
-          await Promise.all(
-            files.map(async (file) => {
-              const result = await handleFileUpload(file, ownerId);
-
-              imageIds.push(result.id);
-              imagePublicIds.push(result.publicId);
-              cloudUrls.push(result.cloudUrl);
-            })
-          );
-        }
-        const response = {
-          success: true,
-          imageIds,
-          imagePublicIds,
-          cloudUrls,
-        };
-
-        res.json(response);
-      }
-    }
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
+  const data = await readUploadedFile(req, false);
+  const ownerId = Array.isArray(data.fields["ownerId"])
+    ? data.fields["ownerId"][0]
+    : data.fields["ownerId"];
+
+  if (!ownerId) {
+    res.status(400).json({ error: "ownerId is missing" });
+    return;
+  }
+
+  const imageIds: string[] = [];
+  const imagePublicIds: string[] = [];
+  const cloudUrls: string[] = [];
+
+  const files = data.files["images"] as File | File[];
+
+  if (!files) {
+    res.status(400).json({ error: "no files attached" });
+    return;
+  }
+
+  if (!Array.isArray(files)) {
+    const file = files;
+    const result = await handleFileUpload(file, ownerId);
+
+    imageIds.push(result.id);
+    imagePublicIds.push(result.publicId);
+    cloudUrls.push(result.cloudUrl);
+  } else {
+    await Promise.all(
+      files.map(async (file) => {
+        const result = await handleFileUpload(file, ownerId);
+
+        imageIds.push(result.id);
+        imagePublicIds.push(result.publicId);
+        cloudUrls.push(result.cloudUrl);
+      })
+    );
+  }
+
+  const response = {
+    success: true,
+    imageIds,
+    imagePublicIds,
+    cloudUrls,
+  };
+
+  res.json(response);
 };
 
 const handleFileUpload = async (
-  file: formidable.File,
+  file: File,
   ownerId: string
 ): Promise<Image> => {
   const now = new Date();
@@ -128,8 +133,8 @@ const readUploadedFile = (
   req: NextApiRequest,
   saveLocally?: boolean
 ): Promise<{
-  fields: formidable.Fields;
-  files: formidable.Files;
+  fields: Fields;
+  files: Files;
 }> => {
   const options: formidable.Options = {
     multiples: true, // Enable parsing of multiple files with the same field name
