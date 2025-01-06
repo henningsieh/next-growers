@@ -4,7 +4,7 @@ import type { GetStaticPropsContext, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-import LandingPage from "~/components/WelcomePage";
+import MaintenancePage from "~/components/MaintenancePage";
 
 import { prisma } from "~/server/db";
 
@@ -280,14 +280,15 @@ interface Props {
  * @Page PublicIndex
  * @returns NextPage
  */
-const PublicIndex: NextPage<Props> = ({ topLikeReports }) => {
+const PublicIndex: NextPage<Props> = () => {
+  // const PublicIndex: NextPage<Props> = ({ topLikeReports }) => {
   return (
     <>
       <Head>
-        <title>{`Welcome | ${appTitle}`}</title>
+        <title>{`Maintenance | ${appTitle}`}</title>
         <meta
           name="description"
-          content="GrowAGram is a cannabis home cultivation community for sharing and discovering tips, techniques, and insights for successful cannabis cultivation. Welcome! Join our image community, share your weed images and upload your own reports to share your successes and learn from others. We are in alpha version - your feedback is very appreciated!"
+          content="GrowAGram is currently undergoing maintenance. We'll be back soon!"
         />
         <link rel="icon" href="/favicon.ico" />
         <meta
@@ -297,7 +298,7 @@ const PublicIndex: NextPage<Props> = ({ topLikeReports }) => {
         <meta property="og:title" content={appTitle} />
       </Head>
 
-      <LandingPage topLikeReports={topLikeReports} />
+      <MaintenancePage />
     </>
   );
 };

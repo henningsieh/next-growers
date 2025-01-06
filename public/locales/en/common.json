@@ -98,5 +98,8 @@
   "addpost-updatedatedescription": "Date of this Update",
   "comments-headline": "Comments",
   "comments-button-open-comments": "Comment now",
-  "user-msg-question-continue": "Do you want to continue?"
+  "user-msg-question-continue": "Do you want to continue?",
+  "maintenance_mode": "🚧 Maintenance Mode 🚧",
+  "maintenance_message": "We are currently undergoing maintenance",
+  "maintenance_return_time": "We will be back at 9 a.m.! 🥦🚀"
 }

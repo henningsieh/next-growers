@@ -98,5 +98,8 @@
   "addpost-updatedatedescription": "Datum des Updates",
   "comments-headline": "Kommentare",
   "comments-button-open-comments": "Jetzt kommentieren",
-  "user-msg-question-continue": "Willst du fortfahren?"
+  "user-msg-question-continue": "Willst du fortfahren?",
+  "maintenance_mode": "🚧 Wartungsmodus 🚧",
+  "maintenance_message": "Wir führen derzeit Wartungsarbeiten an der Datanbank durch.",
+  "maintenance_return_time": "Wir sind um 9 Uhr wieder da! 🥦🚀"
 }
