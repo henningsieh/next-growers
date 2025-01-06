@@ -4,7 +4,8 @@ import type { GetStaticPropsContext, NextPage } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Head from "next/head";
 
-import MaintenancePage from "~/components/MaintenancePage";
+//import MaintenancePage from "~/components/MaintenancePage";
+import LandingPage from "~/components/WelcomePage";
 
 import { prisma } from "~/server/db";
 
@@ -280,8 +281,7 @@ interface Props {
  * @Page PublicIndex
  * @returns NextPage
  */
-const PublicIndex: NextPage<Props> = () => {
-  // const PublicIndex: NextPage<Props> = ({ topLikeReports }) => {
+const PublicIndex: NextPage<Props> = ({ topLikeReports }) => {
   return (
     <>
       <Head>
@@ -298,7 +298,7 @@ const PublicIndex: NextPage<Props> = () => {
         <meta property="og:title" content={appTitle} />
       </Head>
 
-      <MaintenancePage />
+      <LandingPage topLikeReports={topLikeReports} />
     </>
   );
 };

@@ -25,6 +25,7 @@
   },
   "include": [
     ".eslintrc.cjs",
+    ".lintstagedrc.js",
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "**/*.ts",
@@ -35,7 +36,7 @@
     "next-i18next.config.js",
     "next.config.js",
     "prisma/seed.js",
-    ".lintstagedrc.js"
+    "src/middleware.js"
   ],
   "exclude": ["node_modules"]
 }
