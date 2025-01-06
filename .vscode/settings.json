@@ -7,9 +7,12 @@
   "workbench.editor.labelFormat": "short",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "explorer.compactFolders": false
-  // "editor.codeActionsOnSave": {
-  //   "source.fixAll": "always",
-  //   "source.organizeImports": "explicit"
-  // },
+  "explorer.compactFolders": false,
+  "i18n-ally.localesPaths": ["public/locales", "src/messages"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.namespace": true,
+  "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
+  "i18n-ally.enabledFrameworks": ["react-i18next"],
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.displayLanguage": "en"
 }
