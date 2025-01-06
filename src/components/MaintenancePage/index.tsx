@@ -18,7 +18,7 @@ export default function MaintenancePage() {
     >
       <Stack align="center" spacing="xl">
         <Title order={1} size="h1">
-          🚧 Maintenance Mode 🚧
+          {t("common:maintenance_mode")}
         </Title>
         <Text size="xl" align="center">
           {t("common:maintenance_message")}
