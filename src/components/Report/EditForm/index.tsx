@@ -6,7 +6,7 @@ import {
   createStyles,
   Grid,
   Group,
-  LoadingOverlay, // MultiSelect,
+  LoadingOverlay,
   Paper,
   Progress,
   rem,
