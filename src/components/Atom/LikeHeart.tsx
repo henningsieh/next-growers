@@ -16,7 +16,9 @@ import {
   likeUpdateSuccessfulMsg,
 } from "~/messages";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+// Add useEffect import
 
 import { useSession } from "next-auth/react";
 
@@ -51,6 +53,11 @@ const LikeHeart = (props: LikeHeartProps) => {
 
   const [itemLikes, setItemLikes] = useState(itemToLike.likes);
   const [showLikeNames, setShowLikeNames] = useState(false);
+
+  // reset the likes state when itemToLike changes
+  useEffect(() => {
+    setItemLikes(itemToLike.likes);
+  }, [itemToLike]);
 
   const trpc = api.useUtils();
 
