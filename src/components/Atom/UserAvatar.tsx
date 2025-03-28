@@ -1,6 +1,6 @@
 import { Tooltip } from "@mantine/core";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -19,6 +19,11 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
 }) => {
   const defaultImageUrl = `https://ui-avatars.com/api/?name=${userName}`;
   const [src, setSrc] = useState(imageUrl || defaultImageUrl);
+
+  // Reset src when imageUrl prop changes
+  useEffect(() => {
+    setSrc(imageUrl || defaultImageUrl);
+  }, [imageUrl, userName, defaultImageUrl]);
 
   return (
     <Tooltip
