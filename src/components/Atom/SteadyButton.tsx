@@ -106,7 +106,7 @@ function SteadyButton() {
   return (
     <Box className={classes.buttonWrapper}>
       <Button
-        h={32}
+        h={34}
         radius="sm"
         className={classes.button}
         title={t("common:app-steady-button-title")}
