@@ -13,7 +13,6 @@
   "ShowAppreciation_content": "Zeige deine Unterstützung und Wertschätzung für Berichte und Beiträge anderer Benutzer, indem du ihnen deine Likes gibst. Verbreite Positivität und Ermutigung innerhalb der Growagram-Community.",
   "ResponsivePrivacyDataHandling": "Verantwortungsvoller Datenschutz",
   "ResponsivePrivacyDataHandling_content": "Wir legen Wert auf den verantwortungsvollen Umgang mit sensiblen Daten und stellen den höchstmöglichen Datenschutz sicher. Sei versichert, dass wir keine persönlichen Daten, Metadaten oder Passwörter speichern. Unser Engagement gilt der Schaffung einer sicheren Umgebung für deine Informationen und der Wahrung von Vertraulichkeit und Integrität zu jeder Zeit.",
-
   "app-themetoggle": "Farbschema hell/dunkel umschalten",
   "app-switchlanguage": "Sprache wechseln",
   "app-headermenu-signin": "Login",
@@ -61,7 +60,6 @@
   "report-edit-button": "Grow bearbeiten",
   "report-save-button": "Grow speichern",
   "report-save-new-button": "Weiter",
-
   "report-form-bockquote-label": "Text im Headerbild",
   "report-form-bockquote-description": "Erscheint oben auf dem Headerbild deiner Grow-Kachel",
   "report-form-bockquote-placeholder": "Meine Reise durch die wunderbare Welt des Cannabisanbaus",
@@ -74,7 +72,6 @@
   "report-form-strains-label": "Strains",
   "report-form-strains-description": "Wähle hier alle Strains bzw. Sorte(n) deines Grows aus.",
   "report-form-strains-placeholder": "Wähle mind. 1 Strain bzw. Sorte",
-
   "report-delete-button": "löschen",
   "comment-save-button": "Kommentar speichern",
   "profile-save-button": "Profil speichern",
@@ -101,5 +98,28 @@
   "user-msg-question-continue": "Willst du fortfahren?",
   "maintenance_mode": "🚧 Wartungsmodus 🚧",
   "maintenance_message": "Wir führen derzeit Wartungsarbeiten an der Datanbank durch.",
-  "maintenance_return_time": "Wir sind um 9 Uhr wieder da! 🥦🚀"
+  "maintenance_return_time": "Wir sind um 9 Uhr wieder da! 🥦🚀",
+  "supporter-modal-title": "Unterstütze GrowAGram",
+  "supporter-modal-subtitle": "Hilf uns, eine großartige Plattform für Cannabis-Anbauer weiterzuentwickeln",
+  "supporter-modal-description": "GrowAGram ist eine Community-getriebene Plattform, die auf Unterstützer wie dich angewiesen ist, um weiter zu wachsen. Als Unterstützer hilfst du uns, die Plattform für alle zu pflegen und zu verbessern.",
+  "supporter-modal-close": "Vielleicht später",
+  "supporter-modal-dismiss": "Nicht mehr anzeigen",
+  "supporter-payment-monthly": "Monatlich",
+  "supporter-payment-yearly": "Jährlich",
+  "supporter-level-basic-title": "Standard-Mitgliedschaft 🌱",
+  "supporter-level-basic-price": "3 € / Monat",
+  "supporter-level-basic-yearlyPrice": "36 € jährlich abgerechnet - spare 14 %",
+  "supporter-level-basic-description": "Komm in die Gruppe! (Info: dies ist der niedrigste Preis, den Steady zulässt.)",
+  "supporter-level-basic-button": "MITGLIED WERDEN 🌱",
+  "supporter-level-premium-title": "Unterstützer-Mitgliedschaft 🤝",
+  "supporter-level-premium-price": "4.20 € / Monat",
+  "supporter-level-premium-yearlyPrice": "50.40 € jährlich abgerechnet - spare 16 %",
+  "supporter-level-premium-description": "Vielen Dank für deine Unterstützung und dein Vertrauen!",
+  "supporter-level-premium-button": "DJANGO SUPPORTEN 🤝",
+  "supporter-level-pro-title": "Hoodie Gönner Paket 🤑",
+  "supporter-level-pro-price": "7.50 € / Monat",
+  "supporter-level-pro-yearlyPrice": "90 € jährlich abgerechnet - spare 21 %",
+  "supporter-level-pro-description": "Für dieses Paket bekommst du einen GrowAGram-Hoodie in Farbe und Größe deiner Wahl!",
+  "supporter-level-pro-button": "DEM PROJEKT GÖNNEN 🤑",
+  "supporter-modal-follow": "Folge uns auf Twitter"
 }

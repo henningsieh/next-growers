@@ -26,6 +26,12 @@ import {
   IconMapPin,
   IconMessageCircle,
 } from "@tabler/icons-react";
+import {
+  SupporterModalProvider,
+  useSupporterModal,
+} from "~/contexts/SupporterModalContext";
+
+import { useEffect } from "react";
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
@@ -35,11 +41,14 @@ import { useRouter } from "next/router";
 import CookieConsentBanner from "~/components/Atom/CookieConsent";
 import { Footer } from "~/components/Atom/Footer";
 import SteadyButton from "~/components/Atom/SteadyButton";
+import { SupporterWelcomeModal } from "~/components/Atom/SupporterWelcomeModal";
 import LanguageSwitcher from "~/components/LanguageSwitcher";
 import LightDarkButton from "~/components/LightDarkButton";
 import AcceptedTOS from "~/components/User/AcceptedTOS";
 import Notifications from "~/components/User/Notifications";
 import LoginPanel from "~/components/User/SessionPanel";
+
+import { shouldShowSupporterModal } from "~/utils/modalUtils";
 
 const useStyles = createStyles((theme) => ({
   photoCredit: {
@@ -212,16 +221,13 @@ function openUrlInNewTab(url: string) {
   window.open(url, "_blank");
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const [drawerIsOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [externLinksOpen, { toggle: toggleLinks }] =
     useDisclosure(false);
   const { classes, theme } = useStyles();
+  const { isModalOpen, openModal, closeModal } = useSupporterModal();
 
   const handleUnstyledButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -238,6 +244,18 @@ export default function RootLayout({
 
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
+
+  // Check if we should show the supporter modal on component mount
+  useEffect(() => {
+    // Only show after a delay of 1s to ensure page has loaded
+    const timer = setTimeout(() => {
+      if (shouldShowSupporterModal()) {
+        openModal();
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [openModal]);
 
   const externLinks = externLinksMockdata.map((item) => (
     <UnstyledButton
@@ -495,6 +513,12 @@ export default function RootLayout({
         <CookieConsentBanner />
       </Box>
 
+      {/* Supporter Welcome Modal */}
+      <SupporterWelcomeModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
+
       {/* Photo Credit */}
       {theme.colorScheme === "dark" && (
         <Box className={classes.photoCredit}>
@@ -539,5 +563,17 @@ export default function RootLayout({
         </Box>
       )}
     </>
+  );
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <SupporterModalProvider>
+      <AppLayoutContent>{children}</AppLayoutContent>
+    </SupporterModalProvider>
   );
 }

@@ -13,7 +13,6 @@
   "ShowAppreciation_content": "Show your support and appreciation for other users' reports and posts by giving them your likes. Spread positivity and encouragement within the Growagram community.",
   "ResponsivePrivacyDataHandling": "Responsive Privacy Data Handling",
   "ResponsivePrivacyDataHandling_content": "We prioritize the responsible handling of sensitive data and ensure the utmost privacy protection. Rest assured, we do not store any personal data, metadata, or passwords. Our commitment is to foster a secure environment for your information, maintaining confidentiality and integrity at all times.",
-
   "app-themetoggle": "Toggle light/dark color scheme",
   "app-switchlanguage": "Switch language",
   "app-headermenu-signin": "Login",
@@ -61,7 +60,6 @@
   "report-edit-button": "Edit Grow",
   "report-save-button": "Save Grow",
   "report-save-new-button": "Continue",
-
   "report-form-bockquote-label": "Text in the header image",
   "report-form-bockquote-description": "Appears at the top of the header image of your grow tile",
   "report-form-bockquote-placeholder": "My journey through the wonderful world of cannabis cultivation",
@@ -74,7 +72,6 @@
   "report-form-strains-label": "Strains",
   "report-form-strains-description": "Select all strains or crops of your grow here.",
   "report-form-strains-placeholder": "Select at least 1 strain or crop",
-
   "report-delete-button": "Delete",
   "comment-save-button": "Save comment",
   "profile-save-button": "Save Profile",
@@ -101,5 +98,28 @@
   "user-msg-question-continue": "Do you want to continue?",
   "maintenance_mode": "🚧 Maintenance Mode 🚧",
   "maintenance_message": "We are currently undergoing maintenance",
-  "maintenance_return_time": "We will be back at 9 a.m.! 🥦🚀"
+  "maintenance_return_time": "We will be back at 9 a.m.! 🥦🚀",
+  "supporter-modal-title": "Support GrowAGram",
+  "supporter-modal-subtitle": "Help us continue building a great platform for cannabis growers",
+  "supporter-modal-description": "GrowAGram is a community-driven platform that relies on supporters like you to keep growing. By becoming a supporter, you help us maintain and improve the platform for everyone.",
+  "supporter-modal-close": "Maybe later",
+  "supporter-modal-dismiss": "Don't show again",
+  "supporter-payment-monthly": "Monthly",
+  "supporter-payment-yearly": "Yearly",
+  "supporter-level-basic-title": "Standard Membership 🌱",
+  "supporter-level-basic-price": "€3 / month",
+  "supporter-level-basic-yearlyPrice": "€36 billed yearly - save 14%",
+  "supporter-level-basic-description": "Join the group! (Note: this is the lowest price that Steady allows.)",
+  "supporter-level-basic-button": "BECOME A MEMBER 🌱",
+  "supporter-level-premium-title": "Supporter Membership 🤝",
+  "supporter-level-premium-price": "€4.20 / month",
+  "supporter-level-premium-yearlyPrice": "€50.40 billed yearly - save 16%",
+  "supporter-level-premium-description": "Thank you very much for your support and trust!",
+  "supporter-level-premium-button": "SUPPORT DJANGO 🤝",
+  "supporter-level-pro-title": "Hoodie Patron Package 🤑",
+  "supporter-level-pro-price": "€7.50 / month",
+  "supporter-level-pro-yearlyPrice": "€90 billed yearly - save 21%",
+  "supporter-level-pro-description": "For this package, you will receive a GrowAGram hoodie in the color and size of your choice!",
+  "supporter-level-pro-button": "SUPPORT THE PROJECT 🤑",
+  "supporter-modal-follow": "Follow us on Twitter"
 }

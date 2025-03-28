@@ -1,0 +1,493 @@
+import {
+  Box,
+  Button,
+  Checkbox,
+  createStyles,
+  Group,
+  Image,
+  Modal,
+  rem,
+  SegmentedControl,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import { env } from "~/env.mjs";
+
+import React, { useEffect, useState } from "react";
+
+import { useTranslation } from "next-i18next";
+
+const useStyles = createStyles((theme) => ({
+  supporterLevel: {
+    padding: theme.spacing.xs, // Reduced padding
+    borderRadius: theme.radius.md,
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[6]
+        : theme.colors.gray[0],
+    border: `${rem(1)} solid ${
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[4]
+        : theme.colors.gray[3]
+    }`,
+    transition: "transform 200ms ease, box-shadow 200ms ease",
+    "&:hover": {
+      transform: "scale(1.02)",
+      boxShadow: theme.shadows.md,
+    },
+    display: "flex",
+    flexDirection: "column",
+    height: "100%", // Make all cards the same height
+  },
+  title: {
+    fontFamily: `"Grandstander", sans-serif`,
+    fontSize: rem(24), // Slightly smaller
+    fontWeight: 900,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.white
+        : theme.colors.growgreen[4],
+
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(20), // Even smaller on mobile
+    },
+  },
+  subtitle: {
+    fontSize: rem(18),
+    fontWeight: 500,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.gray[3]
+        : theme.colors.dark[6],
+  },
+  price: {
+    fontSize: rem(16),
+    fontWeight: 700,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.growgreen[3]
+        : theme.colors.growgreen[7],
+    whiteSpace: "nowrap", // Prevent text wrapping
+    overflow: "visible", // Show the full text
+  },
+  priceInfo: {
+    fontSize: rem(14),
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.gray[5]
+        : theme.colors.gray[6],
+  },
+  description: {
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.gray[4]
+        : theme.colors.dark[3],
+    lineHeight: 1.5,
+  },
+  button: {
+    fontWeight: 700,
+  },
+  packageImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: theme.radius.sm,
+    position: "relative",
+    zIndex: 1,
+  },
+  packageContent: {
+    position: "relative",
+    zIndex: 2,
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing.sm, // Reduced gap
+    flex: 1, // Take remaining space
+  },
+  packageHeader: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing.xs,
+    marginBottom: theme.spacing.xs, // Reduced margin
+  },
+  priceContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    width: "auto",
+    maxWidth: rem(250),
+    position: "relative", // Ensure proper stacking
+    zIndex: 3, // Even higher z-index to ensure visibility
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? `${theme.colors.dark[6]}99` // Semi-transparent background
+        : `${theme.colors.gray[0]}99`,
+    borderRadius: theme.radius.sm,
+    // padding: `${rem(4)} ${rem(8)}`, // Add some padding
+    alignSelf: "start", // Changed to flex-end to align to the right
+  },
+  imageContainer: {
+    position: "relative",
+    width: "100%",
+    height: "auto", // Ensure the container height matches the image
+    paddingTop: 0, // Remove padding to avoid extra height
+    overflow: "hidden",
+    marginBottom: theme.spacing.xs, // Adjust spacing as needed
+  },
+  imageWrapper: {
+    position: "relative", // Changed from absolute to relative to match the container height
+    width: "100%",
+    height: "100%", // Ensure the wrapper height matches the container
+  },
+  titleSection: {
+    textAlign: "center",
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+    borderRadius: theme.radius.md,
+    background:
+      theme.colorScheme === "dark"
+        ? `linear-gradient(135deg, ${theme.colors.dark[5]}, ${theme.colors.dark[7]})`
+        : `linear-gradient(135deg, ${theme.colors.growgreen[0]}, ${theme.colors.growgreen[1]})`,
+    boxShadow: theme.colorScheme === "dark" ? "none" : theme.shadows.sm,
+  },
+
+  mainTitle: {
+    fontFamily: `"Grandstander", sans-serif`,
+    fontSize: rem(32),
+    fontWeight: 900,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.growgreen[3]
+        : theme.colors.growgreen[7],
+    margin: 0,
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(28),
+    },
+    position: "relative",
+    display: "inline-block",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      bottom: -8,
+      left: "25%",
+      width: "50%",
+      height: 3,
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.growgreen[5]
+          : theme.colors.growgreen[5],
+      borderRadius: theme.radius.xl,
+    },
+  },
+
+  subtitleText: {
+    fontSize: rem(20),
+    fontWeight: 600,
+    marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    color:
+      theme.colorScheme === "dark" ? theme.white : theme.colors.dark[7],
+    [theme.fn.smallerThan("sm")]: {
+      fontSize: rem(18),
+    },
+  },
+
+  descriptionText: {
+    fontSize: rem(16),
+    lineHeight: 1.6,
+    marginTop: theme.spacing.md,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.gray[3]
+        : theme.colors.gray[7],
+    maxWidth: "800px",
+    margin: "0 auto",
+  },
+
+  twitterLink: {
+    display: "inline-flex",
+    alignItems: "center",
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.blue[4]
+        : theme.colors.blue[8],
+    textDecoration: "none",
+    fontWeight: 600,
+    transition: "color 200ms ease, transform 200ms ease",
+    marginTop: theme.spacing.sm,
+
+    "&:hover": {
+      color:
+        theme.colorScheme === "dark"
+          ? theme.colors.blue[3]
+          : theme.colors.blue[7],
+      transform: "translateY(-2px)",
+    },
+
+    "& svg": {
+      marginRight: theme.spacing.xs,
+    },
+  },
+}));
+
+interface SupporterWelcomeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function SupporterWelcomeModal({
+  isOpen,
+  onClose,
+}: SupporterWelcomeModalProps) {
+  const { t } = useTranslation("common");
+  const { classes } = useStyles();
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [isMonthly, setIsMonthly] = useState(true);
+
+  const handleClose = () => {
+    const currentTime = Date.now();
+
+    // Set next show time based on checkbox status
+    if (dontShowAgain) {
+      // If "Don't show again" is checked, set next show time to one week later
+      const oneWeekLater = currentTime + 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+      localStorage.setItem(
+        "supporterModalNextShow",
+        oneWeekLater.toString()
+      );
+    } else {
+      // Otherwise, set next show time to 24 hours later
+      const oneDayLater = currentTime + 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+      localStorage.setItem(
+        "supporterModalNextShow",
+        oneDayLater.toString()
+      );
+    }
+
+    // Always update the last shown timestamp
+    localStorage.setItem(
+      "supporterModalLastShown",
+      currentTime.toString()
+    );
+
+    onClose();
+  };
+
+  const openSteady = () => {
+    window.open(env.NEXT_PUBLIC_STEADY_URL, "_blank");
+    handleClose();
+  };
+
+  useEffect(() => {
+    // Reset states when modal opens
+    if (isOpen) {
+      setDontShowAgain(false);
+      setIsMonthly(true);
+    }
+  }, [isOpen]);
+
+  // Package details from the Membership.tsx file
+  const packages = [
+    {
+      id: "basic",
+      image: "https://ext.same-assets.com/373177671/3526344742.jpeg",
+      titleKey: "supporter-level-basic-title",
+      priceKey: "supporter-level-basic-price",
+      yearlyPriceKey: "supporter-level-basic-yearlyPrice",
+      descriptionKey: "supporter-level-basic-description",
+      buttonKey: "supporter-level-basic-button",
+    },
+    {
+      id: "premium",
+      image: "https://ext.same-assets.com/373177671/218753407.jpeg",
+      titleKey: "supporter-level-premium-title",
+      priceKey: "supporter-level-premium-price",
+      yearlyPriceKey: "supporter-level-premium-yearlyPrice",
+      descriptionKey: "supporter-level-premium-description",
+      buttonKey: "supporter-level-premium-button",
+    },
+    {
+      id: "pro",
+      image: "https://ext.same-assets.com/373177671/1883469280.jpeg",
+      titleKey: "supporter-level-pro-title",
+      priceKey: "supporter-level-pro-price",
+      yearlyPriceKey: "supporter-level-pro-yearlyPrice",
+      descriptionKey: "supporter-level-pro-description",
+      buttonKey: "supporter-level-pro-button",
+    },
+  ];
+
+  // Helper function to safely extract the yearly price and discount parts
+  const extractYearlyPriceParts = (fullText: string) => {
+    if (!fullText || fullText.indexOf(" - ") === -1) {
+      // If the format is not as expected, return the whole string as price
+      return {
+        price: fullText || "",
+        discount: "",
+      };
+    }
+
+    const parts = fullText.split(" - ");
+    return {
+      price: parts[0],
+      discount: parts[1],
+    };
+  };
+
+  return (
+    <Modal
+      withCloseButton={false}
+      opened={isOpen}
+      onClose={handleClose}
+      title=""
+      size="xl"
+      centered
+    >
+      <Stack spacing="md">
+        {/* Enhanced Title and subtitle section */}
+        <Box className={classes.titleSection}>
+          <Title order={1} className={classes.mainTitle}>
+            {t("supporter-modal-title")}
+          </Title>
+          <Text className={classes.subtitleText}>
+            {t("supporter-modal-subtitle")}
+          </Text>
+          <Text className={classes.descriptionText}>
+            {t("supporter-modal-description")}
+          </Text>
+
+          {/* Twitter link */}
+          <Box mt="md">
+            <a
+              href="https://twitter.com/GrowaGram"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classes.twitterLink}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                style={{ marginRight: "8px" }}
+              >
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              {t("supporter-modal-follow")} @GrowaGram
+            </a>
+          </Box>
+        </Box>
+
+        <Group position="center" mt="md">
+          <SegmentedControl
+            value={isMonthly ? "monthly" : "yearly"}
+            onChange={(value) => setIsMonthly(value === "monthly")}
+            data={[
+              {
+                label: t("supporter-payment-monthly"),
+                value: "monthly",
+              },
+              {
+                label: t("supporter-payment-yearly"),
+                value: "yearly",
+              },
+            ]}
+          />
+        </Group>
+
+        {/* Packages section - Refactored */}
+        <Box my="md">
+          <Box
+            sx={(theme) => ({
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: theme.spacing.md,
+              [theme.fn.smallerThan("md")]: {
+                gridTemplateColumns: "repeat(2, 1fr)",
+              },
+              [theme.fn.smallerThan("xs")]: {
+                gridTemplateColumns: "1fr",
+              },
+            })}
+          >
+            {packages.map((pkg) => {
+              // Pre-process the translations to avoid layout shifts
+              const title = t(pkg.titleKey);
+              const monthlyPrice = t(pkg.priceKey);
+              const yearlyPriceText = t(pkg.yearlyPriceKey);
+              const { price: yearlyPrice, discount: yearlyDiscount } =
+                extractYearlyPriceParts(yearlyPriceText);
+              const description = t(pkg.descriptionKey);
+              const buttonText = t(pkg.buttonKey);
+
+              return (
+                <Box key={pkg.id} className={classes.supporterLevel}>
+                  {/* Image with 4:3 aspect ratio */}
+                  <Box className={classes.imageContainer}>
+                    <Box className={classes.imageWrapper}>
+                      <Image
+                        src={pkg.image}
+                        alt={title}
+                        className={classes.packageImage}
+                      />
+                    </Box>
+                  </Box>
+
+                  {/* Content container */}
+                  <Box className={classes.packageContent}>
+                    {/* Package title and price */}
+                    <Box className={classes.packageHeader}>
+                      <Text className={classes.title}>{title}</Text>
+                      <Box className={classes.priceContainer}>
+                        <Text className={classes.price}>
+                          {isMonthly ? monthlyPrice : yearlyPrice}
+                        </Text>
+                        {!isMonthly && yearlyDiscount && (
+                          <Text size="xs" color="dimmed">
+                            {yearlyDiscount}
+                          </Text>
+                        )}
+                      </Box>
+                    </Box>
+
+                    <Text
+                      className={classes.description}
+                      sx={{ flex: 1 }}
+                    >
+                      {description}
+                    </Text>
+
+                    <Button
+                      className={classes.button}
+                      variant="filled"
+                      color="growgreen"
+                      onClick={openSteady}
+                      fullWidth
+                      mt="auto" // Push to bottom of flex container
+                    >
+                      {buttonText}
+                    </Button>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
+
+        <Group position="apart">
+          <Checkbox
+            checked={dontShowAgain}
+            onChange={(event) =>
+              setDontShowAgain(event.currentTarget.checked)
+            }
+            label={t("supporter-modal-dismiss")}
+          />
+          <Button onClick={handleClose} variant="subtle">
+            {t("supporter-modal-close")}
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  );
+}
