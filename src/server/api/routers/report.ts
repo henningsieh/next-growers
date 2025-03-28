@@ -322,6 +322,10 @@ export const reportRouter = createTRPCRouter({
                 },
               },
             ],
+            // Ensure reports have at least one post
+            posts: {
+              some: {}, // This filters for reports that have at least one post
+            },
             // strains: {
             //   //FIXME: workaround for hiding "unready" (without strains) reports
             //   some: {
@@ -469,6 +473,10 @@ export const reportRouter = createTRPCRouter({
                   },
                 },
               ],
+              // Also add the same filter to the count query
+              posts: {
+                some: {}, // This ensures we only count reports with at least one post
+              },
             },
           });
 
