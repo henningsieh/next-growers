@@ -12,11 +12,15 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { env } from "~/env.mjs";
+import {
+  SUBSCRIPTION_PERIODS,
+  type SubscriptionPeriod,
+} from "~/contexts/subscription";
 
 import React, { useEffect, useState } from "react";
 
 import { useTranslation } from "next-i18next";
+import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({
   supporterLevel: {
@@ -87,6 +91,7 @@ const useStyles = createStyles((theme) => ({
   },
   button: {
     fontWeight: 700,
+    cursor: "pointer",
   },
   packageImage: {
     width: "100%",
@@ -146,9 +151,9 @@ const useStyles = createStyles((theme) => ({
     borderRadius: theme.radius.md,
     background:
       theme.colorScheme === "dark"
-        ? `linear-gradient(135deg, ${theme.colors.dark[5]}, ${theme.colors.dark[7]})`
-        : `linear-gradient(135deg, ${theme.colors.growgreen[0]}, ${theme.colors.growgreen[1]})`,
-    boxShadow: theme.colorScheme === "dark" ? "none" : theme.shadows.sm,
+        ? `linear-gradient(135deg, ${theme.colors.growgreen[7]}, ${theme.colors.growgreen[8]})`
+        : `linear-gradient(135deg, ${theme.colors.growgreen[5]}, ${theme.colors.growgreen[7]})`,
+    // boxShadow: theme.colorScheme === "dark" ? "none" : theme.shadows.xl,
   },
 
   mainTitle: {
@@ -158,7 +163,7 @@ const useStyles = createStyles((theme) => ({
     color:
       theme.colorScheme === "dark"
         ? theme.colors.growgreen[3]
-        : theme.colors.growgreen[7],
+        : theme.colors.growgreen[2],
     margin: 0,
     [theme.fn.smallerThan("sm")]: {
       fontSize: rem(28),
@@ -175,7 +180,7 @@ const useStyles = createStyles((theme) => ({
       backgroundColor:
         theme.colorScheme === "dark"
           ? theme.colors.growgreen[5]
-          : theme.colors.growgreen[5],
+          : theme.colors.groworange[5],
       borderRadius: theme.radius.xl,
     },
   },
@@ -186,7 +191,7 @@ const useStyles = createStyles((theme) => ({
     marginTop: theme.spacing.md,
     marginBottom: theme.spacing.md,
     color:
-      theme.colorScheme === "dark" ? theme.white : theme.colors.dark[7],
+      theme.colorScheme === "dark" ? theme.white : theme.colors.gray[2],
     [theme.fn.smallerThan("sm")]: {
       fontSize: rem(18),
     },
@@ -199,7 +204,7 @@ const useStyles = createStyles((theme) => ({
     color:
       theme.colorScheme === "dark"
         ? theme.colors.gray[3]
-        : theme.colors.gray[7],
+        : theme.colors.gray[4],
     maxWidth: "800px",
     margin: "0 auto",
   },
@@ -210,7 +215,7 @@ const useStyles = createStyles((theme) => ({
     color:
       theme.colorScheme === "dark"
         ? theme.colors.blue[4]
-        : theme.colors.blue[8],
+        : theme.colors.blue[6],
     textDecoration: "none",
     fontWeight: 600,
     transition: "color 200ms ease, transform 200ms ease",
@@ -242,7 +247,9 @@ export function SupporterWelcomeModal({
   const { t } = useTranslation("common");
   const { classes } = useStyles();
   const [dontShowAgain, setDontShowAgain] = useState(false);
-  const [isMonthly, setIsMonthly] = useState(true);
+  const [subscriptionPeriod, setSubscriptionPeriod] =
+    useState<SubscriptionPeriod>(SUBSCRIPTION_PERIODS.MONTHLY);
+  const isMonthly = subscriptionPeriod === SUBSCRIPTION_PERIODS.MONTHLY;
 
   const handleClose = () => {
     const currentTime = Date.now();
@@ -273,16 +280,11 @@ export function SupporterWelcomeModal({
     onClose();
   };
 
-  const openSteady = () => {
-    window.open(env.NEXT_PUBLIC_STEADY_URL, "_blank");
-    handleClose();
-  };
-
   useEffect(() => {
     // Reset states when modal opens
     if (isOpen) {
       setDontShowAgain(false);
-      setIsMonthly(true);
+      setSubscriptionPeriod(SUBSCRIPTION_PERIODS.MONTHLY);
     }
   }, [isOpen]);
 
@@ -290,7 +292,9 @@ export function SupporterWelcomeModal({
   const packages = [
     {
       id: "basic",
-      image: "https://ext.same-assets.com/373177671/3526344742.jpeg",
+      image:
+        "https://assets.steadyhq.com/production/plan/96fb5e3b-0fa2-47a1-84db-383cea778889/image/1716644253?auto=format&h=300&w=400&fit=crop&fm=jpg",
+      url: "https://steadyhq.com/de/plans/96fb5e3b-0fa2-47a1-84db-383cea778889/subscribe",
       titleKey: "supporter-level-basic-title",
       priceKey: "supporter-level-basic-price",
       yearlyPriceKey: "supporter-level-basic-yearlyPrice",
@@ -299,7 +303,9 @@ export function SupporterWelcomeModal({
     },
     {
       id: "premium",
-      image: "https://ext.same-assets.com/373177671/218753407.jpeg",
+      image:
+        "https://assets.steadyhq.com/production/plan/a3429e5a-ffc2-4902-8161-184912fddbd6/image/1716645055?auto=format&h=300&w=400&fit=crop&fm=jpg",
+      url: "https://steadyhq.com/de/plans/a3429e5a-ffc2-4902-8161-184912fddbd6/subscribe",
       titleKey: "supporter-level-premium-title",
       priceKey: "supporter-level-premium-price",
       yearlyPriceKey: "supporter-level-premium-yearlyPrice",
@@ -308,7 +314,9 @@ export function SupporterWelcomeModal({
     },
     {
       id: "pro",
-      image: "https://ext.same-assets.com/373177671/1883469280.jpeg",
+      image:
+        "https://assets.steadyhq.com/production/plan/2c5f1c61-7d6b-45b6-ad8f-8f1d006bc828/image/1716702543?auto=format&h=300&w=400&fit=crop&fm=jpg",
+      url: "https://steadyhq.com/de/plans/2c5f1c61-7d6b-45b6-ad8f-8f1d006bc828/subscribe",
       titleKey: "supporter-level-pro-title",
       priceKey: "supporter-level-pro-price",
       yearlyPriceKey: "supporter-level-pro-yearlyPrice",
@@ -336,7 +344,7 @@ export function SupporterWelcomeModal({
 
   return (
     <Modal
-      withCloseButton={false}
+      withCloseButton={true}
       opened={isOpen}
       onClose={handleClose}
       title=""
@@ -381,16 +389,18 @@ export function SupporterWelcomeModal({
 
         <Group position="center" mt="md">
           <SegmentedControl
-            value={isMonthly ? "monthly" : "yearly"}
-            onChange={(value) => setIsMonthly(value === "monthly")}
+            value={subscriptionPeriod}
+            onChange={(value: SubscriptionPeriod) =>
+              setSubscriptionPeriod(value)
+            }
             data={[
               {
                 label: t("supporter-payment-monthly"),
-                value: "monthly",
+                value: SUBSCRIPTION_PERIODS.MONTHLY,
               },
               {
-                label: t("supporter-payment-yearly"),
-                value: "yearly",
+                label: t("supporter-payment-annually"),
+                value: SUBSCRIPTION_PERIODS.YEARLY,
               },
             ]}
           />
@@ -458,16 +468,21 @@ export function SupporterWelcomeModal({
                       {description}
                     </Text>
 
-                    <Button
-                      className={classes.button}
-                      variant="filled"
-                      color="growgreen"
-                      onClick={openSteady}
-                      fullWidth
-                      mt="auto" // Push to bottom of flex container
+                    <Link
+                      href={`${pkg.url}?period=${subscriptionPeriod}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ width: "100%", marginTop: "auto" }}
                     >
-                      {buttonText}
-                    </Button>
+                      <Button
+                        className={classes.button}
+                        variant="filled"
+                        color="growgreen"
+                        fullWidth
+                      >
+                        {buttonText}
+                      </Button>
+                    </Link>
                   </Box>
                 </Box>
               );
