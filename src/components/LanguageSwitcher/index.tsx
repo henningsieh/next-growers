@@ -1,8 +1,8 @@
 import {
   Center,
+  createStyles,
   Group,
   SegmentedControl,
-  useMantineTheme,
 } from "@mantine/core";
 import deFlag from "public/svg/DE.svg";
 import usFlag from "public/svg/US.svg";
@@ -12,12 +12,20 @@ import { useTranslation } from "next-i18next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+const useStyles = createStyles(() => ({
+  flagImage: {
+    width: "1.5rem",
+    height: "1rem",
+    borderRadius: "2px",
+  },
+}));
+
 const LanguageSwitcher: NextPage = () => {
   const router = useRouter();
   const { locale: activeLocale } = router;
   const { t, i18n } = useTranslation(activeLocale);
+  const { classes } = useStyles();
 
-  const theme = useMantineTheme();
   const switchLabel = t("common:app-switchlanguage");
 
   return (
@@ -29,9 +37,9 @@ const LanguageSwitcher: NextPage = () => {
           {
             value: "de",
             label: (
-              <Center p={2}>
+              <Center>
                 <Image
-                  className={"w-6 h-4"}
+                  className={classes.flagImage}
                   src={deFlag as string}
                   alt="German Language Flag"
                 />
@@ -41,9 +49,9 @@ const LanguageSwitcher: NextPage = () => {
           {
             value: "en",
             label: (
-              <Center p={2}>
+              <Center>
                 <Image
-                  className={"w-6 h-4"}
+                  className={classes.flagImage}
                   src={usFlag as string}
                   alt="English Language Flag"
                 />
@@ -51,12 +59,6 @@ const LanguageSwitcher: NextPage = () => {
             ),
           },
         ]}
-        color={theme.colorScheme === "dark" ? "dark.4" : "gray.3"}
-        bg={
-          theme.colorScheme === "dark"
-            ? theme.fn.darken(theme.colors.dark[5], 0.2)
-            : theme.fn.lighten(theme.colors.growgreen[4], 0.7)
-        }
         onChange={() =>
           void router.replace(router.pathname, router.asPath, {
             locale: i18n.language === "de" ? "en" : "de",

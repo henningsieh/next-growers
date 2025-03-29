@@ -43,12 +43,16 @@ const useStyles = createStyles((theme) => ({
         : `linear-gradient(45deg, ${theme.colors.growgreen[4]}, ${theme.colors.growgreen[3]}, ${theme.colors.growgreen[2]})`,
     backgroundSize: "200% auto",
     animation: `${shine} 3s linear infinite, ${pulse} 2s ease-in-out infinite`,
+    boxShadow:
+      theme.colorScheme === "dark"
+        ? `0 0 ${rem(8)} ${theme.colors.growgreen[5]}`
+        : `0 0 ${rem(8)} ${theme.colors.growgreen[3]}`,
     "&:hover": {
       backgroundSize: "200% auto",
       boxShadow:
         theme.colorScheme === "dark"
-          ? `0 0 ${rem(15)} ${theme.colors.growgreen[5]}`
-          : `0 0 ${rem(15)} ${theme.colors.growgreen[3]}`,
+          ? `0 0 ${rem(25)} ${rem(5)} ${theme.colors.growgreen[5]}`
+          : `0 0 ${rem(25)} ${rem(5)} ${theme.colors.growgreen[3]}`,
       transform: "scale(1.03)",
     },
   },
