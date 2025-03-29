@@ -11,7 +11,9 @@ import {
   Stack,
   Text,
   Title,
+  // useMantineTheme,
 } from "@mantine/core";
+import { IconBrandX } from "@tabler/icons-react";
 import {
   SUBSCRIPTION_PERIODS,
   type SubscriptionPeriod,
@@ -147,7 +149,7 @@ const useStyles = createStyles((theme) => ({
   titleSection: {
     textAlign: "center",
     padding: theme.spacing.lg,
-    marginBottom: theme.spacing.md,
+    // marginBottom: theme.spacing.md,
     borderRadius: theme.radius.md,
     background:
       theme.colorScheme === "dark"
@@ -164,7 +166,6 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark"
         ? theme.colors.growgreen[3]
         : theme.colors.growgreen[2],
-    margin: 0,
     [theme.fn.smallerThan("sm")]: {
       fontSize: rem(28),
     },
@@ -218,8 +219,9 @@ const useStyles = createStyles((theme) => ({
         : theme.colors.blue[6],
     textDecoration: "none",
     fontWeight: 600,
+    fontSize: rem(20),
     transition: "color 200ms ease, transform 200ms ease",
-    marginTop: theme.spacing.sm,
+    marginTop: theme.spacing.xs,
 
     "&:hover": {
       color:
@@ -231,6 +233,48 @@ const useStyles = createStyles((theme) => ({
 
     "& svg": {
       marginRight: theme.spacing.xs,
+    },
+  },
+  segmentedControlRoot: {
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[6]
+        : theme.colors.gray[0],
+    border: `1px solid ${
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[4]
+        : theme.colors.gray[3]
+    }`,
+    padding: theme.spacing.xs,
+  },
+
+  segmentedControlItem: {
+    border: "none",
+    "&:hover": {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[4]
+          : theme.colors.gray[2],
+    },
+    "&:not(:first-of-type)": {
+      marginLeft: theme.spacing.xl,
+    },
+  },
+
+  segmentedControlItemActive: {
+    backgroundColor: `${theme.colors.growgreen[5]} !important`,
+    boxShadow: theme.shadows.sm,
+  },
+
+  segmentedControlLabel: {
+    fontSize: theme.fontSizes.sm,
+    fontWeight: 500,
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[0]
+        : theme.colors.gray[7],
+    "&[data-active]": {
+      color: `${theme.white} !important`,
     },
   },
 }));
@@ -250,6 +294,8 @@ export function SupporterWelcomeModal({
   const [subscriptionPeriod, setSubscriptionPeriod] =
     useState<SubscriptionPeriod>(SUBSCRIPTION_PERIODS.MONTHLY);
   const isMonthly = subscriptionPeriod === SUBSCRIPTION_PERIODS.MONTHLY;
+
+  // const theme = useMantineTheme();
 
   const handleClose = () => {
     const currentTime = Date.now();
@@ -350,6 +396,24 @@ export function SupporterWelcomeModal({
       title=""
       size="xl"
       centered
+      styles={(theme) => ({
+        body: {
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[7]
+              : theme.colors.gray[2],
+        },
+        // You can also add other style targets if needed
+        header: {
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[7]
+              : theme.colors.gray[2],
+        },
+        // title: { ... },
+        // close: { ... },
+        // overlay: { ... },
+      })}
     >
       <Stack spacing="md">
         {/* Enhanced Title and subtitle section */}
@@ -372,16 +436,7 @@ export function SupporterWelcomeModal({
               rel="noopener noreferrer"
               className={classes.twitterLink}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                style={{ marginRight: "8px" }}
-              >
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
+              <IconBrandX size={24} />
               {t("supporter-modal-follow")} @GrowaGram
             </a>
           </Box>
@@ -393,6 +448,12 @@ export function SupporterWelcomeModal({
             onChange={(value: SubscriptionPeriod) =>
               setSubscriptionPeriod(value)
             }
+            classNames={{
+              root: classes.segmentedControlRoot,
+              control: classes.segmentedControlItem,
+              controlActive: classes.segmentedControlItemActive,
+              label: classes.segmentedControlLabel,
+            }}
             data={[
               {
                 label: t("supporter-payment-monthly"),
@@ -407,7 +468,7 @@ export function SupporterWelcomeModal({
         </Group>
 
         {/* Packages section - Refactored */}
-        <Box my="md">
+        <Box>
           <Box
             sx={(theme) => ({
               display: "grid",
@@ -498,7 +559,7 @@ export function SupporterWelcomeModal({
             }
             label={t("supporter-modal-dismiss")}
           />
-          <Button onClick={handleClose} variant="subtle">
+          <Button onClick={handleClose} variant="filled">
             {t("supporter-modal-close")}
           </Button>
         </Group>
