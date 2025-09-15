@@ -54,7 +54,7 @@
     "@trpc/next": "^10.45.2",
     "@trpc/react-query": "^10.45.2",
     "@trpc/server": "^10.45.2",
-    "axios": "^1.8.4",
+    "axios": "^1.12.2",
     "cloudinary": "^2.6.0",
     "cors": "^2.8.5",
     "country-flag-icons": "^1.5.18",
