@@ -71,7 +71,7 @@
     "next-connect": "^1.0.0",
     "next-i18next": "^13.3.0",
     "next-sitemap": "^4.2.3",
-    "nodemailer": "^6.10.0",
+    "nodemailer": "^7.0.7",
     "react": "^18.3.1",
     "react-cookie-consent": "^9.0.0",
     "react-dom": "^18.3.1",
