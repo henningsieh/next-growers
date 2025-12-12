@@ -4,8 +4,8 @@ import {
   Group,
   SegmentedControl,
 } from "@mantine/core";
-import deFlag from "public/svg/DE.svg";
-import usFlag from "public/svg/US.svg";
+
+// Use images from the `public/` folder via absolute paths
 
 import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
@@ -40,8 +40,10 @@ const LanguageSwitcher: NextPage = () => {
               <Center>
                 <Image
                   className={classes.flagImage}
-                  src={deFlag as string}
+                  src="/svg/DE.svg"
                   alt="German Language Flag"
+                  width={24}
+                  height={16}
                 />
               </Center>
             ),
@@ -52,8 +54,10 @@ const LanguageSwitcher: NextPage = () => {
               <Center>
                 <Image
                   className={classes.flagImage}
-                  src={usFlag as string}
+                  src="/svg/US.svg"
                   alt="English Language Flag"
+                  width={24}
+                  height={16}
                 />
               </Center>
             ),
