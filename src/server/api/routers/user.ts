@@ -1,6 +1,8 @@
 import { NotificationEvent, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { TwitterApi } from "twitter-api-v2";
 import { z } from "zod";
+import { env } from "~/env.mjs";
 
 import {
   createTRPCRouter,
@@ -519,4 +521,102 @@ export const userRouter = createTRPCRouter({
       }
     }
   }),
+
+  refreshUserImageFromProvider: protectedProcedure.mutation(
+    async ({ ctx }) => {
+      try {
+        // Try Twitter first
+        let account = await ctx.prisma.account.findFirst({
+          where: {
+            userId: ctx.session.user.id,
+            provider: "twitter",
+          },
+        });
+
+        let newImageUrl: string | undefined;
+
+        if (
+          account &&
+          account.oauth_token &&
+          account.oauth_token_secret
+        ) {
+          // Initialize Twitter API client with user tokens
+          const userClient = new TwitterApi({
+            appKey: env.TWITTER_API_KEY,
+            appSecret: env.TWITTER_API_KEY_SECRET,
+            accessToken: account.oauth_token,
+            accessSecret: account.oauth_token_secret,
+          });
+
+          // Fetch user profile
+          const userProfile = await userClient.v2.me({
+            "user.fields": ["profile_image_url"],
+          });
+
+          newImageUrl = userProfile.data.profile_image_url;
+        } else {
+          // Try Google
+          account = await ctx.prisma.account.findFirst({
+            where: {
+              userId: ctx.session.user.id,
+              provider: "google",
+            },
+          });
+
+          if (account && account.access_token) {
+            // Fetch from Google userinfo
+            const response = await fetch(
+              "https://www.googleapis.com/oauth2/v2/userinfo",
+              {
+                headers: {
+                  Authorization: `Bearer ${account.access_token}`,
+                },
+              }
+            );
+
+            if (response.ok) {
+              const userInfo = (await response.json()) as {
+                picture?: string;
+              };
+              newImageUrl = userInfo.picture;
+            }
+          }
+        }
+
+        if (!newImageUrl) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "No linked account found or failed to fetch image",
+          });
+        }
+
+        // Update the user's image in DB
+        await ctx.prisma.user.update({
+          where: {
+            id: ctx.session.user.id,
+          },
+          data: {
+            image: newImageUrl,
+          },
+        });
+
+        return { newImageUrl };
+      } catch (error: unknown) {
+        if (error instanceof TRPCError) {
+          throw error;
+        } else if (error instanceof Error) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: error.message,
+            cause: error,
+          });
+        } else {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "An unknown error occurred",
+          });
+        }
+      }
+    }
+  ),
 });
