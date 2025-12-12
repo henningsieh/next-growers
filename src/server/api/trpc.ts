@@ -6,7 +6,6 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end.
  */
-
 /**
  * 1. CONTEXT
  *
@@ -15,7 +14,6 @@
  * These allow you to access things when processing a request, like the
  * database, the session, etc.
  */
-
 /**
  * 2. INITIALIZATION
  *
