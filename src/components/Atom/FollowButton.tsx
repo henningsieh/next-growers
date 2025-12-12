@@ -9,6 +9,7 @@ import {
 
 import { useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
 
@@ -18,10 +19,10 @@ type FollowButtonProps = {
 
 function FollowButton({ growerId: growerId }: FollowButtonProps) {
   const { data: _session, status: sessionSatus } = useSession();
-  //init translation
-  // const router = useRouter();
-  // const activeLocale = router.locale;
-  const { t } = useTranslation();
+
+  const router = useRouter();
+  const { locale: activeLocale } = router;
+  const { t } = useTranslation(activeLocale);
 
   const trpc = api.useUtils();
 
@@ -73,12 +74,16 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
     // isSuccess: isFollowingUserIsSuccess,
     // isError: isFollowingUserIsError,
     // error: isFollowingUserError,
-  } = api.user.isFollowingUser.useQuery({
-    userId: growerId,
-  });
+  } = api.user.isFollowingUser.useQuery(
+    { userId: growerId },
+    { enabled: sessionSatus === "authenticated" }
+  );
 
   if (sessionSatus === "loading") return null;
-  if (sessionSatus === "authenticated" && !isFollowingUserIsLoading) {
+  // Do not fetch or render the follow button for unauthenticated visitors
+  if (sessionSatus === "unauthenticated") return null;
+
+  if (!isFollowingUserIsLoading) {
     // USER IS AUTHENTICATED AND FOLLOWING DATA IS LOADED
     if (!isFollowingUser) {
       return (
@@ -92,7 +97,7 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
         >
           <Text>
             {/* Follow this Grower */}
-            {t("profile-follow-button")}
+            {t("common:profile-follow-button")}
           </Text>
         </Button>
       );
@@ -108,11 +113,13 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
         >
           <Text>
             {/* Unfollow this Grower */}
-            {t("profile-unfollow-button")}
+            {t("common:profile-unfollow-button")}
           </Text>
         </Button>
       );
     }
   }
+
+  return null;
 }
 export default FollowButton;
