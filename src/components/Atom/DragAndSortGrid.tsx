@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { createStyles, Flex, SimpleGrid } from "@mantine/core";
-import arrayMove from "array-move";
+import { arrayMoveImmutable } from "array-move";
 
 import type { Dispatch, SetStateAction } from "react";
 import { useState } from "react";
@@ -80,7 +80,7 @@ export default function DragAndSortGrid({
   }, []); // Adding an empty dependency array ensures that the effect runs only once, similar to componentDidMount
 
   const onSortEnd = (oldIndex: number, newIndex: number) => {
-    setImages((array) => arrayMove(array, oldIndex, newIndex));
+    setImages((array) => arrayMoveImmutable(array, oldIndex, newIndex));
   };
 
   return (
