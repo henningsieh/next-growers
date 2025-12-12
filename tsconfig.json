@@ -17,7 +17,6 @@
     "incremental": true,
     "noErrorTruncation": true,
     "noUncheckedIndexedAccess": false, // otherwise linter will complain about own theme color shades
-    "baseUrl": ".",
     "plugins": [{ "name": "next" }],
     "paths": {
       "~/*": ["./src/*"]
