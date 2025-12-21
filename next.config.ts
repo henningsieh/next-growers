@@ -1,7 +1,8 @@
-import { env } from "./src/env.mjs";
+import { env } from "./src/env";
 import { withSentryConfig } from "@sentry/nextjs";
 
-/** @type {import("next").NextConfig} */
+import type { NextConfig } from "next";
+
 const config = {
   images: {
     dangerouslyAllowSVG: true,
@@ -62,8 +63,9 @@ const config = {
     defaultLocale: "en",
     locales: ["de", "en"],
   },
-};
-export default withSentryConfig(config, {
+} satisfies NextConfig;
+
+const sentryOptions = {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
@@ -72,6 +74,21 @@ export default withSentryConfig(config, {
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
+
+  // Disable telemetry
+  telemetry: false,
+
+  // Release health check options - increase retries and timeout
+  release: {
+    cleanArtifacts: true,
+    finalize: false, // Don't finalize release to avoid extra API calls
+  },
+
+  // Error handling - make non-critical
+  errorHandler: (err: Error) => {
+    console.warn("⚠️  Sentry upload warning:", err.message);
+    console.warn("Build will continue despite Sentry error...");
+  },
 
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
@@ -96,6 +113,6 @@ export default withSentryConfig(config, {
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
-});
+};
 
-await import("./src/env.mjs");
+export default withSentryConfig(config, sentryOptions);

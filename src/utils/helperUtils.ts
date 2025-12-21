@@ -1,10 +1,9 @@
 import type { AxiosProgressEvent, AxiosResponse } from "axios";
 import axios from "axios";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
-// import { env } from "~/env.mjs";
 import type {
   CloudinaryResonse,
   CloudinarySignature,

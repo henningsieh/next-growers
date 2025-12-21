@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { createStyles, Flex, SimpleGrid } from "@mantine/core";
 import { arrayMoveImmutable } from "array-move";
 

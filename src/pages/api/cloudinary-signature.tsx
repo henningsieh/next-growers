@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 // import type { SignApiOptions } from "cloudinary";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import type { NextApiHandler } from "next";
 import type { NextApiRequest, NextApiResponse } from "next";

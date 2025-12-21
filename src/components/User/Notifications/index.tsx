@@ -79,7 +79,7 @@ const ProtectedNotifications = () => {
         console.error(error);
         // Handle error, e.g., show an error message
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       onSuccess: (_res) => {
         notifications.show(markAllReadMessage);
       },

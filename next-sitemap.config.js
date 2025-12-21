@@ -1,5 +1,5 @@
 /** @type {import('next-sitemap').IConfig} */
-module.exports = {
+const config = {
   siteUrl: process.env.SITE_URL || "https://growagram.com",
   changefreq: "daily",
   priority: 0.7,
@@ -20,15 +20,13 @@ module.exports = {
   // ],
 
   // Default transformation function
-  transform: async (config, path) => {
+  transform: (cfg, path) => {
     return {
       loc: path, // => this will be exported as http(s)://<config.siteUrl>/<path>
-      changefreq: config.changefreq,
-      priority: config.priority,
-      lastmod: config.autoLastmod
-        ? new Date().toISOString()
-        : undefined,
-      alternateRefs: config.alternateRefs ?? [],
+      changefreq: cfg.changefreq,
+      priority: cfg.priority,
+      lastmod: cfg.autoLastmod ? new Date().toISOString() : undefined,
+      alternateRefs: cfg.alternateRefs ?? [],
     };
   },
 
@@ -45,3 +43,5 @@ module.exports = {
     // additionalSitemaps: ["https://growagram.com/sitemap-0.xml"], // doubles the default
   },
 };
+
+module.exports = config;

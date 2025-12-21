@@ -110,12 +110,13 @@ function renderMarkDownToHtml(markdown: string): Promise<string> {
     remark()
       .use(remarkHtml)
       .use(remarkBreaks)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .process(markdown, (err: any, file: any) => {
+      .process(markdown, (err, file) => {
         if (err) {
-          reject(err);
+          reject(new Error(err.message));
+        } else if (file) {
+          resolve(file.toString());
         } else {
-          resolve(String(file));
+          reject(new Error("Unknown error during markdown processing"));
         }
       });
   });
@@ -180,7 +181,7 @@ export function UserComment({
       },
       // If the mutation fails, use the context
       // returned from onMutate to roll back
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       onError: (error, _comment) => {
         notifications.show(defaultErrorMsg(error.message));
         console.error({ error });

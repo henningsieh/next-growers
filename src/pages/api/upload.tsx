@@ -25,19 +25,19 @@ const handler: NextApiHandler = async (req, res) => {
   if (!session) {
     res.status(401).json({ error: "unauthorized" });
   } else {
-    const data = await readUploadedFile(req, false);
-    const files = data.files as unknown as UploadedFiles;
+    const [, files] = await readUploadedFile(req, false);
+    const uploadedFiles = files as unknown as UploadedFiles;
 
-    if (!files.image) {
+    if (!uploadedFiles.image) {
       res.status(400).json({ error: "no files attached" });
       return;
     }
 
     const originalFilename =
-      files.image.originalFilename?.split(".")[0];
-    const localPathToImage = files.image.filepath;
+      uploadedFiles.image.originalFilename?.split(".")[0];
+    const localPathToImage = uploadedFiles.image.filepath;
 
-    if (!!files.image && !Array.isArray(files.image)) {
+    if (!!uploadedFiles.image && !Array.isArray(uploadedFiles.image)) {
       // now handle the case where image is NOT an array
       const now = new Date();
       const year = now.getFullYear();
@@ -98,13 +98,10 @@ const handler: NextApiHandler = async (req, res) => {
   }
 };
 
-const readUploadedFile = (
+const readUploadedFile = async (
   req: NextApiRequest,
   saveLocally?: boolean
-): Promise<{
-  fields: formidable.Fields;
-  files: formidable.Files;
-}> => {
+): Promise<[formidable.Fields, formidable.Files]> => {
   const options: formidable.Options = {
     multiples: true, // Enable parsing of multiple files with the same field name
   };
@@ -117,12 +114,7 @@ const readUploadedFile = (
   options.maxFileSize = 4000 * 1024 * 1024;
   const form = formidable(options);
 
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
+  return form.parse(req);
 };
 
 export default handler;

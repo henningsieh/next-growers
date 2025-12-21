@@ -43,7 +43,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   }, [imageUrl, userName, defaultImageUrl]);
 
   // Refresh image from provider on mount if it's a provider image and for current user
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (
       session?.user.id === userId &&

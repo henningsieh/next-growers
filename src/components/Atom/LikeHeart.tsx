@@ -232,7 +232,6 @@ const LikeHeart = (props: LikeHeartProps) => {
 
     // Call the correct mutation// Call the correct mutation
     if (itemType === "Report") {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       likeReportMutation({ id: itemToLike.id });
     } else if (itemType === "Post") {
       likePostMutation({ id: itemToLike.id });

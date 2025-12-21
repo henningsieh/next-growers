@@ -27,10 +27,10 @@ const handler: NextApiHandler = async (req, res) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  const data = await readUploadedFile(req, false);
-  const ownerId = Array.isArray(data.fields["ownerId"])
-    ? data.fields["ownerId"][0]
-    : data.fields["ownerId"];
+  const [fields, files] = await readUploadedFile(req, false);
+  const ownerId = Array.isArray(fields["ownerId"])
+    ? fields["ownerId"][0]
+    : fields["ownerId"];
 
   if (!ownerId) {
     res.status(400).json({ error: "ownerId is missing" });
@@ -41,15 +41,15 @@ const handler: NextApiHandler = async (req, res) => {
   const imagePublicIds: string[] = [];
   const cloudUrls: string[] = [];
 
-  const files = data.files["images"] as File | File[];
+  const uploadedFiles = files["images"] as File | File[];
 
-  if (!files) {
+  if (!uploadedFiles) {
     res.status(400).json({ error: "no files attached" });
     return;
   }
 
-  if (!Array.isArray(files)) {
-    const file = files;
+  if (!Array.isArray(uploadedFiles)) {
+    const file = uploadedFiles;
     const result = await handleFileUpload(file, ownerId);
 
     imageIds.push(result.id);
@@ -57,7 +57,7 @@ const handler: NextApiHandler = async (req, res) => {
     cloudUrls.push(result.cloudUrl);
   } else {
     await Promise.all(
-      files.map(async (file) => {
+      uploadedFiles.map(async (file) => {
         const result = await handleFileUpload(file, ownerId);
 
         imageIds.push(result.id);
@@ -129,13 +129,10 @@ const handleFileUpload = async (
   return image;
 };
 
-const readUploadedFile = (
+const readUploadedFile = async (
   req: NextApiRequest,
   saveLocally?: boolean
-): Promise<{
-  fields: Fields;
-  files: Files;
-}> => {
+): Promise<[Fields, Files]> => {
   const options: formidable.Options = {
     multiples: true, // Enable parsing of multiple files with the same field name
   };
@@ -148,12 +145,7 @@ const readUploadedFile = (
   options.maxFileSize = 4000 * 1024 * 1024;
   const form = formidable(options);
 
-  return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
-    });
-  });
+  return form.parse(req);
 };
 
 export default handler;

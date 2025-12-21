@@ -266,7 +266,7 @@ const PostComments = ({ growId, updateId }: CommentsProps) => {
       },
       // If the mutation fails, use the context
       // returned from onMutate to roll back
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       onError: (error, _comment) => {
         notifications.show(defaultErrorMsg(error.message));
       },

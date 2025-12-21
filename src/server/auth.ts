@@ -1,5 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import { type GetServerSidePropsContext } from "next";
 import {
@@ -11,7 +11,6 @@ import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 import TwitterProvider from "next-auth/providers/twitter";
 
-// import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 
 /**

@@ -22,7 +22,7 @@ import {
   IconSquarePlus,
   IconTrashFilled,
 } from "@tabler/icons-react";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -83,7 +83,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       console.error("ERROR strains.saveBagSeedToReport.useMutation");
       console.error(tRPCsaveBagSeedToReportError);
       console.error(error);
-      throw tRPCsaveBagSeedToReportError;
+      throw error;
     },
     async onSuccess(_result, _plant) {
       console.debug("SUCCESS strains.saveBagSeedToReport.useMutation");
@@ -240,7 +240,6 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       </tr>
     ));
     setPlantsInGrow(rows);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     plantIdToDelete,
     allPlantsInGrowMemo,

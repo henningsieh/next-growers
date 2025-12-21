@@ -2,7 +2,7 @@ import { NotificationEvent, Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { TwitterApi } from "twitter-api-v2";
 import { z } from "zod";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import {
   createTRPCRouter,

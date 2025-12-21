@@ -17,8 +17,8 @@ import { getFileUploadCloudinaryMaxFileSizeInByte } from "~/utils/helperUtils";
 
 export const httpStatusErrorMsg = (
   message: string,
-  httpStatus?: number | string | undefined,
-  autoClose?: boolean | undefined
+  httpStatus?: number | string,
+  autoClose?: boolean
 ) => ({
   loading: false,
   title: `Error ${httpStatus ? `${String(httpStatus)}` : "500"}`,

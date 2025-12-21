@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import {
   createTRPCRouter,

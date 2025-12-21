@@ -1,0 +1,17 @@
+.DS_Store
+.env*.local
+.eslintrc.json
+.git
+.github
+.gitignore
+.husky
+.idea
+.lintstagedrc.ts
+.next
+.prettierrc
+.vscode
+node_modules
+README.md
+tsconfig.tsbuildinfo
+*.log
+*.dump

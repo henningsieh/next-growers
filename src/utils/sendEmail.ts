@@ -1,7 +1,7 @@
 // utils/sendEmail.ts
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 interface EmailOptions {
   to: string;

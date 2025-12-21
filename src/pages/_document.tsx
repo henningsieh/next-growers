@@ -1,5 +1,5 @@
 import { createGetInitialProps } from "@mantine/next";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import Document, { Head, Html, Main, NextScript } from "next/document";
 

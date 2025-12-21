@@ -8,7 +8,7 @@ import {
   ThemeIcon,
 } from "@mantine/core";
 import { IconBrandInstagram, IconBrandX } from "@tabler/icons-react";
-import { env } from "~/env.mjs";
+import { env } from "~/env";
 
 import { useTranslation } from "next-i18next";
 import Image from "next/image";

@@ -95,7 +95,6 @@ const useStyles = createStyles((theme) => ({
         : "url(/background-light.webp)",
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   link: {
     display: "flex",
     alignItems: "center",
@@ -126,7 +125,6 @@ const useStyles = createStyles((theme) => ({
     }),
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   subLink: {
     width: "100%",
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,

@@ -56,7 +56,7 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
           httpStatusErrorMsg(error.message, error.data?.httpStatus)
         );
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       onSuccess: (result) => {
         console.debug(result);
         notifications.show(unfollowUserSuccessfulMsg);

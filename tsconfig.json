@@ -33,9 +33,9 @@
     "**/*.mjs",
     "next-sitemap.config.js",
     "next-i18next.config.js",
-    "next.config.js",
-    "prisma/seed.js",
-    "src/middleware.js"
+    "next.config.ts",
+    "prisma/seed.ts",
+    "src/middleware.ts"
   ],
   "exclude": ["node_modules"]
 }
