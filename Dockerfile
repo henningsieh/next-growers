@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:lts-alpine AS builder
 
 WORKDIR /app
 
@@ -6,6 +6,9 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 RUN npm ci
+
+# Update npm to latest version
+RUN npm install -g npm@latest
 
 COPY . .
 
