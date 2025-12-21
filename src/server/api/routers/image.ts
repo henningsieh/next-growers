@@ -1,4 +1,4 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { TRPCError } from "@trpc/server";
 import type { SignApiOptions } from "cloudinary";
 import { env } from "~/env.mjs";
