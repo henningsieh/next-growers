@@ -81,12 +81,17 @@ export async function getStaticProps(
 ) {
   // FETCH USER DATA FROM THE DATABASE
   const growerId = context.params?.userId as string;
-  const growerProfileData = (await prisma.user.findUnique({
+  const growerProfileData = await prisma.user.findUnique({
     where: {
       id: growerId,
     },
     select: getUserSelectObject(growerId),
-  })) as UserProfile;
+  });
+
+  // If no user was found for the requested id, return 404
+  if (!growerProfileData) {
+    return { notFound: true };
+  }
 
   // INITIALIZE FOLLOWERS AND FOLLOWINGS ARRAY
   const followers = await Promise.all(
