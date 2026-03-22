@@ -10,8 +10,10 @@ const config: Configuration = {
     `npx prettier --write ${filenames.join(" ")}`,
   ],
 
-  // Prettify only Markdown and JSON files
+  // Prettify Markdown, JSON and YAML files
   "**/*.(md|json)": (filenames: string[]) =>
+    `npx prettier --write ${filenames.join(" ")}`,
+  "**/*.(yml|yaml)": (filenames: string[]) =>
     `npx prettier --write ${filenames.join(" ")}`,
 };
 
