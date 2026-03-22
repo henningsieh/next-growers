@@ -138,6 +138,22 @@
     "typescript": "^5.9.3",
     "yaml": "^2.8.3"
   },
+  "pnpm": {
+    "overrides": {
+      "hono": "^4.12.8",
+      "@hono/node-server": "^1.19.11",
+      "effect": "^3.21.0",
+      "rollup": "^4.60.0"
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "@sentry/cli",
+      "core-js",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
+  },
   "ct3aMetadata": {
     "initVersion": "7.12.1"
   }
