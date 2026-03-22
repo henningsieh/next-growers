@@ -171,7 +171,7 @@ const ProtectedNotifications = () => {
             withBorder
             shadow="md"
             mt="sm"
-            className={"absolute rounded top-9 -right-2 text-right"}
+            className={"absolute rounded-sm top-9 -right-2 text-right"}
             style={{
               // position: "absolute",
               // right: -8,

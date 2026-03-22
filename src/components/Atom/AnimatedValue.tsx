@@ -1,6 +1,19 @@
-import { animated, useSpring } from "@react-spring/web";
+import {
+  animated,
+  type Interpolation,
+  useSpring,
+} from "@react-spring/web";
 
-import React from "react";
+import { type HTMLAttributes, type ReactNode } from "react";
+
+type AnimatedSpanProps = Omit<
+  HTMLAttributes<HTMLSpanElement>,
+  "children"
+> & {
+  children?: Interpolation<number, string> | ReactNode;
+};
+
+const AnimatedSpan = animated.span as React.FC<AnimatedSpanProps>;
 
 interface AnimatedValueProps {
   value: number;
@@ -18,9 +31,9 @@ const AnimatedValue: React.FC<AnimatedValueProps> = ({
   });
 
   return (
-    <animated.span>
+    <AnimatedSpan>
       {props.number.to((n: number) => n.toFixed(0))}
-    </animated.span>
+    </AnimatedSpan>
   );
 };
 

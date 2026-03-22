@@ -24,7 +24,13 @@ import {
 } from "@tabler/icons-react";
 import { env } from "~/env";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  type JSX,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";

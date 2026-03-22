@@ -119,7 +119,7 @@ export default function SessionPanel() {
                 p={0}
               >
                 <Image
-                  className="rounded-sm"
+                  className="rounded-xs"
                   height={32}
                   width={32}
                   src={

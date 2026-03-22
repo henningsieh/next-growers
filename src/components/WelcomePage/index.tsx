@@ -151,7 +151,7 @@ export default function WelcomePage({
               <Button
                 variant="default"
                 className="text-lg uppercase cursor-default h-12 w-72 
-              bg-gradient-to-r transition duration-300 ease-in-out 
+              bg-linear-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
               >
@@ -172,7 +172,7 @@ export default function WelcomePage({
                   : open();
               }}
               className="text-lg uppercase cursor-default h-12 w-72 
-              bg-gradient-to-r transition duration-1000 ease-in-out 
+              bg-linear-to-r transition duration-1000 ease-in-out 
               from-teal-700  via-green-600  to-emerald-800 
               hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
             >
@@ -209,7 +209,7 @@ export default function WelcomePage({
               <Button
                 variant="default"
                 className="text-lg uppercase cursor-default h-12 w-72 
-              bg-gradient-to-r transition duration-300 ease-in-out 
+              bg-linear-to-r transition duration-300 ease-in-out 
               from-orange-600 via-pink-600 to-red-500 text-white
               hover:from-orange-700 hover:via-pink-700 hover:to-red-600"
               >
@@ -231,7 +231,7 @@ export default function WelcomePage({
                   : open();
               }}
               className="text-lg uppercase cursor-default h-12 w-72 
-              bg-gradient-to-r transition duration-1000 ease-in-out 
+              bg-linear-to-r transition duration-1000 ease-in-out 
               from-teal-700  via-green-600  to-emerald-800 
               hover:from-teal-800 hover:via-green-700 hover:to-emerald-700"
             >

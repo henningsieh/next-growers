@@ -1,5 +1,4 @@
 import nextConfig from "eslint-config-next";
-import tseslint from "typescript-eslint";
 
 const eslintConfig = [
   {
@@ -14,10 +13,6 @@ const eslintConfig = [
     ],
   },
   ...nextConfig,
-  ...tseslint.configs.recommended.map((config) => ({
-    ...config,
-    files: ["**/*.ts", "**/*.tsx"],
-  })),
   {
     files: ["**/*.ts", "**/*.tsx"],
     rules: {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const isoString = "2023-05-19T18:36:19.568Z";
 
 // Format: May 19, 2023 (en-US)

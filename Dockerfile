@@ -5,17 +5,17 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
-# Update npm to latest version
-RUN npm install -g npm@latest
+# Optional: Update pnpm to latest version
+RUN corepack prepare pnpm@latest --activate
 
 COPY . .
 
-RUN npx prisma generate
+RUN pnpm prisma generate
 
 # Build the application
-RUN npm run build
+RUN pnpm run build
 
 # Production image
 FROM node:20-alpine AS runner

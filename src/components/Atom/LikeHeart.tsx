@@ -308,7 +308,7 @@ const LikeHeart = (props: LikeHeartProps) => {
               {(transitionStyles) => (
                 <Paper
                   withBorder
-                  className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded text-right`}
+                  className={`absolute bottom-full right-0 z-50 m-0 p-0 -pr-1 mb-1 w-max rounded-sm text-right`}
                   style={{ ...transitionStyles }}
                 >
                   {itemLikes &&

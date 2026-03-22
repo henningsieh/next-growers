@@ -26,6 +26,7 @@ import {
   IconLock,
   IconMail,
   IconServer2,
+  type TablerIcon,
 } from "@tabler/icons-react";
 
 import Link from "next/link";
@@ -79,8 +80,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface FeatureProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  icon: React.FC<any>;
+  icon: TablerIcon;
   title: React.ReactNode;
   description: React.ReactNode;
   href?: string;

@@ -38,7 +38,7 @@ import {
   IconUserEdit,
 } from "@tabler/icons-react";
 
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 
 import type {
   GetStaticPaths,
