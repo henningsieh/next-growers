@@ -2,13 +2,14 @@ FROM node:lts-alpine AS builder
 
 WORKDIR /app
 
+# Enable pnpm FIRST via corepack
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
+
 COPY package*.json ./
+COPY pnpm-lock.yaml ./
 COPY prisma ./prisma/
 
 RUN pnpm install --frozen-lockfile
-
-# Optional: Update pnpm to latest version
-RUN corepack prepare pnpm@latest --activate
 
 COPY . .
 
