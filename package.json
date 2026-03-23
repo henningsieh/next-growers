@@ -115,7 +115,7 @@
     "@types/eslint__eslintrc": "^2.1.2",
     "@types/formidable": "^3.5.0",
     "@types/html-to-text": "^9.0.4",
-    "@types/multer": "^1.4.12",
+    "@types/multer": "^2.1.0",
     "@types/node": "^22.19.15",
     "@types/nodemailer": "^6.4.23",
     "@types/react": "^19.2.14",
