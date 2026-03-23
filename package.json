@@ -49,7 +49,7 @@
     "@tabler/icons-react": "^3.40.0",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/react-query": "^4.43.0",
-    "@tiptap/extension-bullet-list": "^2.27.2",
+    "@tiptap/extension-bullet-list": "^3.20.4",
     "@tiptap/extension-highlight": "^2.27.2",
     "@tiptap/extension-link": "^2.27.2",
     "@tiptap/extension-list-item": "^2.27.2",
