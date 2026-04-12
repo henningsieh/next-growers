@@ -65,7 +65,7 @@
     "@trpc/react-query": "^10.45.4",
     "@trpc/server": "^10.45.4",
     "array-move": "^4.0.0",
-    "axios": "^1.13.6",
+    "axios": "^1.15.0",
     "cloudinary": "^2.9.0",
     "cors": "^2.8.6",
     "country-flag-icons": "^1.6.15",
