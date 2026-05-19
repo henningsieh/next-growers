@@ -21,6 +21,9 @@ RUN pnpm run build
 # Production image
 FROM node:20-alpine AS runner
 
+# Install curl for Coolify healthchecks (avoids wget fallback warnings)
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 ENV NODE_ENV=production
