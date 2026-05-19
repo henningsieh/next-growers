@@ -149,9 +149,7 @@
       "effect": "^3.21.0",
       "rollup": "^4.60.0",
       "import-in-the-middle": "^3.0.1",
-      "require-in-the-middle": "^8.0.1",
-      "@opentelemetry/instrumentation": "^0.57.2",
-      "@opentelemetry/api-logs": "^0.57.2"
+      "require-in-the-middle": "^8.0.1"
     },
     "onlyBuiltDependencies": [
       "@prisma/engines",
