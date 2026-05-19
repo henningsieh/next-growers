@@ -5,6 +5,7 @@ import type { NextConfig } from "next";
 
 const config = {
   images: {
+    qualities: [75, 80, 90, 100],
     dangerouslyAllowSVG: true,
     remotePatterns: [
       {
@@ -63,6 +64,9 @@ const config = {
     defaultLocale: "en",
     locales: ["de", "en"],
   },
+  // Suppress "Webpack is configured while Turbopack is not" warning
+  // caused by withSentryConfig injecting webpack plugins
+  turbopack: {},
 } satisfies NextConfig;
 
 const sentryOptions = {
@@ -115,4 +119,9 @@ const sentryOptions = {
   automaticVercelMonitors: true,
 };
 
-export default withSentryConfig(config, sentryOptions);
+// Sentry's withSentryConfig injects a webpack plugin which triggers a
+// "Webpack configured, Turbopack is not" warning when running `next dev --turbo`.
+// Source map uploads and Sentry build plugins are only needed in production anyway.
+const isDev = process.env.NODE_ENV === "development";
+
+export default isDev ? config : withSentryConfig(config, sentryOptions);

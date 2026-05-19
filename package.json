@@ -78,6 +78,7 @@
     "html-entities": "^2.6.0",
     "html-to-text": "^9.0.5",
     "i18next": "^22.5.1",
+    "import-in-the-middle": "^3.0.1",
     "mdast-util-to-hast": "^13.2.1",
     "next": "^15.5.14",
     "next-auth": "^4.24.13",
@@ -100,6 +101,7 @@
     "remark-breaks": "^4.0.0",
     "remark-html": "^16.0.1",
     "remark-parse": "^11.0.0",
+    "require-in-the-middle": "^8.0.1",
     "sharp": "^0.34.5",
     "superjson": "^2.2.6",
     "tall": "^8.0.0",
@@ -145,7 +147,9 @@
       "hono": "^4.12.8",
       "@hono/node-server": "^1.19.11",
       "effect": "^3.21.0",
-      "rollup": "^4.60.0"
+      "rollup": "^4.60.0",
+      "import-in-the-middle": "^3.0.1",
+      "require-in-the-middle": "^8.0.1"
     },
     "onlyBuiltDependencies": [
       "@prisma/engines",
