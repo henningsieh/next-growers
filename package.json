@@ -144,7 +144,7 @@
   },
   "pnpm": {
     "overrides": {
-      "hono": "^4.12.8",
+      "hono": "^4.12.21",
       "@hono/node-server": "^1.19.11",
       "effect": "^3.21.0",
       "rollup": "^4.60.0",
