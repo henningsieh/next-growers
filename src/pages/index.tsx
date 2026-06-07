@@ -268,7 +268,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       topLikeReports,
       ...translations,
     },
-    revalidate: 1,
+    revalidate: 1200,
   };
 }
 
