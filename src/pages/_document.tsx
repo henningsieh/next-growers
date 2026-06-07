@@ -9,7 +9,7 @@ export default class _Document extends Document {
 
   render() {
     return (
-      <Html>
+      <Html data-scroll-behavior="smooth">
         <Head>
           <meta
             name="google-site-verification"
