@@ -76,7 +76,7 @@
     "formidable": "^3.5.4",
     "framer-motion": "=7.10.3",
     "html-entities": "^2.6.0",
-    "html-to-text": "^9.0.5",
+    "html-to-text": "^10.0.0",
     "i18next": "^22.5.1",
     "import-in-the-middle": "^3.0.1",
     "mdast-util-to-hast": "^13.2.1",
