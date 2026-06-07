@@ -23,6 +23,7 @@ const eslintConfig = [
           argsIgnorePattern: "^_",
           destructuredArrayIgnorePattern: "^_",
           caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
         },
       ],
       "@typescript-eslint/no-unused-expressions": "warn",
