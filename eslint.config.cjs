@@ -1,5 +1,6 @@
-import nextConfig from "eslint-config-next";
+const nextConfig = require("eslint-config-next");
 
+/** @type {import('eslint').Linter.FlatConfig[]} */
 const eslintConfig = [
   {
     ignores: [
@@ -30,4 +31,4 @@ const eslintConfig = [
   },
 ];
 
-export default eslintConfig;
+module.exports = eslintConfig;

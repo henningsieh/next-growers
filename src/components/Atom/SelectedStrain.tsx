@@ -85,33 +85,6 @@ export default function SelectedStrain({
     }
   );
 
-  // Inside the SelectedStrain component
-  useEffect(() => {
-    if (strainInfosFromSeedfinder) {
-      savePlantToGrowForm.setValues({
-        growId: growid,
-        strainId: strainInfosFromSeedfinder.id,
-        name: strainInfosFromSeedfinder.name,
-        picture_url: strainInfosFromSeedfinder.brinfo.pic,
-        type: strainInfosFromSeedfinder.brinfo.type,
-        cbd: strainInfosFromSeedfinder.brinfo.cbd,
-        description: strainInfosFromSeedfinder.brinfo.descr,
-        flowering_days: strainInfosFromSeedfinder.brinfo.flowering.days,
-        flowering_info: strainInfosFromSeedfinder.brinfo.flowering.info,
-        flowering_automatic:
-          strainInfosFromSeedfinder.brinfo.flowering.auto,
-        seedfinder_ext_url: strainInfosFromSeedfinder.links.info,
-        breederId: strainInfosFromSeedfinder.brinfo.id,
-        breeder_name: strainInfosFromSeedfinder.brinfo.name,
-        breeder_description:
-          strainInfosFromSeedfinder.brinfo.description,
-        breeder_website_url: strainInfosFromSeedfinder.brinfo.link,
-      });
-    }
-    // MantineForm `savePlantToGrowForm` as a dependency lets useEffect freak out!
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [strainInfosFromSeedfinder]);
-
   const savePlantToGrowForm = useForm({
     validate: zodResolver(InputSavePlantToGrow),
     initialValues: {
@@ -161,6 +134,33 @@ export default function SelectedStrain({
         : "",
     },
   });
+
+  // Update form values when strain data loads
+  useEffect(() => {
+    if (strainInfosFromSeedfinder) {
+      savePlantToGrowForm.setValues({
+        growId: growid,
+        strainId: strainInfosFromSeedfinder.id,
+        name: strainInfosFromSeedfinder.name,
+        picture_url: strainInfosFromSeedfinder.brinfo.pic,
+        type: strainInfosFromSeedfinder.brinfo.type,
+        cbd: strainInfosFromSeedfinder.brinfo.cbd,
+        description: strainInfosFromSeedfinder.brinfo.descr,
+        flowering_days: strainInfosFromSeedfinder.brinfo.flowering.days,
+        flowering_info: strainInfosFromSeedfinder.brinfo.flowering.info,
+        flowering_automatic:
+          strainInfosFromSeedfinder.brinfo.flowering.auto,
+        seedfinder_ext_url: strainInfosFromSeedfinder.links.info,
+        breederId: strainInfosFromSeedfinder.brinfo.id,
+        breeder_name: strainInfosFromSeedfinder.brinfo.name,
+        breeder_description:
+          strainInfosFromSeedfinder.brinfo.description,
+        breeder_website_url: strainInfosFromSeedfinder.brinfo.link,
+      });
+    }
+    // MantineForm `savePlantToGrowForm` as a dependency lets useEffect freak out!
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [strainInfosFromSeedfinder]);
 
   const handleErrors = (errors: typeof savePlantToGrowForm.errors) => {
     Object.keys(errors).forEach((key) => {

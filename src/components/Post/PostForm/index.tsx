@@ -83,12 +83,6 @@ const PostForm = (props: AddPostProps) => {
     })
   );
 
-  // Update "images" form field value, if "imageIds" state changes
-  useEffect(() => {
-    createPostForm.setFieldValue("images", images);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [images]);
-
   // Prepare WISIWIG Editior
   const editor = useEditor({
     extensions: [
@@ -159,9 +153,10 @@ const PostForm = (props: AddPostProps) => {
       },
     });
 
-  if (report == null) return null;
   const currentDate = new Date();
-  const reportCreatedAt = new Date(report.createdAt);
+  const reportCreatedAt = report
+    ? new Date(report.createdAt)
+    : new Date();
 
   reportCreatedAt.setHours(0, 0, 0, 0); // Set time to midnight for calculation
   currentDate.setHours(0, 0, 0, 0); // Set time to midnight for calculation
@@ -176,7 +171,6 @@ const PostForm = (props: AddPostProps) => {
           (1000 * 60 * 60 * 24)
       );
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const createPostForm = useForm({
     validate: zodResolver(InputCreatePostForm(reportCreatedAt)),
     validateInputOnChange: true,
@@ -192,6 +186,14 @@ const PostForm = (props: AddPostProps) => {
       images: images.map(({ id, postOrder }) => ({ id, postOrder })),
     },
   });
+
+  // Update "images" form field value, if "imageIds" state changes
+  useEffect(() => {
+    createPostForm.setFieldValue("images", images);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images]);
+
+  if (report == null) return null;
 
   const growStageSelectData: MantineSelectData = Object.keys(
     GrowStage
