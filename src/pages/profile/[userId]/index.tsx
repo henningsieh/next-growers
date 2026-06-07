@@ -38,7 +38,7 @@ import {
   IconUserEdit,
 } from "@tabler/icons-react";
 
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 
 import type {
   GetStaticPaths,
@@ -462,28 +462,10 @@ const PublicProfile: NextPage<
   const responsiveStatsColumnCount = xs ? 1 : md ? 2 : 4;
 
   const tab = useRouter().query.tab as string | undefined;
-
-  const [activeTab, setActiveTab] = useState<string | undefined>(
-    tab || "grows"
-  );
-
-  // Set the active tab based on the query string
-  useEffect(() => {
-    if (tab) {
-      setActiveTab(tab);
-    }
-  }, [tab]);
-
-  // Set the active tab based on Tab mouse click
-  useEffect(() => {
-    if (activeTab) {
-      setActiveTab(activeTab);
-    }
-  }, [activeTab]);
+  const activeTab = tab || "grows";
 
   const handleTabChange = (value: string | null) => {
     if (value) {
-      setActiveTab(value);
       void router.replace(
         {
           pathname: router.pathname,
