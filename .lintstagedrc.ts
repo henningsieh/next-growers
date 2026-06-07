@@ -14,7 +14,7 @@ const config: Configuration = {
   "**/*.(md|json)": (filenames: string[]) =>
     `npx prettier --write ${filenames.join(" ")}`,
   "**/*.(yml|yaml)": (filenames: string[]) =>
-    `npx prettier --write ${filenames.join(" ")}`,
+    `npx prettier --write ${filenames.filter((f) => !f.endsWith("pnpm-lock.yaml")).join(" ")}`,
 };
 
 export default config;
