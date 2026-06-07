@@ -268,7 +268,10 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       topLikeReports,
       ...translations,
     },
-    revalidate: 1,
+    // Revalidate every 20 minutes to balance freshness with performance.
+    // The topLikeReports query is expensive with nested includes; health checks
+    // every 5s were causing high CPU usage with the previous 1s revalidate.
+    revalidate: 1200,
   };
 }
 
