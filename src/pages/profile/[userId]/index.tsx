@@ -64,10 +64,11 @@ import type {
   IsoReportWithPostsCountFromDb,
   UserProfileWithoutFollow,
 } from "~/types";
-import { Locale, type UserProfile } from "~/types";
+import { Locale } from "~/types";
 
 import { calculateStatsDiffInPercent } from "~/utils/helperUtils";
 import {
+  getMinimalUserSelectObject,
   getUserSelectObject,
   getUserSelectObjectWithoutFollow,
 } from "~/utils/repository/userSelectObject";
@@ -94,32 +95,31 @@ export async function getStaticProps(
   }
 
   // INITIALIZE FOLLOWERS AND FOLLOWINGS ARRAY
-  const followers = await Promise.all(
-    growerProfileData.followers.map(async (follower) => {
-      // fetch each follower data as UserProfile from the database
-      const followerData = await prisma.user.findUnique({
-        where: {
-          id: follower.followerId,
-        },
-        select: getUserSelectObject(follower.followerId),
-      });
+  const followers = (
+    await Promise.all(
+      growerProfileData.followers.map(async (follower) => {
+        return prisma.user.findUnique({
+          where: {
+            id: follower.followerId,
+          },
+          select: getMinimalUserSelectObject(),
+        });
+      })
+    )
+  ).filter((f): f is NonNullable<typeof f> => f != null);
 
-      return followerData as UserProfile;
-    })
-  );
-  const followings = await Promise.all(
-    growerProfileData.following.map(async (following) => {
-      // fetch each following data as UserProfile from the database
-      const followingData = await prisma.user.findUnique({
-        where: {
-          id: following.followingId,
-        },
-        select: getUserSelectObject(following.followingId),
-      });
-
-      return followingData as UserProfile;
-    })
-  );
+  const followings = (
+    await Promise.all(
+      growerProfileData.following.map(async (following) => {
+        return prisma.user.findUnique({
+          where: {
+            id: following.followingId,
+          },
+          select: getMinimalUserSelectObject(),
+        });
+      })
+    )
+  ).filter((f): f is NonNullable<typeof f> => f != null);
 
   // INITIALIZE HISTORICAL USER DATA
   const thirtyDaysAgo = new Date();

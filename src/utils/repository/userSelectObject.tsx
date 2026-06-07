@@ -1,3 +1,12 @@
+/** Minimal select for follower/following list display (name + avatar only) */
+export function getMinimalUserSelectObject() {
+  return {
+    id: true,
+    name: true,
+    image: true,
+  };
+}
+
 export function getUserSelectObject(userId: string) {
   return {
     id: true,

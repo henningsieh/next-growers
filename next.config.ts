@@ -68,6 +68,9 @@ const config = {
   // Suppress "Webpack is configured while Turbopack is not" warning
   // caused by withSentryConfig injecting webpack plugins
   turbopack: {},
+  experimental: {
+    largePageDataBytes: 256 * 1000, // Set threshold to 256 kB
+  },
 } satisfies NextConfig;
 
 const sentryOptions = {
