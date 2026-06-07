@@ -300,8 +300,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0
       '@types/node':
-        specifier: ^25.5.0
-        version: 25.9.0
+        specifier: ^25.9.2
+        version: 25.9.2
       '@types/nodemailer':
         specifier: ^6.4.23
         version: 6.4.23
@@ -358,7 +358,7 @@ importers:
         version: 4.2.2
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@25.9.0)(typescript@5.9.3)
+        version: 10.9.2(@types/node@25.9.2)(typescript@5.9.3)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -2179,9 +2179,6 @@ packages:
 
   '@types/mysql@2.15.27':
     resolution: {integrity: sha512-YfWiV16IY0OeBfBCk8+hXKmdTKrKlwKN1MNKAPBu5JYxLwBEZl7QzeEpGnlZb3VMGJrrGmB84gXiH+ofs/TezA==}
-
-  '@types/node@25.9.0':
-    resolution: {integrity: sha512-AOQwYUNolgy3VosiRqXrACUXTN8nJUtPl7FJXMqZVyxiiCLhQuG3jXKvCS1ALr+Y2OmZhzzLVlYPEqJaiqkaJQ==}
 
   '@types/node@25.9.2':
     resolution: {integrity: sha512-G05zqtJhcDLb8uslf5EjCxXg9G1KQxiV8OS0R26IC//Eoyitzqe8z37I7cqvnZlrlSfgocQRfSn/AHBZJJFyGw==}
@@ -7391,11 +7388,11 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
 
   '@types/debug@4.1.13':
     dependencies:
@@ -7421,7 +7418,7 @@ snapshots:
 
   '@types/express-serve-static-core@5.1.1':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
       '@types/qs': 6.15.0
       '@types/range-parser': 1.2.7
       '@types/send': 1.2.1
@@ -7434,7 +7431,7 @@ snapshots:
 
   '@types/formidable@3.5.0':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
 
   '@types/hast@3.0.4':
     dependencies:
@@ -7474,11 +7471,7 @@ snapshots:
 
   '@types/mysql@2.15.27':
     dependencies:
-      '@types/node': 25.9.0
-
-  '@types/node@25.9.0':
-    dependencies:
-      undici-types: 7.24.6
+      '@types/node': 25.9.2
 
   '@types/node@25.9.2':
     dependencies:
@@ -7486,7 +7479,7 @@ snapshots:
 
   '@types/nodemailer@6.4.23':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
 
   '@types/parse-json@4.0.2': {}
 
@@ -7496,13 +7489,13 @@ snapshots:
 
   '@types/pg@8.11.11':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
       pg-protocol: 1.13.0
       pg-types: 4.1.0
 
   '@types/pg@8.15.6':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
       pg-protocol: 1.13.0
       pg-types: 2.2.0
 
@@ -7524,16 +7517,16 @@ snapshots:
 
   '@types/send@1.2.1':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
 
   '@types/serve-static@2.2.0':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
 
   '@types/tedious@4.0.14':
     dependencies:
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
 
   '@types/unist@3.0.3': {}
 
@@ -10941,14 +10934,14 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
-  ts-node@10.9.2(@types/node@25.9.0)(typescript@5.9.3):
+  ts-node@10.9.2(@types/node@25.9.2)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 25.9.0
+      '@types/node': 25.9.2
       acorn: 8.16.0
       acorn-walk: 8.3.5
       arg: 4.1.3
