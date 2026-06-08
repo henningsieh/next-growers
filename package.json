@@ -43,7 +43,7 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@react-spring/web": "^9.7.5",
-    "@sentry/cli": "^2.58.6",
+    "@sentry/cli": "^3.5.0",
     "@sentry/nextjs": "^10.56.0",
     "@t3-oss/env-nextjs": "^0.13.11",
     "@tabler/icons-react": "^3.44.0",
