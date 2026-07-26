@@ -81,7 +81,7 @@
     "import-in-the-middle": "^3.0.1",
     "mdast-util-to-hast": "^13.2.1",
     "next": "^16.2.7",
-    "next-auth": "^4.24.14",
+    "next-auth": "^4.24.15",
     "next-connect": "^1.0.0",
     "next-i18next": "^13.3.0",
     "next-sitemap": "^4.2.3",
