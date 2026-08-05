@@ -132,7 +132,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.23",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.4",
     "prisma": "^7.8.0",
