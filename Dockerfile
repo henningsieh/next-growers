@@ -9,13 +9,15 @@ FROM node:24.22.1-alpine AS builder
 
 WORKDIR /app
 
-# pnpm kommt aus package.json ("packageManager": "pnpm@10.32.1") – das ist die
+# pnpm kommt aus package.json ("packageManager") – das ist die
 # einzige, massgebliche Vorgabe. Hier steht bewusst KEINE zweite pnpm-Version,
-# damit beide nicht auseinanderlaufen koennen (zuvor: package.json 10.32.1 vs.
-# Dockerfile pnpm@11). corepack loest die Version anhand der kopierten
-# package.json auf.
+# damit beide nicht auseinanderlaufen koennen. corepack loest die Version
+# anhand der kopierten package.json auf.
+# pnpm-workspace.yaml MUSS mit kopiert werden: es enthaelt overrides +
+# allowBuilds + minimumReleaseAge. Ohne sie bricht "pnpm install
+# --frozen-lockfile" mit ERR_PNPM_LOCKFILE_CONFIG_MISMATCH ab.
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY prisma ./prisma/
 RUN corepack enable && node --version && pnpm --version
 
