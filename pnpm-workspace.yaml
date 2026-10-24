@@ -1,0 +1,67 @@
+# pnpm 12 liest overrides + Build-Freigaben nur noch aus dieser Datei
+# (der "pnpm"-Block in package.json wird ignoriert).
+# Ohne "packages"-Feld bleibt dies ein Einzelprojekt (kein Workspace-Verhalten).
+
+# 2 Tage Puffer: nur Pakete installieren, die seit mind. 2880 Minuten
+# (48h) veröffentlicht sind. Ausnahmen via minimumReleaseAgeExclude.
+minimumReleaseAge: 2880
+# Bewusste Ausnahme: Pakete, die wir gerade selbst auf latest gezogen haben
+# (alle jünger als 48h). Versionsgenau gepinnt + prune, damit die Einträge
+# automatisch verschwinden, sobald wir diese Versionen verlassen.
+minimumReleaseAgeExclude:
+  - "@babel/helper-string-parser@7.29.11"
+  - "@babel/parser@7.29.11"
+  - "@babel/types@7.29.11"
+  - "@next/env@16.4.3"
+  - "@next/eslint-plugin-next@16.4.3"
+  - "@next/swc-darwin-arm64@16.4.3"
+  - "@next/swc-darwin-x64@16.4.3"
+  - "@next/swc-linux-arm64-gnu@16.4.3"
+  - "@next/swc-linux-arm64-musl@16.4.3"
+  - "@next/swc-linux-x64-gnu@16.4.3"
+  - "@next/swc-linux-x64-musl@16.4.3"
+  - "@next/swc-win32-arm64-msvc@16.4.3"
+  - "@next/swc-win32-x64-msvc@16.4.3"
+  - "@sentry/browser-utils@11.9.0"
+  - "@sentry/browser@11.9.0"
+  - "@sentry/bundler-plugins@11.9.0"
+  - "@sentry/cloudflare@11.9.0"
+  - "@sentry/feedback@11.9.0"
+  - "@sentry/nextjs@11.9.0"
+  - "@sentry/node@11.9.0"
+  - "@sentry/opentelemetry@11.9.0"
+  - "@sentry/react@11.9.0"
+  - "@sentry/replay-canvas@11.9.0"
+  - "@sentry/replay@11.9.0"
+  - "@sentry/server-runtime-injection@11.9.0"
+  - "@sentry/server-utils@11.9.0"
+  - "@sentry/vercel-edge@11.9.0"
+  - baseline-browser-mapping@2.11.32
+  - dotenv@18.0.9
+  - electron-to-chromium@1.5.464
+  - eslint-config-next@16.4.3
+  - i18next@26.5.10
+  - ignore@7.0.14
+  - next-i18next@16.4.2
+  - next@16.4.3
+  - react-i18next@17.1.8
+minimumReleaseAgeExcludePrune: true
+
+# Aus package.json umgezogen (unverändert übernommen).
+# HINWEIS: hono/@hono/node-server standen hier seit März, sind aber aus
+# dem Graph verschwunden -> gestrichen. import-/require-in-the-middle sind
+# als direkte Deps raus (ungenutzt) -> auch hier gestrichen.
+overrides:
+  effect: ^3.21.0
+  rollup: ^4.60.0
+  "@radix-ui/react-slot": 1.2.5
+
+# Aus package.json umgezogen (onlyBuiltDependencies heisst jetzt allowBuilds).
+# Ohne diese Freigaben bricht "pnpm install" mit ERR_PNPM_IGNORED_BUILDS ab.
+allowBuilds:
+  "@prisma/engines": true
+  "@sentry/cli": true
+  core-js: true
+  prisma: true
+  sharp: true
+  unrs-resolver: true
