@@ -47,7 +47,7 @@ import type {
   NextPage,
 } from "next";
 import { useSession } from "next-auth/react";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";

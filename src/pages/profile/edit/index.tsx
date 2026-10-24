@@ -48,8 +48,8 @@ import type {
 } from "next";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
-import { type SSRConfig, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { type SSRConfig, useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -138,7 +138,7 @@ const ProtectedEditProfile: NextPage = () => {
   const theme = useMantineTheme();
   const pageTitle = t("common:profile-edit-title");
 
-  const { mutate: tRPCsetUsername, isLoading: isLoadingSetUsername } =
+  const { mutate: tRPCsetUsername, isPending: isLoadingSetUsername } =
     api.user.saveOwnUsername.useMutation({
       onError: (error) => {
         // If unique constraint failed on the fields: (`name`)
@@ -165,7 +165,7 @@ const ProtectedEditProfile: NextPage = () => {
       },
     });
 
-  const { mutate: tRPCsetUserImage, isLoading: isLoadingSetUserImage } =
+  const { mutate: tRPCsetUserImage, isPending: isLoadingSetUserImage } =
     api.user.saveOwnUserImage.useMutation({
       onSuccess() {
         notifications.show(setUserimageSuccessfulMsg);

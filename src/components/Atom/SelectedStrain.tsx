@@ -54,7 +54,7 @@ export default function SelectedStrain({
   const trpc = api.useUtils();
   const {
     mutate: tRPCsavePlantToGrow,
-    isLoading: savePlantToGrowIsLoading,
+    isPending: savePlantToGrowIsLoading,
     //isError: savePlantToGrowHasErrors
   } = api.strains.savePlantToGrow.useMutation({
     onMutate: (_plant) => {

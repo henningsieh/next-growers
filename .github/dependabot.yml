@@ -10,7 +10,5 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-      - dependency-name: "next"
-        versions: [">=16"] # Stay on Next.js 15.x
       - dependency-name: "@mantine/*"
-        versions: [">=7"] # Stay on Mantine 6.x
+        versions: [">=7"] # Stay on Mantine 6.x (v7+ needs migration)

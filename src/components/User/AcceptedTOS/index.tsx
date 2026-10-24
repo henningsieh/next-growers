@@ -19,7 +19,7 @@ import { acceptedcurrentTOSMsg, httpStatusErrorMsg } from "~/messages";
 import { useEffect } from "react";
 
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useRouter } from "next/router";
 
 import { Locale } from "~/types";
@@ -58,7 +58,7 @@ function AcceptedTOS() {
   // procedure to accept current TOS
   const {
     mutate: acceptCurrentTOS,
-    isLoading: acceptCurrentTOSIsLoading,
+    isPending: acceptCurrentTOSIsLoading,
     isSuccess: acceptCurrentTOSIsLoaded,
   } = api.user.acceptCurrentTOS.useMutation({
     onError: (error) => {

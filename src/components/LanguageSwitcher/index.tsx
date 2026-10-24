@@ -8,7 +8,7 @@ import {
 // Use images from the `public/` folder via absolute paths
 
 import type { NextPage } from "next";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Image from "next/image";
 import { useRouter } from "next/router";
 

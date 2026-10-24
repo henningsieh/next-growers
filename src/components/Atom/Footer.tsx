@@ -10,7 +10,7 @@ import {
 import { IconBrandInstagram, IconBrandX } from "@tabler/icons-react";
 import { env } from "~/env";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";

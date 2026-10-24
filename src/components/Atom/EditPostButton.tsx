@@ -2,7 +2,7 @@ import { Button, createStyles, rem } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconEdit } from "@tabler/icons-react";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Link from "next/link";
 import { useRouter } from "next/router";
 

@@ -1,6 +1,6 @@
 import { Container, Stack, Text, Title } from "@mantine/core";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useRouter } from "next/router";
 
 export default function MaintenancePage() {

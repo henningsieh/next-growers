@@ -8,7 +8,7 @@ import {
 } from "~/messages";
 
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
@@ -27,7 +27,7 @@ function FollowButton({ growerId: growerId }: FollowButtonProps) {
   const trpc = api.useUtils();
 
   // tRPC procedure to follow a user
-  const { mutate: tRPCfollowUser, isLoading: followUserIsLoading } =
+  const { mutate: tRPCfollowUser, isPending: followUserIsLoading } =
     api.user.followUserById.useMutation({
       onError: (error) => {
         // Handle error, show an error message

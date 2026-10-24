@@ -27,7 +27,7 @@ import { defaultErrorMsg, markAllReadMessage } from "~/messages";
 import { useState } from "react";
 
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -182,7 +182,7 @@ const ProtectedNotifications = () => {
             {/* Alle Gelesen Button */}
             {!isLoading &&
               !isError &&
-              notificationsFromDb?.length > 0 && (
+              (notificationsFromDb?.length ?? 0) > 0 && (
                 <Box p={3}>
                   <Group grow spacing="xs">
                     <Button

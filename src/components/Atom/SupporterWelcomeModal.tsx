@@ -21,7 +21,7 @@ import {
 
 import React, { useEffect, useState } from "react";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Link from "next/link";
 
 const useStyles = createStyles((theme) => ({

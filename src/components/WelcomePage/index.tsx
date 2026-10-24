@@ -15,7 +15,7 @@ import {
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Link from "next/link";
 import { useRouter } from "next/router";
 

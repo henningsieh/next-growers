@@ -6,7 +6,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { z } from "zod";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Link from "next/link";
 import { useRouter } from "next/router";
 

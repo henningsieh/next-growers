@@ -1,7 +1,7 @@
 import { appTitle } from "./_document";
 
 import type { GetStaticPropsContext, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Head from "next/head";
 
 //import MaintenancePage from "~/components/MaintenancePage";

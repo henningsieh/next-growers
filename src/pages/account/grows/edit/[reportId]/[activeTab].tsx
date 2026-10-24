@@ -29,8 +29,8 @@ import type {
 } from "next";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -145,6 +145,10 @@ const ProtectedEditReportDetails: NextPage = () => {
         Error {reportError.data?.httpStatus}: {reportError.message}
       </>
     );
+  }
+
+  if (!grow) {
+    return <>Error 404: Grow report was not found.</>;
   }
 
   if (

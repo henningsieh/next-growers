@@ -19,7 +19,7 @@ import { IconLogin2 } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 import { signOut, useSession } from "next-auth/react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";

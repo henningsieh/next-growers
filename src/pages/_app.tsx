@@ -20,7 +20,7 @@ import "~/styles/globals.css";
 
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { appWithTranslation } from "next-i18next";
+import { appWithTranslation } from "next-i18next/pages";
 import type { AppType } from "next/app";
 import { useRouter } from "next/router";
 

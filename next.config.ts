@@ -1,6 +1,6 @@
 import "./sentry.build.config.js";
 import { env } from "./src/env";
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 import type { NextConfig } from "next";
 

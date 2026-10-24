@@ -7,7 +7,7 @@ import {
 
 import { Chart } from "react-google-charts";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useRouter } from "next/router";
 
 import { Locale } from "~/types";

@@ -2,7 +2,7 @@ import { Button } from "@mantine/core";
 
 import { FcGoogle } from "react-icons/fc";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useRouter } from "next/router";
 
 export function GoogleButton() {

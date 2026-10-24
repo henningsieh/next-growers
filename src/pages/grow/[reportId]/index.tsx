@@ -15,7 +15,7 @@ import { httpStatusErrorMsg, noPostAtThisDay } from "~/messages";
 import { useState } from "react";
 
 import type { GetServerSideProps, NextPage } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -111,6 +111,10 @@ const PublicReport: NextPage = () => {
         Error {error.data?.httpStatus}: {error.message}
       </>
     );
+  }
+
+  if (!grow) {
+    return <>Error 404: Grow report was not found.</>;
   }
 
   const dateOfnewestPost = grow.posts.reduce((maxDate, post) => {

@@ -32,7 +32,7 @@ import {
   useState,
 } from "react";
 
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useRouter } from "next/router";
 
 import SelectedStrain from "~/components/Atom/SelectedStrain";
@@ -79,7 +79,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   // initialize saveBagSeedToReport function
   const {
     mutate: tRPCsaveBagSeedToReport,
-    isLoading: tRPCsaveBagSeedToReportIsLoading,
+    isPending: tRPCsaveBagSeedToReportIsLoading,
     error: tRPCsaveBagSeedToReportError,
   } = api.strains.saveBagSeedToReport.useMutation({
     onMutate: (_plantId) => {
@@ -101,7 +101,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
   // Initialize deletePlant function
   const {
     mutate: tRPCdeletePlantById,
-    isLoading: tRPCdeletePlantByIdIsLoading,
+    isPending: tRPCdeletePlantByIdIsLoading,
   } = api.strains.deletePlantById.useMutation({
     onMutate: (_plantId) => {
       console.debug("START strains.deletePlantById.useMutation");
@@ -147,7 +147,7 @@ const AddPlant = ({ growId }: AddPlantProps) => {
       automatic: boolean;
     }[] = [];
     if (!allPlantsInGrowAreLoading && !allPlantsInGrowHaveErrors) {
-      allPlantsInGrow.forEach((plant) => {
+      allPlantsInGrow?.forEach((plant) => {
         plants.push({
           id: plant.id,
           plantName: plant.plantName,

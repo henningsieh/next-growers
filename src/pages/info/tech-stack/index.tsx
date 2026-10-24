@@ -1,12 +1,12 @@
 import { appTitle } from "~/pages/_document";
 
-// import { useTranslation } from "next-i18next";
+// import { useTranslation } from "next-i18next/pages";
 import type {
   GetStaticProps,
   GetStaticPropsContext,
   NextPage,
 } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Head from "next/head";
 
 // import { useRouter } from "next/router";

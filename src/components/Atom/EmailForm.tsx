@@ -7,7 +7,7 @@ import { IconAt } from "@tabler/icons-react";
 import { useState } from "react";
 
 import { signIn } from "next-auth/react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { useRouter } from "next/router";
 
 import { getEmailaddress } from "~/utils/helperUtils";
