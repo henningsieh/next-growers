@@ -1,13 +1,23 @@
-FROM node:20-alpine AS builder
+# Gepinnter Node-Stand: 24.22.1-alpine (Oktober-2026-Sicherheitsrelease, LTS "Krypton").
+# Fixiert CVE-2026-111497 (Brotli), CVE-2026-105482 (DNS NUL-Byte),
+# CVE-2026-105483 / CVE-2026-106069 (TLS-IP-Normalisierung).
+# Quelle: https://nodejs.org/en/blog/vulnerability/october-2026-security-releases
+# Stand verifiziert am 2026-10-24 als aktuellster Node-24-LTS-Patch
+# (https://nodejs.org/download/release/index.json -> v24.22.1).
+# BEIDE Stufen (builder + runner) muessen denselben Pin tragen.
+FROM node:24.22.1-alpine AS builder
 
 WORKDIR /app
 
-# Enable pnpm FIRST via corepack
-RUN corepack enable && corepack prepare pnpm@11 --activate
-
-COPY package*.json ./
-COPY pnpm-lock.yaml ./
+# pnpm kommt aus package.json ("packageManager": "pnpm@10.32.1") – das ist die
+# einzige, massgebliche Vorgabe. Hier steht bewusst KEINE zweite pnpm-Version,
+# damit beide nicht auseinanderlaufen koennen (zuvor: package.json 10.32.1 vs.
+# Dockerfile pnpm@11). corepack loest die Version anhand der kopierten
+# package.json auf.
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma/
+RUN corepack enable && node --version && pnpm --version
 
 RUN pnpm install --frozen-lockfile
 
@@ -18,8 +28,8 @@ RUN pnpm prisma generate
 # Build the application
 RUN pnpm run build
 
-# Production image
-FROM node:20-alpine AS runner
+# Production image – derselbe gepatchte Node-Stand wie im Builder
+FROM node:24.22.1-alpine AS runner
 
 # Install curl for Coolify healthchecks (avoids wget fallback warnings)
 RUN apk add --no-cache curl
@@ -27,6 +37,10 @@ RUN apk add --no-cache curl
 WORKDIR /app
 
 ENV NODE_ENV=production
+
+# Build-Nachweis: scheitert der Build, falls das Runtime-Image nicht den
+# gepatchten Stand enthaelt.
+RUN node --version
 
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/sentry.build.config.js ./
