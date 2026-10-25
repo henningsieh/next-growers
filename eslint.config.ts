@@ -1,7 +1,7 @@
-const nextConfig = require("eslint-config-next");
+import type { Linter } from "eslint";
+import nextConfig from "eslint-config-next";
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
-const eslintConfig = [
+const eslintConfig: Linter.Config[] = [
   {
     ignores: [
       ".next/**",
@@ -32,4 +32,4 @@ const eslintConfig = [
   },
 ];
 
-module.exports = eslintConfig;
+export default eslintConfig;
