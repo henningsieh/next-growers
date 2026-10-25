@@ -1,8 +1,15 @@
-import "./sentry.build.config.js";
+import { registerSentryBuildErrorHandler } from "./sentry.build.config";
 import { env } from "./src/env";
 import { withSentryConfig } from "@sentry/nextjs/config";
 
 import type { NextConfig } from "next";
+
+// next-i18next resolves its config via `createRequire()` (no ESM interop),
+// so it can't auto-discover a `.ts` config. Point it at the TypeScript one.
+// An explicitly set env var still wins.
+process.env.I18NEXT_DEFAULT_CONFIG_PATH ??= "./next-i18next.config.ts";
+
+registerSentryBuildErrorHandler();
 
 const config = {
   images: {

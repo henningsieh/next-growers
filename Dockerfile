@@ -45,13 +45,13 @@ ENV NODE_ENV=production
 RUN node --version
 
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/sentry.build.config.js ./
+COPY --from=builder /app/sentry.build.config.ts ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/next-i18next.config.js ./
-COPY --from=builder /app/next-sitemap.config.js ./
+COPY --from=builder /app/next-i18next.config.ts ./
+COPY --from=builder /app/next-sitemap.config.ts ./
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/src ./src
 

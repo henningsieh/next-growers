@@ -28,15 +28,12 @@
   },
   "include": [
     ".eslintrc.cjs",
-    ".lintstagedrc.js",
+    ".lintstagedrc.ts",
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.cjs",
     "**/*.mjs",
-    "next-sitemap.config.js",
-    "next-i18next.config.js",
     "next.config.ts",
     "prisma/seed.ts",
     "src/middleware.ts"
