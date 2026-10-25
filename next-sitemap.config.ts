@@ -1,5 +1,6 @@
-/** @type {import('next-sitemap').IConfig} */
-const config = {
+import type { IConfig } from "next-sitemap";
+
+const config: IConfig = {
   siteUrl: process.env.SITE_URL || "https://growagram.com",
   changefreq: "daily",
   priority: 0.7,
@@ -44,4 +45,4 @@ const config = {
   },
 };
 
-module.exports = config;
+export default config;
