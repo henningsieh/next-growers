@@ -1,15 +1,22 @@
 {
+  // Editor & formatting
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.prettier": "explicit",
+    "source.fixAll.ts": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+
+  // Language-specific overrides
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "git.enableSmartCommit": true,
-  "workbench.iconTheme": "vscode-icons",
-  "workbench.editor.labelFormat": "short",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+
+  // ESLint
   "eslint.useFlatConfig": true,
   "eslint.validate": [
     "javascript",
@@ -17,12 +24,26 @@
     "typescript",
     "typescriptreact"
   ],
+
+  // TypeScript
+  "js/ts.experimental.useTsgo": true,
+
+  // Git
+  "git.enableSmartCommit": true,
+
+  // Workbench & explorer
   "explorer.compactFolders": false,
-  "i18n-ally.localesPaths": ["public/locales", "src/messages"],
-  "i18n-ally.keystyle": "nested",
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.editor.labelFormat": "long",
+
+  // i18n Ally
+  "i18n-ally.sortKeys": true,
   "i18n-ally.namespace": true,
-  "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
-  "i18n-ally.enabledFrameworks": ["react-i18next"],
+  "i18n-ally.encoding": "tree",
+  "i18n-ally.keystyle": "nested",
   "i18n-ally.sourceLanguage": "en",
-  "i18n-ally.displayLanguage": "en"
+  "i18n-ally.displayLanguage": "en",
+  "i18n-ally.enabledFrameworks": ["react-i18next"],
+  "i18n-ally.pathMatcher": "{locale}/{namespace}.json",
+  "i18n-ally.localesPaths": ["public/locales", "src/messages"]
 }

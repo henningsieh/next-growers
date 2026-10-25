@@ -5,15 +5,15 @@ const config: Configuration = {
   "**/*.(ts|tsx)": () => "npx tsc --noEmit",
 
   // Lint & Prettify TS and JS files
-  "**/*.(ts|tsx|js)": (filenames: string[]) => [
+  "**/*.(ts|tsx|js)": (filenames: readonly string[]) => [
     `npx eslint ${filenames.join(" ")}`,
     `npx prettier --write ${filenames.join(" ")}`,
   ],
 
   // Prettify Markdown, JSON and YAML files
-  "**/*.(md|json)": (filenames: string[]) =>
+  "**/*.(md|json)": (filenames: readonly string[]) =>
     `npx prettier --write ${filenames.join(" ")}`,
-  "**/*.(yml|yaml)": (filenames: string[]) =>
+  "**/*.(yml|yaml)": (filenames: readonly string[]) =>
     `npx prettier --write ${filenames.filter((f) => !f.endsWith("pnpm-lock.yaml")).join(" ")}`,
 };
 
