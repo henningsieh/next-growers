@@ -135,7 +135,7 @@
     "tailwindcss": "^4.3.3",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "yaml": "^2.9.1"
   },
   "ct3aMetadata": {
