@@ -105,7 +105,7 @@
     "tall": "^8.0.0",
     "twitter-api-v2": "^1.29.1",
     "unified": "^11.0.5",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
