@@ -57,7 +57,7 @@
     "@tiptap/extension-superscript": "^2.27.2",
     "@tiptap/extension-text-align": "^2.27.2",
     "@tiptap/extension-underline": "^2.27.2",
-    "@tiptap/pm": "^2.27.2",
+    "@tiptap/pm": "^2.27.3",
     "@tiptap/react": "^2.27.2",
     "@tiptap/starter-kit": "^2.27.2",
     "@trpc/client": "^11.19.0",
